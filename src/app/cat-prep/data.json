@@ -1,0 +1,478 @@
+[
+  {
+    "id": 1,
+    "parent_id": "",
+    "title": "CAT Preparation",
+    "type": "SUBJECT",
+    "order_index": 1
+  },
+  {
+    "id": 2,
+    "parent_id": 1,
+    "title": "Quantitative Aptitude",
+    "type": "SUBJECT",
+    "order_index": 1
+  },
+  {
+    "id": 3,
+    "parent_id": 1,
+    "title": "Data Interpretation and Logical Reasoning",
+    "type": "SUBJECT",
+    "order_index": 2
+  },
+  {
+    "id": 4,
+    "parent_id": 1,
+    "title": "Verbal Ability and Reading Comprehension",
+    "type": "SUBJECT",
+    "order_index": 3
+  },
+  {
+    "id": 5,
+    "parent_id": 2,
+    "title": "Algebra",
+    "type": "TOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 6,
+    "parent_id": 2,
+    "title": "Arithmetic",
+    "type": "TOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 7,
+    "parent_id": 2,
+    "title": "Number System",
+    "type": "TOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 8,
+    "parent_id": 2,
+    "title": "Geometry",
+    "type": "TOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 9,
+    "parent_id": 2,
+    "title": "Modern Maths",
+    "type": "TOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 10,
+    "parent_id": 5,
+    "title": "Linear Equations",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 11,
+    "parent_id": 5,
+    "title": "Quadratic Equations",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 12,
+    "parent_id": 5,
+    "title": "Exponents",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 13,
+    "parent_id": 5,
+    "title": "logarithm",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 14,
+    "parent_id": 5,
+    "title": "Inequality",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 15,
+    "parent_id": 5,
+    "title": "Functions",
+    "type": "SUBTOPIC",
+    "order_index": 6
+  },
+  {
+    "id": 16,
+    "parent_id": 6,
+    "title": "Percentages",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 17,
+    "parent_id": 6,
+    "title": "Ratio and Proportion",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 18,
+    "parent_id": 6,
+    "title": "Profit and loss",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 19,
+    "parent_id": 6,
+    "title": "Interest",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 20,
+    "parent_id": 6,
+    "title": "Mixtures and Allegations",
+    "type": "SUBTOPIC",
+    "order_index": 6
+  },
+  {
+    "id": 21,
+    "parent_id": 6,
+    "title": "Work rate and time",
+    "type": "SUBTOPIC",
+    "order_index": 7
+  },
+  {
+    "id": 22,
+    "parent_id": 6,
+    "title": "Distance time and speed",
+    "type": "SUBTOPIC",
+    "order_index": 8
+  },
+  {
+    "id": 23,
+    "parent_id": 7,
+    "title": "Factores",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 24,
+    "parent_id": 7,
+    "title": "Unit Digit theorm",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 25,
+    "parent_id": 7,
+    "title": "Maximum power and trailing zeros",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 26,
+    "parent_id": 7,
+    "title": "Remainder theorem",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 27,
+    "parent_id": 7,
+    "title": "HCF and LCM",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 28,
+    "parent_id": 8,
+    "title": "Lines and Angles",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 29,
+    "parent_id": 8,
+    "title": "Triangles",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 30,
+    "parent_id": 8,
+    "title": "Circles",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 31,
+    "parent_id": 8,
+    "title": "Quadlaterals",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 32,
+    "parent_id": 8,
+    "title": "Coordinate geometry",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 33,
+    "parent_id": 8,
+    "title": "Surface area and volume",
+    "type": "SUBTOPIC",
+    "order_index": 6
+  },
+  {
+    "id": 34,
+    "parent_id": 8,
+    "title": "Polygons",
+    "type": "SUBTOPIC",
+    "order_index": 7
+  },
+  {
+    "id": 35,
+    "parent_id": 9,
+    "title": "Arithmetic and geometric progression",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 36,
+    "parent_id": 9,
+    "title": "P &c",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 37,
+    "parent_id": 9,
+    "title": "Probability",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 38,
+    "parent_id": 3,
+    "title": "Logical Reasoning",
+    "type": "TOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 39,
+    "parent_id": 3,
+    "title": "Data Interpretation",
+    "type": "TOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 40,
+    "parent_id": 3,
+    "title": "Vein diagrams",
+    "type": "TOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 41,
+    "parent_id": 38,
+    "title": "Arrangements",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 42,
+    "parent_id": 38,
+    "title": "Distibution",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 43,
+    "parent_id": 38,
+    "title": "Games and touraments",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 44,
+    "parent_id": 38,
+    "title": "Maps and networks",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 45,
+    "parent_id": 38,
+    "title": "Puzzles",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 46,
+    "parent_id": 39,
+    "title": "Tables",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 47,
+    "parent_id": 39,
+    "title": "Bar chart",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 48,
+    "parent_id": 39,
+    "title": "Line chart",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 49,
+    "parent_id": 39,
+    "title": "Pie chart",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 50,
+    "parent_id": 39,
+    "title": "Word problems",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  },
+  {
+    "id": 51,
+    "parent_id": 40,
+    "title": "Vein diagrams",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 52,
+    "parent_id": 6,
+    "title": "Averages",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 53,
+    "parent_id": 4,
+    "title": "Critical reasoning",
+    "type": "TOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 54,
+    "parent_id": 4,
+    "title": "Paragraphs",
+    "type": "TOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 55,
+    "parent_id": 4,
+    "title": "Reading Comprehension",
+    "type": "TOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 56,
+    "parent_id": 53,
+    "title": "Statement, premise conclusions, premise, arguments and assumptions",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 57,
+    "parent_id": 53,
+    "title": "Identify the Assumption",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 58,
+    "parent_id": 53,
+    "title": "Strengthen/weaken the argument",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 59,
+    "parent_id": 53,
+    "title": "Similar structure/arguments",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 60,
+    "parent_id": 54,
+    "title": "Para summary",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 61,
+    "parent_id": 54,
+    "title": "Para Jumbles",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 62,
+    "parent_id": 54,
+    "title": "Para completion",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 63,
+    "parent_id": 54,
+    "title": "Para odd one out",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 64,
+    "parent_id": 55,
+    "title": "How to read a passage",
+    "type": "SUBTOPIC",
+    "order_index": 1
+  },
+  {
+    "id": 65,
+    "parent_id": 55,
+    "title": "eliminition of incorrect answers",
+    "type": "SUBTOPIC",
+    "order_index": 2
+  },
+  {
+    "id": 66,
+    "parent_id": 55,
+    "title": "Types of question in RC",
+    "type": "SUBTOPIC",
+    "order_index": 3
+  },
+  {
+    "id": 67,
+    "parent_id": 55,
+    "title": "Main idea of passage",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 68,
+    "parent_id": 55,
+    "title": "tone and structure of passage",
+    "type": "SUBTOPIC",
+    "order_index": 5
+  }
+]
