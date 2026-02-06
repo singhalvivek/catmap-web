@@ -1,0 +1,410 @@
+[
+  {
+    "id": 1,
+    "parent_id": 1,
+    "text": "A comprehensive structure for preparing for the Common Admission Test (CAT), covering all three major sections and their specific sub-topics.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 2,
+    "parent_id": 2,
+    "text": "This section tests mathematical proficiency, focusing on numerical ability, problem-solving, and mathematical concepts ranging from arithmetic to advanced algebra.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 3,
+    "parent_id": 3,
+    "text": "This section assesses the ability to interpret data from charts and graphs, as well as the ability to think logically and solve complex puzzles.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 4,
+    "parent_id": 4,
+    "text": "This section evaluates English language skills, focusing on reading speed, comprehension, critical thinking, and grammar usage.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 5,
+    "parent_id": 5,
+    "text": "A branch of mathematics dealing with symbols and the rules for manipulating those symbols, including equations and inequalities.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 6,
+    "parent_id": 6,
+    "text": "The study of numbers and the basic operations between them, forming the foundation for commercial mathematics and daily calculations.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 7,
+    "parent_id": 7,
+    "text": "The fundamental study of properties of integers, including divisibility, prime numbers, and remainders.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 8,
+    "parent_id": 8,
+    "text": "A branch of mathematics concerned with properties of space, shapes, sizes, and relative positions of figures.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 9,
+    "parent_id": 9,
+    "text": "Advanced mathematical concepts that include counting principles, probability, and sequences.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 10,
+    "parent_id": 10,
+    "text": "Mathematical equations where the highest power of the variable is one, representing straight lines in coordinate geometry.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 11,
+    "parent_id": 11,
+    "text": "Polynomial equations of the second degree, typically in the form ax^2 + bx + c = 0.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 12,
+    "parent_id": 12,
+    "text": "Mathematical notation representing the number of times a number is multiplied by itself, including rules of indices.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 13,
+    "parent_id": 13,
+    "text": "The inverse function to exponentiation, used to solve for exponents and simplify complex multiplication or division problems.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 14,
+    "parent_id": 14,
+    "text": "Mathematical sentences comparing two values that are not equal, using symbols like <, >, or ≠.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 15,
+    "parent_id": 15,
+    "text": "Relationships where every input has a unique output, including graphs and mapping concepts.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 16,
+    "parent_id": 16,
+    "text": "A number or ratio expressed as a fraction of 100, crucial for data interpretation and profit calculations.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 17,
+    "parent_id": 17,
+    "text": "Comparative relationship between two quantities and the equality of two ratios.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 18,
+    "parent_id": 18,
+    "text": "Commercial math concepts dealing with cost price, selling price, margins, and discounts.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 19,
+    "parent_id": 19,
+    "text": "Calculations regarding the cost of borrowing money, covering both Simple and Compound Interest.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 20,
+    "parent_id": 20,
+    "text": "Techniques for solving problems involving combining different solutions or ingredients, often using the rule of allegation.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 21,
+    "parent_id": 21,
+    "text": "Problems dealing with the relationship between the amount of work done, the time taken, and the efficiency of workers.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 22,
+    "parent_id": 22,
+    "text": "Physics-based math problems calculating the relationship between how fast an object moves, the time it takes, and the distance covered.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 23,
+    "parent_id": 23,
+    "text": "Numbers that divide another number evenly without leaving a remainder.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 24,
+    "parent_id": 24,
+    "text": "Techniques to determine the last digit of a calculation involving large powers or products.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 25,
+    "parent_id": 25,
+    "text": "Methods to determine the highest power of a prime dividing a factorial and calculating the number of zeros at the end of a number.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 26,
+    "parent_id": 26,
+    "text": "A systematic approach to finding the remainder when a polynomial or number is divided by another.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 27,
+    "parent_id": 27,
+    "text": "Highest Common Factor and Lowest Common Multiple; concepts used to solve synchronization and divisibility problems.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 28,
+    "parent_id": 28,
+    "text": "Basic geometric concepts involving straight lines, parallel lines, transversals, and angle properties.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 29,
+    "parent_id": 29,
+    "text": "Properties of three-sided polygons, including area, congruence, similarity, and centers (centroid, incenter, etc.).",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 30,
+    "parent_id": 30,
+    "text": "Study of curved geometric figures, including properties of chords, tangents, secants, and arcs.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 31,
+    "parent_id": 31,
+    "text": "Properties of four-sided polygons such as squares, rectangles, parallelograms, and trapezoids.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 32,
+    "parent_id": 32,
+    "text": "Geometry using a coordinate system to define the position of points, lines, and shapes on a plane.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 33,
+    "parent_id": 33,
+    "text": "Calculations of the total area of the surface and the space occupied by 3D objects like cubes, cylinders, and spheres.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 34,
+    "parent_id": 34,
+    "text": "Study of n-sided closed figures, including interior and exterior angles and diagonals.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 35,
+    "parent_id": 35,
+    "text": "Sequences of numbers where the difference or ratio between consecutive terms is constant.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 36,
+    "parent_id": 36,
+    "text": "Permutations and Combinations; techniques for counting arrangements and selections.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 37,
+    "parent_id": 37,
+    "text": "The branch of mathematics concerning numerical descriptions of how likely an event is to occur.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 38,
+    "parent_id": 38,
+    "text": "Questions requiring deductive reasoning to deduce relationships, arrangements, and sequences from a given set of conditions.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 39,
+    "parent_id": 39,
+    "text": "Analysis of data presented in various visual formats to answer numerical questions.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 40,
+    "parent_id": 40,
+    "text": "Diagrams that use circles to represent sets and their relationships, overlaps, and differences.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 41,
+    "parent_id": 41,
+    "text": "Linear and circular seating arrangement problems based on specific constraints.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 42,
+    "parent_id": 42,
+    "text": "Logic puzzles involving distributing items among people or groups based on variable criteria.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 43,
+    "parent_id": 43,
+    "text": "Reasoning based on the rules of sports, knockout structures, and round-robin formats.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 44,
+    "parent_id": 44,
+    "text": "Route optimization and network flow problems usually represented by nodes and edges.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 45,
+    "parent_id": 45,
+    "text": "General constraint-based reasoning questions that do not fit into standard categories.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 46,
+    "parent_id": 46,
+    "text": "Data presented in rows and columns requiring calculation and comparison of values.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 47,
+    "parent_id": 47,
+    "text": "Visual representation of data using rectangular bars to compare quantities.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 48,
+    "parent_id": 48,
+    "text": "Data trends represented by points connected by straight line segments.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 49,
+    "parent_id": 49,
+    "text": "Circular statistical graphic divided into slices to illustrate numerical proportion.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 50,
+    "parent_id": 50,
+    "text": "Data interpretation questions presented purely in text format without visual charts.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 51,
+    "parent_id": 51,
+    "text": "Solving complex set theory problems involving 2, 3, or 4 overlapping sets.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 52,
+    "parent_id": 52,
+    "text": "Calculations involving the central value of a discrete set of numbers.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 53,
+    "parent_id": 53,
+    "text": "Evaluation of arguments, identifying assumptions, inferences, and logical flaws.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 54,
+    "parent_id": 54,
+    "text": "Exercises focused on the structure, coherence, and flow of short texts.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 55,
+    "parent_id": 55,
+    "text": "Answering questions based on the content, tone, and implications of a long passage.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 56,
+    "parent_id": 56,
+    "text": "Identifying the core components of a logical argument.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 57,
+    "parent_id": 57,
+    "text": "Finding the unstated premise that makes an argument's conclusion valid.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 58,
+    "parent_id": 58,
+    "text": "Choosing statements that either support or undermine a given logical argument.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 59,
+    "parent_id": 59,
+    "text": "Identifying parallel logic or analogous reasoning in different scenarios.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 60,
+    "parent_id": 60,
+    "text": "Selecting the option that best captures the essence of a short paragraph.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 61,
+    "parent_id": 61,
+    "text": "Rearranging a set of jumbled sentences to form a coherent and logical paragraph.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 62,
+    "parent_id": 62,
+    "text": "Filling in the missing sentence of a paragraph to ensure logical flow and completion.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 63,
+    "parent_id": 63,
+    "text": "Identifying the sentence that does not fit the context or theme of the given paragraph.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 64,
+    "parent_id": 64,
+    "text": "Strategies for effective reading, including skimming, scanning, and active reading.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 65,
+    "parent_id": 65,
+    "text": "Techniques for narrowing down choices by identifying logically incorrect options.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 66,
+    "parent_id": 66,
+    "text": "Overview of question formats such as factual, inferential, and vocabulary-based questions.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 67,
+    "parent_id": 67,
+    "text": "Identifying the primary purpose or central theme of the author's writing.",
+    "type": "DESCRIPTION"
+  },
+  {
+    "id": 68,
+    "parent_id": 68,
+    "text": "Analyzing the author's attitude and the organizational framework of the passage.",
+    "type": "DESCRIPTION"
+  }
+]
