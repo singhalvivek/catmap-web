@@ -17,18 +17,32 @@ export default function CatPrepTreePage() {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Left Tree */}
-      <div className="w-1/3 border-r bg-white p-4 overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-3">Learning Path</h2>
-        <Tree roots={tree} onSelect={setSelected} />
+      {/* Center Tree */}
+      <div className="flex-1 flex flex-col items-center justify-start p-8 overflow-y-auto">
+        <div className="w-full max-w-2xl">
+          <h2 className="text-xl font-semibold mb-6">Learning Path</h2>
+          <Tree roots={tree} onSelect={setSelected} />
+        </div>
       </div>
 
-      {/* Right Panel */}
-      <div className="flex-1 p-6 overflow-y-auto">
-        <DetailsPanel
-          selected={selected}
-          descriptions={descriptions as Description[]}
-        />
+      {/* Right Slide-in Panel */}
+      <div
+        className={`fixed top-0 right-0 h-screen w-96 bg-white border-l border-gray-200 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out ${
+          selected ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <button
+          onClick={() => setSelected(null)}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+        <div className="p-6 pt-12">
+          <DetailsPanel
+            selected={selected}
+            descriptions={descriptions as Description[]}
+          />
+        </div>
       </div>
     </div>
   );

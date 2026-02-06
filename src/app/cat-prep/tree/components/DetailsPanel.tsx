@@ -16,14 +16,7 @@ export default function DetailsPanel({
     : null;
 
   if (!selected) {
-    return (
-      <div className="max-w-2xl">
-        <h1 className="text-2xl font-bold mb-2">Welcome to CAT Preparation</h1>
-        <p className="text-gray-600">
-          Select any topic from the learning path on the left to view detailed explanations.
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (
