@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import data from "../data.json";
 import descriptions from "../description.json";
+import resources from "../resources.json";
 
 import { buildTree } from "./lib/buildTree";
 import { Node } from "./models/node";
 import { Description } from "./models/description";
+import { Resource } from "./models/resource";
 
 import Tree from "./components/Tree";
 import DetailsPanel from "./components/DetailsPanel";
@@ -55,6 +57,7 @@ export default function CatPrepTreePage() {
           <DetailsPanel
             selected={selected}
             descriptions={descriptions as Description[]}
+            resources={resources as Resource[]}
           />
         </div>
       </div>
