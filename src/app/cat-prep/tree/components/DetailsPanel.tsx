@@ -63,12 +63,15 @@ export default function DetailsPanel({
   }, [selected?.id]);
 
   async function onSubmit() {
+    if (!selected) return;
+    const node = selected;
+
     try {
       setSubmitting(true);
 
       await submitFeedback({
-        parentId: selected.id,
-        nodeTitle: selected.title,
+        parentId: node.id,
+        nodeTitle: node.title,
         description: descText,
         resources: editResources,
         name,
