@@ -15,8 +15,22 @@ export default function DetailsPanel({
     ? descriptions.find((d) => d.parent_id === selected.id)
     : null;
 
+  // Default state (panel is not empty anymore)
   if (!selected) {
-    return null;
+    return (
+      <div className="max-w-2xl">
+        <h2 className="text-2xl font-bold mb-2">Welcome 👋</h2>
+        <p className="text-gray-600">
+          Select any topic from the learning path to view details, explanations,
+          and study focus here.
+        </p>
+
+        <div className="mt-4 p-4 rounded-lg bg-gray-50 border text-sm text-gray-500">
+          💡 Tip: Start with Quantitative Aptitude if you’re focusing on problem
+          solving.
+        </div>
+      </div>
+    );
   }
 
   return (
