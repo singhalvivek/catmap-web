@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ENV } from "@/config/env";
 
-const SHEETS_WEBHOOK_URL = process.env.SHEETS_WEBHOOK_URL!;
+console.log("SHEETS_WEBHOOK_URL =", process.env.SHEETS_WEBHOOK_URL);
+const SHEETS_WEBHOOK_URL = ENV.SHEETS_WEBHOOK_URL;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -14,8 +16,6 @@ export async function POST(req: NextRequest) {
     email: body.email,
     comment: body.comment,
   };
-
-  console.log("SHEETS_WEBHOOK_URL =", process.env.SHEETS_WEBHOOK_URL);
 
   await fetch(SHEETS_WEBHOOK_URL, {
     method: "POST",
