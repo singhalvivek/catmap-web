@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "question": "What is CAT and who conducts it?",
+    "answer": "CAT (Common Admission Test) is a national-level MBA entrance exam conducted by the IIMs for admission into MBA/PGDM programs."
+  },
+  {
+    "id": 2,
+    "question": "What are the sections in CAT?",
+    "answer": "CAT has three sections: Quantitative Aptitude (QA), DILR, and VARC."
+  },
+  {
+    "id": 3,
+    "question": "How long does CAT preparation take?",
+    "answer": "On average, 6–9 months of focused preparation is sufficient, depending on your starting level."
+  },
+  {
+    "id": 4,
+    "question": "Are mock tests important for CAT?",
+    "answer": "Yes, mock tests help improve speed, accuracy, and exam temperament."
+  }
+]
