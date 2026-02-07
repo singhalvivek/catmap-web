@@ -102,7 +102,7 @@ export default function DetailsPanel({
         <h3 className="text-lg font-semibold mb-2">Description</h3>
 
         {!editMode ? (
-          <p className="leading-relaxed text-gray-800">
+          <p className="leading-relaxed text-gray-200">
             {originalDesc || "No description available for this topic yet."}
           </p>
         ) : (
@@ -129,7 +129,7 @@ export default function DetailsPanel({
               {originalResources.map((res) => (
                 <li
                   key={res.id}
-                  className="flex justify-between items-center p-3 border rounded-md bg-white"
+                  className="flex justify-between items-center p-3 border rounded-md bg-gray-800"
                 >
                   <div>
                     <div className="font-medium">
@@ -208,7 +208,7 @@ export default function DetailsPanel({
         {!editMode ? (
           <button
             onClick={() => setEditMode(true)}
-            className="px-4 py-2 rounded-md border hover:bg-gray-50"
+            className="px-4 py-2 rounded-md border text-gray-200 hover:bg-gray-50 hover:text-gray-700 transition"
           >
             Suggest Edit / Correction
           </button>

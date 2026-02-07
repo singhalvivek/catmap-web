@@ -35,50 +35,64 @@ export default function CatPrepTreePage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
       {/* Header */}
       <Header />
 
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* Center Column */}
-        <main className="flex-1 flex flex-col items-center justify-start p-8 overflow-y-auto">
-          <div className="w-full max-w-2xl">
-            {/* Learning Path */}
-            <h2 className="text-xl font-semibold mb-6">Learning Path</h2>
-            <Tree
-              roots={tree}
-              onSelect={setSelected}
-              selectedId={selected?.id ?? null}
-            />
+        <main className="flex-1 flex flex-col items-center justify-start p-6 sm:p-8 overflow-y-auto">
+          <div className="w-full max-w-4xl">
+            {/* Learning Path Header */}
+            <div className="mb-12">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                CAT Learning Path
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-300">
+                Follow a structured roadmap to master CAT concepts
+              </p>
+            </div>
 
-            {/* FAQ Section (separate from tree) */}
-            <Faq faqs={faqs as any[]} />
+            {/* Learning Path */}
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-12">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Topics</h2>
+              <Tree
+                roots={tree}
+                onSelect={setSelected}
+                selectedId={selected?.id ?? null}
+              />
+            </div>
+
+            {/* FAQ Section */}
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+              <Faq faqs={faqs as any[]} />
+            </div>
           </div>
         </main>
 
         {/* Right Slide-in Panel */}
-        <aside
-          className={`fixed top-14 right-0 h-[calc(100vh-56px)] w-full md:w-96 bg-white border-l border-gray-200 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out ${
-            selected ? "translate-x-0" : "translate-x-full"
-          }`}
-        >
-          <button
-            onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            aria-label="Close details panel"
+        {selected && (
+          <aside
+            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
           >
-            ✕
-          </button>
+            <button
+              onClick={() => setSelected(null)}
+              className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl"
+              aria-label="Close details panel"
+            >
+              ✕
+            </button>
 
-          <div className="p-6 pt-12">
-            <DetailsPanel
-              selected={selected}
-              descriptions={descriptions as Description[]}
-              resources={resources as Resource[]}
-            />
-          </div>
-        </aside>
+            <div className="p-6 pt-12">
+              <DetailsPanel
+                selected={selected}
+                descriptions={descriptions as Description[]}
+                resources={resources as Resource[]}
+              />
+            </div>
+          </aside>
+        )}
       </div>
 
       {/* Footer */}

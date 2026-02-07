@@ -24,10 +24,9 @@ export default function TreeNode({
     <div className="mb-3">
       <div
         className={`flex items-center justify-between gap-2 px-4 py-3 rounded-lg border cursor-pointer transition
-          ${
-            isSelected
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-200 bg-white hover:bg-gray-50"
+          ${isSelected
+            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500"
+            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50"
           }`}
       >
         {/* Clicking the main row selects the node */}
@@ -37,8 +36,8 @@ export default function TreeNode({
             onSelect(node);
           }}
         >
-          <span className="font-medium text-gray-900">{node.title}</span>
-          <span className="text-xs text-gray-500">({node.type})</span>
+          <span className="font-medium text-gray-900 dark:text-gray-100">{node.title}</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">({node.type})</span>
         </div>
 
         {/* Expand / collapse button */}
