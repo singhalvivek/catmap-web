@@ -8,17 +8,29 @@ export default function TreeNode({
   node,
   level,
   onSelect,
+  selectedId,
 }: {
   node: Node;
   level: number;
   onSelect: (n: Node) => void;
+  selectedId: number | null; // NEW: used to highlight selected node
 }) {
   const [open, setOpen] = useState(level < 1);
   const hasChildren = node.children && node.children.length > 0;
 
+  const isSelected = selectedId === node.id;
+
   return (
     <div className="mb-3">
-      <div className="flex items-center justify-between gap-2 px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
+      <div
+        className={`flex items-center justify-between gap-2 px-4 py-3 rounded-lg border cursor-pointer transition
+          ${
+            isSelected
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-200 bg-white hover:bg-gray-50"
+          }`}
+      >
+        {/* Clicking the main row selects the node */}
         <div
           className="flex-1 flex items-center gap-2"
           onClick={() => {
@@ -29,10 +41,11 @@ export default function TreeNode({
           <span className="text-xs text-gray-500">({node.type})</span>
         </div>
 
+        {/* Expand / collapse button */}
         {hasChildren && (
           <button
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); // prevent select on toggle click
               setOpen(!open);
             }}
             className="flex items-center justify-center w-6 h-6 rounded-md hover:bg-gray-200 transition-colors"
@@ -44,8 +57,9 @@ export default function TreeNode({
         )}
       </div>
 
+      {/* Children */}
       {hasChildren && open && (
-        <div className="ml-4">
+        <div className="ml-4 mt-2">
           {node.children!
             .sort((a, b) => a.order_index - b.order_index)
             .map((child) => (
@@ -54,6 +68,7 @@ export default function TreeNode({
                 node={child}
                 level={level + 1}
                 onSelect={onSelect}
+                selectedId={selectedId} // pass selected id down
               />
             ))}
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from "../data.json";
 import descriptions from "../description.json";
 
@@ -15,19 +15,32 @@ export default function CatPrepTreePage() {
   const tree = buildTree(data as Node[]);
   const [selected, setSelected] = useState<Node | null>(null);
 
+  // Close panel on ESC key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Center Tree */}
       <div className="flex-1 flex flex-col items-center justify-start p-8 overflow-y-auto">
         <div className="w-full max-w-2xl">
           <h2 className="text-xl font-semibold mb-6">Learning Path</h2>
-          <Tree roots={tree} onSelect={setSelected} />
+          <Tree
+            roots={tree}
+            onSelect={setSelected}
+            selectedId={selected?.id ?? null} // NEW
+          />
         </div>
       </div>
 
       {/* Right Slide-in Panel */}
       <div
-        className={`fixed top-0 right-0 h-screen w-96 bg-white border-l border-gray-200 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-screen w-full md:w-96 bg-white border-l border-gray-200 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out ${
           selected ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -37,6 +50,7 @@ export default function CatPrepTreePage() {
         >
           ✕
         </button>
+
         <div className="p-6 pt-12">
           <DetailsPanel
             selected={selected}
