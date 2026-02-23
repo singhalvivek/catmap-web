@@ -1,5 +1,13 @@
 [
   {
+    "id": 110,
+    "parent_id": 2,
+    "youtubevideo_title": "Quant Formula Book",
+    "type": "ARTICLE",
+    "link": "https://quantifiers.in/wp-content/uploads/2024/07/Quant-Formula-Book-by-Quantifiers-CAT-Academy.pdf",
+    "order_index": 1
+  },
+  {
     "id": 1,
     "parent_id": 5,
     "youtubevideo_title": "Algebra Revision",
@@ -53,6 +61,822 @@
     "youtubevideo_title": "Linear Equation Notes",
     "type": "ARTICLE",
     "link": "https://edurev.in/t/73830/CAT-Linear-Equations-Important-Concepts-and-Notes-PDF",
+    "order_index": 1
+  },
+  {
+    "id": 8,
+    "parent_id": 10,
+    "youtubevideo_title": "Linear Equation Basics to advance",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/Aw8X6n2XTA4?si=Y2zP9_Z1pa1xANF6",
+    "order_index": 2
+  },
+  {
+    "id": 9,
+    "parent_id": 10,
+    "youtubevideo_title": "Linear Equation Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PL5FO_h9pPSgbh-hHULh6xdn7rnxBWseWE&si=KWcAtfyRXgR6bV43",
+    "order_index": 3
+  },
+  {
+    "id": 10,
+    "parent_id": 11,
+    "youtubevideo_title": "Quadratic Equation Notes",
+    "type": "ARTICLE",
+    "link": "https://edurev.in/t/73618/CAT-Quadratic-Equations-Basic-Concepts-and-Notes-PDF",
+    "order_index": 1
+  },
+  {
+    "id": 11,
+    "parent_id": 11,
+    "youtubevideo_title": "Quadratic Equation Basics",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/s_S4J2vArUE?si=1ycFhgtfQk4RpKSv",
+    "order_index": 2
+  },
+  {
+    "id": 12,
+    "parent_id": 11,
+    "youtubevideo_title": "Complete Quadratic Equation",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/qJx4IZ8FoKw?si=thnI3aRXqqyZPAUC",
+    "order_index": 3
+  },
+  {
+    "id": 13,
+    "parent_id": 11,
+    "youtubevideo_title": "Quadratic Equation Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLh-uxFrOdsq_9U0xZwMfk9cG8kpr3x8x0&si=ww0U7cvF-HkkUdTe",
+    "order_index": 4
+  },
+  {
+    "id": 14,
+    "parent_id": 11,
+    "youtubevideo_title": "Quadratic Equation Graphs",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/0ayWn-ghIqA?si=xNsSfAndtr03WiJh",
+    "order_index": 5
+  },
+  {
+    "id": 15,
+    "parent_id": 12,
+    "youtubevideo_title": "Exponents",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/SvKdl4PEzPg?si=P_SDhOe6c8R8NOxn",
+    "order_index": 1
+  },
+  {
+    "id": 16,
+    "parent_id": 12,
+    "youtubevideo_title": "Exponets",
+    "type": "VIDEO",
+    "link": "https://youtu.be/T9S_CzO9bro?si=GsMLA4_c7ZnXWWew",
+    "order_index": 2
+  },
+  {
+    "id": 17,
+    "parent_id": 13,
+    "youtubevideo_title": "Logarithms Notes",
+    "type": "ARTICLE",
+    "link": "https://bodheeprep.com/logarithm-concepts",
+    "order_index": 1
+  },
+  {
+    "id": 18,
+    "parent_id": 13,
+    "youtubevideo_title": "Indices",
+    "type": "surges and Logarithm Notes",
+    "link": "ARTICLE",
+    "order_index": "https://www.learntheta.com/cat-quant-indices-surds-logarithms"
+  },
+  {
+    "id": 19,
+    "parent_id": 13,
+    "youtubevideo_title": "Logarithms Video",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/lkETl5WW9j8?si=2loRovL77jHRHKez",
+    "order_index": 3
+  },
+  {
+    "id": 20,
+    "parent_id": 13,
+    "youtubevideo_title": "Logarithms Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLh-uxFrOdsq8thGKFiR-vfMewaSrkxeGy&si=Ahb2LC0erIvoT4Am",
+    "order_index": 4
+  },
+  {
+    "id": 21,
+    "parent_id": 14,
+    "youtubevideo_title": "Inequalities Basics",
+    "type": "ARTICLE",
+    "link": "https://unacademy.com/content/cat/study-material/mathematics/inequalities/",
+    "order_index": 1
+  },
+  {
+    "id": 22,
+    "parent_id": 14,
+    "youtubevideo_title": "Inequalities Notes",
+    "type": "ARTICLE",
+    "link": "https://edurev.in/t/73563/Inequalities-Examples--with-Solutions---Miscellane",
+    "order_index": 2
+  },
+  {
+    "id": 23,
+    "parent_id": 14,
+    "youtubevideo_title": "Inequalities Playlist (Rodha)",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PL3uhIRZV1vHu5O__hnfeRRvWz8Zp8OOEj&si=KAoM5RN347_6rD5L",
+    "order_index": 3
+  },
+  {
+    "id": 24,
+    "parent_id": 14,
+    "youtubevideo_title": "Inequalities Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLh-uxFrOdsq8Y0LNgUaFC3OrUePk9a1Si&si=5j2yE73SDeWcpIPm",
+    "order_index": 4
+  },
+  {
+    "id": 25,
+    "parent_id": 15,
+    "youtubevideo_title": "Funtions Overview",
+    "type": "ARTICLE",
+    "link": "https://edurev.in/t/308893/Overview-Functions",
+    "order_index": 1
+  },
+  {
+    "id": 26,
+    "parent_id": 15,
+    "youtubevideo_title": "Functions and Graph",
+    "type": "ARTICLE",
+    "link": "https://bodheeprep.com/functions-graphs-concepts-cat-exam",
+    "order_index": 2
+  },
+  {
+    "id": 27,
+    "parent_id": 15,
+    "youtubevideo_title": "Function One Shot",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/mfQ9nfPk5U4?si=Kez58cUrX6hObb4t",
+    "order_index": 3
+  },
+  {
+    "id": 28,
+    "parent_id": 15,
+    "youtubevideo_title": "Modulus Function",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/NrOx9aXHtdk?si=Vx5PL2ETpNXxxjuA",
+    "order_index": 4
+  },
+  {
+    "id": 29,
+    "parent_id": 52,
+    "youtubevideo_title": "Averages Basics",
+    "type": "ARTICLE",
+    "link": "https://catking.in/the-cat-average-basic-concept-with-questions",
+    "order_index": 1
+  },
+  {
+    "id": 30,
+    "parent_id": 52,
+    "youtubevideo_title": "Averages In one",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/TNgTsmsfKSk?si=4ZZ87NLFTSahbWqM",
+    "order_index": 2
+  },
+  {
+    "id": 31,
+    "parent_id": 16,
+    "youtubevideo_title": "Percentage In one",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/ZAuPVrpzjHQ?si=fcGspIbY2cRwry1B",
+    "order_index": 1
+  },
+  {
+    "id": 32,
+    "parent_id": 16,
+    "youtubevideo_title": "Percentages Formulas and Notes",
+    "type": "ARTICLE",
+    "link": "https://www.learntheta.com/cat-quant-percentages",
+    "order_index": 2
+  },
+  {
+    "id": 33,
+    "parent_id": 17,
+    "youtubevideo_title": "Ratio-Proportion and Variations",
+    "type": "ARTICLE",
+    "link": "https://cetking.com/wp-content/uploads/2020/04/Ratios-handbook-PDF-Ck-Quant-for-CAT-CET-other-exams.pdf",
+    "order_index": 1
+  },
+  {
+    "id": 34,
+    "parent_id": 17,
+    "youtubevideo_title": "Ratio Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLxQPucuWtxEkZNNRV2XEUy2frt6xe6ook&si=S4xqMrGXQuDgt1ST",
+    "order_index": 2
+  },
+  {
+    "id": 35,
+    "parent_id": 18,
+    "youtubevideo_title": "Profit and Loss",
+    "type": "ARTICLE",
+    "link": "https://www.learntheta.com/cat-quant-profit-and-loss",
+    "order_index": 1
+  },
+  {
+    "id": 36,
+    "parent_id": 18,
+    "youtubevideo_title": "Profit and Loss Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLIvNOn585X_bBUXUZvw54a4hz27lIlewp&si=b47etV-cgxvdlu7b",
+    "order_index": 2
+  },
+  {
+    "id": 37,
+    "parent_id": 19,
+    "youtubevideo_title": "Interest and Installments",
+    "type": "ARTICLE",
+    "link": "https://www.learntheta.com/cat-quant-simple-compound-interest",
+    "order_index": 1
+  },
+  {
+    "id": 38,
+    "parent_id": 19,
+    "youtubevideo_title": "Simple and compound Interest",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/swB-FzxcZIY?si=DKWmoZ2C_dbvyQZ3",
+    "order_index": 2
+  },
+  {
+    "id": 39,
+    "parent_id": 20,
+    "youtubevideo_title": "Mixtures and Alligation",
+    "type": "ARTICLE",
+    "link": "https://bodheeprep.com/mixture-and-alligation",
+    "order_index": 1
+  },
+  {
+    "id": 40,
+    "parent_id": 20,
+    "youtubevideo_title": "Mixtures and Alligation",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PL5FO_h9pPSgYb5u1c9VT7zR1V62JKF_ej&si=bzQyBwGxJ2pkOSTn",
+    "order_index": 2
+  },
+  {
+    "id": 41,
+    "parent_id": 21,
+    "youtubevideo_title": "Time and Work",
+    "type": "ARTICLE",
+    "link": "https://www.learntheta.com/cat-quant-time-and-work",
+    "order_index": 1
+  },
+  {
+    "id": 42,
+    "parent_id": 21,
+    "youtubevideo_title": "Work-rate and Time",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/elVzskhevmI?si=v5AvGmdu0QaUZACl",
+    "order_index": 2
+  },
+  {
+    "id": 43,
+    "parent_id": 22,
+    "youtubevideo_title": "Distance-speed and Time",
+    "type": "ARTICLE",
+    "link": "https://www.learntheta.com/cat-quant-speed-distance-time",
+    "order_index": 1
+  },
+  {
+    "id": 44,
+    "parent_id": 22,
+    "youtubevideo_title": "Distance-speed adn time One Shot",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/40SE2RBLjWw?si=7SMC-VtXUtspAgZS",
+    "order_index": 2
+  },
+  {
+    "id": 45,
+    "parent_id": 23,
+    "youtubevideo_title": "Factors Questions and Tricks",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/Dftl1PckD6w?si=wVLFInpNVul7ruXA",
+    "order_index": 1
+  },
+  {
+    "id": 46,
+    "parent_id": 23,
+    "youtubevideo_title": "Facors Notes",
+    "type": "ARTICLE",
+    "link": "https://bodheeprep.com/number-factors-cat-exam",
+    "order_index": 2
+  },
+  {
+    "id": 47,
+    "parent_id": 24,
+    "youtubevideo_title": "Unit Digit theorm",
+    "type": "VIDEO",
+    "link": "https://youtu.be/-HK8zLKjkPg?si=JpisMV4k1IUFlqlm",
+    "order_index": 1
+  },
+  {
+    "id": 48,
+    "parent_id": 25,
+    "youtubevideo_title": "Maximum Power and trailing zeros",
+    "type": "VIDEO",
+    "link": "https://youtu.be/U1gg6L3qyQQ?si=njo6WFWHKn4vr-0D",
+    "order_index": 1
+  },
+  {
+    "id": 49,
+    "parent_id": 26,
+    "youtubevideo_title": "Remainder Theorm",
+    "type": "VIDEO",
+    "link": "https://youtu.be/taNnRLuS4pk?si=AN0lnlbr6gbQ8RDi",
+    "order_index": 1
+  },
+  {
+    "id": 50,
+    "parent_id": 27,
+    "youtubevideo_title": "HCF and LCM",
+    "type": "ARTICLE",
+    "link": "https://edurev.in/t/453160/Important-Formulas-HCF-LCM",
+    "order_index": 1
+  },
+  {
+    "id": 51,
+    "parent_id": 27,
+    "youtubevideo_title": "HCC and LCM",
+    "type": "VIDEO",
+    "link": "https://youtu.be/iuuBv7F33Zg?si=EHdWdhkBu2rbu8ey",
+    "order_index": 2
+  },
+  {
+    "id": 52,
+    "parent_id": 28,
+    "youtubevideo_title": "Lines and angles basics",
+    "type": "ARTICLE",
+    "link": "https://edurev.in/t/73547/CAT-Angles--Lines-Basic-Concepts-and-Notes-PDF",
+    "order_index": 1
+  },
+  {
+    "id": 53,
+    "parent_id": 28,
+    "youtubevideo_title": "Lines and angles",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/_9LUroJYC3w?si=WMwjS7OM-t4GvWXY",
+    "order_index": 2
+  },
+  {
+    "id": 54,
+    "parent_id": 29,
+    "youtubevideo_title": "Triangles",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/uRdn4Eu4COc?si=V8H-7ept2Y2ab-M2",
+    "order_index": 1
+  },
+  {
+    "id": 55,
+    "parent_id": 30,
+    "youtubevideo_title": "Circles",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/bTumOwP-hBY?si=WmGqjIz0f5CaAcrk",
+    "order_index": 1
+  },
+  {
+    "id": 56,
+    "parent_id": 31,
+    "youtubevideo_title": "Quadlaterals",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/xKArFEgYJFY?si=1fG1U5Yr5gX-_H-f",
+    "order_index": 1
+  },
+  {
+    "id": 57,
+    "parent_id": 32,
+    "youtubevideo_title": "Coordinate geometry",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PL5FO_h9pPSgZZ8OeLMnTGgY1Q9u4fq8EY&si=d48ext6eCxNGtnyA",
+    "order_index": 1
+  },
+  {
+    "id": 58,
+    "parent_id": 33,
+    "youtubevideo_title": "Surface area and Volume",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/gPABftWLp2w?si=bF7eUo-9I7jzga-4",
+    "order_index": 1
+  },
+  {
+    "id": 59,
+    "parent_id": 34,
+    "youtubevideo_title": "Polygons",
+    "type": "VIDEO",
+    "link": "https://youtu.be/VwtIYwStYHk?si=CtnsByybkJJh-_mX",
+    "order_index": 1
+  },
+  {
+    "id": 60,
+    "parent_id": 35,
+    "youtubevideo_title": "Sequence and Series",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLv-Mw_qNc2UhzrpqBmgVHvkVh_dlefWGN&si=IgT4dTVpTx_SnERY",
+    "order_index": 1
+  },
+  {
+    "id": 61,
+    "parent_id": 36,
+    "youtubevideo_title": "Pnc Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLG4bwc5fquzio-ijSv5E5ijVMXe64ardb&si=vQ_Xd_zYp8cfxC1q",
+    "order_index": 1
+  },
+  {
+    "id": 62,
+    "parent_id": 37,
+    "youtubevideo_title": "Probability",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/fnmHhU_vYJ4?si=u8nyVfD2Z3eWGqYl",
+    "order_index": 1
+  },
+  {
+    "id": 63,
+    "parent_id": 38,
+    "youtubevideo_title": "Logical Reasoning Marathon (for revision)",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/0m_BlDrYRYA?si=RYjru6HiTp6XpZ4c",
+    "order_index": 1
+  },
+  {
+    "id": 64,
+    "parent_id": 39,
+    "youtubevideo_title": "DI one shot",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/ThZU2CODrEU?si=fggFH_x0Eqs64_cJ",
+    "order_index": 1
+  },
+  {
+    "id": 65,
+    "parent_id": 39,
+    "youtubevideo_title": "DI revision",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/PYaRv2zR4fA?si=c3lsTBlPHJismPuB",
+    "order_index": 2
+  },
+  {
+    "id": 66,
+    "parent_id": 40,
+    "youtubevideo_title": "Caselets revision",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/i3zq0UMmYQg?si=QA0JbfUoehq5CELk",
+    "order_index": 1
+  },
+  {
+    "id": 67,
+    "parent_id": 41,
+    "youtubevideo_title": "Arrangements",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/wn1jAlclEjE?si=QAl9r7D4andtylbt",
+    "order_index": 1
+  },
+  {
+    "id": 68,
+    "parent_id": 42,
+    "youtubevideo_title": "Distribution",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/Vks2AcgfyLQ?si=O_DBGqtjIpHn16an",
+    "order_index": 1
+  },
+  {
+    "id": 69,
+    "parent_id": 42,
+    "youtubevideo_title": "Distribution Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLbsrEiZd87jzEOhDAMvLNYWc2PnGgDKNV&si=_4fzXlE627B-q_e_",
+    "order_index": 2
+  },
+  {
+    "id": 70,
+    "parent_id": 43,
+    "youtubevideo_title": "Games and Tournaments",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/tCWJMtunG_s?si=mIEWXcYNIo8YtVvR",
+    "order_index": 1
+  },
+  {
+    "id": 71,
+    "parent_id": 43,
+    "youtubevideo_title": "Games and Tournaments",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/5CCE51f59rk?si=mNejp6I7ykgTqUlr",
+    "order_index": 2
+  },
+  {
+    "id": 72,
+    "parent_id": 44,
+    "youtubevideo_title": "Routes and network",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLI7dFGIe2petnBiCsMy_heC8oEH33elvj&si=hl9mrnzZjasOqLyL",
+    "order_index": 1
+  },
+  {
+    "id": 73,
+    "parent_id": 45,
+    "youtubevideo_title": "Quant based puzzels",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLG4bwc5fquzh-FpOtCJ6TMHc783DB-KPt&si=UMdByGKKlQvCyelN",
+    "order_index": 1
+  },
+  {
+    "id": 74,
+    "parent_id": 46,
+    "youtubevideo_title": "Tables",
+    "type": "VIDEO",
+    "link": "https://youtu.be/ckESGMbio9M?si=j66UeF0BV1XJnuN5",
+    "order_index": 1
+  },
+  {
+    "id": 75,
+    "parent_id": 47,
+    "youtubevideo_title": "Bar Charts",
+    "type": "VIDEO",
+    "link": "https://youtu.be/9_bd0mNYx1U?si=8coB4L_Rle_nsZRM",
+    "order_index": 1
+  },
+  {
+    "id": 76,
+    "parent_id": 48,
+    "youtubevideo_title": "Line Chart",
+    "type": "VIDEO",
+    "link": "https://youtu.be/soFubyN_QZc?si=wwKCoNPt0mMiTKw3",
+    "order_index": 1
+  },
+  {
+    "id": 77,
+    "parent_id": 49,
+    "youtubevideo_title": "Pie chart",
+    "type": "VIDEO",
+    "link": "https://youtu.be/Zr55dW4PlR4?si=UIqK4Prwlw2cHQVk",
+    "order_index": 1
+  },
+  {
+    "id": 78,
+    "parent_id": 50,
+    "youtubevideo_title": "Work Problems",
+    "type": "VIDEO",
+    "link": "https://youtu.be/WrMtg4pBLg0?si=8qJChJKNbj_WGHcX",
+    "order_index": 1
+  },
+  {
+    "id": 79,
+    "parent_id": 51,
+    "youtubevideo_title": "Vein Diagrams",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/nCyXygt7RzU?si=BzJem-BJyvmYWMxg",
+    "order_index": 1
+  },
+  {
+    "id": 80,
+    "parent_id": 53,
+    "youtubevideo_title": "Critical reasoning",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLG4bwc5fquziFHfEeGgOP-jU3_HqD68sV&si=qMXljKkvzSm9jU_a",
+    "order_index": 1
+  },
+  {
+    "id": 81,
+    "parent_id": 54,
+    "youtubevideo_title": "Paraghaps",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLlxE9WKuvDj_YaFfzeHmVocr7_DBodB_7&si=3V2DqN0TWDP4sOMe",
+    "order_index": 1
+  },
+  {
+    "id": 82,
+    "parent_id": 55,
+    "youtubevideo_title": "RC",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLAzOuYf0ldeQh6hEhYUfnU7tS4m65bcu2&si=jldhpj1oJCmrf4Ir",
+    "order_index": 1
+  },
+  {
+    "id": 83,
+    "parent_id": 55,
+    "youtubevideo_title": "RC",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLj8E34obZYU0fcfUjtbIsNnD8RKY17Z-r&si=y-cY-Rryn3NKKQEm",
+    "order_index": 2
+  },
+  {
+    "id": 84,
+    "parent_id": 55,
+    "youtubevideo_title": "Thematic RC",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLlxE9WKuvDj8jry6Hmmgy6DYOpIP1aVDs&si=Uh6NjZFjVWLcFEsG",
+    "order_index": 3
+  },
+  {
+    "id": 85,
+    "parent_id": 56,
+    "youtubevideo_title": "Disecting statements",
+    "type": "VIDEO",
+    "link": "https://youtu.be/5s0j4grB8AQ?si=Evs8AGCt-bujevyw",
+    "order_index": 1
+  },
+  {
+    "id": 86,
+    "parent_id": 57,
+    "youtubevideo_title": "Identify Assumption",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/PQjEdqJ2SB0?si=r4_Wfef2h-HD0mSf",
+    "order_index": 1
+  },
+  {
+    "id": 87,
+    "parent_id": 58,
+    "youtubevideo_title": "Weaking/strengthening the argument",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/OFYoOzD2gyg?si=eq1np1mO5HfudyAG",
+    "order_index": 1
+  },
+  {
+    "id": 88,
+    "parent_id": 69,
+    "youtubevideo_title": "Inference based questions",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/k-iLMPJgdpI?si=hD-6Bz74PPz5-1ln",
+    "order_index": 1
+  },
+  {
+    "id": 89,
+    "parent_id": 60,
+    "youtubevideo_title": "Summary of the passage",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/pDlAWOBCkY8?si=DQxka_8pBM-ot3uy",
+    "order_index": 1
+  },
+  {
+    "id": 90,
+    "parent_id": 60,
+    "youtubevideo_title": "Para summary",
+    "type": "VIDEO",
+    "link": "https://youtu.be/1nUeQaoLuXc?si=tclTgkFgstrVKub3",
+    "order_index": 2
+  },
+  {
+    "id": 91,
+    "parent_id": 61,
+    "youtubevideo_title": "Para Jumbles",
+    "type": "VIDEO",
+    "link": "https://youtu.be/PgNBT_Zp_Us",
+    "order_index": 1
+  },
+  {
+    "id": 92,
+    "parent_id": 61,
+    "youtubevideo_title": "PJ",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/Iq-daEkWQ_Q?si=Xgudo-xEUMWxnMdx",
+    "order_index": 2
+  },
+  {
+    "id": 93,
+    "parent_id": 62,
+    "youtubevideo_title": "Para completion",
+    "type": "VIDEO",
+    "link": "https://youtu.be/Rrsw1Ju0BaU?si=Y8QlnYfuCagerFw5",
+    "order_index": 1
+  },
+  {
+    "id": 94,
+    "parent_id": 63,
+    "youtubevideo_title": "Odd sentence",
+    "type": "VIDEO",
+    "link": "https://youtu.be/In0aLW6hKiU",
+    "order_index": 1
+  },
+  {
+    "id": 95,
+    "parent_id": 64,
+    "youtubevideo_title": "How to read aeon essay/passage",
+    "type": "VIDEO",
+    "link": "https://youtu.be/pq43Qc4rcak?si=XSiIh780AMqQJrKH",
+    "order_index": 1
+  },
+  {
+    "id": 96,
+    "parent_id": 64,
+    "youtubevideo_title": "RC strategy",
+    "type": "VIDEO",
+    "link": "https://youtu.be/ozhEHygD3YY?si=D0mFypimOt5fkuo4",
+    "order_index": 2
+  },
+  {
+    "id": 97,
+    "parent_id": 64,
+    "youtubevideo_title": "How to read RC",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/U1TczCLIq5o?si=aZS7RUVTvXegdlEA",
+    "order_index": 1
+  },
+  {
+    "id": 98,
+    "parent_id": 65,
+    "youtubevideo_title": "Elimination strategy",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/hBI5VmnzYCc?si=JOoiM9Y_Jfqtnl2C",
+    "order_index": 1
+  },
+  {
+    "id": 99,
+    "parent_id": 66,
+    "youtubevideo_title": "Types of RC questions",
+    "type": "VIDEO",
+    "link": "https://youtu.be/UIIAMNHn4Jo?si=BJhLp_wRv_DlAReK",
+    "order_index": 1
+  },
+  {
+    "id": 100,
+    "parent_id": 67,
+    "youtubevideo_title": "Main idea of the passage",
+    "type": "VIDEO",
+    "link": "https://youtu.be/CHQ75XsoAbo?si=xu84a8bwOUbGYEGh",
+    "order_index": 1
+  },
+  {
+    "id": 101,
+    "parent_id": 68,
+    "youtubevideo_title": "Tones in a passage",
+    "type": "VIDEO",
+    "link": "https://youtu.be/netkzavDwEQ?si=pqOfESIb_ucaa9NO",
+    "order_index": 1
+  },
+  {
+    "id": 102,
+    "parent_id": 2,
+    "youtubevideo_title": "QA Rodha Playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLG4bwc5fquzgfMh4YFDnv7fttM0RIKiUQ&si=oT6KYOZUAqiYmlOS",
+    "order_index": 2
+  },
+  {
+    "id": 103,
+    "parent_id": 3,
+    "youtubevideo_title": "LRDI RODHA playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLG4bwc5fquzhDp8eqRym2Ma1ut10YF0Ea&si=qFOI3YiLKI9EiR66",
+    "order_index": 1
+  },
+  {
+    "id": 104,
+    "parent_id": 4,
+    "youtubevideo_title": "VARC",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLlxE9WKuvDj9frfrHcL-2wnxXyy4auLpe&si=XnM4U3oBs--XbJrB",
+    "order_index": 1
+  },
+  {
+    "id": 105,
+    "parent_id": 7,
+    "youtubevideo_title": "Number system",
+    "type": "ARTICLE",
+    "link": "https://www.learntheta.com/cat-quant-number-systems/",
+    "order_index": 1
+  },
+  {
+    "id": 106,
+    "parent_id": 7,
+    "youtubevideo_title": "Number system playlist",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PLG4bwc5fquzgmP5BLHrRDwBueer0udDjc&si=Rm-SV2oHco1siIq-",
+    "order_index": 2
+  },
+  {
+    "id": 107,
+    "parent_id": 8,
+    "youtubevideo_title": "Geometry formula and notes",
+    "type": "ARTICLE",
+    "link": "https://test.aiexpertsedge.com/uploads/pdfs/2c6d97303784a4a6e4035e8dd888f02b.pdf",
+    "order_index": 1
+  },
+  {
+    "id": 108,
+    "parent_id": 8,
+    "youtubevideo_title": "Geometry playlisy",
+    "type": "VIDEO",
+    "link": "https://youtube.com/playlist?list=PL4YW4OWyzRDR46j54-6sEKXegcELNyh0f&si=CW9X5xZwYkEOBgK9",
+    "order_index": 2
+  },
+  {
+    "id": 109,
+    "parent_id": 9,
+    "youtubevideo_title": "Modern Maths one shot",
+    "type": "VIDEO",
+    "link": "https://www.youtube.com/live/TjQ1ySjHjpw?si=qoZmU9gFbNEkuRht",
     "order_index": 1
   }
 ]
