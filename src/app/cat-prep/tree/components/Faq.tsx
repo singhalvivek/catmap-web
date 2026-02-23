@@ -12,7 +12,7 @@ export default function Faq({ faqs }: { faqs: FAQ[] }) {
   const [openId, setOpenId] = useState<number | null>(1);
 
   return (
-    <div className="w-full max-w-2xl mt-12">
+    <div className="w-full max-w-4xl mt-12">
       <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Frequently Asked Questions</h2>
 
       <div className="space-y-3">
