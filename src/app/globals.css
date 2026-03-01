@@ -1,26 +1,148 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* =================================== */
+/* 🎨 TRUST-FOCUSED THEME (Tailwind v4) */
+/* =================================== */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-trust-navy: #1E3A5F;
+  --color-trust-blue: #2563EB;
+  --color-hope-teal: #14B8A6;
+  --color-warm-gold: #F59E0B;
+  --color-calm-bg: #F8FAFC;
+  --color-calm-border: #E2E8F0;
+  
+  /* Fonts */
+  --font-heading: Georgia, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  
+  /* Shadows */
+  --shadow-card: 0 4px 14px rgba(30, 58, 95, 0.08);
+  --shadow-card-hover: 0 8px 25px rgba(30, 58, 95, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =================================== */
+/* 🌐 BASE STYLES */
+/* =================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: white;
+  color: var(--color-trust-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =================================== */
+/* 🎯 LANDING PAGE UTILITIES */
+/* =================================== */
+
+/* Hero gradient */
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(20, 184, 166, 0.9) 100%);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--color-trust-navy);
+  color: white;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-card);
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background-color: var(--color-trust-blue);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--color-trust-navy);
+  border: 2px solid var(--color-trust-navy);
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-secondary:hover {
+  background: var(--color-trust-navy);
+  color: white;
+}
+
+/* Savings badge */
+.savings-badge {
+  display: inline-block;
+  background: var(--color-hope-teal);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin-top: 0.25rem;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* FAQ accordion */
+.faq-answer {
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  overflow: hidden;
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(30, 58, 95, 0.2),
+    rgba(20, 184, 166, 0.3),
+    rgba(30, 58, 95, 0.2)
+  );
+  margin: 4rem 0;
+}
+
+/* Heading font */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Focus rings for accessibility */
+input:focus,
+button:focus,
+a:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.5);
+}
+
+/* Smooth scroll offset for anchor links */
+:target {
+  scroll-margin-top: 5rem;
 }
