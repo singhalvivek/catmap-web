@@ -21,6 +21,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Faq from "./components/Faq";
 
+
+import { ProgressProvider } from "./context/ProgressContext";
+
 export default function CatPrepTreePage() {
   const tree = buildTree(data as Node[]);
   const [selected, setSelected] = useState<Node | null>(null);
@@ -57,11 +60,13 @@ export default function CatPrepTreePage() {
             {/* Learning Path */}
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-12">
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Topics</h2>
-              <Tree
-                roots={tree}
-                onSelect={setSelected}
-                selectedId={selected?.id ?? null}
-              />
+              <ProgressProvider>
+                <Tree
+                  roots={tree}
+                  onSelect={setSelected}
+                  selectedId={selected?.id ?? null}
+                />
+              </ProgressProvider>
             </div>
 
             {/* FAQ Section */}
