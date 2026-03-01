@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Node } from "../models/node";
 import { calculateNodeProgress } from "../lib/progressCalculator";
-import { useProgressContext } from "../context/ProgressContext";
 
 // Single node with expand/collapse behavior
 export default function TreeNode({
@@ -19,8 +18,7 @@ export default function TreeNode({
 }) {
   const [open, setOpen] = useState(level < 1);
   const hasChildren = node.children && node.children.length > 0;
-  const { progress } = useProgressContext(); // NEW: get progress from context
-  const { percent, total } = calculateNodeProgress(node, progress);
+  const { percent, total } = calculateNodeProgress(node);
   const showProgress = total > 0; // only show if it has subtopics
 
   const isSelected = selectedId === node.id;

@@ -21,9 +21,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Faq from "./components/Faq";
 
-
-import { ProgressProvider } from "./context/ProgressContext";
-
 export default function CatPrepTreePage() {
   const tree = buildTree(data as Node[]);
   const [selected, setSelected] = useState<Node | null>(null);
@@ -60,13 +57,11 @@ export default function CatPrepTreePage() {
             {/* Learning Path */}
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-12">
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Topics</h2>
-              <ProgressProvider>
-                <Tree
-                  roots={tree}
-                  onSelect={setSelected}
-                  selectedId={selected?.id ?? null}
-                />
-              </ProgressProvider>
+              <Tree
+                roots={tree}
+                onSelect={setSelected}
+                selectedId={selected?.id ?? null}
+              />
             </div>
 
             {/* FAQ Section */}
@@ -79,7 +74,7 @@ export default function CatPrepTreePage() {
         {/* Right Slide-in Panel */}
         {selected && (
           <aside
-            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-3/5 lg:w-2/5 xl:w-2/5 max-w-[900px] bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
+            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
           >
             <button
               onClick={() => setSelected(null)}

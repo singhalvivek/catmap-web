@@ -6,7 +6,7 @@ import { Description } from "../models/description";
 import { Resource } from "../models/resource";
 import { submitFeedback } from "../lib/feedback";
 import { ProgressStatus, ProgressMeta } from "../models/progress";
-import { useProgressContext } from "../context/ProgressContext";
+import { useProgress } from "../lib/useProgress";
 
 type EditableResource = {
   title: string;
@@ -46,9 +46,7 @@ export default function DetailsPanel({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
-
-  const { progress, updateProgress } = useProgressContext();
-  const status = progress[selected.id] ?? ProgressStatus.NOT_STARTED;
+  const { status, updateStatus } = useProgress(selected.id);
   const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
   const [submitting, setSubmitting] = useState(false);
 
@@ -106,9 +104,12 @@ export default function DetailsPanel({
             <h1 className="text-2xl font-bold">{selected.title}</h1>
               <select
                 value={status}
-                onChange={(e) => 
-                  updateProgress(selected.id, e.target.value as ProgressStatus)
-                }
+                onChange={(e) => {
+                  const newStatus = e.target.value as ProgressStatus;
+                  updateStatus(newStatus);
+                  // Notify tree to refresh
+                  window.dispatchEvent(new Event("progress-updated"));
+                }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-full border border-gray-600 bg-gray-800 ${meta.color}`}
               >
                 {Object.values(ProgressStatus).map((key) => (

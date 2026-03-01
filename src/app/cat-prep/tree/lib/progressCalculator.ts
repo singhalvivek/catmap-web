@@ -4,43 +4,40 @@ import { ProgressStatus } from "../models/progress";
 /**
  * Get progress of a node based on completed SUBTOPIC descendants
  */
-export function calculateNodeProgress(
-    node: Node,
-    progress: Record<number, string>
-): {
-    total: number;
-    completed: number;
-    percent: number;
+export function calculateNodeProgress(node: Node): {
+  total: number;
+  completed: number;
+  percent: number;
 } {
-    const subtopics: Node[] = [];
+  const subtopics: Node[] = [];
 
-    function collectSubtopics(n: Node) {
-        if (n.type === "SUBTOPIC") {
-            subtopics.push(n);
-        }
-
-        n.children?.forEach(collectSubtopics);
+  function collectSubtopics(n: Node) {
+    if (n.type === "SUBTOPIC") {
+      subtopics.push(n);
     }
 
-    collectSubtopics(node);
+    n.children?.forEach(collectSubtopics);
+  }
 
-    const total = subtopics.length;
+  collectSubtopics(node);
 
-    let completed = 0;
+  const total = subtopics.length;
 
-    subtopics.forEach((sub) => {
-        let saved: string | null = null;
+  let completed = 0;
 
-        if (typeof window !== "undefined") {
-            saved = localStorage.getItem(`progress_${sub.id}`);
-        }
+  subtopics.forEach((sub) => {
+    let saved: string | null = null;
 
-        if (saved === ProgressStatus.COMPLETED) {
-            completed++;
-        }
-    });
+    if (typeof window !== "undefined") {
+      saved = localStorage.getItem(`progress_${sub.id}`);
+    }
 
-    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    if (saved === ProgressStatus.COMPLETED) {
+      completed++;
+    }
+  });
 
-    return { total, completed, percent };
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+  return { total, completed, percent };
 }
