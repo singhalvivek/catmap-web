@@ -74,7 +74,7 @@ export default function CatPrepTreePage() {
         {/* Right Slide-in Panel */}
         {selected && (
           <aside
-            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
+            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-3/5 lg:w-2/5 xl:w-2/5 max-w-[900px] bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
           >
             <button
               onClick={() => setSelected(null)}
