@@ -5,6 +5,8 @@ import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
 import { submitFeedback } from "../lib/feedback";
+import { ProgressStatus, ProgressMeta } from "../models/progress";
+import { useProgress } from "../lib/useProgress";
 
 type EditableResource = {
   title: string;
@@ -44,6 +46,8 @@ export default function DetailsPanel({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
+  const { status, updateStatus } = useProgress(selected.id);
+  const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
   const [submitting, setSubmitting] = useState(false);
 
   // Reset edit state when selected node changes
@@ -90,11 +94,32 @@ export default function DetailsPanel({
   }
 
   return (
-    <div className="max-w-2xl space-y-8">
+    <div className="max-w-4xl space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">{selected.title}</h1>
-        <div className="text-sm text-gray-500">{selected.type}</div>
+        
+        <div className="space-y-2">
+          <div className="text-sm text-gray-500">{selected.type}</div>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold">{selected.title}</h1>
+              <select
+                value={status}
+                onChange={(e) => {
+                  const newStatus = e.target.value as ProgressStatus;
+                  updateStatus(newStatus);
+                  // Notify tree to refresh
+                  window.dispatchEvent(new Event("progress-updated"));
+                }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full border border-gray-600 bg-gray-800 ${meta.color}`}
+              >
+                {Object.values(ProgressStatus).map((key) => (
+                  <option key={key} value={key}>
+                    {ProgressMeta[key].label}
+                  </option>
+                ))}
+              </select>
+          </div>
+        </div>
       </div>
 
       {/* Description */}
