@@ -3,6 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* 🆕 Landing Page Trust Colors */
+  --trust-navy: #1E3A5F;
+  --trust-blue: #2563EB;
+  --hope-teal: #14B8A6;
+  --warm-gold: #F59E0B;
+  --calm-bg: #F8FAFC;
+  --calm-border: #E2E8F0;
 }
 
 @theme inline {
@@ -10,6 +18,19 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* 🆕 Landing Page Theme Colors */
+  --color-trust-navy: var(--trust-navy);
+  --color-trust-blue: var(--trust-blue);
+  --color-hope-teal: var(--hope-teal);
+  --color-warm-gold: var(--warm-gold);
+  --color-calm-bg: var(--calm-bg);
+  --color-calm-border: var(--calm-border);
+  
+  --font-heading: Georgia, serif;
+  
+  --shadow-card: 0 4px 14px rgba(30, 58, 95, 0.08);
+  --shadow-card-hover: 0 8px 25px rgba(30, 58, 95, 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +44,70 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =================================== */
+/* 🆕 LANDING PAGE STYLES (Safe Additions) */
+/* =================================== */
+
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(20, 184, 166, 0.9) 100%);
+}
+
+.btn-primary {
+  background-color: var(--trust-navy);
+  color: white;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-card);
+}
+.btn-primary:hover {
+  background-color: var(--trust-blue);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--trust-navy);
+  border: 2px solid var(--trust-navy);
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  background: var(--trust-navy);
+  color: white;
+}
+
+.savings-badge {
+  display: inline-block;
+  background: var(--hope-teal);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin-top: 0.25rem;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.faq-answer {
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  overflow: hidden;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(30, 58, 95, 0.2), rgba(20, 184, 166, 0.3), rgba(30, 58, 95, 0.2));
+  margin: 4rem 0;
 }
