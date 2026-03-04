@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,8 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CatMap - Master CAT with Interactive Roadmaps",
-  description: "Interactive learning platform with structured roadmaps, curated resources, and expert guidance for CAT exam preparation",
+  title: "learnmax — India's Lowest Prices on Competitive Exam Courses",
+  description: "learnmax is rewriting the script, bringing major savings on competitive exam courses for all students across India.",
+  keywords: ["competitive exams", "CAT", "UPSC", "SSC", "CLAT", "course discounts", "education savings"],
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#1E3A5F",
 };
 
 export default function RootLayout({
@@ -24,9 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-trust-navy`}>
         {children}
       </body>
     </html>
