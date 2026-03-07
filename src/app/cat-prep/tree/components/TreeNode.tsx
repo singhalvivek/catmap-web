@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Node } from "../models/node";
 import { calculateNodeProgress } from "../lib/progressCalculator";
 
@@ -18,8 +18,22 @@ export default function TreeNode({
 }) {
   const [open, setOpen] = useState(level < 1);
   const hasChildren = node.children && node.children.length > 0;
-  const { percent, total } = calculateNodeProgress(node);
+  const [percent, setPercent] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
   const showProgress = total > 0; // only show if it has subtopics
+  
+  useEffect(() => {
+    const { percent, total } = calculateNodeProgress(node);
+    setPercent(percent);
+    setTotal(total);
+  }, [node, refreshKey]);
+
+  useEffect(() => {
+    const handler = () => setRefreshKey((prev) => prev + 1);
+    window.addEventListener("progress-updated", handler);
+    return () => window.removeEventListener("progress-updated", handler);
+  }, []);
 
   const isSelected = selectedId === node.id;
 
@@ -48,7 +62,7 @@ export default function TreeNode({
               {percent}%
             </span>
           )}
-        
+
           {/* Expand / collapse button */}
           {hasChildren && (
             <button
