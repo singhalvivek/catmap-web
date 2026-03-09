@@ -18,7 +18,7 @@ export default function LandingPage() {
     <main className="flex-1">
       {/* Top Banner */}
       <div className="bg-hope-teal text-white text-center py-2 text-sm font-medium">
-        🇮🇳 India's First Most-Favored-Learning Price Initiative for Students
+        Open-Source Structured Learning for Exams
       </div>
 
       {/* Navigation (Simple for now) */}
@@ -47,11 +47,13 @@ export default function LandingPage() {
             <span>Open-Source-Structured-Learning Initiative</span>
           </div>
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold mb-6 leading-tight">
-            Find India's lowest prices on<br className="hidden md:block" />
-            competitive exam courses
+            Follow structured roadmaps<br className="hidden md:block" />
+            built from the best resources<br className="hidden md:block" />
+            on the internet
           </h2>
           <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto mb-10">
-            learnmax is rewriting the script, bringing major savings on competitive exam courses for all students.
+            Preparing for exams online can be overwhelming. Resources are scattered across YouTube, blogs, notes, and PDFs.
+            We platform organizes the best free resources into clear learning roadmaps so you always know what to study next.
           </p>
           
           {/* Search Bar */}
@@ -59,19 +61,19 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
-                placeholder="Search courses (CAT, UPSC, SSC, CLAT...)"
+                placeholder="Search exams (CAT, UPSC, SSC, CLAT...)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 px-5 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-hope-teal/50"
               />
               <button className="btn-primary whitespace-nowrap">
-                Find Courses
+                Explore Roadmaps
               </button>
             </div>
           </div>
 
           <a href="#browse" className="btn-secondary inline-flex items-center gap-2">
-            Browse Courses <span>→</span>
+            Explore Roadmaps <span>→</span>
           </a>
         </div>
       </section>
@@ -80,14 +82,16 @@ export default function LandingPage() {
       <section className="py-16 bg-calm-bg">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h3 className="text-2xl md:text-3xl font-bold text-trust-navy mb-6">
-            We are being overcharged for courses.
+            Preparing online shouldn't feel chaotic.
           </h3>
           <p className="text-lg text-gray-700 mb-8">
-            The same content, available on the Internet, by the same teachers, are costing students up to <span className="font-bold text-trust-navy">₹50k-100k</span> in the country. <span className="font-semibold">This is unacceptable.</span>
+            Students preparing for competitive exams often rely on free resources online, but those resources are scattered across multiple platforms. 
+            YouTube playlists, random notes, blogs, and PDFs make it difficult to follow a clear learning path or track progress.
+            {/* The same content, available on the Internet, by the same teachers, are costing students up to <span className="font-bold text-trust-navy">₹50k-100k</span> in the country. <span className="font-semibold">This is unacceptable.</span> */}
           </p>
 
           {/* Cost Comparison Card */}
-          <div className="bg-white rounded-2xl shadow-card p-6 md:p-8 max-w-2xl mx-auto card-hover">
+          {/* <div className="bg-white rounded-2xl shadow-card p-6 md:p-8 max-w-2xl mx-auto card-hover">
             <h4 className="font-bold text-lg mb-4 text-trust-navy">Cost comparison: CAT Course</h4>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="text-center p-4 bg-red-50/50 rounded-lg border border-calm-border">
@@ -103,7 +107,7 @@ export default function LandingPage() {
               <p className="font-semibold">🇮🇳 learnmax · New Most-Favored-Learning price</p>
               <p className="text-3xl font-bold text-hope-teal mt-1">₹599 <span className="text-lg font-normal text-blue-200">95% less</span></p>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -111,28 +115,33 @@ export default function LandingPage() {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="inline-block bg-hope-teal/10 text-hope-teal font-bold px-4 py-1 rounded-full text-sm mb-6">
-            💡 Open-Source-Structured-Learning
+            💡 Community curated learning paths
           </div>
           <h3 className="text-2xl md:text-3xl font-bold text-trust-navy mb-6">
-            The days of Big Coaching price-gouging are over.
+            {/* The days of Big Coaching price-gouging are over. */}
+            The internet already has amazing learning resources.
           </h3>
           <p className="text-lg text-gray-700 mb-8">
-            Leveraging the full weight and power of Open source content, learnmax will ensure every student gets the lowest prices on competitive exam courses.
+            {/* Leveraging the full weight and power of Open source content, learnmax will ensure every student gets the lowest prices on competitive exam courses. */}
+            This platform organizes those resources into structured roadmaps so students can prepare efficiently without searching everywhere.
           </p>
           
           {/* Impact Stats */}
           <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
             <div className="p-6 bg-gradient-to-br from-trust-navy/5 to-blue-50 rounded-xl border border-calm-border">
-              <p className="text-3xl font-bold text-trust-navy mb-1">95%</p>
-              <p className="text-sm text-gray-600">Average Savings</p>
+              {/* <p className="text-3xl font-bold text-trust-navy mb-1">95%</p>
+              <p className="text-sm text-gray-600">Average Savings</p> */}
+              <p className="text-2xl font-bold text-hope-teal mb-1">Structured Learning Paths</p>
             </div>
             <div className="p-6 bg-gradient-to-br from-trust-navy/5 to-blue-50 rounded-xl border border-calm-border">
-              <p className="text-3xl font-bold text-trust-navy mb-1">100%</p>
-              <p className="text-sm text-gray-600">Same Quality Content</p>
+              {/* <p className="text-3xl font-bold text-trust-navy mb-1">100%</p>
+              <p className="text-sm text-gray-600">Same Quality Content</p> */}
+              <p className="text-2xl font-bold text-hope-teal mb-1">Curated Best Resources</p>
             </div>
             <div className="p-6 bg-gradient-to-br from-hope-teal/5 to-teal-50 rounded-xl border border-calm-border">
-              <p className="text-3xl font-bold text-hope-teal mb-1">∞</p>
-              <p className="text-sm text-gray-600">Open Access Future</p>
+              {/* <p className="text-3xl font-bold text-hope-teal mb-1">∞</p>
+              <p className="text-sm text-gray-600">Open Access Future</p> */}
+              <p className="text-2xl font-bold text-hope-teal mb-1">Community Driven Improvements</p>
             </div>
           </div>
         </div>
@@ -145,19 +154,20 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-3xl font-bold text-trust-navy mb-4">
-              The proof is in the prices
+              Everything organized in one place
             </h3>
             <p className="text-lg text-gray-600">
-              Compare prices on commonly prescribed courses like these, and see how much you can save with Most-Favored-Learning prices.
+              Each roadmap organizes videos, notes, and useful links, so you can focus on learning instead of searching.
+              {/* Compare prices on commonly prescribed courses like these, and see how much you can save with Most-Favored-Learning prices. */}
             </p>
           </div>
 
           {/* Pricing Table */}
           <div className="bg-white rounded-2xl shadow-card overflow-hidden">
             <div className="grid grid-cols-3 bg-trust-navy text-white font-semibold py-4 px-6 text-sm">
-              <p>Courses</p>
-              <p className="text-center">Lowest learnmax Price</p>
-              <p className="text-right">Original Price</p>
+              <p>Roadmaps</p>
+              {/* <p className="text-center">Lowest learnmax Price</p>
+              <p className="text-right">Original Price</p> */}
             </div>
             
             {courses.map((course, index) => (
@@ -171,20 +181,31 @@ export default function LandingPage() {
                   <span className="text-2xl">{course.icon}</span>
                   <span className="font-medium text-gray-900">{course.name}</span>
                 </div>
-                <div className="text-center">
+                {/* <div className="text-center">
                   <p className="font-bold text-trust-navy text-lg">{course.learnmaxPrice}</p>
                   <span className="savings-badge mt-1">
                     Save {course.savings}
                   </span>
                 </div>
-                <p className="text-right text-gray-500 line-through">{course.originalPrice}</p>
+                <p className="text-right text-gray-500 line-through">{course.originalPrice}</p> */}
+                <div className="text-center">
+                  <button className="btn-primary inline-flex items-center gap-2">
+                    Go to roadmap <span>→</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mb-5 mt-10">
+            <p className="text-lg text-gray-600">
+              We are launching with CAT roadmap at start and others roadmaps are in pipeline. to get your roadmap first, join our waitlist.
+            </p>
+          </div>
+
+          <div className="text-center">
             <button className="btn-primary inline-flex items-center gap-2">
-              Browse all courses <span>→</span>
+              Join our Waitlist
             </button>
           </div>
         </div>
@@ -233,21 +254,21 @@ export default function LandingPage() {
       <section className="py-16 bg-gradient-to-br from-trust-navy to-hope-teal text-white text-center">
         <div className="max-w-3xl mx-auto px-4">
           <h3 className="text-2xl md:text-3xl font-bold mb-6">
-            Ready to save on your exam preparation?
+            Start learning with a clear roadmap
           </h3>
           <p className="text-lg text-blue-100 mb-8">
-            Join thousands of students already benefiting from Most-Favored-Learning prices.
+            Explore structured learning paths built using the best free resources available online.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-trust-navy font-bold py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
-              Join Waitlist — It's Free
+              Join our community — It's Free
             </button>
             <a href="#browse" className="border-2 border-white text-white font-bold py-4 px-8 rounded-lg hover:bg-white/10 transition-colors">
-              Browse Courses Now
+              Explore Roadmaps
             </a>
           </div>
           <p className="text-sm text-blue-200 mt-6 opacity-80">
-            No credit card required · Cancel anytime · 100% student-focused
+            Open learning · Community improved · Free resources
           </p>
         </div>
       </section>
