@@ -32,9 +32,8 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-6">
-            <a href="#browse" className="text-gray-700 hover:text-hope-teal font-medium transition-colors">Browse Courses</a>
             <a href="#faq" className="text-gray-700 hover:text-hope-teal font-medium transition-colors">FAQ</a>
-            <button className="btn-primary py-2 px-6 text-sm">Join Waitlist</button>
+            <button className="btn-primary py-2 px-6 text-sm">Browse Roadmaps</button>
           </div>
         </div>
       </nav>
@@ -53,11 +52,11 @@ export default function LandingPage() {
           </h2>
           <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto mb-10">
             Preparing for exams online can be overwhelming. Resources are scattered across YouTube, blogs, notes, and PDFs.
-            We platform organizes the best free resources into clear learning roadmaps so you always know what to study next.
+            Our platform organizes the best free resources into clear learning roadmaps so you always know what to study next.
           </p>
           
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-10">
+          {/* <div className="max-w-2xl mx-auto mb-10">
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
@@ -70,7 +69,7 @@ export default function LandingPage() {
                 Explore Roadmaps
               </button>
             </div>
-          </div>
+          </div> */}
 
           <a href="#browse" className="btn-secondary inline-flex items-center gap-2">
             Explore Roadmaps <span>→</span>
@@ -147,8 +146,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="section-divider max-w-6xl mx-auto px-4"></div>
-
       {/* Course Pricing Table */}
       <section id="browse" className="py-16 bg-calm-bg">
         <div className="max-w-6xl mx-auto px-4">
@@ -164,22 +161,23 @@ export default function LandingPage() {
 
           {/* Pricing Table */}
           <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-            <div className="grid grid-cols-3 bg-trust-navy text-white font-semibold py-4 px-6 text-sm">
+            <div className="grid grid-cols-2 bg-trust-navy text-white font-semibold py-4 px-6 text-sm">
               <p>Roadmaps</p>
               {/* <p className="text-center">Lowest learnmax Price</p>
               <p className="text-right">Original Price</p> */}
+              <p className="text-right">Access</p>
             </div>
             
             {courses.map((course, index) => (
               <div 
                 key={course.name}
-                className={`grid grid-cols-3 items-center py-5 px-6 border-b border-calm-border hover:bg-blue-50/30 transition-colors ${
+                className={`grid grid-cols-2 items-center py-5 px-6 border-b border-calm-border hover:bg-blue-50/30 transition-colors ${
                   index === courses.length - 1 ? 'border-b-0' : ''
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{course.icon}</span>
-                  <span className="font-medium text-gray-900">{course.name}</span>
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl">{course.icon}</span>
+                  <span className="font-semibold text-lg text-gray-900">{course.name}</span>
                 </div>
                 {/* <div className="text-center">
                   <p className="font-bold text-trust-navy text-lg">{course.learnmaxPrice}</p>
@@ -188,10 +186,10 @@ export default function LandingPage() {
                   </span>
                 </div>
                 <p className="text-right text-gray-500 line-through">{course.originalPrice}</p> */}
-                <div className="text-center">
-                  <button className="btn-primary inline-flex items-center gap-2">
-                    Go to roadmap <span>→</span>
-                  </button>
+                <div className="text-right">
+                  <a href="/cat-prep/tree" className="btn-primary inline-flex items-center gap-2">
+                    Roadmap <span>→</span>
+                  </a>
                 </div>
               </div>
             ))}

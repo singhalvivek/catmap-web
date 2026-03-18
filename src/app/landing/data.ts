@@ -3,11 +3,8 @@
 
 export const COURSES = [
   { 
-    name: "CAT Complete Roadmap", 
-    icon: "📚", 
-    learnmaxPrice: "₹599", 
-    originalPrice: "₹24,999", 
-    savings: "98%" 
+    name: "CAT Roadmap", 
+    icon: "📚"
   },
 ] as const;
 
