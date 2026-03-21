@@ -12,32 +12,32 @@ export default function Faq({ faqs }: { faqs: FAQ[] }) {
   const [openId, setOpenId] = useState<number | null>(1);
 
   return (
-    <div className="w-full max-w-4xl mt-12">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Frequently Asked Questions</h2>
+    <div className="w-full max-w-4xl">
+      <h2 className="text-2xl md:text-3xl font-bold text-trust-navy mb-8">Frequently Asked Questions</h2>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {faqs.map((faq) => {
           const isOpen = openId === faq.id;
 
           return (
             <div
               key={faq.id}
-              className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 overflow-hidden"
+              className="border border-calm-border rounded-xl overflow-hidden card-hover"
             >
               <button
                 onClick={() =>
                   setOpenId(isOpen ? null : faq.id)
                 }
-                className="w-full flex justify-between items-center px-4 py-3 text-left font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
+                className="w-full flex items-center justify-between p-5 text-left bg-calm-bg hover:bg-gray-100 transition-colors"
               >
-                {faq.question}
-                <span className="text-gray-500 dark:text-gray-400">
-                  {isOpen ? "−" : "+"}
+                <span className="font-semibold text-trust-navy pr-4">{faq.question}</span>
+                <span className={`text-hope-teal text-xl font-bold transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                  ▼
                 </span>
               </button>
 
               {isOpen && (
-                <div className="px-4 pb-4 text-gray-700 dark:text-gray-300 text-sm leading-relaxed border-t border-gray-200 dark:border-gray-700">
+                <div className="px-5 pb-5 pt-0 text-gray-700 text-sm leading-relaxed border-t border-calm-border">
                   {faq.answer}
                 </div>
               )}

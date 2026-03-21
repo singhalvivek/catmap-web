@@ -35,7 +35,7 @@ export default function CatPrepTreePage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
+    <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
       <Header />
 
@@ -46,17 +46,17 @@ export default function CatPrepTreePage() {
           <div className="w-full max-w-4xl">
             {/* Learning Path Header */}
             <div className="mb-12">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-trust-navy mb-2">
                 CAT Learning Path
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300">
+              <p className="text-lg text-gray-600">
                 Follow a structured roadmap to master CAT concepts
               </p>
             </div>
 
             {/* Learning Path */}
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-12">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Topics</h2>
+            <div className="bg-calm-bg rounded-xl border border-calm-border shadow-card p-6 sm:p-8 mb-12">
+              <h2 className="text-2xl font-semibold text-trust-navy mb-6">Topics</h2>
               <Tree
                 roots={tree}
                 onSelect={setSelected}
@@ -65,7 +65,7 @@ export default function CatPrepTreePage() {
             </div>
 
             {/* FAQ Section */}
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+            <div className="bg-calm-bg rounded-xl border border-calm-border shadow-card p-6 sm:p-8">
               <Faq faqs={faqs as any[]} />
             </div>
           </div>
@@ -74,11 +74,11 @@ export default function CatPrepTreePage() {
         {/* Right Slide-in Panel */}
         {selected && (
           <aside
-            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
+            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-96 bg-white border-l border-calm-border shadow-card overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
           >
             <button
               onClick={() => setSelected(null)}
-              className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl"
+              className="absolute top-4 right-4 text-gray-500 hover:text-trust-navy text-2xl"
               aria-label="Close details panel"
             >
               ✕

@@ -101,7 +101,7 @@ export default function DetailsPanel({
         <div className="space-y-2">
           <div className="text-sm text-gray-500">{selected.type}</div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold">{selected.title}</h1>
+            <h1 className="text-2xl font-bold text-trust-navy">{selected.title}</h1>
               <select
                 value={status}
                 onChange={(e) => {
@@ -110,7 +110,7 @@ export default function DetailsPanel({
                   // Notify tree to refresh
                   window.dispatchEvent(new Event("progress-updated"));
                 }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-full border border-gray-600 bg-gray-800 ${meta.color}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color}`}
               >
                 {Object.values(ProgressStatus).map((key) => (
                   <option key={key} value={key}>
@@ -124,10 +124,10 @@ export default function DetailsPanel({
 
       {/* Description */}
       <section>
-        <h3 className="text-lg font-semibold mb-2">Description</h3>
+        <h3 className="text-lg font-semibold text-trust-navy mb-2">Description</h3>
 
         {!editMode ? (
-          <p className="leading-relaxed text-gray-200">
+          <p className="leading-relaxed text-gray-700">
             {originalDesc || "No description available for this topic yet."}
           </p>
         ) : (
@@ -142,7 +142,7 @@ export default function DetailsPanel({
 
       {/* Resources */}
       <section>
-        <h3 className="text-lg font-semibold mb-2">Resources</h3>
+        <h3 className="text-lg font-semibold text-trust-navy mb-2">Resources</h3>
 
         {!editMode ? (
           originalResources.length === 0 ? (
@@ -154,10 +154,10 @@ export default function DetailsPanel({
               {originalResources.map((res) => (
                 <li
                   key={res.id}
-                  className="flex justify-between items-center p-3 border rounded-md bg-gray-800"
+                  className="flex justify-between items-center p-3 border border-calm-border rounded-md bg-calm-bg"
                 >
                   <div>
-                    <div className="font-medium">
+                    <div className="font-medium text-trust-navy">
                       {res.youtubevideo_title}
                     </div>
                     <div className="text-xs text-gray-500">{res.type}</div>
@@ -229,17 +229,17 @@ export default function DetailsPanel({
       </section>
 
       {/* Feedback / Edit Controls */}
-      <section className="border-t pt-4 space-y-3">
+      <section className="border-t border-calm-border pt-4 space-y-3">
         {!editMode ? (
           <button
             onClick={() => setEditMode(true)}
-            className="px-4 py-2 rounded-md border text-gray-200 hover:bg-gray-50 hover:text-gray-700 transition"
+            className="px-4 py-2 rounded-md border border-calm-border text-trust-navy hover:bg-calm-bg transition"
           >
             Suggest Edit / Correction
           </button>
         ) : (
           <>
-            <h3 className="text-lg font-semibold">Your Details</h3>
+            <h3 className="text-lg font-semibold text-trust-navy">Your Details</h3>
 
             <input
               className="w-full border p-2 rounded text-sm"
@@ -264,14 +264,14 @@ export default function DetailsPanel({
               <button
                 onClick={onSubmit}
                 disabled={submitting}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50"
+                className="px-4 py-2 bg-trust-navy text-white rounded-md hover:bg-trust-blue transition disabled:opacity-50"
               >
                 {submitting ? "Submitting..." : "Submit Suggestion"}
               </button>
 
               <button
                 onClick={() => setEditMode(false)}
-                className="px-4 py-2 border rounded-md"
+                className="px-4 py-2 border border-calm-border rounded-md text-gray-700 hover:bg-calm-bg transition"
               >
                 Cancel
               </button>

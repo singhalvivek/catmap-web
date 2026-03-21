@@ -42,8 +42,8 @@ export default function TreeNode({
       <div
         className={`flex items-center justify-between gap-2 px-4 py-3 rounded-lg border cursor-pointer transition
           ${isSelected
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500"
-            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+            ? "border-hope-teal bg-hope-teal/10"
+            : "border-calm-border bg-white hover:bg-calm-bg"
           }`}
       >
         {/* Clicking the main row selects the node */}
@@ -53,12 +53,12 @@ export default function TreeNode({
             onSelect(node);
           }}
         >
-          <span className="font-medium text-gray-900 dark:text-gray-100">{node.title}</span>
+          <span className="font-medium text-trust-navy">{node.title}</span>
         </div>
 
         <div className="flex items-center gap-3">
           {showProgress && (
-            <span className="ml-2 text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
+            <span className="ml-2 text-xs bg-hope-teal/10 text-hope-teal px-2 py-1 rounded-full font-medium">
               {percent}%
             </span>
           )}
@@ -70,7 +70,7 @@ export default function TreeNode({
                 e.stopPropagation(); // prevent select on toggle click
                 setOpen(!open);
               }}
-              className="flex items-center justify-center w-6 h-6 rounded-md hover:bg-gray-200 transition-colors"
+              className="flex items-center justify-center w-6 h-6 rounded-md hover:bg-calm-border transition-colors"
             >
               <span className="text-lg font-semibold text-gray-600">
                 {open ? "−" : "+"}
