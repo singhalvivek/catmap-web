@@ -46,7 +46,7 @@ export default function DetailsPanel({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
-  const { status, updateStatus } = useProgress(selected.id);
+  const { status, updateStatus, isLoggedIn } = useProgress(selected.id);
   const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
   const [submitting, setSubmitting] = useState(false);
 
@@ -104,13 +104,15 @@ export default function DetailsPanel({
             <h1 className="text-2xl font-bold text-trust-navy">{selected.title}</h1>
               <select
                 value={status}
+                disabled={!isLoggedIn}
                 onChange={(e) => {
                   const newStatus = e.target.value as ProgressStatus;
-                  updateStatus(newStatus);
+                  const updated = updateStatus(newStatus);
+                  if (!updated) return;
                   // Notify tree to refresh
                   window.dispatchEvent(new Event("progress-updated"));
                 }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color} disabled:opacity-60 disabled:cursor-not-allowed`}
               >
                 {Object.values(ProgressStatus).map((key) => (
                   <option key={key} value={key}>
@@ -119,6 +121,11 @@ export default function DetailsPanel({
                 ))}
               </select>
           </div>
+          {!isLoggedIn && (
+            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1 inline-block">
+              Login with Google to save progress.
+            </p>
+          )}
         </div>
       </div>
 

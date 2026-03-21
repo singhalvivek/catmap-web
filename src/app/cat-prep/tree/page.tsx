@@ -74,17 +74,23 @@ export default function CatPrepTreePage() {
         {/* Right Slide-in Panel */}
         {selected && (
           <aside
-            className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full md:w-96 bg-white border-l border-calm-border shadow-card overflow-y-auto transition-transform duration-300 ease-in-out translate-x-0`}
+            className="fixed inset-0 z-[60] flex flex-col bg-white overflow-hidden md:inset-auto md:top-16 md:right-0 md:h-[calc(100vh-64px)] md:w-96 md:border-l md:border-calm-border md:shadow-card"
           >
-            <button
-              onClick={() => setSelected(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-trust-navy text-2xl"
-              aria-label="Close details panel"
-            >
-              ✕
-            </button>
+            {/* Close bar — always visible at top */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-calm-border bg-white shrink-0">
+              <span className="text-sm font-semibold text-trust-navy truncate pr-4">
+                {selected.title}
+              </span>
+              <button
+                onClick={() => setSelected(null)}
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-calm-bg hover:bg-calm-border text-gray-600 hover:text-trust-navy transition-colors shrink-0"
+                aria-label="Close details panel"
+              >
+                ✕
+              </button>
+            </div>
 
-            <div className="p-6 pt-12">
+            <div className="flex-1 overflow-y-auto p-6">
               <DetailsPanel
                 selected={selected}
                 descriptions={descriptions as Description[]}
