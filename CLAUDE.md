@@ -30,7 +30,7 @@ Never skip steps. Never bundle unrelated changes into one commit.
 ## File Structure Rules
 
 - Components in sub-folders when a component has 3+ related sub-components.
-- Hooks in `src/app/cat-prep/tree/lib/` (until a shared `src/hooks/` is created per plan).
+- Hooks in `src/app/cat-prep/lib/` (until a shared `src/hooks/` is created per plan).
 - Types in `models/` — one file per domain entity.
 - Constants in `src/constants/` (create when needed).
 - Planning specs in `planning/`.

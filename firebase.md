@@ -11,16 +11,16 @@ This project now supports Google sign-in using Firebase Authentication and store
      - `googleProvider`
 
 2. Google login/logout UI and auth state handling:
-   - `src/app/cat-prep/tree/components/Header.tsx`
+   - `src/app/cat-prep/components/Header.tsx`
    - Adds:
      - `Login with Google` button (when logged out)
      - User name/email + `Sign out` button (when logged in)
      - Auth state listener via `onAuthStateChanged`
 
 3. Firestore progress persistence:
-    - `src/app/cat-prep/tree/lib/progressStore.ts`
-    - `src/app/cat-prep/tree/lib/useProgress.ts`
-    - `src/app/cat-prep/tree/page.tsx`
+    - `src/app/cat-prep/lib/progressStore.ts`
+    - `src/app/cat-prep/lib/useProgress.ts`
+    - `src/app/cat-prep/page.tsx`
     - Stores progress per user at path:
        - `users/{uid}/progress/{nodeId}`
 
@@ -71,7 +71,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000/cat-prep/tree` and test:
+Open `http://localhost:3000/cat-prep` and test:
 
 1. Click `Login with Google`.
 2. Complete Google popup login.
