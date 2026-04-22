@@ -7,8 +7,8 @@ function required(name: string, value?: string) {
 
 export const ENV = {
   SHEETS_WEBHOOK_URL: required(
-    "SHEETS_WEBHOOK_URL",
-    process.env.SHEETS_WEBHOOK_URL
+    "NEXT_PUBLIC_SHEETS_WEBHOOK_URL",
+    process.env.NEXT_PUBLIC_SHEETS_WEBHOOK_URL
   ),
   FIREBASE_API_KEY: required(
     "NEXT_PUBLIC_FIREBASE_API_KEY",
