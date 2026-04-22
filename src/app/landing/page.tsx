@@ -5,7 +5,6 @@ import { COURSES, FAQS } from "./data";
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const toggleFaq = (id: string) => {
     setOpenFaq(openFaq === id ? null : id);
@@ -159,7 +158,7 @@ export default function LandingPage() {
                   <span className="font-semibold text-lg text-gray-900">{course.name}</span>
                 </div>
                 <div className="text-right">
-                  <a href="/cat-prep/tree" className="btn-primary inline-flex items-center gap-2">
+                  <a href="/cat-prep" className="btn-primary inline-flex items-center gap-2">
                     Roadmap <span>→</span>
                   </a>
                 </div>

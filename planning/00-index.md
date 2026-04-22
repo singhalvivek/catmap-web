@@ -19,10 +19,10 @@ Each item links to its spec doc once created. Update the status column after eac
 | ID | Change | Spec | Status | Commit |
 |----|--------|------|--------|--------|
 | H1 | Replace event-based state with React Context | — | 🔲 Todo | — |
-| H2 | Rename to StudyNaksha (branding overhaul) | — | 🔲 Todo | — |
-| H3 | Remove hardcoded Firebase credential fallbacks | — | 🔲 Todo | — |
+| H2 | Rename to StudyNaksha (branding overhaul) | [spec](./H2-branding-rename-studynaksha.md) | ✅ Done | — |
+| H3 | Remove hardcoded Firebase credential fallbacks | [spec](./H3-remove-hardcoded-firebase-credentials.md) | ✅ Done | — |
 | H4 | Add input validation + real error handling to feedback API | — | 🔲 Todo | — |
-| H5 | Redirect `/cat-prep` → `/cat-prep/tree`, remove dead route | — | 🔲 Todo | — |
+| H5 | Consolidate to `/cat-prep`, remove `/cat-prep/tree` dead route | — | ✅ Done | — |
 | H6 | Rename `youtubevideo_title` → `title` in resources | — | 🔲 Todo | — |
 
 ## Medium Priority

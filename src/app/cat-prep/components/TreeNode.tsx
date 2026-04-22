@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Node } from "../models/node";
-import { calculateNodeProgress } from "../lib/progressCalculator";
+import { calculateNodeProgress } from "../tree/lib/progressCalculator";
 
 // Single node with expand/collapse behavior
 export default function TreeNode({

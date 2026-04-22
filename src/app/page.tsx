@@ -389,7 +389,7 @@ export default function Home() {
             Explore our interactive roadmaps and resources designed to help you ace the CAT exam.
           </p>
           <Link
-            href="/cat-prep/tree"
+            href="/cat-prep"
             className="inline-block px-8 py-4 bg-white hover:bg-gray-100 text-blue-600 rounded-lg transition-colors font-semibold text-lg"
           >
             Explore StudyNaksha Now
@@ -416,7 +416,7 @@ export default function Home() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/cat-prep/tree"
+                    href="/cat-prep"
                     className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
                     CAT Preparation

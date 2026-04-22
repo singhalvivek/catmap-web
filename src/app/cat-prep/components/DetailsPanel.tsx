@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
-import { submitFeedback } from "../lib/feedback";
+import { submitFeedback } from "../tree/lib/feedback";
 import { ProgressStatus, ProgressMeta } from "../models/progress";
-import { useProgress } from "../lib/useProgress";
+import { useProgress } from "../tree/lib/useProgress";
 
 type EditableResource = {
   title: string;
