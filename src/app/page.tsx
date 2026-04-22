@@ -13,13 +13,13 @@ export default function Home() {
   const faqs = [
     {
       id: "faq1",
-      question: "What is CatMap?",
-      answer: "CatMap is an interactive learning platform that provides structured roadmaps and curated resources to help you prepare for the CAT exam. It visualizes your learning journey and guides you through every topic systematically."
+      question: "What is StudyNaksha?",
+      answer: "StudyNaksha is an interactive learning platform that provides structured roadmaps and curated resources to help you prepare for the CAT exam. It visualizes your learning journey and guides you through every topic systematically."
     },
     {
       id: "faq2",
-      question: "Is CatMap free to use?",
-      answer: "Yes! CatMap is completely free to use. We believe quality education resources should be accessible to everyone preparing for competitive exams."
+      question: "Is StudyNaksha free to use?",
+      answer: "Yes! StudyNaksha is completely free to use. We believe quality education resources should be accessible to everyone preparing for competitive exams."
     },
     {
       id: "faq3",
@@ -29,7 +29,7 @@ export default function Home() {
     {
       id: "faq4",
       question: "Can I track my progress?",
-      answer: "Currently, CatMap provides structured learning paths. Progress tracking features are in development and will be available soon."
+      answer: "Currently, StudyNaksha provides structured learning paths. Progress tracking features are in development and will be available soon."
     },
     {
       id: "faq5",
@@ -46,7 +46,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                🗺️ CatMap
+                🗺️ StudyNaksha
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-8">
@@ -88,7 +88,7 @@ export default function Home() {
             Master CAT with Interactive Roadmaps
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8">
-            CatMap is an interactive learning platform designed to help you navigate your CAT preparation journey with structured roadmaps, detailed resources, and expert guidance.
+            StudyNaksha is an interactive learning platform designed to help you navigate your CAT preparation journey with structured roadmaps, detailed resources, and expert guidance.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -117,7 +117,7 @@ export default function Home() {
             The days of Big Coaching price-gouging are over.
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-12 leading-relaxed">
-            Leveraging the full weight and power of Open source content, CatMap will ensure every student gets the best quality CAT preparation resources completely free.
+            Leveraging the full weight and power of Open source content, StudyNaksha will ensure every student gets the best quality CAT preparation resources completely free.
           </p>
           
           {/* Impact Stats */}
@@ -146,7 +146,7 @@ export default function Home() {
               The proof is in the prices
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Compare prices on commonly prescribed CAT courses like these, and see how much you can save with CatMap's free resources.
+              Compare prices on commonly prescribed CAT courses like these, and see how much you can save with StudyNaksha's free resources.
             </p>
           </div>
 
@@ -154,7 +154,7 @@ export default function Home() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700">
             <div className="hidden sm:grid grid-cols-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white font-semibold py-4 px-6 text-sm">
               <p>Courses</p>
-              <p className="text-center">CatMap Price</p>
+              <p className="text-center">StudyNaksha Price</p>
               <p className="text-right">Market Price</p>
             </div>
             
@@ -243,7 +243,7 @@ export default function Home() {
               Frequently Asked Questions
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">
-              Everything you need to know about CatMap
+              Everything you need to know about StudyNaksha
             </p>
           </div>
 
@@ -334,7 +334,7 @@ export default function Home() {
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a
-                    href="https://github.com/yourusername/catmap-web"
+                    href="https://github.com/yourusername/studynaksha"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors font-semibold"
@@ -343,7 +343,7 @@ export default function Home() {
                     Contribute on GitHub
                   </a>
                   <a
-                    href="mailto:contribute@catmap.com"
+                    href="mailto:contribute@studynaksha.com"
                     className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors font-semibold"
                   >
                     <span>✉️</span>
@@ -392,7 +392,7 @@ export default function Home() {
             href="/cat-prep/tree"
             className="inline-block px-8 py-4 bg-white hover:bg-gray-100 text-blue-600 rounded-lg transition-colors font-semibold text-lg"
           >
-            Explore CatMap Now
+            Explore StudyNaksha Now
           </Link>
         </div>
       </section>
@@ -403,7 +403,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                🗺️ CatMap
+                🗺️ StudyNaksha
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
                 Interactive roadmaps for CAT preparation
@@ -442,7 +442,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-gray-200 dark:border-gray-800 pt-8 text-center text-gray-600 dark:text-gray-300 text-sm">
-            <p>&copy; 2025 CatMap. All rights reserved.</p>
+            <p>&copy; 2025 StudyNaksha. All rights reserved.</p>
           </div>
         </div>
       </footer>

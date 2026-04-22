@@ -10,8 +10,8 @@ export const COURSES = [
 
 export const FAQS = [
   {
-    id: "what-is-learnmax",
-    question: "What is learnmax?",
+    id: "what-is-studynaksha",
+    question: "What is StudyNaksha?",
     answer: "This platform organizes the best free learning resources into structured roadmaps for competitive exams."
   },
   {
@@ -21,12 +21,12 @@ export const FAQS = [
   },
   {
     id: "account-needed",
-    question: "Do I need to create an account or register on learnmax?",
+    question: "Do I need to create an account or register on StudyNaksha?",
     answer: "No account is needed."
   },
   {
     id: "cost",
-    question: "Does learnmax cost anything?",
+    question: "Does StudyNaksha cost anything?",
     answer: "The learning material is free. The platform simply organizes the best freely available resources."
   }
 ] as const;

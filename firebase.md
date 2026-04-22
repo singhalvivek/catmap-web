@@ -1,6 +1,6 @@
-# Firebase Setup and Google Login (Only)
+# Firebase Setup, Google Login, and Firestore Progress
 
-This project now supports Google sign-in using Firebase Authentication.
+This project now supports Google sign-in using Firebase Authentication and stores user progress in Firestore.
 
 ## What was added
 
@@ -16,6 +16,13 @@ This project now supports Google sign-in using Firebase Authentication.
      - `Login with Google` button (when logged out)
      - User name/email + `Sign out` button (when logged in)
      - Auth state listener via `onAuthStateChanged`
+
+3. Firestore progress persistence:
+    - `src/app/cat-prep/tree/lib/progressStore.ts`
+    - `src/app/cat-prep/tree/lib/useProgress.ts`
+    - `src/app/cat-prep/tree/page.tsx`
+    - Stores progress per user at path:
+       - `users/{uid}/progress/{nodeId}`
 
 ## Environment variables (recommended)
 
@@ -40,6 +47,22 @@ Note: The code has fallbacks to these values if env vars are not set, so local d
 3. Add your app domain to authorized domains:
    - `localhost` (for local dev)
    - Your production domain
+4. Firestore Database: create in production mode or test mode and then configure rules.
+
+## Firestore rules (minimum for this feature)
+
+Use rules that allow users to access only their own progress documents:
+
+```txt
+rules_version = '2';
+service cloud.firestore {
+   match /databases/{database}/documents {
+      match /users/{userId}/progress/{nodeId} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+   }
+}
+```
 
 ## Run locally
 
@@ -59,7 +82,8 @@ Open `http://localhost:3000/cat-prep/tree` and test:
 
 1. This implementation is client-side auth only.
 2. It does not yet gate routes or persist user profile data to backend.
-3. Learning progress is saved only for logged-in users.
-4. If user is not logged in, progress selector is disabled and a login hint is shown.
-5. If popup login is blocked, allow popups and retry.
+3. Learning progress is saved in Firestore for logged-in users.
+4. A local cache is used for fast UI refresh after login and updates.
+5. If user is not logged in, progress selector is disabled and a login hint is shown.
+6. If popup login is blocked, allow popups and retry.
 

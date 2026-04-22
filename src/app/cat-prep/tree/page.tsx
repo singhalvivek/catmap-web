@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 
 // Data
 import data from "../data.json";
@@ -20,6 +21,8 @@ import DetailsPanel from "./components/DetailsPanel";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Faq from "./components/Faq";
+import { auth } from "@/lib/firebase";
+import { getAllProgressStatuses } from "./lib/progressStore";
 
 export default function CatPrepTreePage() {
   const tree = buildTree(data as Node[]);
@@ -32,6 +35,35 @@ export default function CatPrepTreePage() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (typeof window === "undefined") return;
+
+      if (!user) {
+        window.dispatchEvent(new Event("progress-updated"));
+        return;
+      }
+
+      try {
+        const allProgress = await getAllProgressStatuses(user.uid);
+
+        Object.keys(localStorage)
+          .filter((key) => key.startsWith(`progress_${user.uid}_`))
+          .forEach((key) => localStorage.removeItem(key));
+
+        Object.entries(allProgress).forEach(([nodeId, status]) => {
+          localStorage.setItem(`progress_${user.uid}_${nodeId}`, status);
+        });
+
+        window.dispatchEvent(new Event("progress-updated"));
+      } catch (error) {
+        console.error("Failed to sync progress from Firestore", error);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -47,10 +79,10 @@ export default function CatPrepTreePage() {
             {/* Learning Path Header */}
             <div className="mb-12">
               <h1 className="text-3xl sm:text-4xl font-bold text-trust-navy mb-2">
-                CAT Learning Path
+                CAT Roadmap
               </h1>
               <p className="text-lg text-gray-600">
-                Follow a structured roadmap to master CAT concepts
+                Follow an organized roadmap to master and track CAT concepts
               </p>
             </div>
 
@@ -73,7 +105,7 @@ export default function CatPrepTreePage() {
 
         {/* Right Slide-in Panel */}
         {selected && (
-          <aside
+          <a
             className="fixed inset-0 z-[60] flex flex-col bg-white overflow-hidden md:inset-auto md:top-16 md:right-0 md:h-[calc(100vh-64px)] md:w-96 md:border-l md:border-calm-border md:shadow-card"
           >
             {/* Close bar — always visible at top */}
@@ -97,7 +129,7 @@ export default function CatPrepTreePage() {
                 resources={resources as Resource[]}
               />
             </div>
-          </aside>
+          </a>
         )}
       </div>
 

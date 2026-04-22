@@ -49,8 +49,8 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <span className="text-2xl">📚</span>
           <div>
-            <h1 className="text-xl font-bold text-trust-navy leading-tight">learnmax</h1>
-            <p className="text-xs text-gray-500">Rx for Education</p>
+            <h1 className="text-xl font-bold text-trust-navy leading-tight">StudyNaksha</h1>
+            <p className="text-xs text-gray-500">Your roadmap to Exams</p>
           </div>
         </Link>
 

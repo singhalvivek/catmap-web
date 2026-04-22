@@ -49,6 +49,8 @@ export default function DetailsPanel({
   const { status, updateStatus, isLoggedIn } = useProgress(selected.id);
   const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
   const [submitting, setSubmitting] = useState(false);
+  const [savingProgress, setSavingProgress] = useState(false);
+  const [progressError, setProgressError] = useState<string | null>(null);
 
   // Reset edit state when selected node changes
   useEffect(() => {
@@ -104,13 +106,22 @@ export default function DetailsPanel({
             <h1 className="text-2xl font-bold text-trust-navy">{selected.title}</h1>
               <select
                 value={status}
-                disabled={!isLoggedIn}
-                onChange={(e) => {
+                disabled={!isLoggedIn || savingProgress}
+                onChange={async (e) => {
+                  setProgressError(null);
+                  setSavingProgress(true);
+
                   const newStatus = e.target.value as ProgressStatus;
-                  const updated = updateStatus(newStatus);
-                  if (!updated) return;
+                  const updated = await updateStatus(newStatus);
+                  if (!updated) {
+                    setProgressError("Could not save progress. Please try again.");
+                    setSavingProgress(false);
+                    return;
+                  }
+
                   // Notify tree to refresh
                   window.dispatchEvent(new Event("progress-updated"));
+                  setSavingProgress(false);
                 }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color} disabled:opacity-60 disabled:cursor-not-allowed`}
               >
@@ -124,6 +135,11 @@ export default function DetailsPanel({
           {!isLoggedIn && (
             <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1 inline-block">
               Login with Google to save progress.
+            </p>
+          )}
+          {progressError && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-md px-2 py-1 inline-block">
+              {progressError}
             </p>
           )}
         </div>

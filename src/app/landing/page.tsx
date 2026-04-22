@@ -27,8 +27,8 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <span className="text-2xl">📚</span>
             <div>
-              <h1 className="text-xl font-bold text-trust-navy leading-tight">learnmax</h1>
-              <p className="text-xs text-gray-500">Rx for Education</p>
+              <h1 className="text-xl font-bold text-trust-navy leading-tight">StudyNaksha</h1>
+              <p className="text-xs text-gray-500">Your roadmap to CAT</p>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-6">
@@ -89,24 +89,6 @@ export default function LandingPage() {
             {/* The same content, available on the Internet, by the same teachers, are costing students up to <span className="font-bold text-trust-navy">₹50k-100k</span> in the country. <span className="font-semibold">This is unacceptable.</span> */}
           </p>
 
-          {/* Cost Comparison Card */}
-          {/* <div className="bg-white rounded-2xl shadow-card p-6 md:p-8 max-w-2xl mx-auto card-hover">
-            <h4 className="font-bold text-lg mb-4 text-trust-navy">Cost comparison: CAT Course</h4>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="text-center p-4 bg-red-50/50 rounded-lg border border-calm-border">
-                <p className="text-sm text-gray-600 mb-1">CatKing · Current price</p>
-                <p className="text-2xl font-bold text-gray-800">₹24,999</p>
-              </div>
-              <div className="text-center p-4 bg-blue-50/50 rounded-lg border border-calm-border">
-                <p className="text-sm text-gray-600 mb-1">PW · Online reference</p>
-                <p className="text-2xl font-bold text-gray-800">₹12,999</p>
-              </div>
-            </div>
-            <div className="bg-trust-navy text-white rounded-xl p-4 text-center">
-              <p className="font-semibold">🇮🇳 learnmax · New Most-Favored-Learning price</p>
-              <p className="text-3xl font-bold text-hope-teal mt-1">₹599 <span className="text-lg font-normal text-blue-200">95% less</span></p>
-            </div>
-          </div> */}
         </div>
       </section>
 
@@ -121,7 +103,6 @@ export default function LandingPage() {
             The internet already has amazing learning resources.
           </h3>
           <p className="text-lg text-gray-700 mb-8">
-            {/* Leveraging the full weight and power of Open source content, learnmax will ensure every student gets the lowest prices on competitive exam courses. */}
             This platform organizes those resources into structured roadmaps so students can prepare efficiently without searching everywhere.
           </p>
           
@@ -163,8 +144,6 @@ export default function LandingPage() {
           <div className="bg-white rounded-2xl shadow-card overflow-hidden">
             <div className="grid grid-cols-2 bg-trust-navy text-white font-semibold py-4 px-6 text-sm">
               <p>Roadmaps</p>
-              {/* <p className="text-center">Lowest learnmax Price</p>
-              <p className="text-right">Original Price</p> */}
               <p className="text-right">Access</p>
             </div>
             
@@ -179,13 +158,6 @@ export default function LandingPage() {
                   <span className="text-3xl">{course.icon}</span>
                   <span className="font-semibold text-lg text-gray-900">{course.name}</span>
                 </div>
-                {/* <div className="text-center">
-                  <p className="font-bold text-trust-navy text-lg">{course.learnmaxPrice}</p>
-                  <span className="savings-badge mt-1">
-                    Save {course.savings}
-                  </span>
-                </div>
-                <p className="text-right text-gray-500 line-through">{course.originalPrice}</p> */}
                 <div className="text-right">
                   <a href="/cat-prep/tree" className="btn-primary inline-flex items-center gap-2">
                     Roadmap <span>→</span>

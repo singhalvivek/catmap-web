@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <h3 className="text-lg font-semibold text-trust-navy mb-4">
-              📚 learnmax
+              📚 StudyNaksha
             </h3>
             <p className="text-gray-600">
               Structured roadmaps for competitive exam preparation
