@@ -1,9 +1,6 @@
-// src/app/landing/data.ts
-// Pure data export - no components
-
 export const COURSES = [
-  { 
-    name: "CAT Roadmap", 
+  {
+    name: "CAT Roadmap",
     icon: "📚"
   },
 ] as const;

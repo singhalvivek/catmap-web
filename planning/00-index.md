@@ -34,7 +34,7 @@ Each item links to its spec doc once created. Update the status column after eac
 | M3 | Tighten TypeScript types (NodeType union, ResourceType) | — | 🔲 Todo | — |
 | M4 | Add empty-description state + contribution nudge | — | 🔲 Todo | — |
 | M5 | Remove unused `@xyflow/react` dependency | — | 🔲 Todo | — |
-| M6 | Delete `/landing` dead route | — | 🔲 Todo | — |
+| M6 | Promote `/landing` to root `/`, delete old root | [spec](./M6-delete-landing-promote-to-root.md) | ✅ Done | — |
 | M7 | Add ARIA labels and keyboard navigation | — | 🔲 Todo | — |
 | M8 | Load tree data server-side (Server Component) | — | 🔲 Todo | — |
 | M9 | Memoize progress calculation | — | 🔲 Todo | — |
