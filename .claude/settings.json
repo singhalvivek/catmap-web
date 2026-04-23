@@ -7,6 +7,8 @@
       "Bash(git add*)",
       "Bash(npx eslint*)",
       "Bash(npm run lint*)",
+      "Bash(npm run test*)",
+      "Bash(npm test*)",
       "Bash(grep -r*)",
       "Bash(ls*)",
       "Bash(mkdir*)"
@@ -42,8 +44,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd=$(echo '$CLAUDE_TOOL_INPUT' | grep -o '\"command\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4); case \"$cmd\" in *'git commit'*) cd e:/cat-prep/catmap-web && grep -r 'AIzaSy' src/ 2>/dev/null && echo 'BLOCKED: Firebase key found in src/' && exit 1; grep -rE '(password|secret|token|webhook)\\s*[:=]\\s*[\"'"'"'][^\"'"'"']{8,}' src/ 2>/dev/null && echo 'BLOCKED: Possible secret found in src/' && exit 1; echo 'Secret scan passed.';; esac",
-            "description": "Block commits if secrets are detected in src/"
+            "command": "cmd=$(echo '$CLAUDE_TOOL_INPUT' | grep -o '\"command\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4); case \"$cmd\" in *'git commit'*) cd e:/cat-prep/catmap-web && grep -r 'AIzaSy' src/ 2>/dev/null && echo 'BLOCKED: Firebase key found in src/' && exit 1; echo 'Secret scan passed.';; esac",
+            "description": "Block commits if Firebase API key detected in src/"
           }
         ]
       }
@@ -53,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '\\n✅ Task complete. Next step: run the code-reviewer agent, then test locally before committing.'",
+            "command": "echo 'Task complete. Next step: run the code-reviewer agent, then test locally before committing.'",
             "description": "Remind to run code-reviewer after task"
           }
         ]

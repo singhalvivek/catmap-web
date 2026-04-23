@@ -2,21 +2,61 @@
   {
     "id": 1,
     "question": "What is CAT and who conducts it?",
-    "answer": "CAT (Common Admission Test) is a national-level MBA entrance exam conducted by the IIMs for admission into MBA/PGDM programs."
+    "answer": "CAT (Common Admission Test) is a national-level MBA entrance exam conducted by the IIMs on a rotational basis for admission into MBA/PGDM programs across India."
   },
   {
     "id": 2,
     "question": "What are the sections in CAT?",
-    "answer": "CAT has three sections: Quantitative Aptitude (QA), DILR, and VARC."
+    "answer": "CAT has three sections: Quantitative Aptitude (QA), Data Interpretation and Logical Reasoning (DILR), and Verbal Ability and Reading Comprehension (VARC). Each section is separately timed."
   },
   {
     "id": 3,
     "question": "How long does CAT preparation take?",
-    "answer": "On average, 6–9 months of focused preparation is sufficient, depending on your starting level."
+    "answer": "On average, 6–9 months of focused preparation is sufficient depending on your starting level. If your basics are strong, 4–5 months of intensive prep is also viable."
   },
   {
     "id": 4,
     "question": "Are mock tests important for CAT?",
-    "answer": "Yes, mock tests help improve speed, accuracy, and exam temperament."
+    "answer": "Yes. Mock tests build speed, accuracy, and exam temperament. Aim for 20–30 full-length mocks in the last 3 months, and spend at least as much time analysing each mock as taking it."
+  },
+  {
+    "id": 5,
+    "question": "What percentile do I need for IIM calls?",
+    "answer": "Top IIMs (Ahmedabad, Bangalore, Calcutta) typically require 99+ overall percentile with strong sectional scores. IIM Lucknow, Kozhikode, and Indore consider 95–99. Newer IIMs and colleges like FMS, MDI, and XLRI have lower cutoffs. Sectional cutoffs matter as much as the overall score."
+  },
+  {
+    "id": 6,
+    "question": "How is the CAT score calculated?",
+    "answer": "Each correct answer earns +3 marks. Each wrong MCQ answer costs −1 (no negative marking for TITA/non-MCQ questions). Raw scores are then normalised across exam slots using equi-percentile equating, so the difficulty level of your slot does not disadvantage you."
+  },
+  {
+    "id": 7,
+    "question": "What books are recommended for Quantitative Aptitude?",
+    "answer": "Arun Sharma's 'How to Prepare for QA for CAT' is the most widely used. Nishit Sinha's Pearson Guide is another solid option. For basics, revisit NCERT Maths (Classes 8–10). Supplement with previous CAT papers and online question banks."
+  },
+  {
+    "id": 8,
+    "question": "What resources are recommended for VARC?",
+    "answer": "Build a reading habit with The Hindu, The Economist, and Aeon. For practice, use Nishit Sinha's VARC book or Meenakshi Upadhyay's guide. Solve at least 3–4 RC passages daily in the final two months."
+  },
+  {
+    "id": 9,
+    "question": "Should I attempt all questions in CAT?",
+    "answer": "No. CAT rewards selective accuracy over random attempts. Learn to identify your strong question types, skip unfamiliar ones, and avoid the negative marking trap. A 75–80% attempt rate with high accuracy often outperforms a 100% attempt with errors."
+  },
+  {
+    "id": 10,
+    "question": "How does the topic lock work on StudyNaksha?",
+    "answer": "Each topic's revision content unlocks once you have marked at least 70% of its subtopics as completed. This ensures you have covered the core concepts before moving to revision and practice."
+  },
+  {
+    "id": 11,
+    "question": "How do I save my progress on StudyNaksha?",
+    "answer": "Sign in with your Google account. Your progress is saved to your account in real time and syncs across devices. Without signing in, progress tracking is not available."
+  },
+  {
+    "id": 12,
+    "question": "Is StudyNaksha free?",
+    "answer": "Yes. StudyNaksha is completely free. All roadmaps, resources, and progress tracking features are available without any subscription or payment."
   }
 ]

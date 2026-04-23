@@ -21,7 +21,7 @@ Each item links to its spec doc once created. Update the status column after eac
 | H1 | Replace event-based state with React Context | [spec](./H1-react-context-progress.md) | ✅ Done | — |
 | H2 | Rename to StudyNaksha (branding overhaul) | [spec](./H2-branding-rename-studynaksha.md) | ✅ Done | — |
 | H3 | Remove hardcoded Firebase credential fallbacks | [spec](./H3-remove-hardcoded-firebase-credentials.md) | ✅ Done | — |
-| H4 | Add input validation + real error handling to feedback API | — | 🔲 Todo | — |
+| H4 | Add input validation + real error handling to feedback API | — | ⏸ Deferred (out of scope for this refactor) | — |
 | H5 | Consolidate to `/cat-prep`, remove `/cat-prep/tree` dead route | — | ✅ Done | — |
 | H6 | Rename `youtubevideo_title` → `title` in resources | — | ✅ Done | — |
 
@@ -35,24 +35,24 @@ Each item links to its spec doc once created. Update the status column after eac
 | M4 | Add empty-description state + contribution nudge | — | ✅ Done | — |
 | M5 | Remove unused `@xyflow/react` dependency | — | ✅ Done | — |
 | M6 | Promote `/landing` to root `/`, delete old root | [spec](./M6-delete-landing-promote-to-root.md) | ✅ Done | — |
-| M7 | Add ARIA labels and keyboard navigation | — | 🔲 Todo | — |
+| M7 | Add ARIA labels and keyboard navigation | — | ⏸ Deferred | — |
 | M8 | Load tree data server-side (Server Component) | — | ⏸ Deferred (needs backend split) | — |
 | M9 | Memoize progress calculation + 70% TOPIC gate + restrict progress saving to subtopics | — | ✅ Done | — |
-| M10 | Expand FAQ content (platform-specific questions) | — | 🔲 Todo | — |
+| M10 | Expand FAQ content (platform-specific questions) | — | ✅ Done | — |
 
 ## Low Priority
 
 | ID | Change | Spec | Status | Commit |
 |----|--------|------|--------|--------|
-| L1 | Per-page metadata (`generateMetadata`) | — | 🔲 Todo | — |
-| L2 | Add `robots.txt` and `sitemap.xml` | — | 🔲 Todo | — |
-| L3 | `rel="noopener noreferrer"` + `target="_blank"` on all external links | — | 🔲 Todo | — |
-| L4 | Error boundary around `<Tree />` | — | 🔲 Todo | — |
-| L5 | Unit tests for `buildTree.ts` and `progressCalculator.ts` | — | 🔲 Todo | — |
-| L6 | Standardise node title casing in `data.json` | — | 🔲 Todo | — |
-| L7 | Rename `THIS_WEEK` progress status to clearer label | — | 🔲 Todo | — |
-| L8 | Add `updatedAt` timestamp to Firestore progress writes | — | 🔲 Todo | — |
-| L9 | Open Graph image for social sharing | — | 🔲 Todo | — |
+| L1 | Per-page metadata (`generateMetadata`) | — | ⏸ Deferred (SEO phase) | — |
+| L2 | Add `robots.txt` and `sitemap.xml` | — | ⏸ Deferred (SEO phase) | — |
+| L3 | `rel="noopener noreferrer"` + `target="_blank"` on all external links | — | ✅ Done (already correct in ResourceList) | — |
+| L4 | Error boundary around `<Tree />` | — | ✅ Done | — |
+| L5 | Unit tests for `buildTree.ts` and `progressCalculator.ts` | — | ✅ Done (12/12 passing, Vitest) | — |
+| L6 | Standardise node title casing in `data.json` | — | ✅ Done | — |
+| L7 | Rename `THIS_WEEK` progress status to clearer label | — | N/A (status removed) | — |
+| L8 | Add `updatedAt` timestamp to Firestore progress writes | — | ✅ Done | — |
+| L9 | Open Graph image for social sharing | — | ⏸ Deferred (SEO phase) | — |
 
 ---
 

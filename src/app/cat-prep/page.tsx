@@ -17,6 +17,7 @@ import type { Faq as FaqType } from "./models/faq";
 
 // Components
 import Tree from "./components/Tree";
+import ErrorBoundary from "./components/ErrorBoundary";
 import DetailsPanel from "./components/details/DetailsPanel";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -54,11 +55,13 @@ export default function CatPrepTreePage() {
 
               <div className="bg-calm-bg rounded-xl border border-calm-border shadow-card p-6 sm:p-8 mb-12">
                 <h2 className="text-2xl font-semibold text-trust-navy mb-6">Topics</h2>
-                <Tree
-                  roots={tree}
-                  onSelect={setSelected}
-                  selectedId={selected?.id ?? null}
-                />
+                <ErrorBoundary>
+                  <Tree
+                    roots={tree}
+                    onSelect={setSelected}
+                    selectedId={selected?.id ?? null}
+                  />
+                </ErrorBoundary>
               </div>
 
               <div className="bg-calm-bg rounded-xl border border-calm-border shadow-card p-6 sm:p-8">

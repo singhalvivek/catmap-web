@@ -86,7 +86,7 @@
   {
     "id": 13,
     "parent_id": 5,
-    "title": "logarithm",
+    "title": "Logarithm",
     "type": "SUBTOPIC",
     "order_index": 4
   },
@@ -121,7 +121,7 @@
   {
     "id": 18,
     "parent_id": 6,
-    "title": "Profit and loss",
+    "title": "Profit and Loss",
     "type": "SUBTOPIC",
     "order_index": 4
   },
@@ -142,42 +142,42 @@
   {
     "id": 21,
     "parent_id": 6,
-    "title": "Work rate and time",
+    "title": "Work Rate and Time",
     "type": "SUBTOPIC",
     "order_index": 7
   },
   {
     "id": 22,
     "parent_id": 6,
-    "title": "Distance time and speed",
+    "title": "Distance, Time and Speed",
     "type": "SUBTOPIC",
     "order_index": 8
   },
   {
     "id": 23,
     "parent_id": 7,
-    "title": "Factores",
+    "title": "Factors",
     "type": "SUBTOPIC",
     "order_index": 1
   },
   {
     "id": 24,
     "parent_id": 7,
-    "title": "Unit Digit theorm",
+    "title": "Unit Digit Theorem",
     "type": "SUBTOPIC",
     "order_index": 2
   },
   {
     "id": 25,
     "parent_id": 7,
-    "title": "Maximum power and trailing zeros",
+    "title": "Maximum Power and Trailing Zeros",
     "type": "SUBTOPIC",
     "order_index": 3
   },
   {
     "id": 26,
     "parent_id": 7,
-    "title": "Remainder theorem",
+    "title": "Remainder Theorem",
     "type": "SUBTOPIC",
     "order_index": 4
   },
@@ -212,21 +212,21 @@
   {
     "id": 31,
     "parent_id": 8,
-    "title": "Quadlaterals",
+    "title": "Quadrilaterals",
     "type": "SUBTOPIC",
     "order_index": 4
   },
   {
     "id": 32,
     "parent_id": 8,
-    "title": "Coordinate geometry",
+    "title": "Coordinate Geometry",
     "type": "SUBTOPIC",
     "order_index": 5
   },
   {
     "id": 33,
     "parent_id": 8,
-    "title": "Surface area and volume",
+    "title": "Surface Area and Volume",
     "type": "SUBTOPIC",
     "order_index": 6
   },
@@ -240,14 +240,14 @@
   {
     "id": 35,
     "parent_id": 9,
-    "title": "Arithmetic and geometric progression",
+    "title": "Arithmetic and Geometric Progression",
     "type": "SUBTOPIC",
     "order_index": 1
   },
   {
     "id": 36,
     "parent_id": 9,
-    "title": "P &c",
+    "title": "P & C",
     "type": "SUBTOPIC",
     "order_index": 2
   },
@@ -275,7 +275,7 @@
   {
     "id": 40,
     "parent_id": 3,
-    "title": "Vein diagrams",
+    "title": "Venn Diagrams",
     "type": "TOPIC",
     "order_index": 3
   },
@@ -289,21 +289,21 @@
   {
     "id": 42,
     "parent_id": 38,
-    "title": "Distibution",
+    "title": "Distribution",
     "type": "SUBTOPIC",
     "order_index": 2
   },
   {
     "id": 43,
     "parent_id": 38,
-    "title": "Games and touraments",
+    "title": "Games and Tournaments",
     "type": "SUBTOPIC",
     "order_index": 3
   },
   {
     "id": 44,
     "parent_id": 38,
-    "title": "Maps and networks",
+    "title": "Maps and Networks",
     "type": "SUBTOPIC",
     "order_index": 4
   },
@@ -324,35 +324,35 @@
   {
     "id": 47,
     "parent_id": 39,
-    "title": "Bar chart",
+    "title": "Bar Chart",
     "type": "SUBTOPIC",
     "order_index": 2
   },
   {
     "id": 48,
     "parent_id": 39,
-    "title": "Line chart",
+    "title": "Line Chart",
     "type": "SUBTOPIC",
     "order_index": 3
   },
   {
     "id": 49,
     "parent_id": 39,
-    "title": "Pie chart",
+    "title": "Pie Chart",
     "type": "SUBTOPIC",
     "order_index": 4
   },
   {
     "id": 50,
     "parent_id": 39,
-    "title": "Word problems",
+    "title": "Word Problems",
     "type": "SUBTOPIC",
     "order_index": 5
   },
   {
     "id": 51,
     "parent_id": 40,
-    "title": "Vein diagrams",
+    "title": "Venn Diagrams",
     "type": "SUBTOPIC",
     "order_index": 1
   },
@@ -366,7 +366,7 @@
   {
     "id": 53,
     "parent_id": 4,
-    "title": "Critical reasoning",
+    "title": "Critical Reasoning",
     "type": "TOPIC",
     "order_index": 1
   },
@@ -387,7 +387,7 @@
   {
     "id": 56,
     "parent_id": 53,
-    "title": "Statement, premise conclusions, premise, arguments and assumptions",
+    "title": "Statements, Premises, Conclusions and Assumptions",
     "type": "SUBTOPIC",
     "order_index": 1
   },
@@ -401,21 +401,21 @@
   {
     "id": 58,
     "parent_id": 53,
-    "title": "Strengthen/weaken the argument",
+    "title": "Strengthen and Weaken the Argument",
     "type": "SUBTOPIC",
     "order_index": 3
   },
   {
     "id": 59,
     "parent_id": 53,
-    "title": "Similar structure/arguments",
+    "title": "Similar Structure and Arguments",
     "type": "SUBTOPIC",
     "order_index": 4
   },
   {
     "id": 60,
     "parent_id": 54,
-    "title": "Para summary",
+    "title": "Para Summary",
     "type": "SUBTOPIC",
     "order_index": 1
   },
@@ -429,49 +429,49 @@
   {
     "id": 62,
     "parent_id": 54,
-    "title": "Para completion",
+    "title": "Para Completion",
     "type": "SUBTOPIC",
     "order_index": 3
   },
   {
     "id": 63,
     "parent_id": 54,
-    "title": "Para odd one out",
+    "title": "Para Odd One Out",
     "type": "SUBTOPIC",
     "order_index": 4
   },
   {
     "id": 64,
     "parent_id": 55,
-    "title": "How to read a passage",
+    "title": "How to Read a Passage",
     "type": "SUBTOPIC",
     "order_index": 1
   },
   {
     "id": 65,
     "parent_id": 55,
-    "title": "eliminition of incorrect answers",
+    "title": "Elimination of Incorrect Answers",
     "type": "SUBTOPIC",
     "order_index": 2
   },
   {
     "id": 66,
     "parent_id": 55,
-    "title": "Types of question in RC",
+    "title": "Types of Questions in RC",
     "type": "SUBTOPIC",
     "order_index": 3
   },
   {
     "id": 67,
     "parent_id": 55,
-    "title": "Main idea of passage",
+    "title": "Main Idea of Passage",
     "type": "SUBTOPIC",
     "order_index": 4
   },
   {
     "id": 68,
     "parent_id": 55,
-    "title": "tone and structure of passage",
+    "title": "Tone and Structure of Passage",
     "type": "SUBTOPIC",
     "order_index": 5
   }
