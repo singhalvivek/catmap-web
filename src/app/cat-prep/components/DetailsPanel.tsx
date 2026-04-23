@@ -6,7 +6,7 @@ import { Description } from "../models/description";
 import { Resource } from "../models/resource";
 import { submitFeedback } from "../lib/feedback";
 import { ProgressStatus, ProgressMeta } from "../models/progress";
-import { useProgress } from "../lib/useProgress";
+import { useProgressContext } from "../lib/ProgressContext";
 
 type EditableResource = {
   title: string;
@@ -33,7 +33,6 @@ export default function DetailsPanel({
     .sort((a, b) => a.order_index - b.order_index);
 
   const [editMode, setEditMode] = useState(false);
-
   const [descText, setDescText] = useState(originalDesc);
   const [editResources, setEditResources] = useState<EditableResource[]>(
     originalResources.map((r) => ({
@@ -42,17 +41,17 @@ export default function DetailsPanel({
       link: r.link,
     }))
   );
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
-  const { status, updateStatus, isLoggedIn } = useProgress(selected.id);
-  const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
   const [submitting, setSubmitting] = useState(false);
   const [savingProgress, setSavingProgress] = useState(false);
   const [progressError, setProgressError] = useState<string | null>(null);
 
-  // Reset edit state when selected node changes
+  const { progress, updateProgress, isLoggedIn } = useProgressContext();
+  const status = progress[selected.id] ?? ProgressStatus.NOT_STARTED;
+  const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
+
   useEffect(() => {
     setEditMode(false);
     setDescText(originalDesc);
@@ -99,38 +98,33 @@ export default function DetailsPanel({
     <div className="max-w-4xl space-y-8">
       {/* Header */}
       <div>
-        
         <div className="space-y-2">
           <div className="text-sm text-gray-500">{selected.type}</div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold text-trust-navy">{selected.title}</h1>
-              <select
-                value={status}
-                disabled={!isLoggedIn || savingProgress}
-                onChange={async (e) => {
-                  setProgressError(null);
-                  setSavingProgress(true);
+            <select
+              value={status}
+              disabled={!isLoggedIn || savingProgress}
+              onChange={async (e) => {
+                setProgressError(null);
+                setSavingProgress(true);
 
-                  const newStatus = e.target.value as ProgressStatus;
-                  const updated = await updateStatus(newStatus);
-                  if (!updated) {
-                    setProgressError("Could not save progress. Please try again.");
-                    setSavingProgress(false);
-                    return;
-                  }
+                const newStatus = e.target.value as ProgressStatus;
+                const updated = await updateProgress(selected.id, newStatus);
+                if (!updated) {
+                  setProgressError("Could not save progress. Please try again.");
+                }
 
-                  // Notify tree to refresh
-                  window.dispatchEvent(new Event("progress-updated"));
-                  setSavingProgress(false);
-                }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color} disabled:opacity-60 disabled:cursor-not-allowed`}
-              >
-                {Object.values(ProgressStatus).map((key) => (
-                  <option key={key} value={key}>
-                    {ProgressMeta[key].label}
-                  </option>
-                ))}
-              </select>
+                setSavingProgress(false);
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color} disabled:opacity-60 disabled:cursor-not-allowed`}
+            >
+              {Object.values(ProgressStatus).map((key) => (
+                <option key={key} value={key}>
+                  {ProgressMeta[key].label}
+                </option>
+              ))}
+            </select>
           </div>
           {!isLoggedIn && (
             <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1 inline-block">
