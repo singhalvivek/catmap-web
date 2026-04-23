@@ -1,3 +1,4 @@
+// Faq — accordion FAQ list for the cat-prep page
 "use client";
 
 import { useState } from "react";

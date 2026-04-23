@@ -1,3 +1,4 @@
+// node — syllabus node domain type and NodeType union
 export type NodeType = "SUBJECT" | "TOPIC" | "SUBTOPIC";
 
 export type Node = {

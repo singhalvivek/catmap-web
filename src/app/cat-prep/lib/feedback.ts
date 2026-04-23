@@ -1,3 +1,4 @@
+// feedback — submits contributor suggestions to the feedback API route
 import type { ResourceType } from "../models/resource";
 
 export async function submitFeedback(payload: {

@@ -1,3 +1,4 @@
+// resource — learning resource domain type and ResourceType union
 export type ResourceType = "VIDEO" | "ARTICLE";
 
 export type Resource = {

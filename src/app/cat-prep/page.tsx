@@ -17,7 +17,7 @@ import type { Faq as FaqType } from "./models/faq";
 
 // Components
 import Tree from "./components/Tree";
-import DetailsPanel from "./components/DetailsPanel";
+import DetailsPanel from "./components/details/DetailsPanel";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Faq from "./components/Faq";

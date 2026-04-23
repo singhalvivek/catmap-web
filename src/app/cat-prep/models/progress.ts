@@ -1,7 +1,6 @@
+// progress — ProgressStatus enum and ProgressMeta display config
 export enum ProgressStatus {
   NOT_STARTED = "NOT_STARTED",
-  PLANNED = "PLANNED",
-  THIS_WEEK = "THIS_WEEK",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
 }
@@ -9,19 +8,11 @@ export enum ProgressStatus {
 export const ProgressMeta = {
   NOT_STARTED: {
     label: "Not Started",
-    color: "bg-gray-200 text-gray-700",
-  },
-  PLANNED: {
-    label: "Planned",
-    color: "bg-blue-100 text-blue-700",
-  },
-  THIS_WEEK: {
-    label: "This Week",
-    color: "bg-yellow-100 text-yellow-800",
+    color: "bg-orange-200 text-gray-700",
   },
   IN_PROGRESS: {
     label: "In Progress",
-    color: "bg-orange-100 text-orange-700",
+    color: "bg-yellow-100 text-orange-700",
   },
   COMPLETED: {
     label: "Completed",

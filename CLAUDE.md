@@ -25,6 +25,7 @@ Never skip steps. Never bundle unrelated changes into one commit.
 - **No magic strings** — Define constants for repeated string values (event names, status keys, routes).
 - **No dead code** — Remove unused imports, components, routes, and dependencies before committing.
 - **No comments that explain what** — Only comment when the *why* is non-obvious.
+- **File headers** — Every source file starts with `// <filename> — <one-line description>`. Check and update on every edit. See `.claude/rules/file-headers.md`.
 - **Standard Next.js** — See `.claude/rules/nextjs-conventions.md`.
 
 ## File Structure Rules

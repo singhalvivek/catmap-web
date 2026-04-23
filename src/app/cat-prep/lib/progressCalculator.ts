@@ -1,3 +1,4 @@
+// progressCalculator — computes completion percentage for a tree node from the progress map
 import { Node } from "../models/node";
 import { ProgressStatus } from "../models/progress";
 

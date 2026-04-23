@@ -1,3 +1,4 @@
+// Tree — renders the full syllabus tree; pure render component, no local state
 "use client";
 
 import { Node } from "../models/node";

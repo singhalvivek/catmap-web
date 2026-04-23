@@ -1,3 +1,4 @@
+// ProgressContext — single source of truth for user progress; one auth subscription for the cat-prep feature
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";

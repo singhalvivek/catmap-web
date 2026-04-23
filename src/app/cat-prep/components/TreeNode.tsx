@@ -1,3 +1,4 @@
+// TreeNode — single collapsible node row with progress badge; reads progress from context
 "use client";
 
 import { useState } from "react";

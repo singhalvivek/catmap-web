@@ -29,7 +29,7 @@ Each item links to its spec doc once created. Update the status column after eac
 
 | ID | Change | Spec | Status | Commit |
 |----|--------|------|--------|--------|
-| M1 | Split DetailsPanel into sub-components | — | 🔲 Todo | — |
+| M1 | Split DetailsPanel into sub-components | [spec](./M1-split-details-panel.md) | ✅ Done | — |
 | M2 | Fix `parent_id: ""` → `null` in data.json + type | — | ✅ Done | — |
 | M3 | Tighten TypeScript types (NodeType union, ResourceType) | — | ✅ Done | — |
 | M4 | Add empty-description state + contribution nudge | — | ✅ Done | — |

@@ -1,3 +1,4 @@
+// progressStore — Firestore read/write helpers for per-node progress status
 import {
   collection,
   doc,
