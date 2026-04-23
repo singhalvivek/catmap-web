@@ -36,8 +36,8 @@ Each item links to its spec doc once created. Update the status column after eac
 | M5 | Remove unused `@xyflow/react` dependency | — | ✅ Done | — |
 | M6 | Promote `/landing` to root `/`, delete old root | [spec](./M6-delete-landing-promote-to-root.md) | ✅ Done | — |
 | M7 | Add ARIA labels and keyboard navigation | — | 🔲 Todo | — |
-| M8 | Load tree data server-side (Server Component) | — | 🔲 Todo | — |
-| M9 | Memoize progress calculation | — | 🔲 Todo | — |
+| M8 | Load tree data server-side (Server Component) | — | ⏸ Deferred (needs backend split) | — |
+| M9 | Memoize progress calculation + 70% TOPIC gate + restrict progress saving to subtopics | — | ✅ Done | — |
 | M10 | Expand FAQ content (platform-specific questions) | — | 🔲 Todo | — |
 
 ## Low Priority
