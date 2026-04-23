@@ -1,11 +1,12 @@
-// Centralized feedback submission logic
+import type { ResourceType } from "../models/resource";
+
 export async function submitFeedback(payload: {
   parentId: number;
   nodeTitle: string;
   description: string;
   resources: {
     title: string;
-    type: "VIDEO" | "ARTICLE";
+    type: ResourceType;
     link: string;
   }[];
   name: string;

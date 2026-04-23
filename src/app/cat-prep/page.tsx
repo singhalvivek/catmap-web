@@ -13,6 +13,7 @@ import { buildTree } from "./lib/buildTree";
 import { Node } from "./models/node";
 import { Description } from "./models/description";
 import { Resource } from "./models/resource";
+import type { Faq as FaqType } from "./models/faq";
 
 // Components
 import Tree from "./components/Tree";
@@ -61,7 +62,7 @@ export default function CatPrepTreePage() {
               </div>
 
               <div className="bg-calm-bg rounded-xl border border-calm-border shadow-card p-6 sm:p-8">
-                <Faq faqs={faqs as any[]} />
+                <Faq faqs={faqs as FaqType[]} />
               </div>
             </div>
           </main>

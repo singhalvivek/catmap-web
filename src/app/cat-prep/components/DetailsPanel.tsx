@@ -7,10 +7,11 @@ import { Resource } from "../models/resource";
 import { submitFeedback } from "../lib/feedback";
 import { ProgressStatus, ProgressMeta } from "../models/progress";
 import { useProgressContext } from "../lib/ProgressContext";
+import type { ResourceType } from "../models/resource";
 
 type EditableResource = {
   title: string;
-  type: "VIDEO" | "ARTICLE";
+  type: ResourceType;
   link: string;
 };
 
@@ -36,7 +37,7 @@ export default function DetailsPanel({
   const [descText, setDescText] = useState(originalDesc);
   const [editResources, setEditResources] = useState<EditableResource[]>(
     originalResources.map((r) => ({
-      title: r.youtubevideo_title,
+      title: r.title,
       type: r.type,
       link: r.link,
     }))
@@ -57,7 +58,7 @@ export default function DetailsPanel({
     setDescText(originalDesc);
     setEditResources(
       originalResources.map((r) => ({
-        title: r.youtubevideo_title,
+        title: r.title,
         type: r.type,
         link: r.link,
       }))
@@ -144,9 +145,19 @@ export default function DetailsPanel({
         <h3 className="text-lg font-semibold text-trust-navy mb-2">Description</h3>
 
         {!editMode ? (
-          <p className="leading-relaxed text-gray-700">
-            {originalDesc || "No description available for this topic yet."}
-          </p>
+          originalDesc ? (
+            <p className="leading-relaxed text-gray-700">{originalDesc}</p>
+          ) : (
+            <div className="rounded-lg border border-dashed border-calm-border bg-calm-bg p-4 text-sm text-gray-500">
+              No description yet.{" "}
+              <button
+                onClick={() => setEditMode(true)}
+                className="text-hope-teal underline hover:no-underline"
+              >
+                Be the first to suggest one.
+              </button>
+            </div>
+          )
         ) : (
           <textarea
             value={descText}
@@ -175,7 +186,7 @@ export default function DetailsPanel({
                 >
                   <div>
                     <div className="font-medium text-trust-navy">
-                      {res.youtubevideo_title}
+                      {res.title}
                     </div>
                     <div className="text-xs text-gray-500">{res.type}</div>
                   </div>
@@ -210,7 +221,7 @@ export default function DetailsPanel({
                   value={r.type}
                   onChange={(e) => {
                     const copy = [...editResources];
-                    copy[idx].type = e.target.value as "VIDEO" | "ARTICLE";
+                    copy[idx].type = e.target.value as ResourceType;
                     setEditResources(copy);
                   }}
                 >

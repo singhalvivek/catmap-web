@@ -23,17 +23,17 @@ Each item links to its spec doc once created. Update the status column after eac
 | H3 | Remove hardcoded Firebase credential fallbacks | [spec](./H3-remove-hardcoded-firebase-credentials.md) | ✅ Done | — |
 | H4 | Add input validation + real error handling to feedback API | — | 🔲 Todo | — |
 | H5 | Consolidate to `/cat-prep`, remove `/cat-prep/tree` dead route | — | ✅ Done | — |
-| H6 | Rename `youtubevideo_title` → `title` in resources | — | 🔲 Todo | — |
+| H6 | Rename `youtubevideo_title` → `title` in resources | — | ✅ Done | — |
 
 ## Medium Priority
 
 | ID | Change | Spec | Status | Commit |
 |----|--------|------|--------|--------|
 | M1 | Split DetailsPanel into sub-components | — | 🔲 Todo | — |
-| M2 | Fix `parent_id: ""` → `null` in data.json + type | — | 🔲 Todo | — |
-| M3 | Tighten TypeScript types (NodeType union, ResourceType) | — | 🔲 Todo | — |
-| M4 | Add empty-description state + contribution nudge | — | 🔲 Todo | — |
-| M5 | Remove unused `@xyflow/react` dependency | — | 🔲 Todo | — |
+| M2 | Fix `parent_id: ""` → `null` in data.json + type | — | ✅ Done | — |
+| M3 | Tighten TypeScript types (NodeType union, ResourceType) | — | ✅ Done | — |
+| M4 | Add empty-description state + contribution nudge | — | ✅ Done | — |
+| M5 | Remove unused `@xyflow/react` dependency | — | ✅ Done | — |
 | M6 | Promote `/landing` to root `/`, delete old root | [spec](./M6-delete-landing-promote-to-root.md) | ✅ Done | — |
 | M7 | Add ARIA labels and keyboard navigation | — | 🔲 Todo | — |
 | M8 | Load tree data server-side (Server Component) | — | 🔲 Todo | — |

@@ -1,9 +1,10 @@
-// Represents a single syllabus node (subject / topic / subtopic)
+export type NodeType = "SUBJECT" | "TOPIC" | "SUBTOPIC";
+
 export type Node = {
   id: number;
-  parent_id: number | null | "";
+  parent_id: number | null;
   title: string;
-  type: string;
+  type: NodeType;
   order_index: number;
   children?: Node[];
 };

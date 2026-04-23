@@ -1,14 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Faq as FaqType } from "../models/faq";
 
-type FAQ = {
-  id: number;
-  question: string;
-  answer: string;
-};
-
-export default function Faq({ faqs }: { faqs: FAQ[] }) {
+export default function Faq({ faqs }: { faqs: FaqType[] }) {
   const [openId, setOpenId] = useState<number | null>(1);
 
   return (
