@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CatMap - Master CAT with Interactive Roadmaps",
-  description: "Interactive learning platform with structured roadmaps, curated resources, and expert guidance for CAT exam preparation",
+  title: "StudyNaksha - Ace your Exams with Interactive Roadmaps",
+  description: "Your roadmap to Exams. Free structured learning paths, curated resources, and community-driven guidance for CAT exam preparation.",
 };
 
 export default function RootLayout({

@@ -1,0 +1,65 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git diff*)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(npx eslint*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run test*)",
+      "Bash(npm test*)",
+      "Bash(grep -r*)",
+      "Bash(ls*)",
+      "Bash(mkdir*)"
+    ],
+    "ask": [
+      "Bash(git commit*)"
+    ],
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(git checkout --*)",
+      "Bash(rm -rf*)",
+      "Bash(npm install*)",
+      "Bash(npm uninstall*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd e:/cat-prep/catmap-web && file=$(echo '$CLAUDE_TOOL_RESULT' | grep -o '\"file_path\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4) && [ -n \"$file\" ] && npx eslint \"$file\" --max-warnings=0 2>&1 || true",
+            "description": "Run ESLint on edited file"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(echo '$CLAUDE_TOOL_INPUT' | grep -o '\"command\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4); case \"$cmd\" in *'git commit'*) cd e:/cat-prep/catmap-web && grep -r 'AIzaSy' src/ 2>/dev/null && echo 'BLOCKED: Firebase key found in src/' && exit 1; echo 'Secret scan passed.';; esac",
+            "description": "Block commits if Firebase API key detected in src/"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Task complete. Next step: run the code-reviewer agent, then test locally before committing.'",
+            "description": "Remind to run code-reviewer after task"
+          }
+        ]
+      }
+    ]
+  }
+}
