@@ -1,3 +1,4 @@
+// Header — sticky nav for the roadmap page; auth via Firebase Google sign-in
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
+import SNLogo from "./SNLogo";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -27,9 +29,8 @@ export default function Header() {
     setAuthError(null);
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      setAuthError("Could not sign in with Google. Please try again.");
-      console.error("Google sign-in failed", error);
+    } catch {
+      setAuthError("Could not sign in. Please try again.");
     }
   };
 
@@ -37,58 +38,106 @@ export default function Header() {
     setAuthError(null);
     try {
       await signOut(auth);
-    } catch (error) {
+    } catch {
       setAuthError("Could not sign out. Please try again.");
-      console.error("Sign-out failed", error);
     }
   };
 
   return (
-    <header className="bg-white border-b border-calm-border sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <span className="text-2xl">📚</span>
+    <header
+      className="sticky top-0 z-50 border-b border-calm-border"
+      style={{
+        background: "#FFFDF8",
+        boxShadow: "0 1px 12px rgba(30,58,95,0.06)",
+        height: 64,
+      }}
+    >
+      <div
+        className="flex items-center justify-between"
+        style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64 }}
+      >
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <SNLogo size={34} />
           <div>
-            <h1 className="text-xl font-bold text-trust-navy leading-tight">StudyNaksha</h1>
-            <p className="text-xs text-gray-500">Your roadmap to Exams</p>
+            <div
+              className="font-extrabold text-trust-navy leading-tight"
+              style={{ fontSize: 17, letterSpacing: "-0.4px" }}
+            >
+              StudyNaksha
+            </div>
+            <div className="text-slate-400" style={{ fontSize: 10, letterSpacing: "0.4px" }}>
+              CAT Roadmap
+            </div>
           </div>
         </Link>
 
-        <div className="flex items-center gap-3 sm:gap-6">
-          <span className="text-gray-700 text-sm font-medium">CAT Roadmap</span>
+        {/* Right nav */}
+        <div className="flex items-center gap-3">
+          <span
+            className="font-semibold text-slate-400"
+            style={{
+              fontSize: 13,
+              padding: "4px 10px",
+              background: "#F1F5F9",
+              borderRadius: 6,
+            }}
+          >
+            CAT 2025
+          </span>
 
           {user ? (
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:block text-sm text-gray-600 max-w-40 truncate">
+            <>
+              <span className="hidden sm:block text-sm text-slate-500 max-w-[140px] truncate">
                 {user.displayName ?? user.email ?? "Signed in"}
               </span>
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="btn-secondary py-2 px-4 text-sm"
+                className="font-semibold text-trust-navy"
+                style={{
+                  fontSize: 13,
+                  padding: "7px 16px",
+                  background: "#F1F5F9",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                }}
               >
                 Sign out
               </button>
-            </div>
+            </>
           ) : (
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="btn-primary py-2 px-4 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              className="font-semibold text-trust-navy disabled:opacity-60"
+              style={{
+                fontSize: 13,
+                padding: "7px 16px",
+                background: "#F1F5F9",
+                border: "1px solid #E2E8F0",
+                borderRadius: 8,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
             >
               {loading ? "Checking..." : "Login with Google"}
             </button>
           )}
 
-          <Link href="/" className="hidden sm:inline-flex btn-primary py-2 px-6 text-sm">
-            Browse Roadmaps
+          <Link
+            href="/"
+            className="text-slate-400 font-medium hidden sm:block"
+            style={{ fontSize: 13 }}
+          >
+            ← Home
           </Link>
         </div>
       </div>
 
       {authError && (
-        <p className="px-4 pb-3 text-sm text-red-600 text-right max-w-6xl mx-auto">
+        <p className="px-6 pb-2 text-xs text-red-600 text-right" style={{ maxWidth: 1120, margin: "0 auto" }}>
           {authError}
         </p>
       )}

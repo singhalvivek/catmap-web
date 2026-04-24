@@ -1,43 +1,81 @@
-// NodeDescription — description section with view/edit modes and empty-state contribution nudge
+// NodeDescription — description section: read-only view or editable textarea in edit mode
 "use client";
 
 export default function NodeDescription({
   originalDesc,
   editMode,
   descText,
-  onDescChange,
-  onSuggestEdit,
+  onChange,
+  onStartEdit,
 }: {
   originalDesc: string;
   editMode: boolean;
   descText: string;
-  onDescChange: (text: string) => void;
-  onSuggestEdit: () => void;
+  onChange: (v: string) => void;
+  onStartEdit: () => void;
 }) {
   return (
-    <section>
-      <h3 className="text-lg font-semibold text-trust-navy mb-2">Description</h3>
+    <section style={{ marginBottom: 20 }}>
+      <div
+        className="font-bold uppercase mb-2.5"
+        style={{ fontSize: 12, color: "#1E3A5F", letterSpacing: "0.5px" }}
+      >
+        Description
+      </div>
 
       {!editMode ? (
         originalDesc ? (
-          <p className="leading-relaxed text-gray-700">{originalDesc}</p>
+          <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.75, margin: 0 }}>
+            {originalDesc}
+          </p>
         ) : (
-          <div className="rounded-lg border border-dashed border-calm-border bg-calm-bg p-4 text-sm text-gray-500">
-            No description yet.{" "}
+          <div
+            style={{
+              padding: 16,
+              borderRadius: 10,
+              background: "#F8FAFC",
+              border: "1.5px dashed #CBD5E1",
+              textAlign: "center",
+              color: "#94A3B8",
+              fontSize: 13,
+            }}
+          >
+            No description yet —{" "}
             <button
-              onClick={onSuggestEdit}
-              className="text-hope-teal underline hover:no-underline"
+              onClick={onStartEdit}
+              style={{
+                color: "#14B8A6",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: 13,
+                fontFamily: "inherit",
+                textDecoration: "underline",
+              }}
             >
-              Be the first to suggest one.
+              be the first to suggest one.
             </button>
           </div>
         )
       ) : (
         <textarea
           value={descText}
-          onChange={(e) => onDescChange(e.target.value)}
-          className="w-full min-h-[120px] border rounded-md p-2 text-sm"
+          onChange={(e) => onChange(e.target.value)}
           placeholder="Edit description..."
+          style={{
+            width: "100%",
+            minHeight: 100,
+            padding: 10,
+            borderRadius: 8,
+            border: "1.5px solid #CBD5E1",
+            fontSize: 14,
+            lineHeight: 1.7,
+            fontFamily: "inherit",
+            resize: "vertical",
+            color: "#334155",
+            outline: "none",
+            boxSizing: "border-box",
+          }}
         />
       )}
     </section>

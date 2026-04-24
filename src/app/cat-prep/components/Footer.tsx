@@ -1,54 +1,116 @@
+// Footer — site footer with logo, platform links, and community links
 "use client";
 
 import Link from "next/link";
+import SNLogo from "./SNLogo";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-calm-border bg-calm-bg py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <footer
+      style={{
+        background: "#1E3A5F",
+        color: "rgba(255,255,255,0.7)",
+        padding: "48px 24px 32px",
+      }}
+    >
+      <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: 32,
+            marginBottom: 40,
+          }}
+        >
+          {/* Brand */}
           <div>
-            <h3 className="text-lg font-semibold text-trust-navy mb-4">
-              📚 StudyNaksha
-            </h3>
-            <p className="text-gray-600">
-              Structured roadmaps for competitive exam preparation
+            <div className="flex items-center gap-2.5 mb-3">
+              <SNLogo size={28} />
+              <span
+                className="font-extrabold text-white"
+                style={{ fontSize: 16 }}
+              >
+                StudyNaksha
+              </span>
+            </div>
+            <p style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.5)" }}>
+              Structured roadmaps for competitive exam preparation. 100% free,
+              community-driven.
             </p>
           </div>
+
+          {/* Platform */}
           <div>
-            <h4 className="text-sm font-semibold text-trust-navy mb-4 uppercase">
-              Navigate
-            </h4>
-            <ul className="space-y-2">
-              <li>
+            <div
+              className="font-bold uppercase mb-3"
+              style={{
+                fontSize: 11,
+                letterSpacing: "1px",
+                color: "rgba(255,255,255,0.4)",
+              }}
+            >
+              Platform
+            </div>
+            {[
+              { label: "CAT Roadmap", href: "/cat-prep" },
+              { label: "Browse All", href: "/" },
+              { label: "Suggest Edits", href: "/cat-prep" },
+            ].map(({ label, href }) => (
+              <div key={label} className="mb-2">
                 <Link
-                  href="/"
-                  className="text-gray-600 hover:text-hope-teal transition-colors"
+                  href={href}
+                  className="transition-colors"
+                  style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, textDecoration: "none" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#14B8A6")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
-                  Home
+                  {label}
                 </Link>
-              </li>
-              <li>
-                <a
-                  href="/#browse"
-                  className="text-gray-600 hover:text-hope-teal transition-colors"
-                >
-                  All Roadmaps
-                </a>
-              </li>
-            </ul>
+              </div>
+            ))}
           </div>
+
+          {/* Community */}
           <div>
-            <h4 className="text-sm font-semibold text-trust-navy mb-4 uppercase">
-              Feedback
-            </h4>
-            <p className="text-gray-600 text-sm">
-              Have suggestions? We'd love to hear from you!
-            </p>
+            <div
+              className="font-bold uppercase mb-3"
+              style={{
+                fontSize: 11,
+                letterSpacing: "1px",
+                color: "rgba(255,255,255,0.4)",
+              }}
+            >
+              Community
+            </div>
+            {["Join Waitlist", "Give Feedback", "Open Source"].map((l) => (
+              <div key={l} className="mb-2">
+                <span
+                  className="cursor-default"
+                  style={{ color: "rgba(255,255,255,0.6)", fontSize: 13 }}
+                >
+                  {l}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="border-t border-calm-border pt-8 text-center text-gray-600 text-sm">
-          <p>Open learning · Community improved · Free resources</p>
+
+        <div
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            paddingTop: 24,
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 8,
+          }}
+        >
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>
+            © 2025 StudyNaksha · Open learning · Community improved · Free resources
+          </span>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>
+            Made with care for CAT aspirants
+          </span>
         </div>
       </div>
     </footer>
