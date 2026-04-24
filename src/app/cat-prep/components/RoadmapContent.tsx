@@ -71,7 +71,7 @@ export default function RoadmapContent({
       >
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <div className="font-semibold mb-1" style={{ fontSize: 12, color: "#94A3B8", letterSpacing: "0.5px" }}>
-            CAT 2025
+            CAT
           </div>
           <h1
             className="font-extrabold text-trust-navy"

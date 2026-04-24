@@ -83,7 +83,7 @@ export default function Header() {
               borderRadius: 6,
             }}
           >
-            CAT 2025
+            CAT
           </span>
 
           {user ? (
@@ -126,13 +126,6 @@ export default function Header() {
             </button>
           )}
 
-          <Link
-            href="/"
-            className="text-slate-400 font-medium hidden sm:block"
-            style={{ fontSize: 13 }}
-          >
-            ← Home
-          </Link>
         </div>
       </div>
 

@@ -6,9 +6,12 @@ import Link from "next/link";
 import SNLogo from "./cat-prep/components/SNLogo";
 import { FAQS } from "./data";
 
+const COURSES = ["CAT", "GMAT", "GRE", "UPSC", "Other"] as const;
+
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [course, setCourse] = useState("");
   const [joined, setJoined] = useState(false);
 
   return (
@@ -171,10 +174,7 @@ export default function LandingPage() {
                 >
                   {s.n}
                 </div>
-                <div
-                  className="font-medium mt-0.5"
-                  style={{ fontSize: 12, color: "#94A3B8" }}
-                >
+                <div className="font-medium mt-0.5" style={{ fontSize: 12, color: "#94A3B8" }}>
                   {s.label}
                 </div>
               </div>
@@ -269,14 +269,9 @@ export default function LandingPage() {
                     marginBottom: 14,
                   }}
                 >
-                  <div
-                    style={{ width: 14, height: 14, borderRadius: "50%", background: s.color }}
-                  />
+                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: s.color }} />
                 </div>
-                <h3
-                  className="font-bold text-trust-navy mb-2"
-                  style={{ fontSize: 16 }}
-                >
+                <h3 className="font-bold text-trust-navy mb-2" style={{ fontSize: 16 }}>
                   {s.title}
                 </h3>
                 <p className="text-slate-500" style={{ fontSize: 14, lineHeight: 1.65, margin: 0 }}>
@@ -342,14 +337,13 @@ export default function LandingPage() {
               </span>
             </div>
 
-            {/* CAT row — live */}
+            {/* CAT row */}
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr auto",
                 alignItems: "center",
                 padding: "20px 24px",
-                borderBottom: "1px solid #F1F5F9",
               }}
             >
               <div className="flex items-center gap-3.5">
@@ -410,63 +404,6 @@ export default function LandingPage() {
                 Open →
               </Link>
             </div>
-
-            {/* Coming soon rows */}
-            {[
-              { label: "GMAT Roadmap", sub: "Verbal · Quant · IR", icon: "M" },
-              { label: "GRE Roadmap", sub: "Math · Verbal · AWA", icon: "G" },
-              { label: "UPSC Roadmap", sub: "Prelims · Mains · Optional", icon: "U" },
-            ].map((r, i) => (
-              <div
-                key={r.label}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr auto",
-                  alignItems: "center",
-                  padding: "18px 24px",
-                  borderBottom: i < 2 ? "1px solid #F1F5F9" : "none",
-                  opacity: 0.55,
-                }}
-              >
-                <div className="flex items-center gap-3.5">
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      background: "#F8FAFC",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 16,
-                      fontWeight: 800,
-                      color: "#94A3B8",
-                    }}
-                  >
-                    {r.icon}
-                  </div>
-                  <div>
-                    <div className="font-semibold" style={{ fontSize: 15, color: "#64748B" }}>
-                      {r.label}
-                    </div>
-                    <div style={{ fontSize: 12, color: "#CBD5E1", marginTop: 2 }}>{r.sub}</div>
-                  </div>
-                </div>
-                <span
-                  style={{
-                    padding: "3px 10px",
-                    background: "#F8FAFC",
-                    color: "#94A3B8",
-                    fontSize: 11,
-                    fontWeight: 600,
-                    borderRadius: 100,
-                    border: "1px solid #E2E8F0",
-                  }}
-                >
-                  Coming Soon
-                </span>
-              </div>
-            ))}
           </div>
 
           {/* Waitlist */}
@@ -482,7 +419,7 @@ export default function LandingPage() {
               Get notified when new roadmaps launch
             </h3>
             <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, margin: "0 0 18px" }}>
-              GMAT, GRE, and UPSC roadmaps are in progress.
+              Tell us which course you&apos;re preparing for and we&apos;ll let you know first.
             </p>
             {joined ? (
               <div className="font-bold" style={{ color: "#5EEAD4", fontSize: 15 }}>
@@ -491,8 +428,32 @@ export default function LandingPage() {
             ) : (
               <div
                 className="flex gap-2 justify-center flex-wrap"
-                style={{ maxWidth: 400, margin: "0 auto" }}
+                style={{ maxWidth: 480, margin: "0 auto" }}
               >
+                <select
+                  value={course}
+                  onChange={(e) => setCourse(e.target.value)}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    border: "1.5px solid rgba(255,255,255,0.2)",
+                    background: "rgba(255,255,255,0.08)",
+                    color: course ? "#fff" : "rgba(255,255,255,0.45)",
+                    fontSize: 14,
+                    outline: "none",
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="" disabled style={{ color: "#64748B", background: "#1E3A5F" }}>
+                    Which course?
+                  </option>
+                  {COURSES.map((c) => (
+                    <option key={c} value={c} style={{ color: "#1E3A5F", background: "#fff" }}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
                 <input
                   type="email"
                   value={email}
@@ -500,7 +461,7 @@ export default function LandingPage() {
                   placeholder="you@email.com"
                   style={{
                     flex: 1,
-                    minWidth: 200,
+                    minWidth: 180,
                     padding: "10px 14px",
                     borderRadius: 8,
                     border: "1.5px solid rgba(255,255,255,0.2)",
@@ -512,7 +473,7 @@ export default function LandingPage() {
                   }}
                 />
                 <button
-                  onClick={() => { if (email) setJoined(true); }}
+                  onClick={() => { if (email && course) setJoined(true); }}
                   className="font-bold text-white"
                   style={{
                     background: "#14B8A6",
@@ -520,8 +481,9 @@ export default function LandingPage() {
                     borderRadius: 8,
                     padding: "10px 20px",
                     fontSize: 14,
-                    cursor: "pointer",
+                    cursor: email && course ? "pointer" : "not-allowed",
                     fontFamily: "inherit",
+                    opacity: email && course ? 1 : 0.6,
                   }}
                 >
                   Join Waitlist
@@ -573,10 +535,7 @@ export default function LandingPage() {
                     fontFamily: "inherit",
                   }}
                 >
-                  <span
-                    className="font-semibold text-trust-navy"
-                    style={{ fontSize: 15, lineHeight: 1.4 }}
-                  >
+                  <span className="font-semibold text-trust-navy" style={{ fontSize: 15, lineHeight: 1.4 }}>
                     {faq.question}
                   </span>
                   <span
@@ -598,10 +557,7 @@ export default function LandingPage() {
                     {openFaq === faq.id ? "−" : "+"}
                   </span>
                 </button>
-                <div
-                  className="faq-answer"
-                  style={{ maxHeight: openFaq === faq.id ? 200 : 0 }}
-                >
+                <div className="faq-answer" style={{ maxHeight: openFaq === faq.id ? 200 : 0 }}>
                   <p style={{ padding: "0 20px 16px", fontSize: 14, color: "#64748B", lineHeight: 1.7, margin: 0 }}>
                     {faq.answer}
                   </p>
@@ -669,6 +625,7 @@ export default function LandingPage() {
           </p>
         </div>
       </section>
+
     </div>
   );
 }
