@@ -3,62 +3,89 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
-  /* 🆕 Landing Page Trust Colors */
-  --trust-navy: #1E3A5F;
-  --trust-blue: #2563EB;
-  --hope-teal: #14B8A6;
-  --warm-gold: #F59E0B;
-  --calm-bg: #F8FAFC;
-  --calm-border: #E2E8F0;
+
+  /* existing brand tokens */
+  --trust-navy: #1e3a5f;
+  --trust-blue: #2563eb;
+  --hope-teal: #14b8a6;
+  --warm-gold: #f59e0b;
+  --calm-bg: #f8fafc;
+  --calm-border: #e2e8f0;
+
+  /* new tokens from design handoff */
+  --page-bg: #fffdf8;
+
+  /* shadows */
+  --shadow-card: 0 4px 20px rgba(30, 58, 95, 0.07);
+  --shadow-card-hover: 0 12px 32px rgba(30, 58, 95, 0.1);
+  --shadow-panel: -8px 0 32px rgba(30, 58, 95, 0.1);
+  --shadow-btn-teal: 0 2px 8px rgba(20, 184, 166, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  
-  /* 🆕 Landing Page Theme Colors */
+  --font-sans: var(--font-jakarta);
+
+  /* brand colours */
   --color-trust-navy: var(--trust-navy);
   --color-trust-blue: var(--trust-blue);
   --color-hope-teal: var(--hope-teal);
   --color-warm-gold: var(--warm-gold);
   --color-calm-bg: var(--calm-bg);
   --color-calm-border: var(--calm-border);
-  
-  --font-heading: Georgia, serif;
-  
-  --shadow-card: 0 4px 14px rgba(30, 58, 95, 0.08);
-  --shadow-card-hover: 0 8px 25px rgba(30, 58, 95, 0.12);
-}
+  --color-page-bg: var(--page-bg);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* colour token aliases */
+  --color-page-bg: var(--page-bg);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jakarta), Arial, sans-serif;
 }
 
-/* =================================== */
-/* 🆕 LANDING PAGE STYLES (Safe Additions) */
-/* =================================== */
+/* =========================================== */
+/* Animations                                   */
+/* =========================================== */
 
-.hero-gradient {
-  background: linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(20, 184, 166, 0.9) 100%);
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
 }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInPanel {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.animate-pulse-dot {
+  animation: pulseDot 2s ease infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 450ms ease both;
+}
+
+.animate-slide-in-panel {
+  animation: slideInPanel 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* =========================================== */
+/* Shared utility classes                       */
+/* =========================================== */
 
 .btn-primary {
   background-color: var(--trust-navy);
   color: white;
   font-weight: 600;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s;
   box-shadow: var(--shadow-card);
@@ -73,24 +100,13 @@ body {
   color: var(--trust-navy);
   border: 2px solid var(--trust-navy);
   font-weight: 600;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s;
 }
 .btn-secondary:hover {
   background: var(--trust-navy);
   color: white;
-}
-
-.savings-badge {
-  display: inline-block;
-  background: var(--hope-teal);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  margin-top: 0.25rem;
 }
 
 .card-hover {
@@ -102,27 +118,6 @@ body {
 }
 
 .faq-answer {
-  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
   overflow: hidden;
-}
-
-.section-divider {
-  height: 1px;
-  background: linear-gradient(to right, rgba(30, 58, 95, 0.2), rgba(20, 184, 166, 0.3), rgba(30, 58, 95, 0.2));
-  margin: 4rem 0;
-}
-
-.bg-grid-pattern {
-  background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .bg-grid-pattern {
-    background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  }
 }

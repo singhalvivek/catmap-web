@@ -1,0 +1,60 @@
+{
+  "testId": "2026-04-27",
+  "sections": [
+    {
+      "name": "VARC",
+      "timeLimitSeconds": 600,
+      "questions": [
+        {
+          "questionId": "q_001",
+          "order": 1,
+          "type": "mcq",
+          "text": "What is the primary purpose of a topic sentence in a paragraph?",
+          "imageUrl": null,
+          "options": [
+            { "index": 0, "text": "To summarise the entire essay", "imageUrl": null },
+            { "index": 1, "text": "To introduce the main idea of the paragraph", "imageUrl": null },
+            { "index": 2, "text": "To provide evidence for the argument", "imageUrl": null },
+            { "index": 3, "text": "To conclude the writer's thoughts", "imageUrl": null }
+          ],
+          "timeLimitSeconds": null,
+          "comprehension": null
+        },
+        {
+          "questionId": "q_002",
+          "order": 2,
+          "type": "mcq",
+          "text": "Based on the passage, what does the author identify as the central challenge of modern urban planning?",
+          "imageUrl": null,
+          "options": [
+            { "index": 0, "text": "Lack of funding from governments", "imageUrl": null },
+            { "index": 1, "text": "Balancing density with livability", "imageUrl": null },
+            { "index": 2, "text": "Opposition from local communities", "imageUrl": null },
+            { "index": 3, "text": "Outdated building codes", "imageUrl": null }
+          ],
+          "timeLimitSeconds": null,
+          "comprehension": {
+            "text": "Modern cities face a paradox: as populations grow, the need for dense housing increases, yet high-rise living often strips away the very qualities that make urban life appealing — parks, street-level commerce, and a human scale of architecture. Urban planners must navigate this tension carefully, finding ways to increase capacity without sacrificing the neighbourhoods that attract residents in the first place.",
+            "imageUrl": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quant",
+      "timeLimitSeconds": 600,
+      "questions": [
+        {
+          "questionId": "q_050",
+          "order": 1,
+          "type": "tita",
+          "text": "How many integers between 1 and 100 (inclusive) are divisible by both 3 and 7?",
+          "imageUrl": null,
+          "options": null,
+          "timeLimitSeconds": null,
+          "comprehension": null
+        }
+      ]
+    }
+  ]
+}

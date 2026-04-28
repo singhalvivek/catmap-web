@@ -1,54 +1,48 @@
-// NodeHeader — node type badge, title, and progress status picker with login/error hints
+// NodeHeader — panel header: node type badge, title, and close button
 "use client";
 
 import { Node } from "../../models/node";
-import { ProgressStatus, ProgressMeta } from "../../models/progress";
 
-export default function NodeHeader({
-  node,
-  status,
-  isLoggedIn,
-  savingProgress,
-  progressError,
-  onStatusChange,
-}: {
-  node: Node;
-  status: ProgressStatus;
-  isLoggedIn: boolean;
-  savingProgress: boolean;
-  progressError: string | null;
-  onStatusChange: (status: ProgressStatus) => Promise<void>;
-}) {
-  const meta = ProgressMeta[status] ?? ProgressMeta.NOT_STARTED;
-
+export default function NodeHeader({ selected, onClose }: { selected: Node; onClose: () => void }) {
   return (
-    <div className="space-y-2">
-      <div className="text-sm text-gray-500">{node.type}</div>
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-bold text-trust-navy">{node.title}</h1>
-        <select
-          value={status}
-          disabled={!isLoggedIn || savingProgress}
-          onChange={(e) => onStatusChange(e.target.value as ProgressStatus)}
-          className={`px-3 py-1.5 text-xs font-medium rounded-full border border-calm-border bg-calm-bg ${meta.color} disabled:opacity-60 disabled:cursor-not-allowed`}
+    <div
+      className="flex items-start justify-between gap-3 shrink-0"
+      style={{ padding: "16px 20px", borderBottom: "1px solid #E8EAF0", background: "#fff" }}
+    >
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          className="font-semibold uppercase mb-1"
+          style={{ fontSize: 11, color: "#94A3B8", letterSpacing: "0.6px" }}
         >
-          {Object.values(ProgressStatus).map((key) => (
-            <option key={key} value={key}>
-              {ProgressMeta[key].label}
-            </option>
-          ))}
-        </select>
+          Subtopic
+        </div>
+        <h2
+          className="font-bold text-trust-navy"
+          style={{ fontSize: 16, lineHeight: 1.3, margin: 0 }}
+        >
+          {selected.title}
+        </h2>
       </div>
-      {!isLoggedIn && (
-        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1 inline-block">
-          Login with Google to save progress.
-        </p>
-      )}
-      {progressError && (
-        <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-md px-2 py-1 inline-block">
-          {progressError}
-        </p>
-      )}
+      <button
+        onClick={onClose}
+        aria-label="Close panel"
+        style={{
+          width: 30,
+          height: 30,
+          borderRadius: 8,
+          background: "#F1F5F9",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#64748B",
+          fontSize: 16,
+          flexShrink: 0,
+        }}
+      >
+        ✕
+      </button>
     </div>
   );
 }
