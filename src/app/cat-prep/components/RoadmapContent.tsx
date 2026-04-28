@@ -14,7 +14,7 @@ import Footer from "./Footer";
 import ErrorBoundary from "./ErrorBoundary";
 import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
-import DailyChallenge from "./DailyChallenge";
+import DailyChallengeCard from "./DailyChallengeCard";
 import ContinueLearning from "./ContinueLearning";
 import DetailsPanel from "./details/DetailsPanel";
 import { useProgressContext } from "../lib/ProgressContext";
@@ -120,7 +120,7 @@ export default function RoadmapContent({
         <ContinueLearning subjects={subjects} progress={progress} onSelectNode={setSelected} />
 
         {/* Daily Challenge */}
-        <DailyChallenge />
+        <DailyChallengeCard />
 
         {/* Subject tabs */}
         <div className="flex gap-2.5 mb-7 flex-wrap">
