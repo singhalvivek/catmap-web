@@ -1,4 +1,4 @@
-// ProgressPicker — 3-button progress status row with login hint and error state
+// ProgressPicker — 3-button progress status row; triggers sign-in modal when not logged in
 "use client";
 
 import { ProgressStatus } from "../../models/progress";
@@ -15,12 +15,14 @@ export default function ProgressPicker({
   saving,
   error,
   onStatusChange,
+  onNeedSignIn,
 }: {
   status: ProgressStatus;
   isLoggedIn: boolean;
   saving: boolean;
   error: string | null;
   onStatusChange: (s: ProgressStatus) => void;
+  onNeedSignIn: () => void;
 }) {
   return (
     <div style={{ marginBottom: 20 }}>
@@ -31,8 +33,11 @@ export default function ProgressPicker({
         {STATUS_OPTIONS.map((s) => (
           <button
             key={s.value}
-            onClick={() => onStatusChange(s.value)}
-            disabled={!isLoggedIn || saving}
+            onClick={() => {
+              if (!isLoggedIn) { onNeedSignIn(); return; }
+              onStatusChange(s.value);
+            }}
+            disabled={saving}
             style={{
               flex: 1,
               padding: "7px 4px",
@@ -42,31 +47,16 @@ export default function ProgressPicker({
               color: status === s.value ? s.color : "#94A3B8",
               fontSize: 11,
               fontWeight: 700,
-              cursor: !isLoggedIn || saving ? "not-allowed" : "pointer",
+              cursor: saving ? "not-allowed" : "pointer",
               fontFamily: "inherit",
               transition: "all 0.15s",
-              opacity: !isLoggedIn || saving ? 0.6 : 1,
+              opacity: saving ? 0.6 : 1,
             }}
           >
             {s.label}
           </button>
         ))}
       </div>
-      {!isLoggedIn && (
-        <div
-          style={{
-            marginTop: 6,
-            fontSize: 11,
-            color: "#94A3B8",
-            padding: "4px 8px",
-            background: "#F8FAFC",
-            borderRadius: 6,
-            display: "inline-block",
-          }}
-        >
-          Login with Google to save progress across devices
-        </div>
-      )}
       {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
   );

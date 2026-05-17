@@ -5,8 +5,16 @@ import type { DailyTest } from "../models/dailyChallenge";
 import DailyChallengePageClient from "./components/DailyChallengePageClient";
 
 export const metadata: Metadata = {
-  title: "Daily Challenge — StudyNaksha",
-  description: "Take today's timed CAT practice test across VARC, DILR, and Quant.",
+  title: "Daily Challenge",
+  description: "Take today's timed CAT practice test across VARC, DILR, and Quant. Track your score and build exam stamina.",
+  openGraph: {
+    title: "Daily Challenge",
+    description: "Take today's timed CAT practice test across VARC, DILR, and Quant.",
+  },
+  twitter: {
+    title: "Daily Challenge",
+    description: "Take today's timed CAT practice test across VARC, DILR, and Quant.",
+  },
 };
 
 function getTodayDate(): string {

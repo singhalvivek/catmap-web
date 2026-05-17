@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { ENV } from "@/config/env";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -9,9 +10,33 @@ const jakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "StudyNaksha - Ace your Exams with Interactive Roadmaps",
+  title: {
+    default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+    template: "%s | StudyNaksha",
+  },
   description:
-    "Your roadmap to Exams. Free structured learning paths, curated resources, and community-driven guidance for CAT exam preparation.",
+    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+  metadataBase: new URL(ENV.SITE_URL),
+  openGraph: {
+    type: "website",
+    siteName: "StudyNaksha",
+    locale: "en_IN",
+    title: {
+      default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+      template: "%s | StudyNaksha",
+    },
+    description:
+      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: {
+      default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+      template: "%s | StudyNaksha",
+    },
+    description:
+      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+  },
 };
 
 export default function RootLayout({

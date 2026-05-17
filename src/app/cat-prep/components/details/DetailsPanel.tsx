@@ -1,7 +1,9 @@
-// DetailsPanel — fixed side-panel orchestrator; composes NodeHeader, ProgressPicker, NodeDescription, ResourceList, FeedbackForm
+// DetailsPanel — fixed side-panel orchestrator; composes NodeHeader, ProgressPicker, NodeDescription, ResourceList, FeedbackForm, ResourceViewer
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 import { Node } from "../../models/node";
 import { Description } from "../../models/description";
 import { Resource } from "../../models/resource";
@@ -16,6 +18,7 @@ import ProgressPicker from "./ProgressPicker";
 import NodeDescription from "./NodeDescription";
 import ResourceList from "./ResourceList";
 import FeedbackForm from "./FeedbackForm";
+import ResourceViewer from "./ResourceViewer";
 
 export default function DetailsPanel({
   selected,
@@ -40,20 +43,28 @@ export default function DetailsPanel({
     [resources, selected.id]
   );
 
-  const [editMode, setEditMode]             = useState(false);
-  const [descText, setDescText]             = useState(originalDesc);
-  const [editResources, setEditResources]   = useState<EditableResource[]>(
+  const [editMode, setEditMode]               = useState(false);
+  const [descText, setDescText]               = useState(originalDesc);
+  const [editResources, setEditResources]     = useState<EditableResource[]>(
     originalResources.map((r) => ({ title: r.title, type: r.type, link: r.link }))
   );
-  const [name, setName]                     = useState("");
-  const [email, setEmail]                   = useState("");
-  const [comment, setComment]               = useState("");
-  const [submitting, setSubmitting]         = useState(false);
-  const [savingProgress, setSavingProgress] = useState(false);
-  const [progressError, setProgressError]   = useState<string | null>(null);
+  const [name, setName]                       = useState("");
+  const [email, setEmail]                     = useState("");
+  const [comment, setComment]                 = useState("");
+  const [submitting, setSubmitting]           = useState(false);
+  const [savingProgress, setSavingProgress]   = useState(false);
+  const [progressError, setProgressError]     = useState<string | null>(null);
+  const [viewingResource, setViewingResource] = useState<Resource | null>(null);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [signingIn, setSigningIn]             = useState(false);
 
   const { progress, updateProgress, isLoggedIn } = useProgressContext();
   const status = progress[selected.id] ?? ProgressStatus.NOT_STARTED;
+
+  // Touch tracking for swipe-to-close (mobile + tablet bottom sheet)
+  const panelRef    = useRef<HTMLDivElement>(null);
+  const touchStartY = useRef(0);
+  const touchDeltaY = useRef(0);
 
   useEffect(() => {
     setEditMode(false);
@@ -65,6 +76,8 @@ export default function DetailsPanel({
     setEmail("");
     setComment("");
     setProgressError(null);
+    setViewingResource(null);
+    setShowSignInModal(false);
   }, [selected.id, originalDesc, originalResources]);
 
   const { percent } = useMemo(
@@ -79,6 +92,18 @@ export default function DetailsPanel({
     const updated = await updateProgress(selected.id, newStatus);
     if (!updated) setProgressError("Could not save. Please try again.");
     setSavingProgress(false);
+  }
+
+  async function handleGoogleSignIn() {
+    setSigningIn(true);
+    try {
+      await signInWithPopup(auth, googleProvider);
+      setShowSignInModal(false);
+    } catch {
+      // user dismissed or popup blocked — leave modal open
+    } finally {
+      setSigningIn(false);
+    }
   }
 
   async function handleSubmit() {
@@ -108,82 +133,211 @@ export default function DetailsPanel({
     setEditResources(copy);
   }
 
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaY.current = 0;
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0 && panelRef.current) {
+      touchDeltaY.current = delta;
+      panelRef.current.style.transform = `translateY(${delta}px)`;
+      panelRef.current.style.transition = "none";
+    }
+  }
+
+  function handleTouchEnd() {
+    if (!panelRef.current) return;
+    if (touchDeltaY.current > 100) {
+      onClose();
+    } else {
+      panelRef.current.style.transform = "";
+      panelRef.current.style.transition = "";
+      touchDeltaY.current = 0;
+    }
+  }
+
   return (
     <>
-      {/* Mobile backdrop */}
-      <div className="fixed inset-0 z-[199] bg-black/30 md:hidden" onClick={onClose} />
+      {/* Backdrop — click outside to close */}
+      <div className="fixed inset-0 z-[199] bg-black/40" onClick={onClose} aria-hidden />
 
-      {/* Panel */}
-      <aside
-        className="animate-slide-in-panel fixed inset-0 z-[200] flex flex-col md:inset-auto md:top-16 md:right-0 md:bottom-0"
-        style={{ width: "100%", background: "#FFFDF8", boxShadow: "var(--shadow-panel)" }}
+      {/* Panel
+          Mobile + Tablet (< lg) : bottom sheet, full width, 82vh, slide from bottom
+          Desktop (lg+)          : right drawer, 1/3 width, top-0 to bottom, slide from right
+      */}
+      <div
+        ref={panelRef}
+        role="complementary"
+        aria-label="Node details"
+        className={[
+          "details-panel",
+          "fixed z-[200] flex flex-col",
+          // Mobile + Tablet: bottom sheet
+          "bottom-0 left-0 right-0 h-[82vh] rounded-t-3xl",
+          // Desktop: right panel from very top
+          "lg:top-0 lg:right-0 lg:left-auto lg:bottom-0 lg:w-1/3 lg:h-auto lg:rounded-none",
+        ].join(" ")}
+        style={{ background: "#FFFDF8" }}
       >
-        <style>{`@media (min-width: 768px) { aside.animate-slide-in-panel { width: 400px; border-left: 1px solid #E2E8F0; } }`}</style>
+        {/* Drag handle — mobile + tablet only */}
+        <div
+          className="flex justify-center items-center flex-shrink-0 lg:hidden"
+          style={{ paddingTop: 12, paddingBottom: 6, touchAction: "none", cursor: "grab" }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          aria-hidden
+        >
+          <div style={{ width: 40, height: 4, borderRadius: 2, background: "#CBD5E1" }} />
+        </div>
 
-        <NodeHeader selected={selected} onClose={onClose} />
-
-        <div className="flex-1 overflow-y-auto" style={{ padding: 20 }}>
-          <ProgressPicker
-            status={status}
-            isLoggedIn={isLoggedIn}
-            saving={savingProgress}
-            error={progressError}
-            onStatusChange={handleStatusChange}
+        {viewingResource ? (
+          <ResourceViewer
+            resource={viewingResource}
+            onBack={() => setViewingResource(null)}
           />
+        ) : (
+          <>
+            <NodeHeader selected={selected} onClose={onClose} />
 
-          {isLocked ? (
+            <div className="flex-1 overflow-y-auto" style={{ padding: 20 }}>
+              <ProgressPicker
+                status={status}
+                isLoggedIn={isLoggedIn}
+                saving={savingProgress}
+                error={progressError}
+                onStatusChange={handleStatusChange}
+                onNeedSignIn={() => setShowSignInModal(true)}
+              />
+
+              {isLocked ? (
+                <div
+                  style={{
+                    borderRadius: 12,
+                    border: "1.5px solid #E2E8F0",
+                    background: "#F8FAFC",
+                    padding: "20px 16px",
+                    textAlign: "center",
+                  }}
+                >
+                  <p className="font-semibold text-trust-navy mb-1" style={{ fontSize: 14 }}>
+                    Revision &amp; Sectional Test Locked
+                  </p>
+                  <p style={{ fontSize: 13, color: "#64748B", marginBottom: 6 }}>
+                    Complete 70% of subtopics to unlock.
+                  </p>
+                  <p className="font-medium" style={{ fontSize: 13, color: "#14B8A6" }}>
+                    {percent}% complete
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <NodeDescription
+                    originalDesc={originalDesc}
+                    editMode={editMode}
+                    descText={descText}
+                    onChange={setDescText}
+                    onStartEdit={() => setEditMode(true)}
+                  />
+                  <ResourceList
+                    originalResources={originalResources}
+                    editMode={editMode}
+                    editResources={editResources}
+                    onUpdate={updateResourceField}
+                    onAdd={() =>
+                      setEditResources([
+                        ...editResources,
+                        { title: "", type: "VIDEO", link: "" },
+                      ])
+                    }
+                    onOpen={setViewingResource}
+                  />
+                  <FeedbackForm
+                    editMode={editMode}
+                    name={name}
+                    email={email}
+                    comment={comment}
+                    submitting={submitting}
+                    onStartEdit={() => setEditMode(true)}
+                    onNameChange={setName}
+                    onEmailChange={setEmail}
+                    onCommentChange={setComment}
+                    onSubmit={handleSubmit}
+                    onCancel={() => setEditMode(false)}
+                  />
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Sign-in modal — shown when a progress button is tapped while logged out */}
+      {showSignInModal && (
+        <>
+          <div
+            className="fixed inset-0 z-[201] bg-black/50"
+            onClick={() => setShowSignInModal(false)}
+            aria-hidden
+          />
+          <div
+            className="fixed z-[202] top-1/2 left-1/2"
+            style={{
+              transform: "translate(-50%, -50%)",
+              background: "#fff",
+              borderRadius: 16,
+              padding: "28px 24px",
+              textAlign: "center",
+              width: "min(300px, calc(100vw - 48px))",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+            }}
+          >
             <div
+              className="font-bold text-trust-navy"
+              style={{ fontSize: 17, marginBottom: 8 }}
+            >
+              Sign in to track progress
+            </div>
+            <p style={{ fontSize: 13, color: "#64748B", marginBottom: 24, lineHeight: 1.6 }}>
+              Save your progress across all devices with Google Sign-In. It&apos;s free.
+            </p>
+            <button
+              onClick={handleGoogleSignIn}
+              disabled={signingIn}
+              className="w-full font-semibold"
               style={{
-                borderRadius: 12,
-                border: "1.5px solid #E2E8F0",
-                background: "#F8FAFC",
-                padding: "20px 16px",
-                textAlign: "center",
+                background: "#1E3A5F",
+                color: "#fff",
+                border: "none",
+                borderRadius: 10,
+                padding: "12px 16px",
+                fontSize: 14,
+                cursor: signingIn ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+                opacity: signingIn ? 0.7 : 1,
               }}
             >
-              <p className="font-semibold text-trust-navy mb-1" style={{ fontSize: 14 }}>
-                Revision &amp; Sectional Test Locked
-              </p>
-              <p style={{ fontSize: 13, color: "#64748B", marginBottom: 6 }}>
-                Complete 70% of subtopics to unlock.
-              </p>
-              <p className="font-medium" style={{ fontSize: 13, color: "#14B8A6" }}>
-                {percent}% complete
-              </p>
-            </div>
-          ) : (
-            <>
-              <NodeDescription
-                originalDesc={originalDesc}
-                editMode={editMode}
-                descText={descText}
-                onChange={setDescText}
-                onStartEdit={() => setEditMode(true)}
-              />
-              <ResourceList
-                originalResources={originalResources}
-                editMode={editMode}
-                editResources={editResources}
-                onUpdate={updateResourceField}
-                onAdd={() => setEditResources([...editResources, { title: "", type: "VIDEO", link: "" }])}
-              />
-              <FeedbackForm
-                editMode={editMode}
-                name={name}
-                email={email}
-                comment={comment}
-                submitting={submitting}
-                onStartEdit={() => setEditMode(true)}
-                onNameChange={setName}
-                onEmailChange={setEmail}
-                onCommentChange={setComment}
-                onSubmit={handleSubmit}
-                onCancel={() => setEditMode(false)}
-              />
-            </>
-          )}
-        </div>
-      </aside>
+              {signingIn ? "Signing in…" : "Sign in with Google"}
+            </button>
+            <button
+              onClick={() => setShowSignInModal(false)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#94A3B8",
+                fontSize: 13,
+                cursor: "pointer",
+                marginTop: 12,
+                fontFamily: "inherit",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </>
+      )}
     </>
   );
 }

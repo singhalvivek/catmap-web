@@ -1,3 +1,4 @@
+// env — validates and exports all required environment variables at startup
 function required(name: string, value?: string) {
   if (!value) {
     throw new Error(`Missing required env var: ${name}`);
@@ -6,6 +7,7 @@ function required(name: string, value?: string) {
 }
 
 export const ENV = {
+  SITE_URL: required("NEXT_PUBLIC_SITE_URL", process.env.NEXT_PUBLIC_SITE_URL),
   SHEETS_WEBHOOK_URL: required(
     "NEXT_PUBLIC_SHEETS_WEBHOOK_URL",
     process.env.NEXT_PUBLIC_SHEETS_WEBHOOK_URL
@@ -39,3 +41,7 @@ export const ENV = {
     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
   ),
 };
+
+// Optional — if set, playlist item lists are shown inside the resource viewer
+export const YOUTUBE_API_KEY: string | null =
+  process.env.NEXT_PUBLIC_YOUTUBE_API_KEY ?? null;
