@@ -1,8 +1,8 @@
 // opengraph-image — CAT Prep Roadmap OG image via ImageResponse (edge runtime, 1200x630)
 import { ImageResponse } from "next/og";
-import { OG_SIZE, OG_CONTENT_TYPE, OG_RUNTIME, OG_BRAND } from "@/app/lib/ogImage";
+import { OG_SIZE, OG_CONTENT_TYPE, OG_BRAND } from "@/app/lib/ogImage";
 
-export const runtime = OG_RUNTIME;
+export const runtime = "edge";
 export const alt = "CAT Prep Roadmap | StudyNaksha";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
