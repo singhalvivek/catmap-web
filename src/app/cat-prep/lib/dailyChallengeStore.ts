@@ -1,94 +1,91 @@
-// dailyChallengeStore — Firestore helpers for reading and writing daily challenge results
-import {
-  doc,
-  getDoc,
-  setDoc,
-  deleteDoc,
-  serverTimestamp,
-  Timestamp,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// dailyChallengeStore — localStorage helpers for daily challenge drafts and results; API fallback for cross-device result lookup
 import type {
   DailyChallengeDraft,
   DailyChallengeResult,
-  SectionResult,
-  VisitStatus,
+  SerializedDailyChallengeResult,
 } from "../models/dailyChallenge";
 
-function dailyChallengeDocRef(uid: string, date: string) {
-  return doc(db, "users", uid, "dailyChallenges", date);
+const DRAFT_KEY = (date: string) => `dc_draft_${date}`;
+const RESULT_KEY = (date: string) => `dc_result_${date}`;
+
+// ---- Result helpers ----
+
+export function saveResultLocally(date: string, result: DailyChallengeResult): void {
+  try {
+    localStorage.setItem(
+      RESULT_KEY(date),
+      JSON.stringify({ ...result, completedAt: result.completedAt.toISOString() })
+    );
+  } catch {
+    // localStorage unavailable (e.g. private browsing quota exceeded) — silently skip
+  }
 }
 
+function readLocalResult(date: string): DailyChallengeResult | null {
+  try {
+    const raw = localStorage.getItem(RESULT_KEY(date));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SerializedDailyChallengeResult;
+    return { ...parsed, completedAt: new Date(parsed.completedAt) };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns the stored result for today's quiz.
+ * Checks localStorage first; falls back to the API for cross-device scenarios.
+ */
 export async function getDailyChallengeResult(
   uid: string,
   date: string
 ): Promise<DailyChallengeResult | null> {
-  const snapshot = await getDoc(dailyChallengeDocRef(uid, date));
-  if (!snapshot.exists()) return null;
+  const local = readLocalResult(date);
+  if (local) return local;
 
-  const data = snapshot.data();
-  // completedAt may be null in local cache while serverTimestamp() is still pending — guard against it
-  const raw = data.completedAt;
-  const completedAt = raw instanceof Timestamp ? raw.toDate() : new Date();
-
-  return {
-    testId: data.testId as string,
-    score: data.score as number,
-    totalMarks: data.totalMarks as number,
-    totalTimeSeconds: (data.totalTimeSeconds as number | undefined) ?? 0,
-    completedAt,
-    sections: data.sections as SectionResult[],
-  };
+  try {
+    const res = await fetch(
+      `/api/daily-challenge-result?uid=${encodeURIComponent(uid)}&date=${encodeURIComponent(date)}`
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as SerializedDailyChallengeResult | null;
+    if (!data) return null;
+    const result: DailyChallengeResult = {
+      ...data,
+      completedAt: new Date(data.completedAt),
+    };
+    // Cache in localStorage for future page loads on this device
+    saveResultLocally(date, result);
+    return result;
+  } catch {
+    return null;
+  }
 }
 
-// --- Draft helpers (in-progress test state for resume) ---
+// ---- Draft helpers ----
 
-function draftDocRef(uid: string, date: string) {
-  return doc(db, "users", uid, "dailyChallengeDrafts", date);
+export function getDailyChallengeDraft(date: string): DailyChallengeDraft | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY(date));
+    if (!raw) return null;
+    return JSON.parse(raw) as DailyChallengeDraft;
+  } catch {
+    return null;
+  }
 }
 
-export async function getDailyChallengeDraft(
-  uid: string,
-  date: string
-): Promise<DailyChallengeDraft | null> {
-  const snapshot = await getDoc(draftDocRef(uid, date));
-  if (!snapshot.exists()) return null;
-  const data = snapshot.data();
-  return {
-    testId: data.testId as string,
-    sectionIndex: data.sectionIndex as number,
-    questionIndex: data.questionIndex as number,
-    sectionTimeLeft: data.sectionTimeLeft as number,
-    responses: data.responses as Record<string, number | null>,
-    visitStatus: data.visitStatus as Record<string, VisitStatus>,
-  };
+export function saveDailyChallengeDraft(date: string, draft: DailyChallengeDraft): void {
+  try {
+    localStorage.setItem(DRAFT_KEY(date), JSON.stringify(draft));
+  } catch {
+    // silently skip
+  }
 }
 
-export async function saveDailyChallengeDraft(
-  uid: string,
-  date: string,
-  draft: DailyChallengeDraft
-): Promise<void> {
-  await setDoc(draftDocRef(uid, date), draft);
-}
-
-export async function clearDailyChallengeDraft(uid: string, date: string): Promise<void> {
-  await deleteDoc(draftDocRef(uid, date));
-}
-
-// --- Result helpers ---
-
-export async function saveDailyChallengeResult(
-  uid: string,
-  date: string,
-  result: DailyChallengeResult
-): Promise<void> {
-  await setDoc(dailyChallengeDocRef(uid, date), {
-    testId: result.testId,
-    score: result.score,
-    totalMarks: result.totalMarks,
-    totalTimeSeconds: result.totalTimeSeconds,
-    completedAt: serverTimestamp(),
-    sections: result.sections,
-  });
+export function clearDailyChallengeDraft(date: string): void {
+  try {
+    localStorage.removeItem(DRAFT_KEY(date));
+  } catch {
+    // silently skip
+  }
 }

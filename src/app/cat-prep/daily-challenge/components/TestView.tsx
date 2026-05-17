@@ -2,13 +2,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { AnswerKey, DailyChallengeDraft, DailyTest, DailyChallengeResult } from "../../models/dailyChallenge";
+import type {
+  DailyChallengeDraft,
+  DailyTest,
+  DailyChallengeResult,
+  SerializedDailyChallengeResult,
+} from "../../models/dailyChallenge";
 import { useDailyChallengeTest, type TestHook } from "../lib/useDailyChallengeTest";
-import {
-  saveDailyChallengeResult,
-  saveDailyChallengeDraft,
-  clearDailyChallengeDraft,
-} from "../../lib/dailyChallengeStore";
+import { saveDailyChallengeDraft, clearDailyChallengeDraft, saveResultLocally } from "../../lib/dailyChallengeStore";
 import SectionHeader from "./SectionHeader";
 import QuestionPalette from "./QuestionPalette";
 import QuestionRenderer from "./QuestionRenderer";
@@ -23,13 +24,10 @@ type Props = {
 
 export default function TestView({ test, date, uid, initialState }: Props) {
   const [result, setResult] = useState<DailyChallengeResult | null>(null);
-  const [answerKey, setAnswerKey] = useState<AnswerKey | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
-  // Ref so finalise() always calls the latest computeResult closure (which captures responses)
-  // without needing computeResult in the effect's dep array (it changes every render)
-  const computeResultRef = useRef<TestHook["computeResult"] | null>(null);
+  const collectTimingRef = useRef<TestHook["collectTimingSnapshot"] | null>(null);
 
   const {
     section,
@@ -47,52 +45,72 @@ export default function TestView({ test, date, uid, initialState }: Props) {
     setTITAAnswer,
     toggleMarkForReview,
     submitChallenge,
-    computeResult,
+    collectTimingSnapshot,
   } = useDailyChallengeTest(test, initialState);
 
-  // Keep the ref current so the finalise effect always scores with the latest responses
-  computeResultRef.current = computeResult;
+  collectTimingRef.current = collectTimingSnapshot;
 
-  // Refs for values that change frequently — lets the draft save read latest without re-triggering
   const sectionTimeLeftRef = useRef(sectionTimeLeft);
   sectionTimeLeftRef.current = sectionTimeLeft;
   const questionIndexRef = useRef(questionIndex);
   questionIndexRef.current = questionIndex;
   const visitStatusRef = useRef(visitStatus);
   visitStatusRef.current = visitStatus;
+  const responsesRef = useRef(responses);
+  responsesRef.current = responses;
 
   // Auto-save draft on every answer or section change (debounced 1s); skip when complete
   useEffect(() => {
     if (isComplete) return;
     const id = setTimeout(() => {
-      saveDailyChallengeDraft(uid, date, {
+      saveDailyChallengeDraft(date, {
         testId: test.testId,
         sectionIndex,
         questionIndex: questionIndexRef.current,
         sectionTimeLeft: sectionTimeLeftRef.current,
         responses,
         visitStatus: visitStatusRef.current,
-      }).catch(() => {});
+      });
     }, 1000);
     return () => clearTimeout(id);
-  }, [responses, sectionIndex, isComplete, uid, date, test.testId]);
+  }, [responses, sectionIndex, isComplete, date, test.testId]);
 
-  // When the test ends: fetch answer key, score, save to Firestore
+  // When the test ends: submit to API, save result to localStorage
   useEffect(() => {
-    if (!isComplete || !computeResultRef.current) return;
+    if (!isComplete || !collectTimingRef.current) return;
 
     async function finalise() {
       setSaving(true);
       setSaveError(false);
       try {
-        const res = await fetch(`/answers/${date}.json`);
-        if (!res.ok) throw new Error("answer key not found");
-        const key: AnswerKey = await res.json();
-        const computed = computeResultRef.current!(key);
-        setAnswerKey(key);
+        const { timings, totalTimeSeconds } = collectTimingRef.current!();
+        const res = await fetch("/api/submit-attempt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date, uid, responses: responsesRef.current, timings, totalTimeSeconds }),
+        });
+
+        if (res.status === 409) {
+          // Already submitted — fetch the stored result instead
+          const stored = await fetch(
+            `/api/daily-challenge-result?uid=${encodeURIComponent(uid)}&date=${encodeURIComponent(date)}`
+          );
+          if (stored.ok) {
+            const data = (await stored.json()) as SerializedDailyChallengeResult;
+            const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
+            saveResultLocally(date, computed);
+            setResult(computed);
+          }
+          return;
+        }
+
+        if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
+
+        const data = (await res.json()) as SerializedDailyChallengeResult;
+        const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
+        saveResultLocally(date, computed);
+        clearDailyChallengeDraft(date);
         setResult(computed);
-        await saveDailyChallengeResult(uid, date, computed);
-        await clearDailyChallengeDraft(uid, date).catch(() => {});
       } catch (err) {
         console.error("[TestView] finalise failed:", err);
         setSaveError(true);
@@ -117,14 +135,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
       );
     }
 
-    return (
-      <ResultView
-        result={result}
-        test={test}
-        answerKey={answerKey}
-        saveError={saveError}
-      />
-    );
+    return <ResultView result={result} test={test} saveError={saveError} />;
   }
 
   if (!section || !question) return null;

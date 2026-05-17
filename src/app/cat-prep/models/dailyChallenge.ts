@@ -1,4 +1,4 @@
-// dailyChallenge — types for daily challenge tests, answer keys, and saved Firestore results
+// dailyChallenge — types for daily challenge tests and saved results
 
 export type QuestionType = "mcq" | "tita";
 
@@ -41,17 +41,12 @@ export type DailyTest = {
   sections: TestSection[];
 };
 
-export type AnswerKey = {
-  testId: string;
-  // MCQ: option index (0-based); TITA: numerical value
-  answers: Record<string, number>;
-};
-
 export type QuestionResponse = {
   type: QuestionType;
   given: number | null; // option index for MCQ, number for TITA, null = unattempted
   correct: boolean;
   marks: number;
+  correctAnswer: number | null; // revealed server-side after submission
   timeSpentSeconds: number;
 };
 
@@ -78,4 +73,9 @@ export type DailyChallengeResult = {
   totalTimeSeconds: number;
   completedAt: Date;
   sections: SectionResult[];
+};
+
+// Wire-format version used in API responses and localStorage; completedAt is an ISO string
+export type SerializedDailyChallengeResult = Omit<DailyChallengeResult, "completedAt"> & {
+  completedAt: string;
 };

@@ -20,10 +20,9 @@ function optionLabel(question: Question, idx: number | null): string {
 type Props = {
   questions: Question[];
   responses: Record<string, QuestionResponse>;
-  answers: Record<string, number>;
 };
 
-export default function QuestionReviewList({ questions, responses, answers }: Props) {
+export default function QuestionReviewList({ questions, responses }: Props) {
   return (
     <div className="flex flex-col" style={{ gap: 1, marginTop: 10 }}>
       {questions.map((q, idx) => {
@@ -49,7 +48,7 @@ export default function QuestionReviewList({ questions, responses, answers }: Pr
 
         const marks = resp?.marks ?? 0;
         const timeSpent = resp?.timeSpentSeconds ?? 0;
-        const correctAnswer = answers[q.questionId] ?? null;
+        const correctAnswer = resp?.correctAnswer ?? null;
 
         return (
           <div

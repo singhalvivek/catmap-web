@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import type { AnswerKey, DailyChallengeResult, DailyTest } from "../../models/dailyChallenge";
+import type { DailyChallengeResult, DailyTest } from "../../models/dailyChallenge";
 import SectionBreakdownCard from "./SectionBreakdownCard";
 
 function formatTime(totalSeconds: number): string {
@@ -17,11 +17,10 @@ function formatTime(totalSeconds: number): string {
 type Props = {
   result: DailyChallengeResult;
   test: DailyTest;
-  answerKey: AnswerKey | null;
   saveError: boolean;
 };
 
-export default function ResultView({ result, test, answerKey, saveError }: Props) {
+export default function ResultView({ result, test, saveError }: Props) {
   const pct = result.totalMarks > 0
     ? Math.round((result.score / result.totalMarks) * 100)
     : 0;
@@ -117,7 +116,6 @@ export default function ResultView({ result, test, answerKey, saveError }: Props
                 key={secResult.name}
                 testSection={testSection}
                 sectionResult={secResult}
-                answers={answerKey?.answers ?? {}}
               />
             );
           })}

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Get-ChildItem 'e:\\\\cat-prep\\\\catmap-web\\\\public\\\\answers' -ErrorAction SilentlyContinue | Select-Object Name\")",
+      "Bash(powershell -Command \"Get-ChildItem 'e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\\\\cat-prep\\\\daily-challenge\\\\components' -Filter '*.tsx' | Select-Object Name\")",
+      "Bash(Get-ChildItem \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\lib\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\config\" -ErrorAction SilentlyContinue)",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\lib\")",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\config\")",
+      "Bash(dir /b \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\lib\")"
+    ]
+  }
+}

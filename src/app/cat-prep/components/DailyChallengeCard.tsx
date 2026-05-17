@@ -65,8 +65,8 @@ export default function DailyChallengeCard() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      // Check if today's challenge JSON exists before showing any CTA
-      const challengeExists = await fetch(`/daily-challenges/${date}.json`, { method: "HEAD" })
+      // Check if today's quiz exists in MongoDB
+      const challengeExists = await fetch(`/api/daily-quiz?date=${date}`)
         .then((r) => r.ok)
         .catch(() => false);
 
@@ -89,7 +89,7 @@ export default function DailyChallengeCard() {
           setCardStatus("cta");
         }
       } catch (err) {
-        console.error("[DailyChallengeCard] Firestore read failed:", err);
+        console.error("[DailyChallengeCard] result check failed:", err);
         setCardStatus("cta");
       }
     });

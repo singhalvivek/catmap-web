@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signInWithPopup, type User } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
-import type { AnswerKey, DailyChallengeDraft, DailyTest, DailyChallengeResult } from "../../models/dailyChallenge";
+import type { DailyChallengeDraft, DailyTest, DailyChallengeResult } from "../../models/dailyChallenge";
 import {
   getDailyChallengeResult,
   getDailyChallengeDraft,
@@ -25,7 +25,6 @@ export default function DailyChallengePageClient({ test, date }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<PageStatus>("loading");
   const [priorResult, setPriorResult] = useState<DailyChallengeResult | null>(null);
-  const [priorAnswerKey, setPriorAnswerKey] = useState<AnswerKey | null>(null);
   const [draft, setDraft] = useState<DailyChallengeDraft | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -41,15 +40,9 @@ export default function DailyChallengePageClient({ test, date }: Props) {
         const result = await getDailyChallengeResult(nextUser.uid, date);
         if (result) {
           setPriorResult(result);
-          // Best-effort: fetch answer key so ResultView can show correct answers
-          try {
-            const keyRes = await fetch(`/answers/${date}.json`);
-            if (keyRes.ok) setPriorAnswerKey(await keyRes.json());
-          } catch { /* silently degrade — ResultView handles null answerKey */ }
           setStatus("completed");
         } else if (test) {
-          // Check for an in-progress draft to offer resume
-          const existingDraft = await getDailyChallengeDraft(nextUser.uid, date);
+          const existingDraft = getDailyChallengeDraft(date);
           if (existingDraft && existingDraft.testId === test.testId) {
             setDraft(existingDraft);
             setStatus("resume_prompt");
@@ -60,12 +53,12 @@ export default function DailyChallengePageClient({ test, date }: Props) {
           setStatus("ready");
         }
       } catch (err) {
-        console.error("[DailyChallengePageClient] Firestore check failed:", err);
+        console.error("[DailyChallengePageClient] check failed:", err);
         setStatus("ready");
       }
     });
     return () => unsubscribe();
-  }, [date]);
+  }, [date, test]);
 
   const handleLogin = async () => {
     setAuthError(null);
@@ -78,10 +71,8 @@ export default function DailyChallengePageClient({ test, date }: Props) {
 
   const handleResume = () => setStatus("ready");
 
-  const handleFreshStart = async () => {
-    if (user) {
-      await clearDailyChallengeDraft(user.uid, date).catch(() => {});
-    }
+  const handleFreshStart = () => {
+    clearDailyChallengeDraft(date);
     setDraft(null);
     setStatus("ready");
   };
@@ -142,15 +133,8 @@ export default function DailyChallengePageClient({ test, date }: Props) {
     return <NoChallengeTodayView date={date} />;
   }
 
-  if (status === "completed" && priorResult && test) {
-    return (
-      <ResultView
-        result={priorResult}
-        test={test}
-        answerKey={priorAnswerKey}
-        saveError={false}
-      />
-    );
+  if (status === "completed" && priorResult) {
+    return <ResultView result={priorResult} test={test} saveError={false} />;
   }
 
   if (status === "resume_prompt" && draft && test) {

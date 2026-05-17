@@ -1,14 +1,10 @@
-// useDailyChallengeTest — manages timers, navigation, answer state, and scoring for a test session
+// useDailyChallengeTest — manages timers, navigation, and answer state for a test session
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
-  AnswerKey,
   DailyChallengeDraft,
   DailyTest,
-  DailyChallengeResult,
-  QuestionResponse,
-  SectionResult,
   VisitStatus,
 } from "../../models/dailyChallenge";
 
@@ -169,55 +165,25 @@ export function useDailyChallengeTest(test: DailyTest, draft?: DailyChallengeDra
     setQuestionTimeLeft(nextSection.questions[0]?.timeLimitSeconds ?? null);
   }, [sectionIndex, test.sections]);
 
-  function computeResult(answerKey: AnswerKey): DailyChallengeResult {
-    // Flush time for the question that was active when the test ended
+  /**
+   * Snapshot current timing data for submission.
+   * Flushes time for the active question before returning — call only once on submit.
+   */
+  const collectTimingSnapshot = useCallback((): {
+    timings: Record<string, number>;
+    totalTimeSeconds: number;
+  } => {
     const activeId = activeQuestionIdRef.current;
     if (activeId) {
       const elapsed = Math.round((Date.now() - questionEnterTimeRef.current) / 1000);
       timeSpentRef.current[activeId] = (timeSpentRef.current[activeId] ?? 0) + elapsed;
       questionEnterTimeRef.current = Date.now(); // prevent double-counting if called again
     }
-    const totalTimeSeconds = Math.round((Date.now() - testStartTimeRef.current) / 1000);
-
-    let totalScore = 0;
-    let totalMarks = 0;
-
-    const sections: SectionResult[] = test.sections.map((sec) => {
-      const secResponses: Record<string, QuestionResponse> = {};
-      let secScore = 0;
-      const secTotal = sec.questions.length * 3;
-      totalMarks += secTotal;
-
-      for (const q of sec.questions) {
-        const given = responses[q.questionId] ?? null;
-        const expected = answerKey.answers[q.questionId] ?? null;
-        let correct = false;
-        let marks = 0;
-
-        if (given !== null && expected !== null) {
-          if (q.type === "mcq") {
-            correct = given === expected;
-            marks = correct ? 3 : -1;
-          } else {
-            // TITA: round both to 2 decimal places before comparing
-            const g = Math.round(given * 100) / 100;
-            const e = Math.round(expected * 100) / 100;
-            correct = g === e;
-            marks = correct ? 3 : 0;
-          }
-        }
-
-        const timeSpentSeconds = timeSpentRef.current[q.questionId] ?? 0;
-        secScore += marks;
-        totalScore += marks;
-        secResponses[q.questionId] = { type: q.type, given, correct, marks, timeSpentSeconds };
-      }
-
-      return { name: sec.name, score: secScore, totalMarks: secTotal, responses: secResponses };
-    });
-
-    return { testId: test.testId, score: totalScore, totalMarks, totalTimeSeconds, completedAt: new Date(), sections };
-  }
+    return {
+      timings: { ...timeSpentRef.current },
+      totalTimeSeconds: Math.round((Date.now() - testStartTimeRef.current) / 1000),
+    };
+  }, []);
 
   return {
     section,
@@ -235,6 +201,6 @@ export function useDailyChallengeTest(test: DailyTest, draft?: DailyChallengeDra
     setTITAAnswer,
     toggleMarkForReview,
     submitChallenge,
-    computeResult,
+    collectTimingSnapshot,
   };
 }
