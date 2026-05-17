@@ -1,0 +1,66 @@
+# Planning Index — StudyNaksha
+
+All planned work is tracked here. Pick an item, write a spec in `planning/`, implement, review, and mark ✅.
+
+See [README.md](./README.md) for the workflow and [instructions.md](./instructions.md) for how to add a new feature.
+
+---
+
+## Status Legend
+- ⬜ Pending
+- 🔄 In Progress
+- ✅ Done
+- ❌ Deferred
+
+---
+
+## Code Quality Sprint
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| L3–L6, M10 | ✅ | [L3-L4-L5-L6-M10-implementation.md](./L3-L4-L5-L6-M10-implementation.md) | Completed in refactor branch |
+
+---
+
+## SEO Phase
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| L1 | ✅ | [SEO-phase.md](./SEO-phase.md) | Per-page `generateMetadata` |
+| L2 | ✅ | [SEO-phase.md](./SEO-phase.md) | `robots.ts` + `sitemap.ts` |
+| L9 | ✅ | [SEO-phase.md](./SEO-phase.md) | `opengraph-image.tsx` per route |
+
+---
+
+## Content
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| M10 | ⬜ | — | Expand FAQ with platform-specific questions |
+
+---
+
+## Features
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| H101 | ✅ | [H101-resource-viewer.md](./H101-resource-viewer.md) | In-panel resource viewer with thumbnails |
+| H102 | ⬜ | — | Roadmap page quiz cards; real quiz on separate page |
+| L101 | ⬜ | — | Waitlist: text-box instead of dropdown |
+
+---
+
+## Deferred
+| ID | Status | Blocker |
+|----|--------|---------|
+| M7 | ❌ | ARIA/keyboard nav — revisit when design stable |
+| M8 | ❌ | Server-side tree load — needs API split first |
+| H4 | ❌ | Feedback API validation — low priority |
+
+---
+
+## Daily Challenge Backlog
+| Item | Status |
+|------|--------|
+| Admin upload tool for daily test JSON | ⬜ |
+| Leaderboard / cross-user comparisons | ⬜ |
+| Detailed per-question time analytics | ⬜ |
+| Partial saves / resume mid-test | ⬜ |
+| Mobile gesture navigation | ⬜ |
+| Dark mode | ⬜ |
