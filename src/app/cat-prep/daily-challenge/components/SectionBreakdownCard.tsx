@@ -15,10 +15,9 @@ function formatTime(seconds: number): string {
 type Props = {
   testSection: TestSection;
   sectionResult: SectionResult;
-  answers: Record<string, number>;
 };
 
-export default function SectionBreakdownCard({ testSection, sectionResult, answers }: Props) {
+export default function SectionBreakdownCard({ testSection, sectionResult }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const sectionTimeSpent = Object.values(sectionResult.responses).reduce(
@@ -88,7 +87,6 @@ export default function SectionBreakdownCard({ testSection, sectionResult, answe
           <QuestionReviewList
             questions={testSection.questions}
             responses={sectionResult.responses}
-            answers={answers}
           />
         </div>
       )}
