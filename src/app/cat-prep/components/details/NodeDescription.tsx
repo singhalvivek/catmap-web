@@ -1,19 +1,7 @@
-// NodeDescription — description section: read-only view or editable textarea in edit mode
+// NodeDescription — description section: read-only view of the subtopic description
 "use client";
 
-export default function NodeDescription({
-  originalDesc,
-  editMode,
-  descText,
-  onChange,
-  onStartEdit,
-}: {
-  originalDesc: string;
-  editMode: boolean;
-  descText: string;
-  onChange: (v: string) => void;
-  onStartEdit: () => void;
-}) {
+export default function NodeDescription({ originalDesc }: { originalDesc: string }) {
   return (
     <section style={{ marginBottom: 20 }}>
       <div
@@ -23,60 +11,24 @@ export default function NodeDescription({
         Description
       </div>
 
-      {!editMode ? (
-        originalDesc ? (
-          <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.75, margin: 0 }}>
-            {originalDesc}
-          </p>
-        ) : (
-          <div
-            style={{
-              padding: 16,
-              borderRadius: 10,
-              background: "#F8FAFC",
-              border: "1.5px dashed #CBD5E1",
-              textAlign: "center",
-              color: "#94A3B8",
-              fontSize: 13,
-            }}
-          >
-            No description yet —{" "}
-            <button
-              onClick={onStartEdit}
-              style={{
-                color: "#14B8A6",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                fontFamily: "inherit",
-                textDecoration: "underline",
-              }}
-            >
-              be the first to suggest one.
-            </button>
-          </div>
-        )
+      {originalDesc ? (
+        <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.75, margin: 0 }}>
+          {originalDesc}
+        </p>
       ) : (
-        <textarea
-          value={descText}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Edit description..."
+        <div
           style={{
-            width: "100%",
-            minHeight: 100,
-            padding: 10,
-            borderRadius: 8,
-            border: "1.5px solid #CBD5E1",
-            fontSize: 14,
-            lineHeight: 1.7,
-            fontFamily: "inherit",
-            resize: "vertical",
-            color: "#334155",
-            outline: "none",
-            boxSizing: "border-box",
+            padding: 16,
+            borderRadius: 10,
+            background: "#F8FAFC",
+            border: "1.5px dashed #CBD5E1",
+            textAlign: "center",
+            color: "#94A3B8",
+            fontSize: 13,
           }}
-        />
+        >
+          No description yet.
+        </div>
       )}
     </section>
   );

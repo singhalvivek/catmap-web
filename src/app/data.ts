@@ -54,7 +54,7 @@ export const FAQS = [
   {
     id: "suggest-resource",
     question: "How do I suggest a new resource?",
-    answer: "Open any subtopic in the roadmap and click 'Suggest an edit'. Fill in the resource title, type, and link along with your name and email, then submit. The team reviews all suggestions before adding them."
+    answer: "Open any subtopic in the roadmap and tap 'Know a better video for this? Suggest it.' You'll be taken directly to WhatsApp with the topic name pre-filled — just add the resource link and send."
   },
   {
     id: "data-updates",
