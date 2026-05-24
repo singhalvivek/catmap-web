@@ -1,10 +1,11 @@
 // LandingPageClient — interactive home page (FAQs, waitlist form, hover effects)
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import SNLogo from "./cat-prep/components/SNLogo";
 import { FAQS } from "./data";
+import { trackEvent } from "./components/analytics";
 
 const COURSES = ["CAT", "GMAT", "GRE", "UPSC", "Other"] as const;
 
@@ -29,11 +30,59 @@ function comparisonValColor(val: string): string {
   return "#64748B";
 }
 
+const SECTION_IDS = [
+  "hero", "problem", "distraction_free", "comparison",
+  "how_it_works", "browse_roadmaps", "faq", "bottom_cta",
+] as const;
+
+type SectionId = typeof SECTION_IDS[number];
+
 export default function LandingPageClient() {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [course, setCourse] = useState("");
   const [joined, setJoined] = useState(false);
+  const sectionRefs = useRef<Partial<Record<SectionId, HTMLElement | null>>>({});
+  const firedSections = useRef<Set<SectionId>>(new Set());
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.getAttribute("data-section") as SectionId;
+          if (!id || firedSections.current.has(id)) return;
+          firedSections.current.add(id);
+          trackEvent("section_viewed", { section_id: id });
+        });
+      },
+      { threshold: 0.5 }
+    );
+    Object.values(sectionRefs.current).forEach((el) => { if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
+
+  const sectionRef = (id: SectionId) => (el: HTMLElement | null) => {
+    sectionRefs.current[id] = el;
+  };
+
+  useEffect(() => {
+    const thresholds = [25, 50, 75, 100] as const;
+    const fired = new Set<number>();
+    function onScroll() {
+      const scrolled = window.scrollY + window.innerHeight;
+      const total = document.documentElement.scrollHeight;
+      const pct = Math.round((scrolled / total) * 100);
+      for (const t of thresholds) {
+        if (pct >= t && !fired.has(t)) {
+          fired.add(t);
+          trackEvent("scroll_depth", { depth_percent: t, page: "landing" });
+        }
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <div style={{ fontFamily: "var(--font-jakarta), sans-serif", minHeight: "100vh", background: "#FFFDF8" }}>
@@ -79,6 +128,7 @@ export default function LandingPageClient() {
                 textDecoration: "none",
                 transition: "transform 0.15s, box-shadow 0.15s",
               }}
+              onClick={() => trackEvent("cta_click", { button_id: "nav_browse_roadmaps", button_label: "Browse Roadmaps" })}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-1px)";
                 e.currentTarget.style.boxShadow = "0 4px 14px rgba(20,184,166,0.45)";
@@ -96,6 +146,8 @@ export default function LandingPageClient() {
 
       {/* Hero */}
       <section
+        ref={sectionRef("hero")}
+        data-section="hero"
         className="animate-fade-in-up"
         style={{
           background: "linear-gradient(160deg, #FFFDF8 0%, #F0FDFA 50%, #EEF2FF 100%)",
@@ -153,6 +205,7 @@ export default function LandingPageClient() {
                 textDecoration: "none",
                 transition: "transform 0.15s, box-shadow 0.15s",
               }}
+              onClick={() => trackEvent("cta_click", { button_id: "hero_start_roadmap", button_label: "Start the free CAT roadmap" })}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-2px)";
                 e.currentTarget.style.boxShadow = "0 6px 20px rgba(20,184,166,0.5)";
@@ -205,7 +258,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* Problem / Agitation */}
-      <section style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+      <section ref={sectionRef("problem")} data-section="problem" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
           <h2
             className="text-center font-extrabold text-trust-navy mb-10"
@@ -286,7 +339,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* Distraction-free hook */}
-      <section style={{ padding: "72px 24px", background: "#F0FDFA" }}>
+      <section ref={sectionRef("distraction_free")} data-section="distraction_free" style={{ padding: "72px 24px", background: "#F0FDFA" }}>
         <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center" }}>
           <h2
             className="font-extrabold text-trust-navy mb-5"
@@ -310,7 +363,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* Comparison table */}
-      <section style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+      <section ref={sectionRef("comparison")} data-section="comparison" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
         <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <div className="text-center mb-10">
             <h2
@@ -474,7 +527,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* How it works */}
-      <section id="how" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+      <section id="how" ref={sectionRef("how_it_works")} data-section="how_it_works" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
           <div className="text-center mb-12">
             <div
@@ -574,7 +627,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* Roadmaps */}
-      <section id="browse" style={{ padding: "72px 24px", background: "#F8FAFC" }}>
+      <section id="browse" ref={sectionRef("browse_roadmaps")} data-section="browse_roadmaps" style={{ padding: "72px 24px", background: "#F8FAFC" }}>
         <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <div className="text-center mb-10">
             <div
@@ -688,6 +741,7 @@ export default function LandingPageClient() {
                   textDecoration: "none",
                   transition: "transform 0.15s",
                 }}
+                onClick={() => trackEvent("cta_click", { button_id: "roadmap_table_open", button_label: "Open" })}
                 onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.04)")}
                 onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
               >
@@ -722,7 +776,10 @@ export default function LandingPageClient() {
               >
                 <select
                   value={course}
-                  onChange={(e) => setCourse(e.target.value)}
+                  onChange={(e) => {
+                    setCourse(e.target.value);
+                    if (e.target.value) trackEvent("exam_preference_selected", { exam: e.target.value });
+                  }}
                   style={{
                     padding: "10px 14px",
                     borderRadius: 8,
@@ -763,7 +820,12 @@ export default function LandingPageClient() {
                   }}
                 />
                 <button
-                  onClick={() => { if (email && course) setJoined(true); }}
+                  onClick={() => {
+                    if (email && course) {
+                      setJoined(true);
+                      trackEvent("waitlist_submitted", { exam: course });
+                    }
+                  }}
                   className="font-bold text-white"
                   style={{
                     background: "#14B8A6",
@@ -785,7 +847,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+      <section id="faq" ref={sectionRef("faq")} data-section="faq" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
         <div style={{ maxWidth: 680, margin: "0 auto" }}>
           <div className="text-center mb-10">
             <div
@@ -815,7 +877,11 @@ export default function LandingPageClient() {
                 }}
               >
                 <button
-                  onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                  onClick={() => {
+                    const isOpening = openFaq !== faq.id;
+                    setOpenFaq(isOpening ? faq.id : null);
+                    if (isOpening) trackEvent("faq_expanded", { faq_id: faq.id, faq_question: faq.question.slice(0, 100), page: "landing" });
+                  }}
                   className="w-full flex items-center justify-between text-left gap-3"
                   style={{
                     padding: "16px 20px",
@@ -860,6 +926,8 @@ export default function LandingPageClient() {
 
       {/* CTA */}
       <section
+        ref={sectionRef("bottom_cta")}
+        data-section="bottom_cta"
         style={{
           padding: "72px 24px",
           background: "linear-gradient(135deg, #1E3A5F 0%, #0F766E 100%)",
@@ -890,6 +958,7 @@ export default function LandingPageClient() {
                 textDecoration: "none",
                 transition: "transform 0.15s",
               }}
+              onClick={() => trackEvent("cta_click", { button_id: "bottom_start_roadmap", button_label: "Start the free CAT roadmap" })}
               onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
             >

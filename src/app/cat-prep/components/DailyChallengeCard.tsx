@@ -7,6 +7,7 @@ import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { getDailyChallengeResult } from "../lib/dailyChallengeStore";
 import type { DailyChallengeResult } from "../models/dailyChallenge";
+import { trackEvent } from "@/app/components/analytics";
 
 function getTodayDate(): string {
   return new Date().toISOString().slice(0, 10);
@@ -295,6 +296,7 @@ export default function DailyChallengeCard() {
               flexShrink: 0,
               marginLeft: 16,
             }}
+            onClick={() => trackEvent("daily_challenge_card_clicked", { challenge_date: date, auth_state: "signed_in", button_id: "view_results" })}
           >
             View Results →
           </Link>
@@ -337,6 +339,7 @@ export default function DailyChallengeCard() {
             flexShrink: 0,
             marginLeft: 16,
           }}
+          onClick={() => trackEvent("daily_challenge_card_clicked", { challenge_date: date, auth_state: "signed_in", button_id: "take_challenge" })}
         >
           Take Challenge →
         </Link>

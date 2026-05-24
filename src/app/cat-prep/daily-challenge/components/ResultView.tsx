@@ -1,9 +1,11 @@
 // ResultView — post-test result screen: overall score, time, and per-section expandable breakdown
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { DailyChallengeResult, DailyTest } from "../../models/dailyChallenge";
 import SectionBreakdownCard from "./SectionBreakdownCard";
+import { trackEvent } from "@/app/components/analytics";
 
 function formatTime(totalSeconds: number): string {
   const h = Math.floor(totalSeconds / 3600);
@@ -18,12 +20,22 @@ type Props = {
   result: DailyChallengeResult;
   test: DailyTest;
   saveError: boolean;
+  is_returning?: boolean;
 };
 
-export default function ResultView({ result, test, saveError }: Props) {
+export default function ResultView({ result, test, saveError, is_returning = false }: Props) {
   const pct = result.totalMarks > 0
     ? Math.round((result.score / result.totalMarks) * 100)
     : 0;
+
+  const eventParams = useRef({
+    challenge_date: result.completedAt.toISOString().slice(0, 10),
+    score_percent: pct,
+    is_returning,
+  });
+  useEffect(() => {
+    trackEvent("daily_challenge_result_viewed", eventParams.current);
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ background: "#FFFDF8" }}>

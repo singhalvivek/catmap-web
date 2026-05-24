@@ -1,6 +1,8 @@
 // FeedbackForm — floating suggest-a-resource footer pinned to the bottom of the details panel
 "use client";
 
+import { trackEvent } from "@/app/components/analytics";
+
 const WA_NUMBER = "919352277260";
 
 export default function FeedbackForm({ topicTitle }: { topicTitle: string }) {
@@ -26,6 +28,7 @@ export default function FeedbackForm({ topicTitle }: { topicTitle: string }) {
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackEvent("feedback_submitted", { subtopic_name: topicTitle, feedback_type: "suggestion" })}
         className="w-full font-semibold"
         style={{
           display: "block",
