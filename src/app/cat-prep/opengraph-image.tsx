@@ -1,13 +1,13 @@
-// opengraph-image — CAT Prep Roadmap OG image via ImageResponse (edge runtime, 1200x630)
+// opengraph-image — CAT prep page OG image with logo mark, headline, and tagline (1200x630)
 import { ImageResponse } from "next/og";
 import { OG_SIZE, OG_CONTENT_TYPE, OG_BRAND } from "@/app/lib/ogImage";
 
 export const runtime = "edge";
-export const alt = "CAT Prep Roadmap | StudyNaksha";
+export const alt = "Free CAT Preparation Roadmap | StudyNaksha";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
-export default function OGImage() {
+export default function CatPrepOGImage() {
   return new ImageResponse(
     (
       <div
@@ -23,28 +23,73 @@ export default function OGImage() {
           padding: 80,
         }}
       >
-        <div style={{ width: 72, height: 8, borderRadius: 4, background: OG_BRAND.teal, marginBottom: 40 }} />
-
-        <div style={{ fontSize: 58, fontWeight: 800, color: OG_BRAND.navy, textAlign: "center", lineHeight: 1.15, marginBottom: 24 }}>
-          CAT Prep Roadmap
+        {/* Logo mark — two overlapping books (scaled from icon.tsx) */}
+        <div
+          style={{
+            display: "flex",
+            position: "relative",
+            width: 96,
+            height: 100,
+            marginBottom: 48,
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              left: 4,
+              top: 0,
+              width: 58,
+              height: 100,
+              borderRadius: 10,
+              background: OG_BRAND.navy,
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              left: 34,
+              top: 0,
+              width: 58,
+              height: 100,
+              borderRadius: 10,
+              background: OG_BRAND.teal,
+            }}
+          />
         </div>
 
-        <div style={{ display: "flex", gap: 20, marginBottom: 32 }}>
-          {["Quantitative Aptitude", "DILR", "VARC"].map((s) => (
-            <div
-              key={s}
-              style={{ padding: "10px 24px", borderRadius: 32, background: "#F0FDFA", border: `2px solid ${OG_BRAND.teal}`, color: "#0F766E", fontSize: 20, fontWeight: 600 }}
-            >
-              {s}
-            </div>
-          ))}
+        <div
+          style={{
+            fontSize: 72,
+            fontWeight: 800,
+            color: OG_BRAND.navy,
+            textAlign: "center",
+            lineHeight: 1.1,
+            marginBottom: 28,
+          }}
+        >
+          CAT Roadmap
         </div>
 
-        <div style={{ fontSize: 24, fontWeight: 400, color: OG_BRAND.slate, textAlign: "center" }}>
-          Free · Structured · Community-driven
+        <div
+          style={{
+            fontSize: 32,
+            fontWeight: 500,
+            color: OG_BRAND.slate,
+            textAlign: "center",
+          }}
+        >
+          Structured · Trackable · Distraction-free
         </div>
 
-        <div style={{ position: "absolute", bottom: 48, fontSize: 20, color: OG_BRAND.teal, fontWeight: 600 }}>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 48,
+            fontSize: 20,
+            color: OG_BRAND.teal,
+            fontWeight: 600,
+          }}
+        >
           {OG_BRAND.domain}
         </div>
       </div>

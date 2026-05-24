@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
 import LandingPageClient from "./LandingPageClient";
 
+const TITLE = "Free CAT Preparation Roadmap | StudyNaksha";
+const DESCRIPTION =
+  "A free, structured, distraction-free CAT prep roadmap built from the best open resources. Quant, DILR & VARC — no coaching fees.";
+
 export const metadata: Metadata = {
   title: {
-    // absolute bypasses the layout template — home page doesn't need "| StudyNaksha" suffix
-    absolute: "StudyNaksha — Free CAT Prep Roadmap & Resources",
+    // absolute bypasses the layout template — full brand + keyword title for the home page
+    absolute: TITLE,
   },
-  description:
-    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+  description: DESCRIPTION,
   openGraph: {
-    title: "StudyNaksha — Free CAT Prep Roadmap & Resources",
-    description:
-      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+    title: TITLE,
+    description: DESCRIPTION,
   },
   twitter: {
-    title: "StudyNaksha — Free CAT Prep Roadmap & Resources",
-    description:
-      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+    title: TITLE,
+    description: DESCRIPTION,
   },
 };
 
