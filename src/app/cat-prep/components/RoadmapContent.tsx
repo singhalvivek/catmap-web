@@ -185,10 +185,51 @@ export default function RoadmapContent({
           </div>
         </ErrorBoundary>
 
-        {/* FAQ */}
+        {/* Community feedback */}
         <div
           style={{
             marginTop: 48,
+            borderRadius: 16,
+            background: "linear-gradient(135deg, #1E3A5F 0%, #0F766E 100%)",
+            padding: "28px 28px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 20,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <p className="font-extrabold" style={{ fontSize: 18, color: "#fff", margin: "0 0 4px" }}>
+              Got feedback or found an issue?
+            </p>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", margin: 0, lineHeight: 1.6 }}>
+              Share what&apos;s working, what&apos;s broken, or what you wish existed.
+            </p>
+          </div>
+          <a
+            href="https://t.me/studynaksha"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold flex-shrink-0"
+            style={{
+              display: "inline-block",
+              padding: "11px 22px",
+              borderRadius: 8,
+              background: "#fff",
+              color: "#1E3A5F",
+              fontSize: 14,
+              textDecoration: "none",
+            }}
+          >
+            Join on Telegram →
+          </a>
+        </div>
+
+        {/* FAQ */}
+        <div
+          style={{
+            marginTop: 24,
             padding: "32px 28px",
             background: "#fff",
             borderRadius: 16,
