@@ -67,7 +67,7 @@ export default function LandingPageClient() {
                 e.currentTarget.style.boxShadow = "0 2px 8px rgba(20,184,166,0.35)";
               }}
             >
-              Browse Roadmaps →
+              Browse Roadmaps
             </Link>
           </div>
         </div>
@@ -818,22 +818,8 @@ export default function LandingPageClient() {
               onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
             >
-              Open CAT Roadmap →
+              Start the free CAT roadmap →
             </Link>
-            <button
-              className="font-semibold text-white"
-              style={{
-                background: "rgba(255,255,255,0.1)",
-                border: "1.5px solid rgba(255,255,255,0.3)",
-                borderRadius: 10,
-                padding: "14px 28px",
-                fontSize: 15,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              Join Community
-            </button>
           </div>
           <p style={{ marginTop: 20, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
             Open learning · Community improved · 100% free
