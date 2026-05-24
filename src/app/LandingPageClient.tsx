@@ -502,20 +502,20 @@ export default function LandingPageClient() {
             {[
               {
                 n: "01",
-                title: "Pick a Section",
-                desc: "Choose from Quantitative Aptitude, DILR, or VARC — the three pillars of CAT.",
+                title: "Open the roadmap.",
+                desc: "No sign-up needed. Just start exploring topics across Quant, DILR and VARC.",
                 color: "#1E3A5F",
               },
               {
                 n: "02",
-                title: "Follow the Roadmap",
-                desc: "Topics and subtopics are organized in a proven learning order. No guesswork.",
+                title: "Follow the path.",
+                desc: "Watch curated videos and notes in the right order, distraction-free, at your own pace.",
                 color: "#0F766E",
               },
               {
                 n: "03",
-                title: "Access Free Resources",
-                desc: "Each subtopic links to the best videos, notes, and articles — all free.",
+                title: "Track your progress.",
+                desc: "Sign in with Google to save where you are and pick up exactly where you left off.",
                 color: "#92400E",
               },
             ].map((s) => (
