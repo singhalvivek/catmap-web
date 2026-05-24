@@ -1,7 +1,6 @@
-// SectionHeader — sticky bar showing challenge name, section count, timers, and submit button
+// SectionHeader — sticky bar showing challenge name, timers, and submit button
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 
 function formatTime(seconds: number): string {
@@ -12,8 +11,6 @@ function formatTime(seconds: number): string {
 
 type Props = {
   challengeName: string;
-  sectionIndex: number;
-  totalSections: number;
   sectionTimeLeft: number;
   questionTimeLeft: number | null;
   onSubmitChallenge: () => void;
@@ -21,23 +18,15 @@ type Props = {
 
 export default function SectionHeader({
   challengeName,
-  sectionIndex,
-  totalSections,
   sectionTimeLeft,
   questionTimeLeft,
   onSubmitChallenge,
 }: Props) {
-  const [confirming, setConfirming] = useState(false);
+  const sectionCritical = sectionTimeLeft <= 30;
   const sectionWarning = sectionTimeLeft <= 60;
   const questionWarning = questionTimeLeft !== null && questionTimeLeft <= 10;
 
-  function handleSubmitClick() {
-    if (!confirming) {
-      setConfirming(true);
-      return;
-    }
-    onSubmitChallenge();
-  }
+  const timerColor = sectionCritical ? "#EF4444" : sectionWarning ? "#FBBF24" : "#fff";
 
   return (
     <div
@@ -56,7 +45,7 @@ export default function SectionHeader({
         className="flex items-center justify-between w-full"
         style={{ maxWidth: 960, margin: "0 auto" }}
       >
-        {/* Left: back link + challenge name + section count */}
+        {/* Left: back link + challenge name */}
         <div className="flex items-center gap-3">
           <Link
             href="/cat-prep"
@@ -68,23 +57,11 @@ export default function SectionHeader({
               letterSpacing: "0.2px",
             }}
           >
-            ← Roadmap
+            ← Back
           </Link>
           <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14 }}>|</span>
           <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
             {challengeName}
-          </span>
-          <span
-            className="font-medium"
-            style={{
-              fontSize: 11,
-              color: "rgba(255,255,255,0.6)",
-              padding: "2px 9px",
-              borderRadius: 100,
-              background: "rgba(255,255,255,0.12)",
-            }}
-          >
-            {sectionIndex + 1} / {totalSections}
           </span>
         </div>
 
@@ -94,8 +71,8 @@ export default function SectionHeader({
             <span
               className="font-semibold"
               style={{
-                fontSize: 13,
-                color: questionWarning ? "#FCA5A5" : "rgba(255,255,255,0.7)",
+                fontSize: 12,
+                color: questionWarning ? "#FCA5A5" : "rgba(255,255,255,0.6)",
               }}
             >
               Q: {formatTime(questionTimeLeft)}
@@ -105,11 +82,12 @@ export default function SectionHeader({
           <span
             className="font-bold"
             style={{
-              fontSize: 15,
-              color: sectionWarning ? "#FCA5A5" : "#fff",
+              fontSize: 16,
+              color: timerColor,
               fontVariantNumeric: "tabular-nums",
-              minWidth: 42,
+              minWidth: 44,
               textAlign: "right",
+              letterSpacing: "0.5px",
             }}
           >
             {formatTime(sectionTimeLeft)}
@@ -117,23 +95,21 @@ export default function SectionHeader({
 
           <button
             type="button"
-            onClick={handleSubmitClick}
-            onBlur={() => setConfirming(false)}
+            onClick={onSubmitChallenge}
             className="font-bold"
             style={{
               padding: "5px 14px",
               borderRadius: 7,
-              background: confirming ? "#EF4444" : "rgba(255,255,255,0.15)",
+              background: "rgba(255,255,255,0.12)",
               color: "#fff",
-              border: confirming ? "1.5px solid #EF4444" : "1.5px solid rgba(255,255,255,0.25)",
+              border: "1.5px solid rgba(255,255,255,0.22)",
               fontSize: 12,
               cursor: "pointer",
               fontFamily: "inherit",
-              transition: "all 0.15s",
               whiteSpace: "nowrap",
             }}
           >
-            {confirming ? "Confirm submit?" : "Submit Challenge"}
+            Submit
           </button>
         </div>
       </div>
