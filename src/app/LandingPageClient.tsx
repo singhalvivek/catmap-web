@@ -8,6 +8,27 @@ import { FAQS } from "./data";
 
 const COURSES = ["CAT", "GMAT", "GRE", "UPSC", "Other"] as const;
 
+const COMPARISON_ROWS = [
+  { label: "Cost",                   sn: "Free (later ₹200/mo)", coaching: "₹30k–₹80k+",  yt: "Free"           },
+  { label: "Structured path",        sn: "Yes — full roadmap",   coaching: "Yes",           yt: "No — you guess" },
+  { label: "Distraction-free",       sn: "Yes — embedded",       coaching: "Yes",           yt: "No"             },
+  { label: "Self-paced",             sn: "Yes",                  coaching: "Mostly fixed",  yt: "Yes"            },
+  { label: "Community-improved",     sn: "Yes",                  coaching: "No",            yt: "No"             },
+  { label: "Live classes & mentors", sn: "No",                   coaching: "Yes",           yt: "No"             },
+] as const;
+
+const COMPARISON_COLS = [
+  { key: "sn",       name: "StudyNaksha",    highlight: true  },
+  { key: "coaching", name: "Paid Coaching",  highlight: false },
+  { key: "yt",       name: "Random YouTube", highlight: false },
+] as const;
+
+function comparisonValColor(val: string): string {
+  if (val.toLowerCase().startsWith("yes") || val === "Free (later ₹200/mo)" || val === "Free") return "#059669";
+  if (val.toLowerCase().startsWith("no")) return "#DC2626";
+  return "#64748B";
+}
+
 export default function LandingPageClient() {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -299,7 +320,74 @@ export default function LandingPageClient() {
               How does StudyNaksha compare?
             </h2>
           </div>
-          <div style={{ overflowX: "auto" }}>
+
+          {/* Mobile: one snap-scrollable card per column */}
+          <div className="md:hidden">
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                overflowX: "auto",
+                scrollSnapType: "x mandatory",
+                paddingBottom: 8,
+              }}
+            >
+              {COMPARISON_COLS.map((col) => (
+                <div
+                  key={col.key}
+                  style={{
+                    minWidth: "calc(100vw - 64px)",
+                    scrollSnapAlign: "start",
+                    flexShrink: 0,
+                    background: "#fff",
+                    borderRadius: 16,
+                    border: col.highlight ? "2px solid #14B8A6" : "1.5px solid #E8EAF0",
+                    overflow: "hidden",
+                    boxShadow: col.highlight ? "0 4px 16px rgba(20,184,166,0.15)" : "var(--shadow-card)",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "14px 16px",
+                      background: col.highlight ? "#1E3A5F" : "#F8FAFC",
+                      textAlign: "center",
+                    }}
+                  >
+                    <span style={{ fontSize: 14, fontWeight: 700, color: col.highlight ? "#5EEAD4" : "#64748B" }}>
+                      {col.name}
+                    </span>
+                  </div>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <div
+                      key={row.label}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "11px 16px",
+                        background: i % 2 === 0 ? "#fff" : "#F8FAFC",
+                        borderTop: "1px solid #E8EAF0",
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: 13, color: "#1E3A5F", fontWeight: 500, flex: 1 }}>
+                        {row.label}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: comparisonValColor(row[col.key]), flexShrink: 0 }}>
+                        {row[col.key]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <p style={{ textAlign: "center", fontSize: 12, color: "#94A3B8", marginTop: 8 }}>
+              Swipe to compare →
+            </p>
+          </div>
+
+          {/* Desktop: full table */}
+          <div className="hidden md:block" style={{ overflowX: "auto" }}>
             <table
               style={{
                 width: "100%",
@@ -323,75 +411,62 @@ export default function LandingPageClient() {
                       textTransform: "uppercase",
                     }}
                   />
-                  {["StudyNaksha", "Paid Coaching", "Random YouTube"].map((col) => (
+                  {COMPARISON_COLS.map((col) => (
                     <th
-                      key={col}
+                      key={col.key}
                       style={{
                         padding: "14px 20px",
                         textAlign: "center",
                         fontSize: 13,
                         fontWeight: 700,
-                        color: col === "StudyNaksha" ? "#5EEAD4" : "rgba(255,255,255,0.7)",
+                        color: col.highlight ? "#5EEAD4" : "rgba(255,255,255,0.7)",
                         letterSpacing: "0.3px",
                       }}
                     >
-                      {col}
+                      {col.name}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {([
-                  ["Cost", "Free (later ₹200/mo)", "₹30k–₹80k+", "Free"],
-                  ["Structured path", "Yes — full roadmap", "Yes", "No — you guess"],
-                  ["Distraction-free", "Yes — embedded", "Yes", "No"],
-                  ["Self-paced", "Yes", "Mostly fixed", "Yes"],
-                  ["Community-improved", "Yes", "No", "No"],
-                  ["Live classes & mentors", "No", "Yes", "No"],
-                ] as const).map((row, i) => {
-                  const [label, sn, coaching, yt] = row;
-                  return (
-                    <tr key={label} style={{ background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
-                      <td
-                        style={{
-                          padding: "14px 20px",
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: "#1E3A5F",
-                          borderBottom: "1px solid #E8EAF0",
-                        }}
-                      >
-                        {label}
-                      </td>
-                      {[sn, coaching, yt].map((val, j) => {
-                        const isYes = val.toLowerCase().startsWith("yes") || val === "Free (later ₹200/mo)" || val === "Free";
-                        const isNo = val.toLowerCase().startsWith("no");
-                        const bg = j === 0
-                          ? isNo
-                            ? "rgba(249,115,22,0.08)"
-                            : "rgba(20,184,166,0.07)"
-                          : "transparent";
-                        const color = isYes ? "#059669" : isNo ? "#DC2626" : "#64748B";
-                        return (
-                          <td
-                            key={j}
-                            style={{
-                              padding: "14px 20px",
-                              textAlign: "center",
-                              fontSize: 13,
-                              fontWeight: 600,
-                              color,
-                              background: bg,
-                              borderBottom: "1px solid #E8EAF0",
-                            }}
-                          >
-                            {val}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
+                {COMPARISON_ROWS.map((row, i) => (
+                  <tr key={row.label} style={{ background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
+                    <td
+                      style={{
+                        padding: "14px 20px",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#1E3A5F",
+                        borderBottom: "1px solid #E8EAF0",
+                      }}
+                    >
+                      {row.label}
+                    </td>
+                    {COMPARISON_COLS.map((col, j) => {
+                      const val = row[col.key];
+                      const isNo = val.toLowerCase().startsWith("no");
+                      const bg = j === 0
+                        ? isNo ? "rgba(249,115,22,0.08)" : "rgba(20,184,166,0.07)"
+                        : "transparent";
+                      return (
+                        <td
+                          key={col.key}
+                          style={{
+                            padding: "14px 20px",
+                            textAlign: "center",
+                            fontSize: 13,
+                            fontWeight: 600,
+                            color: comparisonValColor(val),
+                            background: bg,
+                            borderBottom: "1px solid #E8EAF0",
+                          }}
+                        >
+                          {val}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
