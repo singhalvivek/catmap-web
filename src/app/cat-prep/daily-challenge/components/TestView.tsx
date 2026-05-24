@@ -11,6 +11,7 @@ import type {
 } from "../../models/dailyChallenge";
 import { useDailyChallengeTest, type TestHook } from "../lib/useDailyChallengeTest";
 import { saveDailyChallengeDraft, clearDailyChallengeDraft, saveResultLocally } from "../../lib/dailyChallengeStore";
+import { trackEvent } from "@/app/components/analytics";
 import SectionHeader from "./SectionHeader";
 import QuestionPalette from "./QuestionPalette";
 import QuestionRenderer from "./QuestionRenderer";
@@ -69,6 +70,18 @@ export default function TestView({ test, date, uid, initialState }: Props) {
   visitStatusRef.current = visitStatus;
   const responsesRef = useRef(responses);
   responsesRef.current = responses;
+
+  const totalQuestions = test.sections.reduce((sum, s) => sum + s.questions.length, 0);
+
+  const startParams = useRef({ initialState, challenge_date: date, total_questions: totalQuestions });
+  useEffect(() => {
+    if (!startParams.current.initialState) {
+      trackEvent("daily_challenge_started", {
+        challenge_date: startParams.current.challenge_date,
+        total_questions: startParams.current.total_questions,
+      });
+    }
+  }, []);
 
   // Keep the current question button centred in the mobile palette bar
   useEffect(() => {
@@ -129,6 +142,14 @@ export default function TestView({ test, date, uid, initialState }: Props) {
         saveResultLocally(date, computed);
         clearDailyChallengeDraft(date);
         setResult(computed);
+        const correct = computed.sections.reduce((n, s) => n + Object.values(s.responses).filter((r) => r.correct).length, 0);
+        trackEvent("daily_challenge_submitted", {
+          challenge_date: date,
+          total_questions: totalQuestions,
+          correct_count: correct,
+          score_percent: Math.round((correct / totalQuestions) * 100),
+          time_taken_seconds: data.totalTimeSeconds ?? 0,
+        });
       } catch (err) {
         console.error("[TestView] finalise failed:", err);
         setSaveError(true);

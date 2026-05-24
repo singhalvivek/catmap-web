@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Node } from "../models/node";
 import { ProgressStatus } from "../models/progress";
 import SubtopicChip from "./SubtopicChip";
+import { trackEvent } from "@/app/components/analytics";
 
 export default function TopicRow({
   topic,
@@ -33,7 +34,11 @@ export default function TopicRow({
   return (
     <div style={{ marginBottom: 8 }}>
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          const opening = !open;
+          setOpen(opening);
+          if (opening) trackEvent("topic_expanded", { topic_id: String(topic.id), topic_name: topic.title });
+        }}
         aria-expanded={open}
         style={{
           width: "100%",

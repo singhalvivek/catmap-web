@@ -1,7 +1,7 @@
 // DailyChallengePageClient — auth gate; checks for prior attempt, then renders TestView or ResultView
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { onAuthStateChanged, signInWithPopup, type User } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import type { DailyChallengeDraft, DailyTest, DailyChallengeResult } from "../../models/dailyChallenge";
@@ -13,6 +13,7 @@ import {
 import TestView from "./TestView";
 import NoChallengeTodayView from "./NoChallengeTodayView";
 import ResultView from "./ResultView";
+import { trackEvent } from "@/app/components/analytics";
 
 type Props = {
   test: DailyTest | null;
@@ -27,12 +28,17 @@ export default function DailyChallengePageClient({ test, date }: Props) {
   const [priorResult, setPriorResult] = useState<DailyChallengeResult | null>(null);
   const [draft, setDraft] = useState<DailyChallengeDraft | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const landedFired = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
       setUser(nextUser);
       if (!nextUser) {
         setStatus("unauthenticated");
+        if (!landedFired.current) {
+          landedFired.current = true;
+          trackEvent("daily_challenge_landed", { challenge_date: date, auth_state: "signed_out", resuming_draft: false });
+        }
         return;
       }
       setStatus("checking");
@@ -41,16 +47,32 @@ export default function DailyChallengePageClient({ test, date }: Props) {
         if (result) {
           setPriorResult(result);
           setStatus("completed");
+          if (!landedFired.current) {
+            landedFired.current = true;
+            trackEvent("daily_challenge_landed", { challenge_date: date, auth_state: "signed_in", resuming_draft: false });
+          }
         } else if (test) {
           const existingDraft = getDailyChallengeDraft(date);
           if (existingDraft && existingDraft.testId === test.testId) {
             setDraft(existingDraft);
             setStatus("resume_prompt");
+            if (!landedFired.current) {
+              landedFired.current = true;
+              trackEvent("daily_challenge_landed", { challenge_date: date, auth_state: "signed_in", resuming_draft: true });
+            }
           } else {
             setStatus("ready");
+            if (!landedFired.current) {
+              landedFired.current = true;
+              trackEvent("daily_challenge_landed", { challenge_date: date, auth_state: "signed_in", resuming_draft: false });
+            }
           }
         } else {
           setStatus("ready");
+          if (!landedFired.current) {
+            landedFired.current = true;
+            trackEvent("daily_challenge_landed", { challenge_date: date, auth_state: "no_challenge_today", resuming_draft: false });
+          }
         }
       } catch (err) {
         console.error("[DailyChallengePageClient] check failed:", err);
@@ -62,6 +84,7 @@ export default function DailyChallengePageClient({ test, date }: Props) {
 
   const handleLogin = async () => {
     setAuthError(null);
+    trackEvent("signin_clicked", { trigger_location: "daily_challenge_gate" });
     try {
       await signInWithPopup(auth, googleProvider);
     } catch {
@@ -69,7 +92,13 @@ export default function DailyChallengePageClient({ test, date }: Props) {
     }
   };
 
-  const handleResume = () => setStatus("ready");
+  const handleResume = () => {
+    trackEvent("daily_challenge_resumed", {
+      challenge_date: date,
+      questions_answered: draft ? Object.keys(draft.responses ?? {}).length : 0,
+    });
+    setStatus("ready");
+  };
 
   const handleFreshStart = () => {
     clearDailyChallengeDraft(date);
@@ -134,7 +163,7 @@ export default function DailyChallengePageClient({ test, date }: Props) {
   }
 
   if (status === "completed" && priorResult) {
-    return <ResultView result={priorResult} test={test} saveError={false} />;
+    return <ResultView result={priorResult} test={test} saveError={false} is_returning={true} />;
   }
 
   if (status === "resume_prompt" && draft && test) {

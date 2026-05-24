@@ -1,7 +1,7 @@
 // Header — sticky nav for the roadmap page; auth via Firebase Google sign-in
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   User,
@@ -11,14 +11,21 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import SNLogo from "./SNLogo";
+import { trackEvent } from "@/app/components/analytics";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const prevUser = useRef<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      if (nextUser && !prevUser.current) {
+        const isNew = nextUser.metadata.creationTime === nextUser.metadata.lastSignInTime;
+        trackEvent("signin_completed", { method: "google", is_new_user: isNew });
+      }
+      prevUser.current = nextUser;
       setUser(nextUser);
       setLoading(false);
     });
@@ -27,6 +34,7 @@ export default function Header() {
 
   const handleGoogleSignIn = async () => {
     setAuthError(null);
+    trackEvent("signin_clicked", { trigger_location: "header" });
     try {
       await signInWithPopup(auth, googleProvider);
     } catch {

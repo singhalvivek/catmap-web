@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { ENV } from "@/config/env";
+import { GoogleAnalytics } from "@/app/components/GoogleAnalytics";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -46,7 +47,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakartaSans.variable} antialiased`}>{children}</body>
+      <body className={`${jakartaSans.variable} antialiased`}>
+        {children}
+        <GoogleAnalytics />
+      </body>
     </html>
   );
 }

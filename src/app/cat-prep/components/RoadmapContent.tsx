@@ -1,7 +1,7 @@
 // RoadmapContent — client-side roadmap UI; receives pre-built tree data from server page
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
@@ -11,6 +11,7 @@ import { SUBJECT_META } from "../lib/subjectMeta";
 
 import Header from "./Header";
 import Footer from "./Footer";
+import { trackEvent } from "@/app/components/analytics";
 import ErrorBoundary from "./ErrorBoundary";
 import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
@@ -34,7 +35,14 @@ export default function RoadmapContent({
   const [selected, setSelected] = useState<Node | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const { progress } = useProgressContext();
+  const { progress, isLoggedIn } = useProgressContext();
+  const landedFired = useRef(false);
+
+  useEffect(() => {
+    if (landedFired.current) return;
+    landedFired.current = true;
+    trackEvent("cat_prep_landed", { auth_state: isLoggedIn ? "signed_in" : "signed_out" });
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -132,7 +140,11 @@ export default function RoadmapContent({
                 key={subject.id}
                 subject={subject}
                 isActive={activeSubjectId === subject.id}
-                onClick={() => { setActiveSubjectId(subject.id); setSelected(null); }}
+                onClick={() => {
+                  setActiveSubjectId(subject.id);
+                  setSelected(null);
+                  trackEvent("subject_tab_changed", { subject: subMeta.abbr });
+                }}
                 progress={progress}
                 meta={subMeta}
               />
@@ -176,7 +188,15 @@ export default function RoadmapContent({
                 <TopicRow
                   key={topic.id}
                   topic={topic}
-                  onSelectNode={setSelected}
+                  onSelectNode={(node) => {
+                    setSelected(node);
+                    trackEvent("subtopic_clicked", {
+                      subtopic_id: String(node.id),
+                      subtopic_name: node.title,
+                      topic_id: String(topic.id),
+                      subject: meta?.abbr ?? "",
+                    });
+                  }}
                   selectedId={selected?.id ?? null}
                   progress={progress}
                   accentColor={meta?.color ?? "#1E3A5F"}

@@ -17,6 +17,7 @@ import NodeDescription from "./NodeDescription";
 import ResourceList from "./ResourceList";
 import FeedbackForm from "./FeedbackForm";
 import ResourceViewer from "./ResourceViewer";
+import { trackEvent } from "@/app/components/analytics";
 
 export default function DetailsPanel({
   selected,
@@ -71,12 +72,21 @@ export default function DetailsPanel({
     setProgressError(null);
     setSavingProgress(true);
     const updated = await updateProgress(selected.id, newStatus);
-    if (!updated) setProgressError("Could not save. Please try again.");
+    if (updated) {
+      trackEvent("progress_status_changed", {
+        subtopic_id: String(selected.id),
+        subtopic_name: selected.title,
+        new_status: newStatus,
+      });
+    } else {
+      setProgressError("Could not save. Please try again.");
+    }
     setSavingProgress(false);
   }
 
   async function handleGoogleSignIn() {
     setSigningIn(true);
+    trackEvent("signin_clicked", { trigger_location: "cat_prep_gate" });
     try {
       await signInWithPopup(auth, googleProvider);
       setShowSignInModal(false);
@@ -191,7 +201,15 @@ export default function DetailsPanel({
                   <NodeDescription originalDesc={originalDesc} />
                   <ResourceList
                     originalResources={originalResources}
-                    onOpen={setViewingResource}
+                    onOpen={(resource) => {
+                      setViewingResource(resource);
+                      trackEvent("resource_clicked", {
+                        resource_type: resource.type,
+                        resource_title: resource.title,
+                        subtopic_id: String(selected.id),
+                        subtopic_name: selected.title,
+                      });
+                    }}
                   />
                 </>
               )}
