@@ -121,16 +121,50 @@ export default function DailyChallengeCard() {
   );
 
   if (cardStatus === "loading") {
-    return (
-      <div
-        style={{
-          borderRadius: 16,
-          border: "1.5px solid #E8EAF0",
-          height: 88,
-          background: "#fff",
-          marginBottom: 28,
-        }}
-      />
+    return cardWrap(
+      <>
+        {CARD_HEADER(null, today, true)}
+        <div
+          className="animate-pulse"
+          style={{
+            background: "#fff",
+            padding: "14px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ flex: 1 }}>
+            <div
+              style={{
+                height: 14,
+                borderRadius: 6,
+                background: "#E2E8F0",
+                width: "55%",
+                marginBottom: 9,
+              }}
+            />
+            <div
+              style={{
+                height: 11,
+                borderRadius: 5,
+                background: "#F1F5F9",
+                width: "38%",
+              }}
+            />
+          </div>
+          <div
+            style={{
+              height: 34,
+              width: 100,
+              borderRadius: 8,
+              background: "#E2E8F0",
+              marginLeft: 16,
+              flexShrink: 0,
+            }}
+          />
+        </div>
+      </>
     );
   }
 
