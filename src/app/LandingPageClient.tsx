@@ -106,17 +106,17 @@ export default function LandingPageClient() {
             className="text-trust-navy font-extrabold mb-5"
             style={{ fontSize: "clamp(32px,6vw,60px)", lineHeight: 1.1, letterSpacing: "-1.5px" }}
           >
-            Your structured roadmap<br />
-            <span style={{ color: "#14B8A6" }}>to crack CAT</span>
+            Crack CAT without spending<br />
+            <span style={{ color: "#14B8A6" }}>₹80,000 on coaching.</span>
           </h1>
 
           <p
             className="text-slate-600 mx-auto mb-9"
             style={{ fontSize: "clamp(15px,2vw,18px)", lineHeight: 1.7, maxWidth: 600 }}
           >
-            Stop searching across YouTube, PDFs, and blogs. We organize the
-            internet&apos;s best free resources into clear learning paths — so you
-            always know what to study next.
+            A structured, distraction-free roadmap built from the best free videos
+            and notes on the internet — organised like a coaching course, free like
+            the internet.
           </p>
 
           <div className="flex gap-3 justify-center flex-wrap">
@@ -141,7 +141,7 @@ export default function LandingPageClient() {
                 e.currentTarget.style.boxShadow = "0 4px 16px rgba(20,184,166,0.4)";
               }}
             >
-              Explore CAT Roadmap →
+              Start the free CAT roadmap →
             </Link>
             <a
               href="#how"
@@ -179,6 +179,221 @@ export default function LandingPageClient() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Problem / Agitation */}
+      <section style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <h2
+            className="text-center font-extrabold text-trust-navy mb-10"
+            style={{ fontSize: "clamp(22px,4vw,32px)", letterSpacing: "-0.4px" }}
+          >
+            Sound familiar?
+          </h2>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: 20,
+            }}
+          >
+            {([
+              {
+                symbol: "₹",
+                color: "#1E3A5F",
+                title: "Coaching costs too much.",
+                desc: "₹30,000 for online, ₹80,000+ for offline. That's a huge bet before you even know if self-study works for you.",
+              },
+              {
+                symbol: "?",
+                color: "#0F766E",
+                title: "Free material is everywhere — and nowhere.",
+                desc: "The best lectures exist for free, but scattered across 100 channels. You waste weeks just deciding what to watch next.",
+              },
+              {
+                symbol: "▶",
+                color: "#92400E",
+                title: "YouTube keeps pulling me away.",
+                desc: "You open one Quant video and 40 minutes later you're watching something unrelated. The algorithm is built to distract you.",
+              },
+            ] as const).map((card) => (
+              <div
+                key={card.title}
+                style={{
+                  background: "#fff",
+                  borderRadius: 16,
+                  padding: "28px 24px",
+                  border: "1.5px solid #E8EAF0",
+                  boxShadow: "var(--shadow-card)",
+                }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    background: `${card.color}18`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 14,
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: card.color,
+                  }}
+                >
+                  {card.symbol}
+                </div>
+                <h3 className="font-bold text-trust-navy mb-2" style={{ fontSize: 16 }}>
+                  {card.title}
+                </h3>
+                <p className="text-slate-500" style={{ fontSize: 14, lineHeight: 1.65, margin: 0 }}>
+                  {card.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p
+            className="text-center font-semibold mt-10"
+            style={{ fontSize: 16, color: "#0F766E" }}
+          >
+            StudyNaksha fixes all three — one clear path, the best free resources, zero distraction.
+          </p>
+        </div>
+      </section>
+
+      {/* Distraction-free hook */}
+      <section style={{ padding: "72px 24px", background: "#F0FDFA" }}>
+        <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center" }}>
+          <h2
+            className="font-extrabold text-trust-navy mb-5"
+            style={{ fontSize: "clamp(24px,4vw,36px)", letterSpacing: "-0.5px" }}
+          >
+            Watch the best CAT videos —<br />
+            <span style={{ color: "#14B8A6" }}>without YouTube watching you.</span>
+          </h2>
+          <p
+            className="text-slate-600 mx-auto"
+            style={{ fontSize: "clamp(15px,2vw,17px)", lineHeight: 1.75, maxWidth: 560 }}
+          >
+            Every lecture is embedded right inside your roadmap. No recommended videos, no Shorts,
+            no autoplay into cat videos at midnight. You get the teaching you came for and nothing
+            that pulls you away from it.
+          </p>
+          <p className="font-medium mt-6" style={{ fontSize: 14, color: "#0F766E" }}>
+            Same great teachers. None of the distraction.
+          </p>
+        </div>
+      </section>
+
+      {/* Comparison table */}
+      <section style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+          <div className="text-center mb-10">
+            <h2
+              className="font-extrabold text-trust-navy"
+              style={{ fontSize: "clamp(22px,4vw,32px)", letterSpacing: "-0.4px", margin: 0 }}
+            >
+              How does StudyNaksha compare?
+            </h2>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                borderRadius: 16,
+                overflow: "hidden",
+                boxShadow: "var(--shadow-card)",
+                minWidth: 520,
+              }}
+            >
+              <thead>
+                <tr style={{ background: "#1E3A5F" }}>
+                  <th
+                    style={{
+                      padding: "14px 20px",
+                      textAlign: "left",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "rgba(255,255,255,0.7)",
+                      letterSpacing: "0.8px",
+                      textTransform: "uppercase",
+                    }}
+                  />
+                  {["StudyNaksha", "Paid Coaching", "Random YouTube"].map((col) => (
+                    <th
+                      key={col}
+                      style={{
+                        padding: "14px 20px",
+                        textAlign: "center",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: col === "StudyNaksha" ? "#5EEAD4" : "rgba(255,255,255,0.7)",
+                        letterSpacing: "0.3px",
+                      }}
+                    >
+                      {col}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {([
+                  ["Cost", "Free (later ₹200/mo)", "₹30k–₹80k+", "Free"],
+                  ["Structured path", "Yes — full roadmap", "Yes", "No — you guess"],
+                  ["Distraction-free", "Yes — embedded", "Yes", "No"],
+                  ["Self-paced", "Yes", "Mostly fixed", "Yes"],
+                  ["Community-improved", "Yes", "No", "No"],
+                  ["Live classes & mentors", "No", "Yes", "No"],
+                ] as const).map((row, i) => {
+                  const [label, sn, coaching, yt] = row;
+                  return (
+                    <tr key={label} style={{ background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: "#1E3A5F",
+                          borderBottom: "1px solid #E8EAF0",
+                        }}
+                      >
+                        {label}
+                      </td>
+                      {[sn, coaching, yt].map((val, j) => {
+                        const isYes = val.toLowerCase().startsWith("yes") || val === "Free (later ₹200/mo)" || val === "Free";
+                        const isNo = val.toLowerCase().startsWith("no");
+                        const bg = j === 0
+                          ? isNo
+                            ? "rgba(249,115,22,0.08)"
+                            : "rgba(20,184,166,0.07)"
+                          : "transparent";
+                        const color = isYes ? "#059669" : isNo ? "#DC2626" : "#64748B";
+                        return (
+                          <td
+                            key={j}
+                            style={{
+                              padding: "14px 20px",
+                              textAlign: "center",
+                              fontSize: 13,
+                              fontWeight: 600,
+                              color,
+                              background: bg,
+                              borderBottom: "1px solid #E8EAF0",
+                            }}
+                          >
+                            {val}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
