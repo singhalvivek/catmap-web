@@ -8,10 +8,6 @@ function required(name: string, value?: string) {
 
 export const ENV = {
   SITE_URL: required("NEXT_PUBLIC_SITE_URL", process.env.NEXT_PUBLIC_SITE_URL),
-  SHEETS_WEBHOOK_URL: required(
-    "NEXT_PUBLIC_SHEETS_WEBHOOK_URL",
-    process.env.NEXT_PUBLIC_SHEETS_WEBHOOK_URL
-  ),
   FIREBASE_API_KEY: required(
     "NEXT_PUBLIC_FIREBASE_API_KEY",
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY

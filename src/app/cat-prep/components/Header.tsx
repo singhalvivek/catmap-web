@@ -94,14 +94,15 @@ export default function Header() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="font-semibold text-trust-navy"
+                className="font-medium text-slate-400 hover:text-slate-600 transition-colors"
                 style={{
                   fontSize: 13,
-                  padding: "7px 16px",
-                  background: "#F1F5F9",
-                  border: "1px solid #E2E8F0",
-                  borderRadius: 8,
+                  background: "none",
+                  border: "none",
                   cursor: "pointer",
+                  fontFamily: "inherit",
+                  textDecoration: "underline",
+                  textUnderlineOffset: 2,
                 }}
               >
                 Sign out
@@ -112,17 +113,18 @@ export default function Header() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="font-semibold text-trust-navy disabled:opacity-60"
+              className="font-medium text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-40"
               style={{
                 fontSize: 13,
-                padding: "7px 16px",
-                background: "#F1F5F9",
-                border: "1px solid #E2E8F0",
-                borderRadius: 8,
+                background: "none",
+                border: "none",
                 cursor: loading ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+                textDecoration: "underline",
+                textUnderlineOffset: 2,
               }}
             >
-              {loading ? "Checking..." : "Login with Google"}
+              {loading ? "Checking..." : "Sign in"}
             </button>
           )}
 

@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 import { OG_SIZE, OG_CONTENT_TYPE, OG_BRAND } from "@/app/lib/ogImage";
 
 export const runtime = "edge";
-export const alt = "StudyNaksha — Ace your Exams with Interactive Roadmaps";
+export const alt = "Free CAT Preparation Roadmap | StudyNaksha";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
@@ -26,11 +26,11 @@ export default function OGImage() {
         <div style={{ width: 72, height: 8, borderRadius: 4, background: OG_BRAND.teal, marginBottom: 40 }} />
 
         <div style={{ fontSize: 64, fontWeight: 800, color: OG_BRAND.navy, textAlign: "center", lineHeight: 1.15, marginBottom: 24 }}>
-          StudyNaksha
+          CAT Roadmap
         </div>
 
         <div style={{ fontSize: 28, fontWeight: 500, color: OG_BRAND.slate, textAlign: "center", maxWidth: 800, lineHeight: 1.4 }}>
-          Ace your Exams with Interactive Roadmaps
+          Structured · Trackable · Distraction-free
         </div>
 
         <div style={{ position: "absolute", bottom: 48, fontSize: 20, color: OG_BRAND.teal, fontWeight: 600 }}>

@@ -8,6 +8,27 @@ import { FAQS } from "./data";
 
 const COURSES = ["CAT", "GMAT", "GRE", "UPSC", "Other"] as const;
 
+const COMPARISON_ROWS = [
+  { label: "Cost",                   sn: "Free (later ₹200/mo)", coaching: "₹30k–₹80k+",  yt: "Free"           },
+  { label: "Structured path",        sn: "Yes — full roadmap",   coaching: "Yes",           yt: "No — you guess" },
+  { label: "Distraction-free",       sn: "Yes — embedded",       coaching: "Yes",           yt: "No"             },
+  { label: "Self-paced",             sn: "Yes",                  coaching: "Mostly fixed",  yt: "Yes"            },
+  { label: "Community-improved",     sn: "Yes",                  coaching: "No",            yt: "No"             },
+  { label: "Live classes & mentors", sn: "No",                   coaching: "Yes",           yt: "No"             },
+] as const;
+
+const COMPARISON_COLS = [
+  { key: "sn",       name: "StudyNaksha",    highlight: true  },
+  { key: "coaching", name: "Paid Coaching",  highlight: false },
+  { key: "yt",       name: "Random YouTube", highlight: false },
+] as const;
+
+function comparisonValColor(val: string): string {
+  if (val.toLowerCase().startsWith("yes") || val === "Free (later ₹200/mo)" || val === "Free") return "#059669";
+  if (val.toLowerCase().startsWith("no")) return "#DC2626";
+  return "#64748B";
+}
+
 export default function LandingPageClient() {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -67,7 +88,7 @@ export default function LandingPageClient() {
                 e.currentTarget.style.boxShadow = "0 2px 8px rgba(20,184,166,0.35)";
               }}
             >
-              Browse Roadmaps →
+              Browse Roadmaps
             </Link>
           </div>
         </div>
@@ -106,17 +127,17 @@ export default function LandingPageClient() {
             className="text-trust-navy font-extrabold mb-5"
             style={{ fontSize: "clamp(32px,6vw,60px)", lineHeight: 1.1, letterSpacing: "-1.5px" }}
           >
-            Your structured roadmap<br />
-            <span style={{ color: "#14B8A6" }}>to crack CAT</span>
+            Crack CAT without spending<br />
+            <span style={{ color: "#14B8A6" }}>₹80,000 on coaching.</span>
           </h1>
 
           <p
             className="text-slate-600 mx-auto mb-9"
             style={{ fontSize: "clamp(15px,2vw,18px)", lineHeight: 1.7, maxWidth: 600 }}
           >
-            Stop searching across YouTube, PDFs, and blogs. We organize the
-            internet&apos;s best free resources into clear learning paths — so you
-            always know what to study next.
+            A structured, distraction-free roadmap built from the best free videos
+            and notes on the internet — organised like a coaching course, free like
+            the internet.
           </p>
 
           <div className="flex gap-3 justify-center flex-wrap">
@@ -141,7 +162,7 @@ export default function LandingPageClient() {
                 e.currentTarget.style.boxShadow = "0 4px 16px rgba(20,184,166,0.4)";
               }}
             >
-              Explore CAT Roadmap →
+              Start the free CAT roadmap →
             </Link>
             <a
               href="#how"
@@ -183,6 +204,275 @@ export default function LandingPageClient() {
         </div>
       </section>
 
+      {/* Problem / Agitation */}
+      <section style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <h2
+            className="text-center font-extrabold text-trust-navy mb-10"
+            style={{ fontSize: "clamp(22px,4vw,32px)", letterSpacing: "-0.4px" }}
+          >
+            Sound familiar?
+          </h2>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: 20,
+            }}
+          >
+            {([
+              {
+                symbol: "₹",
+                color: "#1E3A5F",
+                title: "Coaching costs too much.",
+                desc: "₹30,000 for online, ₹80,000+ for offline. That's a huge bet before you even know if self-study works for you.",
+              },
+              {
+                symbol: "?",
+                color: "#0F766E",
+                title: "Free material is everywhere — and nowhere.",
+                desc: "The best lectures exist for free, but scattered across 100 channels. You waste weeks just deciding what to watch next.",
+              },
+              {
+                symbol: "▶",
+                color: "#92400E",
+                title: "YouTube keeps pulling me away.",
+                desc: "You open one Quant video and 40 minutes later you're watching something unrelated. The algorithm is built to distract you.",
+              },
+            ] as const).map((card) => (
+              <div
+                key={card.title}
+                style={{
+                  background: "#fff",
+                  borderRadius: 16,
+                  padding: "28px 24px",
+                  border: "1.5px solid #E8EAF0",
+                  boxShadow: "var(--shadow-card)",
+                }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    background: `${card.color}18`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 14,
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: card.color,
+                  }}
+                >
+                  {card.symbol}
+                </div>
+                <h3 className="font-bold text-trust-navy mb-2" style={{ fontSize: 16 }}>
+                  {card.title}
+                </h3>
+                <p className="text-slate-500" style={{ fontSize: 14, lineHeight: 1.65, margin: 0 }}>
+                  {card.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p
+            className="text-center font-semibold mt-10"
+            style={{ fontSize: 16, color: "#0F766E" }}
+          >
+            StudyNaksha fixes all three — one clear path, the best free resources, zero distraction.
+          </p>
+        </div>
+      </section>
+
+      {/* Distraction-free hook */}
+      <section style={{ padding: "72px 24px", background: "#F0FDFA" }}>
+        <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center" }}>
+          <h2
+            className="font-extrabold text-trust-navy mb-5"
+            style={{ fontSize: "clamp(24px,4vw,36px)", letterSpacing: "-0.5px" }}
+          >
+            Watch the best CAT videos —<br />
+            <span style={{ color: "#14B8A6" }}>without YouTube watching you.</span>
+          </h2>
+          <p
+            className="text-slate-600 mx-auto"
+            style={{ fontSize: "clamp(15px,2vw,17px)", lineHeight: 1.75, maxWidth: 560 }}
+          >
+            Every lecture is embedded right inside your roadmap. No recommended videos, no Shorts,
+            no autoplay into cat videos at midnight. You get the teaching you came for and nothing
+            that pulls you away from it.
+          </p>
+          <p className="font-medium mt-6" style={{ fontSize: 14, color: "#0F766E" }}>
+            Same great teachers. None of the distraction.
+          </p>
+        </div>
+      </section>
+
+      {/* Comparison table */}
+      <section style={{ padding: "72px 24px", background: "#FFFDF8" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+          <div className="text-center mb-10">
+            <h2
+              className="font-extrabold text-trust-navy"
+              style={{ fontSize: "clamp(22px,4vw,32px)", letterSpacing: "-0.4px", margin: 0 }}
+            >
+              How does StudyNaksha compare?
+            </h2>
+          </div>
+
+          {/* Mobile: one snap-scrollable card per column */}
+          <div className="md:hidden">
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                overflowX: "auto",
+                scrollSnapType: "x mandatory",
+                paddingBottom: 8,
+              }}
+            >
+              {COMPARISON_COLS.map((col) => (
+                <div
+                  key={col.key}
+                  style={{
+                    minWidth: "calc(100vw - 64px)",
+                    scrollSnapAlign: "start",
+                    flexShrink: 0,
+                    background: "#fff",
+                    borderRadius: 16,
+                    border: col.highlight ? "2px solid #14B8A6" : "1.5px solid #E8EAF0",
+                    overflow: "hidden",
+                    boxShadow: col.highlight ? "0 4px 16px rgba(20,184,166,0.15)" : "var(--shadow-card)",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "14px 16px",
+                      background: col.highlight ? "#1E3A5F" : "#F8FAFC",
+                      textAlign: "center",
+                    }}
+                  >
+                    <span style={{ fontSize: 14, fontWeight: 700, color: col.highlight ? "#5EEAD4" : "#64748B" }}>
+                      {col.name}
+                    </span>
+                  </div>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <div
+                      key={row.label}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "11px 16px",
+                        background: i % 2 === 0 ? "#fff" : "#F8FAFC",
+                        borderTop: "1px solid #E8EAF0",
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: 13, color: "#1E3A5F", fontWeight: 500, flex: 1 }}>
+                        {row.label}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: comparisonValColor(row[col.key]), flexShrink: 0 }}>
+                        {row[col.key]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <p style={{ textAlign: "center", fontSize: 12, color: "#94A3B8", marginTop: 8 }}>
+              Swipe to compare →
+            </p>
+          </div>
+
+          {/* Desktop: full table */}
+          <div className="hidden md:block" style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                borderRadius: 16,
+                overflow: "hidden",
+                boxShadow: "var(--shadow-card)",
+                minWidth: 520,
+              }}
+            >
+              <thead>
+                <tr style={{ background: "#1E3A5F" }}>
+                  <th
+                    style={{
+                      padding: "14px 20px",
+                      textAlign: "left",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "rgba(255,255,255,0.7)",
+                      letterSpacing: "0.8px",
+                      textTransform: "uppercase",
+                    }}
+                  />
+                  {COMPARISON_COLS.map((col) => (
+                    <th
+                      key={col.key}
+                      style={{
+                        padding: "14px 20px",
+                        textAlign: "center",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: col.highlight ? "#5EEAD4" : "rgba(255,255,255,0.7)",
+                        letterSpacing: "0.3px",
+                      }}
+                    >
+                      {col.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON_ROWS.map((row, i) => (
+                  <tr key={row.label} style={{ background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
+                    <td
+                      style={{
+                        padding: "14px 20px",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#1E3A5F",
+                        borderBottom: "1px solid #E8EAF0",
+                      }}
+                    >
+                      {row.label}
+                    </td>
+                    {COMPARISON_COLS.map((col, j) => {
+                      const val = row[col.key];
+                      const isNo = val.toLowerCase().startsWith("no");
+                      const bg = j === 0
+                        ? isNo ? "rgba(249,115,22,0.08)" : "rgba(20,184,166,0.07)"
+                        : "transparent";
+                      return (
+                        <td
+                          key={col.key}
+                          style={{
+                            padding: "14px 20px",
+                            textAlign: "center",
+                            fontSize: 13,
+                            fontWeight: 600,
+                            color: comparisonValColor(val),
+                            background: bg,
+                            borderBottom: "1px solid #E8EAF0",
+                          }}
+                        >
+                          {val}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section id="how" style={{ padding: "72px 24px", background: "#FFFDF8" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
@@ -212,20 +502,20 @@ export default function LandingPageClient() {
             {[
               {
                 n: "01",
-                title: "Pick a Section",
-                desc: "Choose from Quantitative Aptitude, DILR, or VARC — the three pillars of CAT.",
+                title: "Open the roadmap.",
+                desc: "No sign-up needed. Just start exploring topics across Quant, DILR and VARC.",
                 color: "#1E3A5F",
               },
               {
                 n: "02",
-                title: "Follow the Roadmap",
-                desc: "Topics and subtopics are organized in a proven learning order. No guesswork.",
+                title: "Follow the path.",
+                desc: "Watch curated videos and notes in the right order, distraction-free, at your own pace.",
                 color: "#0F766E",
               },
               {
                 n: "03",
-                title: "Access Free Resources",
-                desc: "Each subtopic links to the best videos, notes, and articles — all free.",
+                title: "Track your progress.",
+                desc: "Sign in with Google to save where you are and pick up exactly where you left off.",
                 color: "#92400E",
               },
             ].map((s) => (
@@ -603,22 +893,8 @@ export default function LandingPageClient() {
               onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
             >
-              Open CAT Roadmap →
+              Start the free CAT roadmap →
             </Link>
-            <button
-              className="font-semibold text-white"
-              style={{
-                background: "rgba(255,255,255,0.1)",
-                border: "1.5px solid rgba(255,255,255,0.3)",
-                borderRadius: 10,
-                padding: "14px 28px",
-                fontSize: 15,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              Join Community
-            </button>
           </div>
           <p style={{ marginTop: 20, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
             Open learning · Community improved · 100% free

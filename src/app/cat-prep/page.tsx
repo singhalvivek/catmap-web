@@ -13,14 +13,22 @@ import type { Faq as FaqType } from "./models/faq";
 import { ProgressProvider } from "./lib/ProgressContext";
 import RoadmapContent from "./components/RoadmapContent";
 
+const TITLE = "Free CAT Preparation Roadmap | StudyNaksha";
+const DESCRIPTION =
+  "A free, structured, distraction-free CAT prep roadmap built from the best open resources. Quant, DILR & VARC — no coaching fees.";
+
 export const metadata: Metadata = {
-  title: "CAT Prep Roadmap",
-  description:
-    "Interactive CAT exam preparation roadmap covering Quantitative Aptitude, DILR, and VARC. Track your progress, access curated resources, and prepare smarter.",
+  title: {
+    absolute: TITLE,
+  },
+  description: DESCRIPTION,
   openGraph: {
-    title: "CAT Prep Roadmap",
-    description:
-      "Interactive CAT exam preparation roadmap covering Quantitative Aptitude, DILR, and VARC. Track your progress, access curated resources, and prepare smarter.",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    title: TITLE,
+    description: DESCRIPTION,
   },
 };
 
