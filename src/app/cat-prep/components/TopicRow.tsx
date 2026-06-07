@@ -1,7 +1,6 @@
 // TopicRow — accordion row for a TOPIC node; expands to show subtopic chips
 "use client";
 
-import { useState } from "react";
 import { Node } from "../models/node";
 import { ProgressStatus } from "../models/progress";
 import SubtopicChip from "./SubtopicChip";
@@ -13,14 +12,17 @@ export default function TopicRow({
   selectedId,
   progress,
   accentColor,
+  isOpen,
+  onToggle,
 }: {
   topic: Node;
   onSelectNode: (node: Node) => void;
   selectedId: number | null;
   progress: Record<number, ProgressStatus>;
   accentColor: string;
+  isOpen: boolean;
+  onToggle: () => void;
 }) {
-  const [open, setOpen] = useState(false);
   const subtopics = (topic.children ?? []).slice().sort((a, b) => a.order_index - b.order_index);
 
   const done = subtopics.filter(
@@ -35,20 +37,19 @@ export default function TopicRow({
     <div style={{ marginBottom: 8 }}>
       <button
         onClick={() => {
-          const opening = !open;
-          setOpen(opening);
-          if (opening) trackEvent("topic_expanded", { topic_id: String(topic.id), topic_name: topic.title });
+          if (!isOpen) trackEvent("topic_expanded", { topic_id: String(topic.id), topic_name: topic.title });
+          onToggle();
         }}
-        aria-expanded={open}
+        aria-expanded={isOpen}
         style={{
           width: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "13px 18px",
-          borderRadius: open ? "10px 10px 0 0" : 10,
-          border: `1.5px solid ${open ? accentColor : "#E2E8F0"}`,
-          background: open ? "#FFFDF8" : "#fff",
+          borderRadius: isOpen ? "10px 10px 0 0" : 10,
+          border: `1.5px solid ${isOpen ? accentColor : "#E2E8F0"}`,
+          background: isOpen ? "#FFFDF8" : "#fff",
           cursor: "pointer",
           fontFamily: "inherit",
           transition: "all 0.18s",
@@ -108,18 +109,18 @@ export default function TopicRow({
               width: 22,
               height: 22,
               borderRadius: 6,
-              background: open ? accentColor : "#F1F5F9",
+              background: isOpen ? accentColor : "#F1F5F9",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: open ? "#fff" : "#94A3B8",
+              color: isOpen ? "#fff" : "#94A3B8",
               fontSize: 13,
               fontWeight: 700,
               transition: "all 0.18s",
               flexShrink: 0,
             }}
           >
-            {open ? "−" : "+"}
+            {isOpen ? "−" : "+"}
           </div>
         </div>
       </button>
@@ -127,7 +128,7 @@ export default function TopicRow({
       {/* Subtopics panel */}
       <div
         style={{
-          maxHeight: open ? 400 : 0,
+          maxHeight: isOpen ? 400 : 0,
           overflow: "hidden",
           transition: "max-height 0.3s cubic-bezier(0.4,0,0.2,1)",
         }}
