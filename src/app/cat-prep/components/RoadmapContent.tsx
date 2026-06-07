@@ -19,6 +19,7 @@ import DailyChallengeCard from "./DailyChallengeCard";
 import ContinueLearning from "./ContinueLearning";
 import DetailsPanel from "./details/DetailsPanel";
 import { useProgressContext } from "../lib/ProgressContext";
+import { useTopicExpandState } from "../lib/useTopicExpandState";
 
 export default function RoadmapContent({
   subjects,
@@ -36,6 +37,7 @@ export default function RoadmapContent({
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const { progress, isLoggedIn } = useProgressContext();
+  const { isOpen, toggle } = useTopicExpandState(subjects);
   const landedFired = useRef(false);
 
   useEffect(() => {
@@ -188,6 +190,8 @@ export default function RoadmapContent({
                 <TopicRow
                   key={topic.id}
                   topic={topic}
+                  isOpen={isOpen(topic.id)}
+                  onToggle={() => toggle(topic.id)}
                   onSelectNode={(node) => {
                     setSelected(node);
                     trackEvent("subtopic_clicked", {
