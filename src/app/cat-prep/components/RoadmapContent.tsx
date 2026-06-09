@@ -17,9 +17,13 @@ import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
 import DailyChallengeCard from "./DailyChallengeCard";
 import ContinueLearning from "./ContinueLearning";
+import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
+import SubjectModeToggle from "./SubjectModeToggle";
+import PracticeTopicRow from "./PracticeTopicRow";
 import { useProgressContext } from "../lib/ProgressContext";
 import { useTopicExpandState } from "../lib/useTopicExpandState";
+import { getPracticeSubject } from "@/constants/practiceChapters";
 
 export default function RoadmapContent({
   subjects,
@@ -35,6 +39,8 @@ export default function RoadmapContent({
   const [activeSubjectId, setActiveSubjectId] = useState<number>(subjects[0]?.id ?? 2);
   const [selected, setSelected] = useState<Node | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mode, setMode] = useState<"learn" | "practice">("learn");
+  const [openPracticeTopics, setOpenPracticeTopics] = useState<Record<string, boolean>>({});
 
   const { progress, isLoggedIn } = useProgressContext();
   const { isOpen, toggle } = useTopicExpandState(subjects);
@@ -129,6 +135,9 @@ export default function RoadmapContent({
         {/* Continue Learning strip */}
         <ContinueLearning subjects={subjects} progress={progress} onSelectNode={setSelected} />
 
+        {/* Continue Practice strip */}
+        <ContinuePractice />
+
         {/* Daily Challenge */}
         <DailyChallengeCard />
 
@@ -154,59 +163,72 @@ export default function RoadmapContent({
           })}
         </div>
 
-        {/* Active subject header */}
+        {/* Active subject header — Learn / Practice toggle */}
         {meta && activeSubject && (
-          <div
-            className="flex items-center gap-3 mb-4"
-            style={{
-              padding: "14px 18px",
-              borderRadius: 12,
-              background: meta.light,
-              border: `1.5px solid ${meta.color}30`,
+          <SubjectModeToggle
+            activeSubject={activeSubject}
+            meta={meta}
+            mode={mode}
+            onModeChange={(m) => {
+              setMode(m);
+              setSelected(null);
+              trackEvent("practice_mode_toggled", { mode: m, subject: meta.abbr });
             }}
-          >
-            <div
-              style={{ width: 10, height: 10, borderRadius: "50%", background: meta.color, flexShrink: 0 }}
-            />
-            <div>
-              <div className="font-extrabold" style={{ fontSize: 16, color: meta.color }}>
-                {meta.label}
-              </div>
-              <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 1 }}>
-                {activeSubject.children?.length ?? 0} topics ·{" "}
-                {activeSubject.children?.flatMap((t) => t.children ?? []).length ?? 0} subtopics
-              </div>
-            </div>
-          </div>
+          />
         )}
 
-        {/* Topic accordion rows */}
+        {/* Topic accordion rows — Learn or Practice */}
         <ErrorBoundary>
-          <div>
-            {activeSubject?.children
-              ?.slice()
-              .sort((a, b) => a.order_index - b.order_index)
-              .map((topic) => (
-                <TopicRow
-                  key={topic.id}
+          {mode === "learn" ? (
+            <div>
+              {activeSubject?.children
+                ?.slice()
+                .sort((a, b) => a.order_index - b.order_index)
+                .map((topic) => (
+                  <TopicRow
+                    key={topic.id}
+                    topic={topic}
+                    isOpen={isOpen(topic.id)}
+                    onToggle={() => toggle(topic.id)}
+                    onSelectNode={(node) => {
+                      setSelected(node);
+                      trackEvent("subtopic_clicked", {
+                        subtopic_id: String(node.id),
+                        subtopic_name: node.title,
+                        topic_id: String(topic.id),
+                        subject: meta?.abbr ?? "",
+                      });
+                    }}
+                    selectedId={selected?.id ?? null}
+                    progress={progress}
+                    accentColor={meta?.color ?? "#1E3A5F"}
+                  />
+                ))}
+            </div>
+          ) : (
+            <div>
+              {getPracticeSubject(activeSubjectId)?.topics.map((topic) => (
+                <PracticeTopicRow
+                  key={topic.slug}
                   topic={topic}
-                  isOpen={isOpen(topic.id)}
-                  onToggle={() => toggle(topic.id)}
-                  onSelectNode={(node) => {
-                    setSelected(node);
-                    trackEvent("subtopic_clicked", {
-                      subtopic_id: String(node.id),
-                      subtopic_name: node.title,
-                      topic_id: String(topic.id),
-                      subject: meta?.abbr ?? "",
-                    });
-                  }}
-                  selectedId={selected?.id ?? null}
-                  progress={progress}
+                  section={meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"}
                   accentColor={meta?.color ?? "#1E3A5F"}
+                  isOpen={openPracticeTopics[topic.slug] ?? false}
+                  onToggle={() =>
+                    setOpenPracticeTopics((prev) => ({
+                      ...prev,
+                      [topic.slug]: !prev[topic.slug],
+                    }))
+                  }
                 />
               ))}
-          </div>
+              {!getPracticeSubject(activeSubjectId) && (
+                <p style={{ color: "#94A3B8", fontSize: 14, marginTop: 8 }}>
+                  Practice questions coming soon for this section.
+                </p>
+              )}
+            </div>
+          )}
         </ErrorBoundary>
 
         {/* Community feedback */}

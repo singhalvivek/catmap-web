@@ -145,3 +145,12 @@ body {
   transition: max-height 0.3s ease, opacity 0.3s ease;
   overflow: hidden;
 }
+
+/* =========================================== */
+/* Practice players                             */
+/* =========================================== */
+
+.svg-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
