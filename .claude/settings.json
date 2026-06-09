@@ -21,7 +21,30 @@
       "Bash(git -C \"E:/cat-prep/catmap-web\" log --oneline -5)",
       "Bash(git -C \"E:/cat-prep/catmap-web\" show HEAD:\"src/app/cat-prep/components/DailyChallengeCard.tsx\")",
       "Bash(git -C \"E:/cat-prep/catmap-web\" diff HEAD -- \".claude/settings.json\")",
-      "Bash(git -C \"E:/cat-prep/catmap-web\" show HEAD:\"src/app/cat-prep/daily-challenge/components/SectionBreakdownCard.tsx\")"
+      "Bash(git -C \"E:/cat-prep/catmap-web\" show HEAD:\"src/app/cat-prep/daily-challenge/components/SectionBreakdownCard.tsx\")",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\" /b)",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\\\\cat-prep\" /b /s)",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\\\\api\" /s /b)",
+      "Bash(xargs grep -l \"mongo\\\\|Mongo\\\\|clientPromise\\\\|MongoClient\")",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\planning\" /b)",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\\\\cat-prep\\\\components\" /b)",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\\\\cat-prep\\\\models\" /b)",
+      "Bash(dir \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\constants\" /b)",
+      "Bash(mkdir -p \"e:/cat-prep/catmap-web/src/app/api/practice/questions/[id]/solution\" && echo \"done\")",
+      "Bash(mkdir -p \"e:/cat-prep/catmap-web/src/app/api/practice/dilr/[setNumber]/solution\" && echo \"done\")",
+      "Bash(mkdir -p \"e:/cat-prep/catmap-web/src/app/api/practice/rcs/[rcNumber]/solution/[qNum]\" && echo \"done\")",
+      "Bash(mkdir -p \"e:/cat-prep/catmap-web/src/app/cat-prep/practice/quant/[topic]/[chapter]\")",
+      "Bash(mkdir -p \"e:/cat-prep/catmap-web/src/app/cat-prep/practice/dilr/[chapter]/[setNumber]\")",
+      "Bash(mkdir -p \"e:/cat-prep/catmap-web/src/app/cat-prep/practice/varc/reading-comprehensions/[rcNumber]\")",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(dir /s /b \"e:\\\\cat-prep\\\\catmap-web\\\\src\\\\app\\\\cat-prep\\\\daily-challenge\")",
+      "Bash(Get-ChildItem -Recurse -Include \"*.test.ts\",\"*.test.tsx\",\"*.spec.ts\",\"*.spec.tsx\" -Path src)",
+      "Bash(Select-Object FullName)",
+      "Bash(npx jest *)",
+      "Bash(cat C:\\\\Users\\\\vivek\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\e--cat-prep-catmap-web\\\\cc82ab14-9a99-4944-9c12-5600cc0b6857\\\\tasks\\\\btunk8nym.output)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('scripts',{}\\)\\); print\\('devDeps:', list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(npx vitest *)"
     ],
     "deny": [
       "Bash(git push*)",
@@ -33,6 +56,11 @@
     ],
     "ask": [
       "Bash(git commit*)"
+    ],
+    "additionalDirectories": [
+      "e:\\cat-prep\\catmap-web\\src\\app\\api\\practice\\questions\\[id]",
+      "e:\\cat-prep\\catmap-web\\src\\app\\api\\practice\\dilr\\[setNumber]",
+      "e:\\cat-prep\\catmap-web\\src\\app\\api\\practice\\rcs\\[rcNumber]\\solution"
     ]
   },
   "hooks": {
