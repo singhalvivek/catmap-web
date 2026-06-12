@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
 import { ENV } from "@/config/env";
 import { GoogleAnalytics } from "@/app/components/GoogleAnalytics";
 import "./globals.css";
@@ -50,6 +51,14 @@ export default function RootLayout({
       <body className={`${jakartaSans.variable} antialiased`}>
         {children}
         <GoogleAnalytics />
+        {/* MathJax config must be set before the lib loads */}
+        <Script id="mathjax-config" strategy="beforeInteractive">
+          {`window.MathJax={tex:{inlineMath:[['$','$']],processEscapes:true}};`}
+        </Script>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

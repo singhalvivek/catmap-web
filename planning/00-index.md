@@ -43,6 +43,9 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 | H101 | ✅ | [H101-resource-viewer.md](./H101-resource-viewer.md) | In-panel resource viewer with thumbnails |
 | H102 | ⬜ | — | Roadmap page quiz cards; real quiz on separate page |
 | L101 | ⬜ | — | Waitlist: text-box instead of dropdown |
+| P001 | 🔄 | [P001-practice-questions.md](./P001-practice-questions.md) | Practice questions — Quant MCQ, DILR sets, VARC RC; Learn/Practice toggle on roadmap |
+| P002 | 🔄 | [P002-practice-player-fixes.md](./P002-practice-player-fixes.md) | Bug fixes + code reuse: RC solution cache bug, inline component remounts, mobile layout, shared PracticeOptionButton + PracticePalette |
+| P003 | 🔄 | [P003-continue-practice-strip.md](./P003-continue-practice-strip.md) | Continue Practice strip — chips for in-progress practice sessions |
 
 ---
 
