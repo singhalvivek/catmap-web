@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchRcPassage } from "@/lib/practiceQueries";
 import { getDb } from "@/lib/mongodb";
+import { JsonLd } from "@/app/components/JsonLd";
+import { ENV } from "@/config/env";
+import { buildLearningResourceSchema } from "@/app/cat-prep/lib/nodeMetadata";
 import RcPlayer from "./RcPlayer";
 import Link from "next/link";
 
@@ -9,8 +12,13 @@ type Props = { params: Promise<{ rcNumber: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { rcNumber } = await params;
+  const title = `Reading Comprehension ${rcNumber} — VARC Practice | StudyNaksha`;
+  const description = `Practise CAT Reading Comprehension passage ${rcNumber}. Timed RC practice with detailed solutions — free on StudyNaksha.`;
   return {
-    title: `Reading Comprehension ${rcNumber} — VARC Practice | StudyNaksha`,
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
   };
 }
 
@@ -27,8 +35,29 @@ export default async function RcPage({ params }: Props) {
   const [passage, total] = await Promise.all([fetchRcPassage(num), getTotalRcCount()]);
   if (!passage) notFound();
 
+  const pageUrl = `${ENV.SITE_URL}/cat-prep/practice/varc/reading-comprehensions/${rcNumber}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "CAT Prep", item: `${ENV.SITE_URL}/cat-prep` },
+        { "@type": "ListItem", position: 2, name: "VARC Practice", item: `${ENV.SITE_URL}/cat-prep/practice/varc` },
+        { "@type": "ListItem", position: 3, name: "Reading Comprehensions", item: `${ENV.SITE_URL}/cat-prep/practice/varc/reading-comprehensions` },
+        { "@type": "ListItem", position: 4, name: `Passage ${rcNumber}`, item: pageUrl },
+      ],
+    },
+    buildLearningResourceSchema(
+      `Reading Comprehension ${rcNumber} — VARC Practice`,
+      `Practise CAT Reading Comprehension passage ${rcNumber}. Timed RC practice with detailed solutions — free on StudyNaksha.`,
+      pageUrl
+    ),
+  ];
+
   return (
-    <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+    <>
+      <JsonLd data={jsonLd} />
+      <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
       <div
         style={{
           background: "linear-gradient(160deg, #FFFBEB 0%, #FEF3C7 100%)",
@@ -63,5 +92,6 @@ export default async function RcPage({ params }: Props) {
         <RcPlayer passage={passage} totalPassages={total} storageKey={`varc-rc-${num}`} />
       </div>
     </div>
+    </>
   );
 }

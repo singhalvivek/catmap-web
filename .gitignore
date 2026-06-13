@@ -46,3 +46,6 @@ next-env.d.ts
 
 # local analysis reports
 /report
+
+# Claude Code configuration
+.claude

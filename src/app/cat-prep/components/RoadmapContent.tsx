@@ -1,7 +1,7 @@
 // RoadmapContent — client-side roadmap UI; receives pre-built tree data from server page
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
@@ -9,6 +9,7 @@ import type { Faq as FaqType } from "../models/faq";
 import { ProgressStatus } from "../models/progress";
 import { SUBJECT_META } from "../lib/subjectMeta";
 
+import { toSlug } from "../lib/nodeMetadata";
 import Header from "./Header";
 import Footer from "./Footer";
 import { trackEvent } from "@/app/components/analytics";
@@ -30,20 +31,51 @@ export default function RoadmapContent({
   allDescriptions,
   allResources,
   allFaqs,
+  initialNode = null,
+  initialExpandedTopicId = null,
 }: {
   subjects: Node[];
   allDescriptions: Description[];
   allResources: Resource[];
   allFaqs: FaqType[];
+  initialNode?: Node | null;
+  initialExpandedTopicId?: number | null;
 }) {
-  const [activeSubjectId, setActiveSubjectId] = useState<number>(subjects[0]?.id ?? 2);
-  const [selected, setSelected] = useState<Node | null>(null);
+  const allTopics = useMemo(() => subjects.flatMap((s) => s.children ?? []), [subjects]);
+
+  const [activeSubjectId, setActiveSubjectId] = useState<number>(() => {
+    const anchorId = initialExpandedTopicId ?? initialNode?.id;
+    if (anchorId != null) {
+      const subject = subjects.find((s) =>
+        s.children?.some(
+          (t) => t.id === anchorId || t.children?.some((st) => st.id === anchorId)
+        )
+      );
+      if (subject) return subject.id;
+    }
+    return subjects[0]?.id ?? 2;
+  });
+  const [selected, setSelected] = useState<Node | null>(initialNode);
+  // tracks the "URL-active" topic for replaceState when no subtopic panel is open
+  const [activeTopicId, setActiveTopicId] = useState<number | null>(initialExpandedTopicId);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mode, setMode] = useState<"learn" | "practice">("learn");
   const [openPracticeTopics, setOpenPracticeTopics] = useState<Record<string, boolean>>({});
 
   const { progress, isLoggedIn } = useProgressContext();
-  const { isOpen, toggle } = useTopicExpandState(subjects);
+  const { isOpen, toggle } = useTopicExpandState(subjects, initialExpandedTopicId);
+
+  const handleSelectNode = useCallback(
+    (node: Node) => {
+      setSelected(node);
+      if (node.type === "SUBTOPIC" && node.parent_id != null) {
+        setActiveTopicId(node.parent_id);
+      } else if (node.type === "TOPIC") {
+        setActiveTopicId(node.id);
+      }
+    },
+    []
+  );
   const landedFired = useRef(false);
 
   useEffect(() => {
@@ -59,6 +91,20 @@ export default function RoadmapContent({
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
+
+  useEffect(() => {
+    let url = "/cat-prep";
+    if (selected?.type === "SUBTOPIC" && selected.parent_id != null) {
+      const parent = allTopics.find((t) => t.id === selected.parent_id);
+      if (parent) url = `/cat-prep/${toSlug(parent.title)}/${toSlug(selected.title)}`;
+    } else if (selected?.type === "TOPIC") {
+      url = `/cat-prep/${toSlug(selected.title)}`;
+    } else if (activeTopicId != null) {
+      const topic = allTopics.find((t) => t.id === activeTopicId);
+      if (topic) url = `/cat-prep/${toSlug(topic.title)}`;
+    }
+    window.history.replaceState(null, "", url);
+  }, [selected, activeTopicId, allTopics]);
 
   const activeSubject = subjects.find((s) => s.id === activeSubjectId);
   const meta = SUBJECT_META[activeSubjectId];
@@ -133,7 +179,7 @@ export default function RoadmapContent({
         style={{ maxWidth: 900, margin: "0 auto", width: "100%", padding: "32px 24px" }}
       >
         {/* Continue Learning strip */}
-        <ContinueLearning subjects={subjects} progress={progress} onSelectNode={setSelected} />
+        <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
 
         {/* Continue Practice strip */}
         <ContinuePractice />
@@ -154,6 +200,7 @@ export default function RoadmapContent({
                 onClick={() => {
                   setActiveSubjectId(subject.id);
                   setSelected(null);
+                  setActiveTopicId(null);
                   trackEvent("subject_tab_changed", { subject: subMeta.abbr });
                 }}
                 progress={progress}
@@ -172,6 +219,7 @@ export default function RoadmapContent({
             onModeChange={(m) => {
               setMode(m);
               setSelected(null);
+              setActiveTopicId(null);
               trackEvent("practice_mode_toggled", { mode: m, subject: meta.abbr });
             }}
           />
@@ -189,9 +237,18 @@ export default function RoadmapContent({
                     key={topic.id}
                     topic={topic}
                     isOpen={isOpen(topic.id)}
-                    onToggle={() => toggle(topic.id)}
+                    onToggle={() => {
+                      const willClose = isOpen(topic.id);
+                      toggle(topic.id);
+                      if (!willClose) {
+                        setActiveTopicId(topic.id);
+                      } else if (activeTopicId === topic.id) {
+                        setActiveTopicId(null);
+                      }
+                      setSelected(null);
+                    }}
                     onSelectNode={(node) => {
-                      setSelected(node);
+                      handleSelectNode(node);
                       trackEvent("subtopic_clicked", {
                         subtopic_id: String(node.id),
                         subtopic_name: node.title,

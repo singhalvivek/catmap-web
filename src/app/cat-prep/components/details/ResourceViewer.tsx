@@ -37,13 +37,20 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [autoplay, setAutoplay] = useState(false);
   const [playlistItems, setPlaylistItems] = useState<PlaylistItem[]>([]);
-  const [loadingItems, setLoadingItems] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(() => !!playlistId && !!YOUTUBE_API_KEY);
   const [itemsError, setItemsError] = useState<string | null>(null);
+  const [prevPlaylistId, setPrevPlaylistId] = useState(playlistId);
+
+  if (prevPlaylistId !== playlistId) {
+    setPrevPlaylistId(playlistId);
+    setLoadingItems(!!playlistId && !!YOUTUBE_API_KEY);
+    setItemsError(null);
+    setPlaylistItems([]);
+    setSelectedVideoId(null);
+  }
 
   useEffect(() => {
     if (!playlistId || !YOUTUBE_API_KEY) return;
-    setLoadingItems(true);
-    setItemsError(null);
     fetch(
       `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}`
     )
