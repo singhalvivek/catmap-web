@@ -1,7 +1,7 @@
 // DetailsPanel — fixed side-panel orchestrator; composes NodeHeader, ProgressPicker, NodeDescription, ResourceList, FeedbackForm, ResourceViewer (read-only; suggestions go via WhatsApp/Telegram)
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Node } from "../../models/node";
 import { Description } from "../../models/description";
 import { Resource } from "../../models/resource";
@@ -45,6 +45,14 @@ export default function DetailsPanel({
   const [progressError, setProgressError]     = useState<string | null>(null);
   const [viewingResource, setViewingResource] = useState<Resource | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [prevSelectedId, setPrevSelectedId]   = useState(selected.id);
+
+  if (prevSelectedId !== selected.id) {
+    setPrevSelectedId(selected.id);
+    setProgressError(null);
+    setViewingResource(null);
+    setShowSignInModal(false);
+  }
 
   const { progress, updateProgress, isLoggedIn } = useProgressContext();
   const status = progress[selected.id] ?? ProgressStatus.NOT_STARTED;
@@ -53,12 +61,6 @@ export default function DetailsPanel({
   const panelRef    = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const touchDeltaY = useRef(0);
-
-  useEffect(() => {
-    setProgressError(null);
-    setViewingResource(null);
-    setShowSignInModal(false);
-  }, [selected.id]);
 
   const { percent } = useMemo(
     () => calculateNodeProgress(selected, progress),

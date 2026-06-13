@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchDilrSet, fetchDilrSets } from "@/lib/practiceQueries";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
+import { JsonLd } from "@/app/components/JsonLd";
+import { ENV } from "@/config/env";
+import { buildLearningResourceSchema } from "@/app/cat-prep/lib/nodeMetadata";
 import DilrPlayer from "./DilrPlayer";
 import Link from "next/link";
 
@@ -16,8 +19,13 @@ function resolveChapterName(slug: string): string | undefined {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { chapter, setNumber } = await params;
   const chapterName = resolveChapterName(chapter) ?? chapter;
+  const title = `${chapterName} Set ${setNumber} — DILR Practice | StudyNaksha`;
+  const description = `Solve ${chapterName} Set ${setNumber} for CAT DILR prep. Free practice sets with detailed solutions on StudyNaksha.`;
   return {
-    title: `${chapterName} Set ${setNumber} — DILR Practice | StudyNaksha`,
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
   };
 }
 
@@ -37,8 +45,28 @@ export default async function DilrSetPage({ params }: Props) {
 
   if (!set) notFound();
 
+  const pageUrl = `${ENV.SITE_URL}/cat-prep/practice/dilr/${chapterSlug}/${num}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "CAT Prep", item: `${ENV.SITE_URL}/cat-prep` },
+        { "@type": "ListItem", position: 2, name: "DILR Practice", item: `${ENV.SITE_URL}/cat-prep/practice/dilr` },
+        { "@type": "ListItem", position: 3, name: `${chapterName} Set ${num}`, item: pageUrl },
+      ],
+    },
+    buildLearningResourceSchema(
+      `${chapterName} Set ${num} — DILR Practice`,
+      `Solve ${chapterName} Set ${num} for CAT DILR prep. Free practice sets with detailed solutions on StudyNaksha.`,
+      pageUrl
+    ),
+  ];
+
   return (
-    <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+    <>
+      <JsonLd data={jsonLd} />
+      <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
       <div
         style={{
           background: "linear-gradient(160deg, #F0FDFA 0%, #EEF2FF 100%)",
@@ -78,5 +106,6 @@ export default async function DilrSetPage({ params }: Props) {
         />
       </div>
     </div>
+    </>
   );
 }

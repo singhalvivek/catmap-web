@@ -14,32 +14,30 @@ import {
 
 export function usePracticeProgress(storageKey: string) {
   const [uid, setUid] = useState<string | null>(auth.currentUser?.uid ?? null);
-  const [progress, setProgress] = useState<PracticeProgress>({ answers: {}, correctAnswers: {} });
+  const [progress, setProgress] = useState<PracticeProgress>(
+    () => loadLocalProgress(storageKey) ?? { answers: {}, correctAnswers: {} }
+  );
   const uidRef = useRef(uid);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Keep ref in sync so persist() always sees latest uid
-  uidRef.current = uid;
+  // Sync ref after every render so persist() always sees the latest uid without stale closure
+  useEffect(() => { uidRef.current = uid; });
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
   }, []);
 
-  // Load on mount; re-load when uid becomes available (Firestore merge)
+  // Merge Firestore data when uid becomes available
   useEffect(() => {
-    const local = loadLocalProgress(storageKey);
-    if (local) setProgress(local);
-
-    if (uid) {
-      loadFirestoreProgress(uid, storageKey).then((remote) => {
-        if (remote) {
-          setProgress((prev) => ({
-            answers: { ...prev.answers, ...remote.answers },
-            correctAnswers: { ...prev.correctAnswers, ...remote.correctAnswers },
-          }));
-        }
-      });
-    }
+    if (!uid) return;
+    loadFirestoreProgress(uid, storageKey).then((remote) => {
+      if (remote) {
+        setProgress((prev) => ({
+          answers: { ...prev.answers, ...remote.answers },
+          correctAnswers: { ...prev.correctAnswers, ...remote.correctAnswers },
+        }));
+      }
+    });
   }, [storageKey, uid]);
 
   function persist(next: PracticeProgress) {

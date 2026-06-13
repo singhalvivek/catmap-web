@@ -1,5 +1,5 @@
 // useTopicExpandState — tracks which topic rows are open; defaults first topic per subject to open; persists user overrides to localStorage
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Node } from "../models/node";
 
 const LS_KEY = "sn:topic_expand:v2";
@@ -34,23 +34,19 @@ function saveUserSet(userSet: Record<number, boolean>) {
   } catch {}
 }
 
-export function useTopicExpandState(subjects: Node[]) {
+export function useTopicExpandState(subjects: Node[], forcedOpenId?: number | null) {
   const defaultOpen = useMemo(() => firstTopicIds(subjects), [subjects]);
 
   // Only stores topics the user has explicitly toggled; everything else falls back to defaultOpen
-  const [userSet, setUserSet] = useState<Record<number, boolean>>({});
-
-  useEffect(() => {
-    const stored = loadUserSet();
-    if (stored) setUserSet(stored);
-  }, []);
+  const [userSet, setUserSet] = useState<Record<number, boolean>>(() => loadUserSet() ?? {});
 
   const isOpen = useCallback(
     (topicId: number) => {
       if (topicId in userSet) return userSet[topicId];
+      if (forcedOpenId != null && forcedOpenId === topicId) return true;
       return defaultOpen.has(topicId);
     },
-    [userSet, defaultOpen]
+    [userSet, defaultOpen, forcedOpenId]
   );
 
   const toggle = useCallback(

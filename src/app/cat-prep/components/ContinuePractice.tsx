@@ -1,7 +1,7 @@
 // ContinuePractice — blue strip of in-progress practice chips; reads localStorage; hidden when none are started
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
 import { loadLocalProgress, PROGRESS_PREFIX } from "@/app/cat-prep/lib/practiceProgressStore";
@@ -50,76 +50,74 @@ function parseDilrKey(rawKey: string): { chapterSlug: string; setNum: number } |
   return null;
 }
 
-export default function ContinuePractice() {
-  const [entries, setEntries] = useState<InProgressEntry[]>([]);
+function buildEntries(): InProgressEntry[] {
+  if (typeof window === "undefined") return [];
 
-  useEffect(() => {
-    const PREFIX = PROGRESS_PREFIX;
-    const result: InProgressEntry[] = [];
+  const PREFIX = PROGRESS_PREFIX;
+  const result: InProgressEntry[] = [];
 
-    // Quant — enumerate all known chapter keys from config
-    for (const config of buildQuantEntries()) {
-      const progress = loadLocalProgress(config.key);
-      if (!progress) continue;
-      const answered = Object.keys(progress.answers).length;
+  for (const config of buildQuantEntries()) {
+    const progress = loadLocalProgress(config.key);
+    if (!progress) continue;
+    const answered = Object.keys(progress.answers).length;
+    if (answered === 0) continue;
+    if (config.total && answered >= config.total) continue;
+    result.push({ ...config, answered });
+  }
+
+  const dilrSubject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
+  const dilrChapterMap = Object.fromEntries(
+    (dilrSubject?.topics.flatMap((t) => t.chapters) ?? []).map((c) => [c.slug, c.name])
+  );
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const lsKey = localStorage.key(i);
+    if (!lsKey?.startsWith(PREFIX)) continue;
+    const rawKey = lsKey.slice(PREFIX.length);
+
+    const dilr = parseDilrKey(rawKey);
+    if (dilr) {
+      const progress = loadLocalProgress(rawKey);
+      const answered = progress ? Object.keys(progress.answers).length : 0;
       if (answered === 0) continue;
-      if (config.total && answered >= config.total) continue; // complete
-      result.push({ ...config, answered });
+      const chapterName = dilrChapterMap[dilr.chapterSlug] ?? dilr.chapterSlug;
+      result.push({
+        key: rawKey,
+        title: `${chapterName} — Set ${dilr.setNum}`,
+        subtitle: "DILR",
+        href: `/cat-prep/practice/dilr/${dilr.chapterSlug}/${dilr.setNum}`,
+        color: "#0F766E",
+        bgColor: "#F0FDFA",
+        borderColor: "#99F6E4",
+        answered,
+      });
+      continue;
     }
 
-    // DILR + VARC — scan localStorage for matching key prefixes
-    const dilrSubject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
-    const dilrChapterMap = Object.fromEntries(
-      (dilrSubject?.topics.flatMap((t) => t.chapters) ?? []).map((c) => [c.slug, c.name])
-    );
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const lsKey = localStorage.key(i);
-      if (!lsKey?.startsWith(PREFIX)) continue;
-      const rawKey = lsKey.slice(PREFIX.length);
-
-      // DILR sets
-      const dilr = parseDilrKey(rawKey);
-      if (dilr) {
-        const progress = loadLocalProgress(rawKey);
-        const answered = progress ? Object.keys(progress.answers).length : 0;
-        if (answered === 0) continue;
-        const chapterName = dilrChapterMap[dilr.chapterSlug] ?? dilr.chapterSlug;
-        result.push({
-          key: rawKey,
-          title: `${chapterName} — Set ${dilr.setNum}`,
-          subtitle: "DILR",
-          href: `/cat-prep/practice/dilr/${dilr.chapterSlug}/${dilr.setNum}`,
-          color: "#0F766E",
-          bgColor: "#F0FDFA",
-          borderColor: "#99F6E4",
-          answered,
-        });
-        continue;
-      }
-
-      // VARC RCs
-      if (rawKey.startsWith("varc-rc-")) {
-        const rcNum = parseInt(rawKey.slice("varc-rc-".length), 10);
-        if (isNaN(rcNum) || rcNum < 1) continue;
-        const progress = loadLocalProgress(rawKey);
-        const answered = progress ? Object.keys(progress.answers).length : 0;
-        if (answered === 0) continue;
-        result.push({
-          key: rawKey,
-          title: `RC ${rcNum}`,
-          subtitle: "Reading Comprehension · VARC",
-          href: `/cat-prep/practice/varc/reading-comprehensions/${rcNum}`,
-          color: "#92400E",
-          bgColor: "#FFFBEB",
-          borderColor: "#FDE68A",
-          answered,
-        });
-      }
+    if (rawKey.startsWith("varc-rc-")) {
+      const rcNum = parseInt(rawKey.slice("varc-rc-".length), 10);
+      if (isNaN(rcNum) || rcNum < 1) continue;
+      const progress = loadLocalProgress(rawKey);
+      const answered = progress ? Object.keys(progress.answers).length : 0;
+      if (answered === 0) continue;
+      result.push({
+        key: rawKey,
+        title: `RC ${rcNum}`,
+        subtitle: "Reading Comprehension · VARC",
+        href: `/cat-prep/practice/varc/reading-comprehensions/${rcNum}`,
+        color: "#92400E",
+        bgColor: "#FFFBEB",
+        borderColor: "#FDE68A",
+        answered,
+      });
     }
+  }
 
-    setEntries(result);
-  }, []);
+  return result;
+}
+
+export default function ContinuePractice() {
+  const [entries] = useState<InProgressEntry[]>(() => buildEntries());
 
   if (entries.length === 0) return null;
 

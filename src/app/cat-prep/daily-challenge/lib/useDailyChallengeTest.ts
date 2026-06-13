@@ -46,17 +46,66 @@ export function useDailyChallengeTest(test: DailyTest, draft?: DailyChallengeDra
   const questionId = question?.questionId;
   const questionTimeLimit = question?.timeLimitSeconds ?? null;
 
-  // Ref keeps responses readable inside useCallback without adding it to deps
   const responsesRef = useRef<Record<string, number | null>>({});
-  responsesRef.current = responses;
+  // Keep ref in sync after each render so callbacks always see the latest responses
+  useEffect(() => { responsesRef.current = responses; });
 
-  // Time tracking refs — no state needed since these don't drive re-renders
-  const testStartTimeRef = useRef<number>(Date.now());
-  const questionEnterTimeRef = useRef<number>(Date.now());
+  const testStartTimeRef = useRef(0);
+  const questionEnterTimeRef = useRef(0);
   const activeQuestionIdRef = useRef<string | undefined>(undefined);
   const timeSpentRef = useRef<Record<string, number>>({});
 
-  // Mark the current question as visited whenever it changes; also record time on the previous question
+  useEffect(() => {
+    const now = Date.now();
+    testStartTimeRef.current = now;
+    questionEnterTimeRef.current = now;
+  }, []);
+
+  // Reset question timer and mark as visited when the active question changes
+  const [prevQId, setPrevQId] = useState(questionId);
+  if (prevQId !== questionId) {
+    setPrevQId(questionId);
+    setQuestionTimeLeft(questionTimeLimit);
+    if (questionId) {
+      setVisitStatus((prev) => {
+        if (prev[questionId] === "answered" || prev[questionId] === "marked_for_review")
+          return prev;
+        return { ...prev, [questionId]: "visited" };
+      });
+    }
+  }
+
+  // Auto-advance section when its countdown reaches zero
+  const [prevSectionTimeLeft, setPrevSectionTimeLeft] = useState(sectionTimeLeft);
+  if (prevSectionTimeLeft !== sectionTimeLeft) {
+    setPrevSectionTimeLeft(sectionTimeLeft);
+    if (!isComplete && sectionTimeLeft === 0) {
+      if (sectionIndex >= test.sections.length - 1) {
+        setIsComplete(true);
+      } else {
+        const next = sectionIndex + 1;
+        const nextSection = test.sections[next];
+        setSectionIndex(next);
+        setQuestionIndex(0);
+        setSectionTimeLeft(nextSection.timeLimitSeconds);
+        setQuestionTimeLeft(nextSection.questions[0]?.timeLimitSeconds ?? null);
+      }
+    }
+  }
+
+  // Auto-advance question when its per-question timer reaches zero
+  const [prevQTimeLeft, setPrevQTimeLeft] = useState(questionTimeLeft);
+  if (prevQTimeLeft !== questionTimeLeft) {
+    setPrevQTimeLeft(questionTimeLeft);
+    if (questionTimeLeft === 0 && !isComplete) {
+      const next = questionIndex + 1;
+      if (next < (section?.questions.length ?? 0)) {
+        setQuestionIndex(next);
+      }
+    }
+  }
+
+  // Update timing refs when question changes — ref mutations only, no setState
   useEffect(() => {
     const prev = activeQuestionIdRef.current;
     if (prev) {
@@ -65,13 +114,6 @@ export function useDailyChallengeTest(test: DailyTest, draft?: DailyChallengeDra
     }
     activeQuestionIdRef.current = questionId;
     questionEnterTimeRef.current = Date.now();
-
-    if (!questionId) return;
-    setVisitStatus((prev) => {
-      if (prev[questionId] === "answered" || prev[questionId] === "marked_for_review")
-        return prev;
-      return { ...prev, [questionId]: "visited" };
-    });
   }, [questionId]);
 
   // Section countdown — restarts when section changes
@@ -83,40 +125,14 @@ export function useDailyChallengeTest(test: DailyTest, draft?: DailyChallengeDra
     return () => clearInterval(id);
   }, [sectionIndex, isComplete]);
 
-  // Auto-advance section when its timer reaches zero
+  // Per-question override timer — initial reset is handled above; only manages the interval
   useEffect(() => {
-    if (isComplete || sectionTimeLeft > 0) return;
-    if (sectionIndex >= test.sections.length - 1) {
-      setIsComplete(true);
-    } else {
-      const next = sectionIndex + 1;
-      const nextSection = test.sections[next];
-      setSectionIndex(next);
-      setQuestionIndex(0);
-      setSectionTimeLeft(nextSection.timeLimitSeconds);
-      setQuestionTimeLeft(nextSection.questions[0]?.timeLimitSeconds ?? null);
-    }
-  }, [sectionTimeLeft, sectionIndex, isComplete, test.sections]);
-
-  // Per-question override timer — resets whenever the active question changes
-  useEffect(() => {
-    setQuestionTimeLeft(questionTimeLimit);
     if (questionTimeLimit === null || isComplete) return;
     const id = setInterval(() => {
       setQuestionTimeLeft((t) => (t !== null ? Math.max(0, t - 1) : null));
     }, 1000);
     return () => clearInterval(id);
   }, [questionId, questionTimeLimit, isComplete]);
-
-  // Auto-advance question when its per-question timer reaches zero
-  useEffect(() => {
-    if (questionTimeLeft === null || questionTimeLeft > 0 || isComplete) return;
-    const next = questionIndex + 1;
-    if (next < section.questions.length) {
-      setQuestionIndex(next);
-    }
-    // If last question in section, the section timer drives the advance
-  }, [questionTimeLeft, questionIndex, isComplete, section?.questions.length]);
 
   const goToQuestion = useCallback(
     (idx: number) => {
