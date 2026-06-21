@@ -10,13 +10,16 @@ import SignInModal from "./SignInModal";
 export default function PracticeChapterChip({
   chapter,
   href,
+  chipColor,
 }: {
   chapter: PracticeChapter;
   href: string;
+  chipColor: string;
 }) {
   const { isLoggedIn } = useProgressContext();
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   function handleClick() {
     if (isLoggedIn) {
@@ -30,33 +33,23 @@ export default function PracticeChapterChip({
     <>
       <button
         onClick={handleClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         style={{
           display: "inline-flex",
           alignItems: "center",
           gap: 6,
           padding: "6px 12px",
           borderRadius: 8,
-          border: "1.5px solid #E2E8F0",
-          background: "#fff",
-          color: "#334155",
+          border: `1.5px solid ${isHovered ? "#14B8A6" : chipColor}`,
+          background: isHovered ? "#fff" : chipColor,
+          color: isHovered ? "#0F766E" : "#fff",
           fontSize: 13,
-          fontWeight: 500,
+          fontWeight: 600,
           cursor: "pointer",
           fontFamily: "inherit",
           transition: "all 0.15s",
           whiteSpace: "nowrap",
-        }}
-        onMouseEnter={(e) => {
-          const el = e.currentTarget;
-          el.style.border = "1.5px solid #14B8A6";
-          el.style.background = "#F0FDFA";
-          el.style.color = "#0F766E";
-        }}
-        onMouseLeave={(e) => {
-          const el = e.currentTarget;
-          el.style.border = "1.5px solid #E2E8F0";
-          el.style.background = "#fff";
-          el.style.color = "#334155";
         }}
       >
         <span
@@ -64,12 +57,18 @@ export default function PracticeChapterChip({
             width: 7,
             height: 7,
             borderRadius: "50%",
-            background: "#CBD5E1",
+            background: isHovered ? "#CBD5E1" : "rgba(255,255,255,0.7)",
             flexShrink: 0,
           }}
         />
         {chapter.name}
-        <span style={{ fontSize: 11, color: "#94A3B8", marginLeft: 2 }}>
+        <span
+          style={{
+            fontSize: 11,
+            color: isHovered ? "#94A3B8" : "rgba(255,255,255,0.75)",
+            marginLeft: 2,
+          }}
+        >
           {chapter.questionCount}Q
         </span>
       </button>

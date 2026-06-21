@@ -20,7 +20,7 @@ import DailyChallengeCard from "./DailyChallengeCard";
 import ContinueLearning from "./ContinueLearning";
 import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
-import SubjectModeToggle from "./SubjectModeToggle";
+import RoadmapNav from "./RoadmapNav";
 import PracticeTopicRow from "./PracticeTopicRow";
 import { useProgressContext } from "../lib/ProgressContext";
 import { useTopicExpandState } from "../lib/useTopicExpandState";
@@ -141,9 +141,21 @@ export default function RoadmapContent({
           >
             CAT Preparation Roadmap
           </h1>
-          <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 24px" }}>
+          <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 16px" }}>
             Follow structured learning paths across all three sections
           </p>
+
+          {meta && activeSubject && (
+            <RoadmapNav
+              mode={mode}
+              onModeChange={(m) => {
+                setMode(m);
+                setSelected(null);
+                setActiveTopicId(null);
+                trackEvent("practice_mode_toggled", { mode: m, subject: meta.abbr });
+              }}
+            />
+          )}
 
           {/* Overall progress bar */}
           <div className="flex items-center gap-3">
@@ -179,13 +191,15 @@ export default function RoadmapContent({
         style={{ maxWidth: 900, margin: "0 auto", width: "100%", padding: "32px 24px" }}
       >
         {/* Continue Learning strip */}
-        <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
+        {mode === "learn" && (
+          <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
+        )}
 
         {/* Continue Practice strip */}
-        <ContinuePractice />
+        {mode === "practice" && <ContinuePractice />}
 
         {/* Daily Challenge */}
-        <DailyChallengeCard />
+        {mode === "practice" && <DailyChallengeCard />}
 
         {/* Subject tabs */}
         <div className="flex gap-2.5 mb-7 flex-wrap">
@@ -209,21 +223,6 @@ export default function RoadmapContent({
             );
           })}
         </div>
-
-        {/* Active subject header — Learn / Practice toggle */}
-        {meta && activeSubject && (
-          <SubjectModeToggle
-            activeSubject={activeSubject}
-            meta={meta}
-            mode={mode}
-            onModeChange={(m) => {
-              setMode(m);
-              setSelected(null);
-              setActiveTopicId(null);
-              trackEvent("practice_mode_toggled", { mode: m, subject: meta.abbr });
-            }}
-          />
-        )}
 
         {/* Topic accordion rows — Learn or Practice */}
         <ErrorBoundary>
@@ -259,6 +258,7 @@ export default function RoadmapContent({
                     selectedId={selected?.id ?? null}
                     progress={progress}
                     accentColor={meta?.color ?? "#1E3A5F"}
+                    chipColor={meta?.chip ?? "#566B87"}
                   />
                 ))}
             </div>
@@ -270,6 +270,7 @@ export default function RoadmapContent({
                   topic={topic}
                   section={meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"}
                   accentColor={meta?.color ?? "#1E3A5F"}
+                  chipColor={meta?.chip ?? "#566B87"}
                   isOpen={openPracticeTopics[topic.slug] ?? false}
                   onToggle={() =>
                     setOpenPracticeTopics((prev) => ({
