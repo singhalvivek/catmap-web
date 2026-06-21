@@ -12,6 +12,7 @@ export default function TopicRow({
   selectedId,
   progress,
   accentColor,
+  chipColor,
   isOpen,
   onToggle,
 }: {
@@ -20,6 +21,7 @@ export default function TopicRow({
   selectedId: number | null;
   progress: Record<number, ProgressStatus>;
   accentColor: string;
+  chipColor: string;
   isOpen: boolean;
   onToggle: () => void;
 }) {
@@ -152,6 +154,7 @@ export default function TopicRow({
               isSelected={selectedId === s.id}
               onClick={onSelectNode}
               progress={progress}
+              chipColor={chipColor}
             />
           ))}
           {subtopics.length === 0 && (
