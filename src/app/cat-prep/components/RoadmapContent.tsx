@@ -157,12 +157,18 @@ export default function RoadmapContent({
             className="font-extrabold text-trust-navy"
             style={{ fontSize: "clamp(24px,4vw,36px)", margin: "0 0 6px", letterSpacing: "-0.5px" }}
           >
-            CAT Preparation Roadmap
+            {mode === "learn"
+              ? "CAT Preparation Roadmap"
+              : mode === "practice"
+              ? "CAT Practice"
+              : "CAT Previous Year Papers"}
           </h1>
           <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 16px" }}>
-            {mode === "pyq"
-              ? "Every official CAT paper from 1990 to 2025, in one place."
-              : "Follow structured learning paths across all three sections"}
+            {mode === "learn"
+              ? "Follow structured learning paths across all three sections"
+              : mode === "practice"
+              ? "Topic-wise practice questions across VARC, DILR and Quant"
+              : "Every official CAT paper from 1990 to 2025, in one place."}
           </p>
 
           {meta && activeSubject && (

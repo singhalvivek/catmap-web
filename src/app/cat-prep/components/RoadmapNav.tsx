@@ -1,6 +1,8 @@
 // RoadmapNav — hero button row for switching the roadmap view mode (Learn / Practice / PYQ)
 "use client";
 
+import Link from "next/link";
+
 export type Mode = "learn" | "practice" | "pyq";
 
 const ITEMS: { key: Mode; label: string }[] = [
@@ -45,6 +47,21 @@ export default function RoadmapNav({
           </button>
         );
       })}
+
+      <Link
+        href="/cat-prep/how-to-prepare"
+        className="font-bold"
+        style={{
+          ...PILL_STYLE,
+          display: "inline-block",
+          textDecoration: "none",
+          border: "1.5px solid #14B8A6",
+          background: "#fff",
+          color: "#0F766E",
+        }}
+      >
+        How to Prepare
+      </Link>
     </div>
   );
 }

@@ -47,12 +47,21 @@ export default async function PyqIndexPage() {
         }}
       >
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
-            <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
-              CAT Prep
+          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span>
+              <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
+                CAT Prep
+              </Link>
+              {" / "}
+              <span style={{ color: "#1E3A5F", fontWeight: 600 }}>PYQ</span>
+            </span>
+            <span style={{ color: "#E2E8F0" }}>·</span>
+            <Link
+              href="/cat-prep/how-to-prepare"
+              style={{ color: "#14B8A6", textDecoration: "none", fontWeight: 500 }}
+            >
+              How to Prepare for CAT →
             </Link>
-            {" / "}
-            <span style={{ color: "#1E3A5F", fontWeight: 600 }}>PYQ</span>
           </div>
           <h1
             className="font-extrabold text-trust-navy"

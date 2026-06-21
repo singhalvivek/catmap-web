@@ -53,8 +53,9 @@ export default function Footer() {
             </div>
             {[
               { label: "CAT Roadmap", href: "/cat-prep" },
+              { label: "PYQ Papers", href: "/cat-prep/pyq" },
+              { label: "How to Prepare", href: "/cat-prep/how-to-prepare" },
               { label: "Browse All", href: "/" },
-              { label: "Suggest Edits", href: "/cat-prep" },
             ].map(({ label, href }) => (
               <div key={label} className="mb-2">
                 <Link
