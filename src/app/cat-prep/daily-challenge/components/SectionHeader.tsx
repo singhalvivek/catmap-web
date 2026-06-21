@@ -14,6 +14,7 @@ type Props = {
   sectionTimeLeft: number;
   questionTimeLeft: number | null;
   onSubmitChallenge: () => void;
+  backHref?: string;
 };
 
 export default function SectionHeader({
@@ -21,6 +22,7 @@ export default function SectionHeader({
   sectionTimeLeft,
   questionTimeLeft,
   onSubmitChallenge,
+  backHref = "/cat-prep",
 }: Props) {
   const sectionCritical = sectionTimeLeft <= 30;
   const sectionWarning = sectionTimeLeft <= 60;
@@ -48,7 +50,7 @@ export default function SectionHeader({
         {/* Left: back link + challenge name */}
         <div className="flex items-center gap-3">
           <Link
-            href="/cat-prep"
+            href={backHref}
             className="font-semibold"
             style={{
               fontSize: 12,

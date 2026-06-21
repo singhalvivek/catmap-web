@@ -21,21 +21,35 @@ type Props = {
   test: DailyTest;
   saveError: boolean;
   is_returning?: boolean;
+  title?: string;
+  backHref?: string;
+  backLabel?: string;
+  analyticsEvent?: string;
 };
 
-export default function ResultView({ result, test, saveError, is_returning = false }: Props) {
+export default function ResultView({
+  result,
+  test,
+  saveError,
+  is_returning = false,
+  title = "Daily Challenge · Results",
+  backHref = "/cat-prep",
+  backLabel = "← Back to Roadmap",
+  analyticsEvent = "daily_challenge_result_viewed",
+}: Props) {
   const pct = result.totalMarks > 0
     ? Math.round((result.score / result.totalMarks) * 100)
     : 0;
 
   const eventParams = useRef({
     challenge_date: result.completedAt.toISOString().slice(0, 10),
+    test_id: result.testId,
     score_percent: pct,
     is_returning,
   });
   useEffect(() => {
-    trackEvent("daily_challenge_result_viewed", eventParams.current);
-  }, []);
+    trackEvent(analyticsEvent, eventParams.current);
+  }, [analyticsEvent]);
 
   return (
     <div className="min-h-screen" style={{ background: "#FFFDF8" }}>
@@ -53,7 +67,7 @@ export default function ResultView({ result, test, saveError, is_returning = fal
         }}
       >
         <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
-          Daily Challenge · Results
+          {title}
         </span>
       </div>
 
@@ -135,7 +149,7 @@ export default function ResultView({ result, test, saveError, is_returning = fal
 
         <div style={{ textAlign: "center" }}>
           <Link
-            href="/cat-prep"
+            href={backHref}
             className="font-bold text-white"
             style={{
               display: "inline-block",
@@ -146,7 +160,7 @@ export default function ResultView({ result, test, saveError, is_returning = fal
               textDecoration: "none",
             }}
           >
-            ← Back to Roadmap
+            {backLabel}
           </Link>
         </div>
       </div>

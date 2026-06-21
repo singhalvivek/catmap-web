@@ -1,12 +1,22 @@
-// RoadmapNav — hero button row for switching the roadmap view mode (Learn / Practice)
+// RoadmapNav — hero button row for switching the roadmap view mode (Learn / Practice / PYQ)
 "use client";
 
-type Mode = "learn" | "practice";
+export type Mode = "learn" | "practice" | "pyq";
 
 const ITEMS: { key: Mode; label: string }[] = [
   { key: "learn", label: "Learn" },
   { key: "practice", label: "Practice" },
+  { key: "pyq", label: "PYQ" },
 ];
+
+const PILL_STYLE = {
+  padding: "9px 20px",
+  borderRadius: 999,
+  fontSize: 14,
+  fontFamily: "inherit",
+  transition: "all 0.18s",
+  cursor: "pointer",
+} as const;
 
 export default function RoadmapNav({
   mode,
@@ -25,15 +35,10 @@ export default function RoadmapNav({
             onClick={() => onModeChange(item.key)}
             className="font-bold"
             style={{
-              padding: "9px 20px",
-              borderRadius: 999,
-              fontSize: 14,
+              ...PILL_STYLE,
               border: `1.5px solid ${isActive ? "#1E3A5F" : "rgba(30,58,95,0.18)"}`,
               background: isActive ? "#1E3A5F" : "#fff",
               color: isActive ? "#fff" : "#1E3A5F",
-              cursor: "pointer",
-              fontFamily: "inherit",
-              transition: "all 0.18s",
             }}
           >
             {item.label}

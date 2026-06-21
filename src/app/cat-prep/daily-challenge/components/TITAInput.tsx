@@ -4,9 +4,10 @@
 type Props = {
   value: number | null;
   onChange: (value: number | null) => void;
+  disabled?: boolean;
 };
 
-export default function TITAInput({ value, onChange }: Props) {
+export default function TITAInput({ value, onChange, disabled }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     if (raw === "" || raw === "-") {
@@ -32,6 +33,7 @@ export default function TITAInput({ value, onChange }: Props) {
         step="0.01"
         value={value ?? ""}
         onChange={handleChange}
+        disabled={disabled}
         placeholder="Type a number…"
         style={{
           width: 200,
@@ -40,7 +42,7 @@ export default function TITAInput({ value, onChange }: Props) {
           border: "1.5px solid #CBD5E1",
           fontSize: 16,
           fontFamily: "inherit",
-          background: "#fff",
+          background: disabled ? "#F8FAFC" : "#fff",
           color: "#1E3A5F",
           outline: "none",
         }}

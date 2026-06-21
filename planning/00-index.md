@@ -46,6 +46,8 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 | P001 | 🔄 | [P001-practice-questions.md](./P001-practice-questions.md) | Practice questions — Quant MCQ, DILR sets, VARC RC; Learn/Practice toggle on roadmap |
 | P002 | 🔄 | [P002-practice-player-fixes.md](./P002-practice-player-fixes.md) | Bug fixes + code reuse: RC solution cache bug, inline component remounts, mobile layout, shared PracticeOptionButton + PracticePalette |
 | P003 | 🔄 | [P003-continue-practice-strip.md](./P003-continue-practice-strip.md) | Continue Practice strip — chips for in-progress practice sessions |
+| P004 | 🔄 | [P004-pyq-section.md](./P004-pyq-section.md) | PYQ section — browse past papers + timed mock test; new entry point next to Learn/Practice. All 4 phases built; pending a real click-test of the mock submit flow before marking ✅ |
+| P005 | 🔄 | [P005-progress-bars.md](./P005-progress-bars.md) | Mode-aware progress bars — Learn/Practice/PYQ each show their own metric + info tooltip |
 
 ---
 
