@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-
-const NAV_LINKS = [
-  { label: "Learn", href: "/cat-prep" },
-  { label: "Practice", href: "/cat-prep" },
-  { label: "PYQ", href: "/cat-prep/pyq" },
-  { label: "How to Prepare", href: "/cat-prep/how-to-prepare", active: true },
-];
+import RoadmapNav from "../components/RoadmapNav";
 
 export const metadata: Metadata = {
   title: "How to Prepare for CAT | StudyNaksha",
@@ -220,27 +214,7 @@ export default function HowToPreparePage() {
           </p>
 
           {/* Nav pills */}
-          <div className="flex gap-2 flex-wrap">
-            {NAV_LINKS.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="font-bold"
-                style={{
-                  padding: "9px 20px",
-                  borderRadius: 999,
-                  fontSize: 14,
-                  textDecoration: "none",
-                  transition: "all 0.18s",
-                  border: `1.5px solid ${item.active ? "#1E3A5F" : "rgba(30,58,95,0.18)"}`,
-                  background: item.active ? "#1E3A5F" : "#fff",
-                  color: item.active ? "#fff" : "#1E3A5F",
-                }}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          <RoadmapNav />
         </div>
       </div>
 

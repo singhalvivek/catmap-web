@@ -2,6 +2,7 @@
 "use client";
 
 import type { QuestionOption } from "../../models/dailyChallenge";
+import MathText from "./MathText";
 
 type Props = {
   options: QuestionOption[];
@@ -62,7 +63,7 @@ export default function MCQOptions({ options, selected, onSelect }: Props) {
                 style={{ maxHeight: 60, borderRadius: 4 }}
               />
             ) : (
-              <span>{opt.text}</span>
+              <MathText text={opt.text ?? ""} />
             )}
           </button>
         );

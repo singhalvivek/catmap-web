@@ -17,11 +17,14 @@ import ErrorBoundary from "./ErrorBoundary";
 import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
 import DailyChallengeCard from "./DailyChallengeCard";
+import DailyEssayCard from "./DailyEssayCard";
 import ContinueLearning from "./ContinueLearning";
 import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
-import RoadmapNav, { type Mode } from "./RoadmapNav";
+import RoadmapNav from "./RoadmapNav";
 import PracticeTopicRow from "./PracticeTopicRow";
+
+export type Mode = "learn" | "practice" | "pyq";
 import PyqPapersList from "./PyqPapersList";
 import ModeProgressBar from "./ModeProgressBar";
 import { useProgressContext } from "../lib/ProgressContext";
@@ -38,6 +41,8 @@ export default function RoadmapContent({
   allFaqs,
   initialNode = null,
   initialExpandedTopicId = null,
+  initialMode = "learn",
+  initialPapers = null,
 }: {
   subjects: Node[];
   allDescriptions: Description[];
@@ -45,6 +50,8 @@ export default function RoadmapContent({
   allFaqs: FaqType[];
   initialNode?: Node | null;
   initialExpandedTopicId?: number | null;
+  initialMode?: Mode;
+  initialPapers?: PyqPaperSummary[] | null;
 }) {
   const allTopics = useMemo(() => subjects.flatMap((s) => s.children ?? []), [subjects]);
 
@@ -64,11 +71,11 @@ export default function RoadmapContent({
   // tracks the "URL-active" topic for replaceState when no subtopic panel is open
   const [activeTopicId, setActiveTopicId] = useState<number | null>(initialExpandedTopicId);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [mode, setMode] = useState<Mode>("learn");
+  const [mode] = useState<Mode>(initialMode);
   const [openPracticeTopics, setOpenPracticeTopics] = useState<Record<string, boolean>>({});
-  const [pyqPapers, setPyqPapers] = useState<PyqPaperSummary[] | null>(null);
+  const [pyqPapers, setPyqPapers] = useState<PyqPaperSummary[] | null>(initialPapers ?? null);
   // ref-based guard prevents duplicate fetches without a synchronous setState in the effect body
-  const pyqFetchStarted = useRef(false);
+  const pyqFetchStarted = useRef(initialPapers != null);
 
   const { progress, isLoggedIn } = useProgressContext();
   const { isOpen, toggle } = useTopicExpandState(subjects, initialExpandedTopicId);
@@ -112,6 +119,7 @@ export default function RoadmapContent({
   }, []);
 
   useEffect(() => {
+    if (mode !== "learn") return;
     let url = "/cat-prep";
     if (selected?.type === "SUBTOPIC" && selected.parent_id != null) {
       const parent = allTopics.find((t) => t.id === selected.parent_id);
@@ -123,7 +131,7 @@ export default function RoadmapContent({
       if (topic) url = `/cat-prep/${toSlug(topic.title)}`;
     }
     window.history.replaceState(null, "", url);
-  }, [selected, activeTopicId, allTopics]);
+  }, [mode, selected, activeTopicId, allTopics]);
 
   const activeSubject = subjects.find((s) => s.id === activeSubjectId);
   const meta = SUBJECT_META[activeSubjectId];
@@ -171,20 +179,7 @@ export default function RoadmapContent({
               : "Every official CAT paper from 1990 to 2025, in one place."}
           </p>
 
-          {meta && activeSubject && (
-            <RoadmapNav
-              mode={mode}
-              onModeChange={(m) => {
-                setMode(m);
-                setSelected(null);
-                setActiveTopicId(null);
-                trackEvent(m === "pyq" ? "pyq_entry_clicked" : "practice_mode_toggled", {
-                  mode: m,
-                  subject: meta.abbr,
-                });
-              }}
-            />
-          )}
+          {meta && activeSubject && <RoadmapNav />}
 
           {/* Overall progress bar — contextual to the active mode */}
           {mode === "learn" ? (
@@ -221,6 +216,9 @@ export default function RoadmapContent({
         {mode === "learn" && (
           <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
         )}
+
+        {/* Daily Essay */}
+        {mode === "learn" && <DailyEssayCard />}
 
         {/* Continue Practice strip */}
         {mode === "practice" && <ContinuePractice />}

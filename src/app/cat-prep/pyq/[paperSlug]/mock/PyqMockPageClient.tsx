@@ -163,6 +163,7 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
         backHref={`/cat-prep/pyq/${paperSlug}`}
         backLabel="← Back to Paper"
         analyticsEvent="pyq_mock_result_viewed"
+        reviewHref={`/cat-prep/pyq/${paperSlug}/mock/review`}
       />
     );
   }
