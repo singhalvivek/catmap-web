@@ -10,20 +10,18 @@ import { Description } from "../models/description";
 import { Resource } from "../models/resource";
 import type { Faq as FaqType } from "../models/faq";
 
-import { fetchPyqPapersIndex } from "@/lib/pyqQueries";
 import { ProgressProvider } from "../lib/ProgressContext";
 import RoadmapContent from "../components/RoadmapContent";
 
 export const metadata: Metadata = {
-  title: "CAT Previous Year Question Papers (PYQ) 1990–2025 | StudyNaksha",
+  title: "CAT Practice Questions | StudyNaksha",
   description:
-    "Free CAT previous year question papers from 1990 to 2025 with detailed solutions. Practice question by question or attempt a full timed mock test. Covers VARC, DILR and Quant sections.",
+    "Topic-wise CAT practice questions across VARC, DILR and Quant. Work through chapter-level drills to build mastery before tackling full PYQ papers.",
 };
 
-export default async function PyqIndexPage() {
+export default function CatPracticePage() {
   const tree = buildTree(data as Node[]);
   const subjects = tree[0]?.children ?? [];
-  const papers = await fetchPyqPapersIndex();
 
   return (
     <ProgressProvider>
@@ -32,8 +30,7 @@ export default async function PyqIndexPage() {
         allDescriptions={descriptions as Description[]}
         allResources={resources as Resource[]}
         allFaqs={faqs as FaqType[]}
-        initialMode="pyq"
-        initialPapers={papers}
+        initialMode="practice"
       />
     </ProgressProvider>
   );

@@ -3,6 +3,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { onAuthStateChanged, signInWithPopup, type User } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 import type { PyqPaper, PyqQuestion, PyqSection, PyqSolution } from "@/app/cat-prep/models/pyq";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
@@ -94,6 +96,13 @@ function MathContent({ text, containerRef }: { text: string; containerRef: React
 }
 
 export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
+  const [authUser, setAuthUser] = useState<User | null | "loading">("loading");
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (u) => setAuthUser(u));
+  }, []);
+
   const [activeSection, setActiveSection] = useState<PyqSection>(SECTION_ORDER[0]);
   const [activeTab, setActiveTab] = useState<"passage" | "question">("passage");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -319,6 +328,55 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
       </div>
     </div>
   );
+
+  if (authUser === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
+        <p className="text-slate-500 text-sm">Loading…</p>
+      </div>
+    );
+  }
+
+  if (!authUser) {
+    const handleLogin = async () => {
+      setAuthError(null);
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch {
+        setAuthError("Could not sign in. Please try again.");
+      }
+    };
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
+        <div style={{ maxWidth: 360, textAlign: "center", padding: "32px 24px" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>📚</div>
+          <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 22, marginBottom: 8 }}>
+            Sign in to practice
+          </h2>
+          <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
+            Your progress is saved to your account so you can pick up where you left off.
+          </p>
+          <button
+            type="button"
+            onClick={handleLogin}
+            className="font-bold text-white w-full"
+            style={{
+              padding: "12px 24px",
+              borderRadius: 10,
+              background: "#1E3A5F",
+              border: "none",
+              fontSize: 15,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            Login with Google
+          </button>
+          {authError && <p className="text-red-600 text-xs mt-3">{authError}</p>}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef}>

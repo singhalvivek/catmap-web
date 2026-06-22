@@ -14,6 +14,7 @@ import type {
 import type {
   DailyTest,
   TestSection,
+  Question,
   DailyChallengeResult,
   SerializedDailyChallengeResult,
   QuestionResponse,
@@ -227,6 +228,53 @@ export async function fetchPyqMockTest(paperSlug: string): Promise<DailyTest | n
         ? { text: q.comprehension.text ?? "", imageUrl: q.comprehension.imageUrls[0] ?? null }
         : null,
     })),
+  }));
+
+  return { testId: paperSlug, sections };
+}
+
+/**
+ * Builds the same sectioned DailyTest shape as `fetchPyqMockTest`, but for the
+ * post-submission review screen: answers and explanations are included since the
+ * attempt is already graded, so there's nothing left to leak.
+ */
+export async function fetchPyqMockReviewTest(paperSlug: string): Promise<DailyTest | null> {
+  const db = await getDb();
+  const questionDocs = await db
+    .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
+    .find({ paperSlug })
+    .sort({ questionNumber: 1 })
+    .toArray();
+  if (questionDocs.length === 0) return null;
+
+  const compMap = await fetchComprehensionMap(questionDocs);
+  const sectionTimeLimit = getPyqMockSectionTimeLimitSeconds();
+
+  const questionsBySection = new Map<PyqSection, Question[]>(
+    SECTION_ORDER.map((name) => [name, []])
+  );
+  for (const doc of questionDocs) {
+    const compId = doc.comprehensionId?.toString();
+    const comp = compId ? compMap.get(compId) : undefined;
+    questionsBySection.get(doc.section)?.push({
+      questionId: doc._id.toString(),
+      order: doc.questionNumber,
+      type: doc.type,
+      text: doc.text ?? "",
+      imageUrl: doc.imageUrls[0] ?? null,
+      options: doc.options
+        ? doc.options.map((o) => ({ index: o.index, text: o.text, imageUrl: o.imageUrls[0] ?? null }))
+        : null,
+      timeLimitSeconds: null,
+      comprehension: comp ? { text: comp.text ?? "", imageUrl: comp.imageUrls[0] ?? null } : null,
+      explanation: doc.explanation ? { text: doc.explanation.text, imageUrls: doc.explanation.imageUrls } : null,
+    });
+  }
+
+  const sections: TestSection[] = SECTION_ORDER.map((name) => ({
+    name,
+    timeLimitSeconds: sectionTimeLimit,
+    questions: questionsBySection.get(name) ?? [],
   }));
 
   return { testId: paperSlug, sections };

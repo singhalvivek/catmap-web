@@ -1,15 +1,17 @@
-// RoadmapNav — hero button row for switching the roadmap view mode (Learn / Practice / PYQ)
+// RoadmapNav — hero button row for switching the roadmap view mode (Learn / Practice / PYQ / How to Prepare)
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export type Mode = "learn" | "practice" | "pyq";
+const ITEMS = [
+  { key: "learn", label: "Learn", href: "/cat-prep" },
+  { key: "practice", label: "Practice", href: "/cat-prep/practice" },
+  { key: "pyq", label: "PYQ", href: "/cat-prep/pyq" },
+  { key: "how-to-prepare", label: "How to Prepare", href: "/cat-prep/how-to-prepare" },
+] as const;
 
-const ITEMS: { key: Mode; label: string }[] = [
-  { key: "learn", label: "Learn" },
-  { key: "practice", label: "Practice" },
-  { key: "pyq", label: "PYQ" },
-];
+type NavKey = (typeof ITEMS)[number]["key"];
 
 const PILL_STYLE = {
   padding: "9px 20px",
@@ -18,50 +20,42 @@ const PILL_STYLE = {
   fontFamily: "inherit",
   transition: "all 0.18s",
   cursor: "pointer",
+  display: "inline-block",
+  textDecoration: "none",
 } as const;
 
-export default function RoadmapNav({
-  mode,
-  onModeChange,
-}: {
-  mode: Mode;
-  onModeChange: (mode: Mode) => void;
-}) {
+function getActiveKey(pathname: string): NavKey {
+  if (pathname === "/cat-prep/pyq" || pathname.startsWith("/cat-prep/pyq/")) return "pyq";
+  if (pathname === "/cat-prep/practice" || pathname.startsWith("/cat-prep/practice/")) return "practice";
+  if (pathname === "/cat-prep/how-to-prepare") return "how-to-prepare";
+  return "learn";
+}
+
+export default function RoadmapNav() {
+  const pathname = usePathname();
+  const active = getActiveKey(pathname);
+
   return (
     <div className="flex gap-2 flex-wrap" style={{ marginBottom: 20 }}>
       {ITEMS.map((item) => {
-        const isActive = mode === item.key;
+        const isActive = active === item.key;
+        const isHtp = item.key === "how-to-prepare";
         return (
-          <button
+          <Link
             key={item.key}
-            onClick={() => onModeChange(item.key)}
+            href={item.href}
             className="font-bold"
             style={{
               ...PILL_STYLE,
-              border: `1.5px solid ${isActive ? "#1E3A5F" : "rgba(30,58,95,0.18)"}`,
-              background: isActive ? "#1E3A5F" : "#fff",
-              color: isActive ? "#fff" : "#1E3A5F",
+              border: `1.5px solid ${isHtp ? "#14B8A6" : isActive ? "#1E3A5F" : "rgba(30,58,95,0.18)"}`,
+              background: isActive ? (isHtp ? "#14B8A6" : "#1E3A5F") : "#fff",
+              color: isActive ? "#fff" : isHtp ? "#0F766E" : "#1E3A5F",
             }}
           >
             {item.label}
-          </button>
+          </Link>
         );
       })}
-
-      <Link
-        href="/cat-prep/how-to-prepare"
-        className="font-bold"
-        style={{
-          ...PILL_STYLE,
-          display: "inline-block",
-          textDecoration: "none",
-          border: "1.5px solid #14B8A6",
-          background: "#fff",
-          color: "#0F766E",
-        }}
-      >
-        How to Prepare
-      </Link>
     </div>
   );
 }

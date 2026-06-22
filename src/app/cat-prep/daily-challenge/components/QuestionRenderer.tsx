@@ -3,6 +3,7 @@
 
 import type { Question } from "../../models/dailyChallenge";
 import ComprehensionBlock from "./ComprehensionBlock";
+import MathText from "./MathText";
 import MCQOptions from "./MCQOptions";
 import TITAInput from "./TITAInput";
 
@@ -52,7 +53,7 @@ export default function QuestionRenderer({
           className="font-semibold text-trust-navy"
           style={{ fontSize: 15, lineHeight: 1.75, margin: 0 }}
         >
-          {question.text}
+          <MathText text={question.text} />
         </p>
       </div>
 

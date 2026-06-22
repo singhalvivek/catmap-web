@@ -1,5 +1,6 @@
 // ComprehensionBlock — renders the reading passage and optional image for comprehension questions
 import type { Comprehension } from "../../models/dailyChallenge";
+import MathText from "./MathText";
 
 export default function ComprehensionBlock({
   comprehension,
@@ -47,7 +48,7 @@ export default function ComprehensionBlock({
           whiteSpace: "pre-line",
         }}
       >
-        {comprehension.text}
+        <MathText text={comprehension.text} />
       </p>
     </div>
   );

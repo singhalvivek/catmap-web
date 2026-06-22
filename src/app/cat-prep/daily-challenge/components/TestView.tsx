@@ -174,7 +174,14 @@ export default function TestView({ test, date, uid, initialState }: Props) {
       );
     }
 
-    return <ResultView result={result} test={test} saveError={saveError} />;
+    return (
+      <ResultView
+        result={result}
+        test={test}
+        saveError={saveError}
+        reviewHref={`/cat-prep/daily-challenge/review?date=${encodeURIComponent(date)}`}
+      />
+    );
   }
 
   if (!section || !question) return null;
