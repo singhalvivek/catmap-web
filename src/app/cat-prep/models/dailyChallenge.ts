@@ -19,6 +19,11 @@ export type Comprehension = {
   imageUrl: string | null;
 };
 
+export type Explanation = {
+  text: string | null;
+  imageUrls: string[];
+};
+
 export type Question = {
   questionId: string;
   order: number;
@@ -28,6 +33,9 @@ export type Question = {
   options: QuestionOption[] | null;
   timeLimitSeconds: number | null;
   comprehension: Comprehension | null;
+  // Only populated on review-only fetches, after the attempt is graded — never
+  // present on the live-test fetch path (would leak the answer mid-attempt).
+  explanation?: Explanation | null;
 };
 
 export type TestSection = {

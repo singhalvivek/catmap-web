@@ -51,9 +51,11 @@ export default function RootLayout({
       <body className={`${jakartaSans.variable} antialiased`}>
         {children}
         <GoogleAnalytics />
-        {/* MathJax config must be set before the lib loads */}
+        {/* MathJax config must be set before the lib loads. $$ listed before $ so
+            cracku's PYQ content (which uses $$..$$ inline, not display math) matches
+            before the single-dollar percentyl delimiter does. */}
         <Script id="mathjax-config" strategy="beforeInteractive">
-          {`window.MathJax={tex:{inlineMath:[['$','$']],processEscapes:true}};`}
+          {`window.MathJax={tex:{inlineMath:[['$$','$$'],['$','$']],processEscapes:true}};`}
         </Script>
         <Script
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"

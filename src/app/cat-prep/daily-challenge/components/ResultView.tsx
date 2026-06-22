@@ -4,7 +4,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { DailyChallengeResult, DailyTest } from "../../models/dailyChallenge";
-import SectionBreakdownCard from "./SectionBreakdownCard";
+import SectionSummaryRow from "./SectionSummaryRow";
 import { trackEvent } from "@/app/components/analytics";
 
 function formatTime(totalSeconds: number): string {
@@ -21,21 +21,37 @@ type Props = {
   test: DailyTest;
   saveError: boolean;
   is_returning?: boolean;
+  title?: string;
+  backHref?: string;
+  backLabel?: string;
+  analyticsEvent?: string;
+  reviewHref?: string;
 };
 
-export default function ResultView({ result, test, saveError, is_returning = false }: Props) {
+export default function ResultView({
+  result,
+  test,
+  saveError,
+  is_returning = false,
+  title = "Daily Challenge · Results",
+  backHref = "/cat-prep",
+  backLabel = "← Back to Roadmap",
+  analyticsEvent = "daily_challenge_result_viewed",
+  reviewHref,
+}: Props) {
   const pct = result.totalMarks > 0
     ? Math.round((result.score / result.totalMarks) * 100)
     : 0;
 
   const eventParams = useRef({
     challenge_date: result.completedAt.toISOString().slice(0, 10),
+    test_id: result.testId,
     score_percent: pct,
     is_returning,
   });
   useEffect(() => {
-    trackEvent("daily_challenge_result_viewed", eventParams.current);
-  }, []);
+    trackEvent(analyticsEvent, eventParams.current);
+  }, [analyticsEvent]);
 
   return (
     <div className="min-h-screen" style={{ background: "#FFFDF8" }}>
@@ -53,7 +69,7 @@ export default function ResultView({ result, test, saveError, is_returning = fal
         }}
       >
         <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
-          Daily Challenge · Results
+          {title}
         </span>
       </div>
 
@@ -119,12 +135,12 @@ export default function ResultView({ result, test, saveError, is_returning = fal
           Section Breakdown
         </p>
 
-        <div className="flex flex-col gap-3" style={{ marginBottom: 28 }}>
+        <div className="flex flex-col gap-3" style={{ marginBottom: 20 }}>
           {result.sections.map((secResult, i) => {
             const testSection = test.sections[i];
             if (!testSection) return null;
             return (
-              <SectionBreakdownCard
+              <SectionSummaryRow
                 key={secResult.name}
                 testSection={testSection}
                 sectionResult={secResult}
@@ -133,20 +149,40 @@ export default function ResultView({ result, test, saveError, is_returning = fal
           })}
         </div>
 
+        {reviewHref && (
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <Link
+              href={reviewHref}
+              className="font-bold text-white w-full"
+              style={{
+                display: "block",
+                padding: "13px 32px",
+                borderRadius: 10,
+                background: "#1E3A5F",
+                fontSize: 14,
+                textDecoration: "none",
+              }}
+            >
+              Review Answers →
+            </Link>
+          </div>
+        )}
+
         <div style={{ textAlign: "center" }}>
           <Link
-            href="/cat-prep"
-            className="font-bold text-white"
+            href={backHref}
+            className="font-bold"
             style={{
               display: "inline-block",
               padding: "12px 32px",
               borderRadius: 10,
-              background: "#1E3A5F",
+              background: reviewHref ? "#F1F5F9" : "#1E3A5F",
+              color: reviewHref ? "#1E3A5F" : "#fff",
               fontSize: 14,
               textDecoration: "none",
             }}
           >
-            ← Back to Roadmap
+            {backLabel}
           </Link>
         </div>
       </div>

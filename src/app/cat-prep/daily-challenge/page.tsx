@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
 };
 
-function getTodayDate(): string {
+export function getTodayDate(): string {
   // Use IST (UTC+5:30) so the date matches what Indian users expect
   return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }

@@ -163,7 +163,15 @@ export default function DailyChallengePageClient({ test, date }: Props) {
   }
 
   if (status === "completed" && priorResult) {
-    return <ResultView result={priorResult} test={test} saveError={false} is_returning={true} />;
+    return (
+      <ResultView
+        result={priorResult}
+        test={test}
+        saveError={false}
+        is_returning={true}
+        reviewHref={`/cat-prep/daily-challenge/review?date=${encodeURIComponent(date)}`}
+      />
+    );
   }
 
   if (status === "resume_prompt" && draft && test) {

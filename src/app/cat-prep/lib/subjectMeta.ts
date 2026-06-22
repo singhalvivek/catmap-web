@@ -4,6 +4,8 @@ export type SubjectMeta = {
   label: string;
   color: string;
   light: string;
+  /** Medium-light tint of `color`, used as the default fill for subtopic/chapter chips */
+  chip: string;
 };
 
 export const SUBJECT_META: Record<number, SubjectMeta> = {
@@ -13,18 +15,21 @@ export const SUBJECT_META: Record<number, SubjectMeta> = {
     label: "Quantitative Aptitude",
     color: "#1E3A5F",
     light: "#EEF2FF",
+    chip: "#566B87",
   },
   3: {
     abbr: "DILR",
     label: "Data Interpretation & Logical Reasoning",
     color: "#0F766E",
     light: "#F0FDFA",
+    chip: "#4B9892",
   },
   4: {
     abbr: "VARC",
     label: "Verbal Ability & Reading Comprehension",
     color: "#92400E",
     light: "#FFFBEB",
+    chip: "#AD704A",
   },
 };
 

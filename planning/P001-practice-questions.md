@@ -18,7 +18,7 @@ route under `/cat-prep/practice/`.
 ### New files
 | Path | Purpose |
 |------|---------|
-| `src/app/cat-prep/components/SubjectModeToggle.tsx` | Split "Learn / Practice" pill that replaces the plain subject header |
+| `src/app/cat-prep/components/RoadmapNav.tsx` | Hero-level pill row for switching Learn / Practice mode (room for future buttons like "How to Prepare", "PYQ") |
 | `src/app/cat-prep/components/PracticeTopicRow.tsx` | Accordion row for a practice topic; shows chapters as chips |
 | `src/app/cat-prep/components/PracticeChapterChip.tsx` | Chip linking to `/cat-prep/practice/…` |
 | `src/app/cat-prep/practice/quant/[topic]/[chapter]/page.tsx` | MCQ / jumble question player |
@@ -40,19 +40,22 @@ route under `/cat-prep/practice/`.
 ### Modified files
 | Path | Change |
 |------|--------|
-| `src/app/cat-prep/components/RoadmapContent.tsx` | Replace the plain subject header `<div>` with `<SubjectModeToggle>`, add `mode` state (`"learn" \| "practice"`), render `PracticeTopicRow` list when `mode === "practice"` |
+| `src/app/cat-prep/components/RoadmapContent.tsx` | Add `mode` state (`"learn" \| "practice"`); render `RoadmapNav` in the hero, below the subhead and above the progress bar; render `PracticeTopicRow` list when `mode === "practice"` |
 
 ---
 
 ## Acceptance Criteria
 
 ### Subject header
-- [ ] The existing subject header element is replaced by `SubjectModeToggle`.
-- [ ] Left pill: "Learn" — shows `N topics · M subtopics` (identical to current).
-- [ ] Right pill: "Practice" — shows `N topics · Q questions`.
-- [ ] Active pill has a filled background (`meta.color`); inactive is outlined.
-- [ ] Switching pills does **not** navigate — it toggles state on the same page.
-- [ ] Colours, border-radius, and font weights stay identical to the existing element.
+> **Amendment (2026-06-20):** moved from a per-subject-colored split pill below the
+> subject tabs to a neutral pill row in the hero, under the subhead. Counts and
+> `meta.color` theming were dropped since the row is no longer scoped to one subject.
+> Leaves room for future buttons ("How to Prepare", "PYQ") in the same row.
+
+- [x] Learn / Practice pills render in the hero, below "Follow structured learning paths…" and above the progress bar.
+- [x] Active pill: navy fill, white text. Inactive: white fill, navy border/text.
+- [x] Hero nav only renders when `meta && activeSubject` resolve (same guard the old element used), so it can't fire `practice_mode_toggled` in a degraded/empty-content state.
+- [x] Switching pills does **not** navigate — it toggles state on the same page.
 
 ### Practice topic list (roadmap page)
 - [ ] When `mode === "practice"`, the `TopicRow` accordion list is replaced by `PracticeTopicRow` rows.

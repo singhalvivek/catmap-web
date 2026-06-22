@@ -8,6 +8,7 @@ export default function PracticeTopicRow({
   topic,
   section,
   accentColor,
+  chipColor,
   isOpen,
   onToggle,
 }: {
@@ -15,6 +16,7 @@ export default function PracticeTopicRow({
   /** "Quant" | "DILR" | "VARC" — determines URL prefix */
   section: string;
   accentColor: string;
+  chipColor: string;
   isOpen: boolean;
   onToggle: () => void;
 }) {
@@ -121,6 +123,7 @@ export default function PracticeTopicRow({
               key={chapter.slug}
               chapter={chapter}
               href={chapterHref(chapter.slug, topic.slug)}
+              chipColor={chipColor}
             />
           ))}
         </div>
