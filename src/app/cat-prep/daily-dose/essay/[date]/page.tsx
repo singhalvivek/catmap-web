@@ -3,16 +3,27 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchOrPickDailyEssay, getEssaySubmissions } from "@/lib/essayQueries";
 import DailyEssayPageClient from "../components/DailyEssayPageClient";
+import { JsonLd } from "@/app/components/JsonLd";
+import { ENV } from "@/config/env";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
 
 type Props = { params: Promise<{ date: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params;
+  const essay = await fetchOrPickDailyEssay(date).catch(() => null);
+  if (!essay) {
+    return { title: `Essay – ${date} | StudyNaksha` };
+  }
+  const title = `${essay.title} — Daily Essay | StudyNaksha`;
+  const description = essay.excerpt || `Read the community essay discussion from ${date} on StudyNaksha.`;
   return {
-    title: `Essay – ${date} | StudyNaksha`,
-    description: "Read the Aeon essay and community responses from this day.",
+    title,
+    description,
+    alternates: { canonical: `${ENV.SITE_URL}/cat-prep/daily-dose/essay/${date}` },
+    openGraph: { title, description },
+    twitter: { title, description },
   };
 }
 
@@ -35,12 +46,33 @@ export default async function PastEssayPage({ params }: Props) {
   // Past essays: fetch all submissions publicly (no submit gate needed)
   const submissions = await getEssaySubmissions(date, "").catch(() => []);
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: essay.title,
+    description: essay.excerpt,
+    datePublished: date,
+    inLanguage: "en-IN",
+    publisher: {
+      "@type": "Organization",
+      name: "StudyNaksha",
+      url: ENV.SITE_URL,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${ENV.SITE_URL}/cat-prep/daily-dose/essay/${date}`,
+    },
+  };
+
   return (
-    <DailyEssayPageClient
-      essay={essay}
-      date={date}
-      viewOnly
-      initialSubmissions={submissions}
-    />
+    <>
+      <JsonLd data={articleSchema} />
+      <DailyEssayPageClient
+        essay={essay}
+        date={date}
+        viewOnly
+        initialSubmissions={submissions}
+      />
+    </>
   );
 }

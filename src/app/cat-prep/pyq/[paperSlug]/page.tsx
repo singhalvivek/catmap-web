@@ -2,10 +2,15 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchPyqPaper } from "@/lib/pyqQueries";
-import { pyqPaperLabel } from "@/constants/pyqPapers";
+import { PYQ_PAPERS, pyqPaperLabel } from "@/constants/pyqPapers";
+import { ENV } from "@/config/env";
 import PyqPaperPlayer from "./PyqPaperPlayer";
 
 type Props = { params: Promise<{ paperSlug: string }> };
+
+export function generateStaticParams() {
+  return PYQ_PAPERS.map((p) => ({ paperSlug: p.slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { paperSlug } = await params;
@@ -17,6 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: { canonical: `${ENV.SITE_URL}/cat-prep/pyq/${paperSlug}` },
     openGraph: { title, description },
     twitter: { title, description },
   };

@@ -10,6 +10,14 @@ import Link from "next/link";
 
 type Props = { params: Promise<{ chapter: string; setNumber: string }> };
 
+export function generateStaticParams() {
+  const dilrSubject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
+  if (!dilrSubject) return [];
+  return dilrSubject.topics.flatMap((t) =>
+    t.chapters.map((chapter) => ({ chapter: chapter.slug, setNumber: "1" }))
+  );
+}
+
 function resolveChapterName(slug: string): string | undefined {
   const subject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
   const chapter = subject?.topics.flatMap((t) => t.chapters).find((c) => c.slug === slug);
@@ -24,6 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: { canonical: `${ENV.SITE_URL}/cat-prep/practice/dilr/${chapter}/${setNumber}` },
     openGraph: { title, description },
     twitter: { title, description },
   };

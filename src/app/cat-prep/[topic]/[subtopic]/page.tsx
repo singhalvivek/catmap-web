@@ -17,6 +17,17 @@ import { ENV } from "@/config/env";
 
 type Props = { params: Promise<{ topic: string; subtopic: string }> };
 
+export function generateStaticParams() {
+  const allNodes = data as Node[];
+  return allNodes
+    .filter((n) => n.type === "SUBTOPIC")
+    .flatMap((n) => {
+      const parent = allNodes.find((p) => p.id === n.parent_id);
+      if (!parent) return [];
+      return [{ topic: toSlug(parent.title), subtopic: toSlug(n.title) }];
+    });
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic, subtopic } = await params;
   const topicNode = findTopicBySlug(topic);

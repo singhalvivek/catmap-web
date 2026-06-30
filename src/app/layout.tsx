@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import { ENV } from "@/config/env";
 import { GoogleAnalytics } from "@/app/components/GoogleAnalytics";
+import { JsonLd } from "@/app/components/JsonLd";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -10,6 +11,15 @@ const jakartaSans = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
 });
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "StudyNaksha",
+  url: ENV.SITE_URL,
+  description:
+    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -50,6 +60,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${jakartaSans.variable} antialiased`}>
         {children}
+        <JsonLd data={websiteSchema} />
         <GoogleAnalytics />
         {/* MathJax config must be set before the lib loads. $$ listed before $ so
             cracku's PYQ content (which uses $$..$$ inline, not display math) matches

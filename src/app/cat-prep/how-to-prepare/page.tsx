@@ -3,11 +3,14 @@ import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RoadmapNav from "../components/RoadmapNav";
+import { JsonLd } from "@/app/components/JsonLd";
+import { ENV } from "@/config/env";
 
 export const metadata: Metadata = {
   title: "How to Prepare for CAT | StudyNaksha",
   description:
     "An honest, no-fluff guide to CAT preparation — when to start, whether you need coaching, what score to target, and how to use PYQ practice to build real exam readiness.",
+  alternates: { canonical: `${ENV.SITE_URL}/cat-prep/how-to-prepare` },
 };
 
 const SCORE_TARGETS = [
@@ -185,10 +188,58 @@ const MISTAKES = [
   },
 ];
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What CAT percentile is needed to get into IIM A, B, C?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "99%+ percentile is required for IIM A, B, C — top 1% of ~3 lakh test-takers. IIM L, K, I, XLRI, and FMS require 97–99%. Newer IIMs and MDI, SPJIMR, IIFT require 90–97%. These are General category cutoffs; OBC/EWS cutoffs are ~10–15 percentile points lower.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How long does it take to prepare for CAT?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Most serious aspirants start 9–12 months before the exam (CAT is held in November). Preparation spans four phases: foundation-building (Months 1–3), deeper practice and mocks (Months 4–6), mock-heavy analysis (Months 7–9), and a sharpening phase in the final 4–6 weeks.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need coaching to crack CAT?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Coaching is a tool, not a requirement. Every year, multiple 99%ilers crack CAT through self-study. Coaching helps if you need structured deadlines or expert doubt resolution. The hybrid path — coaching only for your weakest section — often offers the best ROI.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What are the three sections of the CAT exam?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "CAT has three sections with 40 minutes each: VARC (Verbal Ability & Reading Comprehension, 24 questions — ~40% of total score), DILR (Data Interpretation & Logical Reasoning, 20 questions — ~33%), and QA (Quantitative Ability, 22 questions — ~37%). Sections are taken sequentially; you cannot move between them mid-exam.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How many mock tests should I take for CAT?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Target 1 full mock per week from Month 5, ramping to 2 per week in Months 7–9 and 3 per week in the final 4–6 weeks. Spend as much time analyzing each mock as you spent taking it — that is where the actual learning happens.",
+      },
+    },
+  ],
+};
+
 export default function HowToPreparePage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
       <Header />
+      <JsonLd data={faqSchema} />
 
       {/* Hero */}
       <div

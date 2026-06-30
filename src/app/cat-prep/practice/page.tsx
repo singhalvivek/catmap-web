@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ENV } from "@/config/env";
 import data from "../data.json";
 import descriptions from "../description.json";
 import resources from "../resources.json";
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
   title: "CAT Practice Questions | StudyNaksha",
   description:
     "Topic-wise CAT practice questions across VARC, DILR and Quant. Work through chapter-level drills to build mastery before tackling full PYQ papers.",
+  alternates: { canonical: `${ENV.SITE_URL}/cat-prep/practice` },
 };
 
 export default function CatPracticePage() {

@@ -4,7 +4,11 @@ import { ENV } from "@/config/env";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/api/", "/cat-prep/pyq/*/mock"],
+    },
     sitemap: `${ENV.SITE_URL}/sitemap.xml`,
   };
 }

@@ -10,6 +10,14 @@ import Link from "next/link";
 
 type Props = { params: Promise<{ topic: string; chapter: string }> };
 
+export function generateStaticParams() {
+  const quantSubject = PRACTICE_SUBJECTS.find((s) => s.section === "Quant");
+  if (!quantSubject) return [];
+  return quantSubject.topics.flatMap((topic) =>
+    topic.chapters.map((chapter) => ({ topic: topic.slug, chapter: chapter.slug }))
+  );
+}
+
 function resolveChapterMeta(topicSlug: string, chapterSlug: string) {
   const subject = PRACTICE_SUBJECTS.find((s) => s.section === "Quant");
   const topic = subject?.topics.find((t) => t.slug === topicSlug);
@@ -26,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: { canonical: `${ENV.SITE_URL}/cat-prep/practice/quant/${topic}/${chapter}` },
     openGraph: { title, description },
     twitter: { title, description },
   };
@@ -58,6 +67,15 @@ export default async function QuantChapterPage({ params }: Props) {
       `Practice ${chapter.questionCount}+ CAT-level ${chapter.name} questions. Free, self-paced ${topic.name} practice on StudyNaksha.`,
       pageUrl
     ),
+    {
+      "@context": "https://schema.org",
+      "@type": "Quiz",
+      name: `${chapter.name} Practice — ${topic.name}`,
+      educationalLevel: "graduate",
+      about: { "@type": "Thing", name: "CAT Exam" },
+      provider: { "@type": "Organization", name: "StudyNaksha", url: ENV.SITE_URL },
+      numberOfQuestions: questions.length,
+    },
   ];
 
   return (

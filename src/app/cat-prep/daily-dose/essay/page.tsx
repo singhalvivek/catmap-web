@@ -1,13 +1,15 @@
 // page — /cat-prep/daily-dose/essay server page; pre-fetches today's essay
 import type { Metadata } from "next";
+import { ENV } from "@/config/env";
 import { fetchOrPickDailyEssay } from "@/lib/essayQueries";
 import DailyEssayPageClient from "./components/DailyEssayPageClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Daily Essay | StudyNaksha",
   description: "Read today's Aeon essay, reflect on it, and see how others responded. Daily VARC practice for CAT.",
+  alternates: { canonical: `${ENV.SITE_URL}/cat-prep/daily-dose/essay` },
   openGraph: {
     title: "Daily Essay | StudyNaksha",
     description: "Read today's Aeon essay and respond. VARC practice for CAT aspirants.",
