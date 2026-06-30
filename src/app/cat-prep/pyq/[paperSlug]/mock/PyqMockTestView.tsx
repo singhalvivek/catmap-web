@@ -179,8 +179,8 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
         test={test}
         saveError={saveError}
         title={`${paperLabel} · Mock Results`}
-        backHref={`/cat-prep/pyq/${paperSlug}`}
-        backLabel="← Back to Paper"
+        backHref="/cat-prep/pyq"
+        backLabel="← Back to PYQs"
         analyticsEvent="pyq_mock_result_viewed"
         reviewHref={`/cat-prep/pyq/${paperSlug}/mock/review`}
       />
@@ -218,11 +218,11 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
       <SectionHeader
-        challengeName={paperLabel}
+        sectionName={section.name}
         sectionTimeLeft={sectionTimeLeft}
         questionTimeLeft={questionTimeLeft}
         onSubmitChallenge={() => setShowConfirmModal(true)}
-        backHref={`/cat-prep/pyq/${paperSlug}`}
+        backHref="/cat-prep/pyq"
       />
 
       {/*
