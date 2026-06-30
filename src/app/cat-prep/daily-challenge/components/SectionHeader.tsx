@@ -10,7 +10,7 @@ function formatTime(seconds: number): string {
 }
 
 type Props = {
-  challengeName: string;
+  sectionName: string;
   sectionTimeLeft: number;
   questionTimeLeft: number | null;
   onSubmitChallenge: () => void;
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export default function SectionHeader({
-  challengeName,
+  sectionName,
   sectionTimeLeft,
   questionTimeLeft,
   onSubmitChallenge,
@@ -28,7 +28,11 @@ export default function SectionHeader({
   const sectionWarning = sectionTimeLeft <= 60;
   const questionWarning = questionTimeLeft !== null && questionTimeLeft <= 10;
 
-  const timerColor = sectionCritical ? "#EF4444" : sectionWarning ? "#FBBF24" : "#fff";
+  const timerChip = sectionCritical
+    ? { bg: "rgba(239,68,68,0.18)", border: "rgba(248,113,113,0.55)", text: "#FCA5A5" }
+    : sectionWarning
+    ? { bg: "rgba(251,191,36,0.18)", border: "rgba(251,191,36,0.5)", text: "#FCD34D" }
+    : { bg: "rgba(255,255,255,0.12)", border: "rgba(255,255,255,0.22)", text: "#fff" };
 
   return (
     <div
@@ -47,7 +51,7 @@ export default function SectionHeader({
         className="flex items-center justify-between w-full"
         style={{ maxWidth: 960, margin: "0 auto" }}
       >
-        {/* Left: back link + challenge name */}
+        {/* Left: back link + section name */}
         <div className="flex items-center gap-3">
           <Link
             href={backHref}
@@ -63,7 +67,7 @@ export default function SectionHeader({
           </Link>
           <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14 }}>|</span>
           <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
-            {challengeName}
+            {sectionName}
           </span>
         </div>
 
@@ -84,14 +88,25 @@ export default function SectionHeader({
           <span
             className="font-bold"
             style={{
-              fontSize: 16,
-              color: timerColor,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 15,
+              color: timerChip.text,
+              background: timerChip.bg,
+              border: `1.5px solid ${timerChip.border}`,
+              borderRadius: 8,
+              padding: "5px 10px",
               fontVariantNumeric: "tabular-nums",
-              minWidth: 44,
-              textAlign: "right",
               letterSpacing: "0.5px",
+              transition: "background 0.3s, border-color 0.3s, color 0.3s",
             }}
           >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="2" />
+              <path d="M12 9v4l2.5 2.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 2h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
             {formatTime(sectionTimeLeft)}
           </span>
 
