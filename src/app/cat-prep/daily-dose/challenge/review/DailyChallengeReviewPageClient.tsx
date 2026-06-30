@@ -1,4 +1,4 @@
-// PyqMockReviewPageClient — auth gate; fetches the saved mock result and renders ReviewTestView
+// DailyChallengeReviewPageClient — auth gate; fetches the saved challenge result and renders ReviewTestView
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,18 +6,17 @@ import Link from "next/link";
 import { onAuthStateChanged, signInWithPopup, type User } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import type { DailyTest, DailyChallengeResult } from "@/app/cat-prep/models/dailyChallenge";
-import { getPyqMockResult } from "@/app/cat-prep/lib/pyqMockStore";
+import { getDailyChallengeResult } from "@/app/cat-prep/lib/dailyChallengeStore";
 import ReviewTestView from "@/app/cat-prep/daily-dose/challenge/components/ReviewTestView";
 
 type Props = {
   test: DailyTest;
-  paperSlug: string;
-  paperLabel: string;
+  date: string;
 };
 
 type PageStatus = "loading" | "unauthenticated" | "checking" | "no_result" | "ready";
 
-export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }: Props) {
+export default function DailyChallengeReviewPageClient({ test, date }: Props) {
   const [status, setStatus] = useState<PageStatus>("loading");
   const [result, setResult] = useState<DailyChallengeResult | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -30,7 +29,7 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
       }
       setStatus("checking");
       try {
-        const stored = await getPyqMockResult(nextUser.uid, paperSlug);
+        const stored = await getDailyChallengeResult(nextUser.uid, date);
         if (stored) {
           setResult(stored);
           setStatus("ready");
@@ -38,12 +37,12 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
           setStatus("no_result");
         }
       } catch (err) {
-        console.error("[PyqMockReviewPageClient] check failed:", err);
+        console.error("[DailyChallengeReviewPageClient] check failed:", err);
         setStatus("no_result");
       }
     });
     return () => unsubscribe();
-  }, [paperSlug]);
+  }, [date]);
 
   const handleLogin = async () => {
     setAuthError(null);
@@ -100,10 +99,10 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
             No attempt found
           </h2>
           <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
-            You need to complete this mock test before you can review it.
+            You need to complete this challenge before you can review it.
           </p>
           <Link
-            href={`/cat-prep/pyq/${paperSlug}/mock`}
+            href="/cat-prep/daily-dose/challenge"
             className="font-bold text-white"
             style={{
               display: "inline-block",
@@ -114,7 +113,7 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
               textDecoration: "none",
             }}
           >
-            Take the Mock Test →
+            Take the Challenge →
           </Link>
         </div>
       </div>
@@ -125,8 +124,8 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
     <ReviewTestView
       test={test}
       result={result!}
-      title={`${paperLabel} · Review`}
-      backHref={`/cat-prep/pyq/${paperSlug}/mock`}
+      title="Daily Challenge · Review"
+      backHref="/cat-prep/daily-dose/challenge"
     />
   );
 }

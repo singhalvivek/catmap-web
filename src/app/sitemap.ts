@@ -62,7 +62,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: ENV.SITE_URL, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${ENV.SITE_URL}/cat-prep`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${ENV.SITE_URL}/cat-prep/daily-challenge`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${ENV.SITE_URL}/cat-prep/daily-dose`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${ENV.SITE_URL}/cat-prep/daily-dose/challenge`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     ...topicEntries,
     ...subtopicEntries,
     ...quantEntries,

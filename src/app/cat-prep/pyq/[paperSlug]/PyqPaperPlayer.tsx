@@ -9,7 +9,7 @@ import type { PyqPaper, PyqQuestion, PyqSection, PyqSolution } from "@/app/cat-p
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
 import { PracticePalette, type PillState } from "@/app/cat-prep/components/practice/PracticePalette";
-import TITAInput from "@/app/cat-prep/daily-challenge/components/TITAInput";
+import TITAInput from "@/app/cat-prep/daily-dose/challenge/components/TITAInput";
 
 const SECTION_ORDER: PyqSection[] = ["VARC", "DILR", "QA"];
 // Locks a question as "checked" without matching any real option letter or
