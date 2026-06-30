@@ -284,7 +284,7 @@ export default function DailyChallengeCard() {
             </div>
           </div>
           <Link
-            href="/cat-prep/daily-challenge"
+            href="/cat-prep/daily-dose/challenge"
             className="font-bold text-white"
             style={{
               padding: "8px 18px",
@@ -327,7 +327,7 @@ export default function DailyChallengeCard() {
           </p>
         </div>
         <Link
-          href="/cat-prep/daily-challenge"
+          href="/cat-prep/daily-dose/challenge"
           className="font-bold text-white"
           style={{
             padding: "8px 18px",

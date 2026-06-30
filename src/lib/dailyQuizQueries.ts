@@ -54,7 +54,7 @@ type AttemptDoc = {
 function getSectionTimeLimitSeconds(): number {
   const raw = process.env.DAILY_CHALLENGE_SECTION_TIME_SECONDS;
   const n = raw ? parseInt(raw, 10) : NaN;
-  return Number.isFinite(n) && n > 0 ? n : 1200;
+  return Number.isFinite(n) && n > 0 ? n : 600;
 }
 
 function getQuestionTimeLimitSeconds(): number | null {
@@ -76,9 +76,13 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
   if (!quiz) return null;
 
   const questionDocs = await db
-    .collection<QuestionDoc>("questions")
+    .collection<QuestionDoc>("cracku_pyq_questions")
     .find({ _id: { $in: quiz.questionIds } })
     .toArray();
+
+  // Treat a quiz with no resolvable questions as "no challenge today" rather than
+  // returning an empty test (an empty question set crashes the test player).
+  if (questionDocs.length === 0) return null;
 
   // Sort questions to match the order declared in questionIds
   const questionOrder = new Map(
@@ -93,7 +97,7 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
   let comprehension: { text: string; imageUrl: string | null } | null = null;
   if (quiz.isComprehension && quiz.comprehensionId) {
     const comp = await db
-      .collection<ComprehensionDoc>("comprehensions")
+      .collection<ComprehensionDoc>("cracku_pyq_comprehensions")
       .findOne({ _id: quiz.comprehensionId });
     if (comp) {
       comprehension = { text: comp.text, imageUrl: comp.imageUrls[0] ?? null };
@@ -155,7 +159,7 @@ export async function gradeAndSaveAttempt(params: {
   if (!quiz) throw new Error(`No quiz found for date: ${date}`);
 
   const questionDocs = await db
-    .collection<QuestionDoc>("questions")
+    .collection<QuestionDoc>("cracku_pyq_questions")
     .find({ _id: { $in: quiz.questionIds } })
     .toArray();
 

@@ -1,4 +1,4 @@
-// PyqMockTestView — mock-test-taking shell; drives section/question/timer state via the shared sectioned-test hook
+// TestView — test-taking shell; drives section/question/timer state and hands off to ResultView
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -8,19 +8,18 @@ import type {
   DailyChallengeResult,
   SerializedDailyChallengeResult,
   VisitStatus,
-} from "@/app/cat-prep/models/dailyChallenge";
-import { useSectionedTest, type TestHook } from "@/app/cat-prep/lib/useSectionedTest";
-import { savePyqMockDraft, clearPyqMockDraft, saveResultLocally } from "@/app/cat-prep/lib/pyqMockStore";
+} from "../../../models/dailyChallenge";
+import { useDailyChallengeTest, type TestHook } from "../lib/useDailyChallengeTest";
+import { saveDailyChallengeDraft, clearDailyChallengeDraft, saveResultLocally } from "../../../lib/dailyChallengeStore";
 import { trackEvent } from "@/app/components/analytics";
-import SectionHeader from "@/app/cat-prep/daily-dose/challenge/components/SectionHeader";
-import QuestionPalette from "@/app/cat-prep/daily-dose/challenge/components/QuestionPalette";
-import QuestionRenderer from "@/app/cat-prep/daily-dose/challenge/components/QuestionRenderer";
-import ResultView from "@/app/cat-prep/daily-dose/challenge/components/ResultView";
+import SectionHeader from "./SectionHeader";
+import QuestionPalette from "./QuestionPalette";
+import QuestionRenderer from "./QuestionRenderer";
+import ResultView from "./ResultView";
 
 type Props = {
   test: DailyTest;
-  paperSlug: string;
-  paperLabel: string;
+  date: string;
   uid: string;
   initialState?: DailyChallengeDraft;
 };
@@ -33,7 +32,7 @@ const PALETTE_STYLES: Record<VisitStatus | "current", { bg: string; color: strin
   current:           { bg: "#1E3A5F", color: "#fff",    border: "#1E3A5F" },
 };
 
-export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, initialState }: Props) {
+export default function TestView({ test, date, uid, initialState }: Props) {
   const [result, setResult] = useState<DailyChallengeResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -59,7 +58,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
     toggleMarkForReview,
     submitChallenge,
     collectTimingSnapshot,
-  } = useSectionedTest(test, initialState);
+  } = useDailyChallengeTest(test, initialState);
 
   collectTimingRef.current = collectTimingSnapshot;
 
@@ -74,11 +73,11 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
 
   const totalQuestions = test.sections.reduce((sum, s) => sum + s.questions.length, 0);
 
-  const startParams = useRef({ initialState, paperSlug, total_questions: totalQuestions });
+  const startParams = useRef({ initialState, challenge_date: date, total_questions: totalQuestions });
   useEffect(() => {
     if (!startParams.current.initialState) {
-      trackEvent("pyq_mock_started", {
-        paper_slug: startParams.current.paperSlug,
+      trackEvent("daily_challenge_started", {
+        challenge_date: startParams.current.challenge_date,
         total_questions: startParams.current.total_questions,
       });
     }
@@ -96,7 +95,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
   useEffect(() => {
     if (isComplete) return;
     const id = setTimeout(() => {
-      savePyqMockDraft(paperSlug, {
+      saveDailyChallengeDraft(date, {
         testId: test.testId,
         sectionIndex,
         questionIndex: questionIndexRef.current,
@@ -106,7 +105,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
       });
     }, 1000);
     return () => clearTimeout(id);
-  }, [responses, sectionIndex, isComplete, paperSlug, test.testId]);
+  }, [responses, sectionIndex, isComplete, date, test.testId]);
 
   // When the test ends: submit to API, save result to localStorage
   useEffect(() => {
@@ -117,18 +116,20 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
       setSaveError(false);
       try {
         const { timings, totalTimeSeconds } = collectTimingRef.current!();
-        const res = await fetch(`/api/pyq/${paperSlug}/submit`, {
+        const res = await fetch("/api/submit-attempt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid, responses: responsesRef.current, timings, totalTimeSeconds }),
+          body: JSON.stringify({ date, uid, responses: responsesRef.current, timings, totalTimeSeconds }),
         });
 
         if (res.status === 409) {
-          const stored = await fetch(`/api/pyq/${paperSlug}/result?uid=${encodeURIComponent(uid)}`);
+          const stored = await fetch(
+            `/api/daily-challenge-result?uid=${encodeURIComponent(uid)}&date=${encodeURIComponent(date)}`
+          );
           if (stored.ok) {
             const data = (await stored.json()) as SerializedDailyChallengeResult;
             const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
-            saveResultLocally(paperSlug, computed);
+            saveResultLocally(date, computed);
             setResult(computed);
           }
           return;
@@ -138,19 +139,19 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
 
         const data = (await res.json()) as SerializedDailyChallengeResult;
         const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
-        saveResultLocally(paperSlug, computed);
-        clearPyqMockDraft(paperSlug);
+        saveResultLocally(date, computed);
+        clearDailyChallengeDraft(date);
         setResult(computed);
         const correct = computed.sections.reduce((n, s) => n + Object.values(s.responses).filter((r) => r.correct).length, 0);
-        trackEvent("pyq_mock_submitted", {
-          paper_slug: paperSlug,
+        trackEvent("daily_challenge_submitted", {
+          challenge_date: date,
           total_questions: totalQuestions,
           correct_count: correct,
           score_percent: Math.round((correct / totalQuestions) * 100),
           time_taken_seconds: data.totalTimeSeconds ?? 0,
         });
       } catch (err) {
-        console.error("[PyqMockTestView] finalise failed:", err);
+        console.error("[TestView] finalise failed:", err);
         setSaveError(true);
       } finally {
         setSaving(false);
@@ -158,7 +159,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
     }
 
     finalise();
-  }, [isComplete, paperSlug, uid, totalQuestions]);
+  }, [isComplete, date, uid]);
 
   // --- Completed state ---
   if (isComplete) {
@@ -178,11 +179,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
         result={result}
         test={test}
         saveError={saveError}
-        title={`${paperLabel} · Mock Results`}
-        backHref="/cat-prep/pyq"
-        backLabel="← Back to PYQs"
-        analyticsEvent="pyq_mock_result_viewed"
-        reviewHref={`/cat-prep/pyq/${paperSlug}/mock/review`}
+        reviewHref={`/cat-prep/daily-dose/challenge/review?date=${encodeURIComponent(date)}`}
       />
     );
   }
@@ -222,7 +219,6 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
         sectionTimeLeft={sectionTimeLeft}
         questionTimeLeft={questionTimeLeft}
         onSubmitChallenge={() => setShowConfirmModal(true)}
-        backHref="/cat-prep/pyq"
       />
 
       {/*
@@ -472,7 +468,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
             onClick={(e) => e.stopPropagation()}
           >
             <p className="font-extrabold text-trust-navy" style={{ fontSize: 18, marginBottom: 16 }}>
-              Submit Mock Test?
+              Submit Challenge?
             </p>
 
             {/* Attempt summary */}
@@ -510,7 +506,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
             </div>
 
             <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 20, lineHeight: 1.5 }}>
-              Once submitted, you cannot change your answers. This is a one-time attempt.
+              Once submitted, you cannot change your answers.
             </p>
 
             <div className="flex gap-3">
