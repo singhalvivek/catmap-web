@@ -146,7 +146,7 @@ export default function DailyEssayCard() {
             </p>
           </div>
           <Link
-            href="/cat-prep/daily-essay"
+            href="/cat-prep/daily-dose/essay"
             className="font-bold text-white"
             style={{
               padding: "8px 16px",
@@ -184,7 +184,7 @@ export default function DailyEssayCard() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", marginLeft: 16, flexShrink: 0 }}>
           <Link
-            href="/cat-prep/daily-essay"
+            href="/cat-prep/daily-dose/essay"
             className="font-bold text-white"
             style={{
               padding: "8px 16px",

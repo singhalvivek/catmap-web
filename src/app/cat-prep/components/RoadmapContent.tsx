@@ -16,15 +16,16 @@ import { trackEvent } from "@/app/components/analytics";
 import ErrorBoundary from "./ErrorBoundary";
 import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
-import DailyChallengeCard from "./DailyChallengeCard";
-import DailyEssayCard from "./DailyEssayCard";
+import DailyDoseCard from "./DailyDoseCard";
+import DailyDoseSection from "./DailyDoseSection";
+import DailyDoseStreakBanner from "./DailyDoseStreakBanner";
 import ContinueLearning from "./ContinueLearning";
 import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
 import RoadmapNav from "./RoadmapNav";
 import PracticeTopicRow from "./PracticeTopicRow";
 
-export type Mode = "learn" | "practice" | "pyq";
+export type Mode = "learn" | "practice" | "pyq" | "daily-dose";
 import PyqPapersList from "./PyqPapersList";
 import ModeProgressBar from "./ModeProgressBar";
 import { useProgressContext } from "../lib/ProgressContext";
@@ -169,6 +170,8 @@ export default function RoadmapContent({
               ? "CAT Preparation Roadmap"
               : mode === "practice"
               ? "CAT Practice"
+              : mode === "daily-dose"
+              ? "Your Daily Dose"
               : "CAT Previous Year Papers"}
           </h1>
           <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 16px" }}>
@@ -176,13 +179,17 @@ export default function RoadmapContent({
               ? "Follow structured learning paths across all three sections"
               : mode === "practice"
               ? "Topic-wise practice questions across VARC, DILR and Quant"
+              : mode === "daily-dose"
+              ? "One essay, one challenge — a small daily habit that compounds."
               : "Every official CAT paper from 1990 to 2025, in one place."}
           </p>
 
           {meta && activeSubject && <RoadmapNav />}
 
           {/* Overall progress bar — contextual to the active mode */}
-          {mode === "learn" ? (
+          {mode === "daily-dose" ? (
+            <DailyDoseStreakBanner />
+          ) : mode === "learn" ? (
             <ModeProgressBar
               current={doneSubs}
               total={totalSubs}
@@ -217,17 +224,14 @@ export default function RoadmapContent({
           <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
         )}
 
-        {/* Daily Essay */}
-        {mode === "learn" && <DailyEssayCard />}
+        {/* Daily Dose promo — surfaces the section from the Learn home */}
+        {mode === "learn" && <DailyDoseCard />}
 
         {/* Continue Practice strip */}
         {mode === "practice" && <ContinuePractice />}
 
-        {/* Daily Challenge */}
-        {mode === "practice" && <DailyChallengeCard />}
-
-        {/* Subject tabs — hidden in PYQ mode (papers are organized by year/slot, not by subject) */}
-        {mode !== "pyq" && (
+        {/* Subject tabs — hidden in PYQ & Daily Dose (not organized by subject) */}
+        {mode !== "pyq" && mode !== "daily-dose" && (
           <div className="flex gap-2.5 mb-7 flex-wrap">
             {subjects.map((subject) => {
               const subMeta = SUBJECT_META[subject.id];
@@ -253,7 +257,9 @@ export default function RoadmapContent({
 
         {/* Main content area — switches on mode */}
         <ErrorBoundary>
-          {mode === "pyq" ? (
+          {mode === "daily-dose" ? (
+            <DailyDoseSection />
+          ) : mode === "pyq" ? (
             pyqPapers === null ? (
               <p style={{ color: "#94A3B8", fontSize: 14 }}>Loading papers…</p>
             ) : (
