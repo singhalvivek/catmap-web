@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchPracticeQuestions } from "@/lib/practiceQueries";
@@ -114,12 +115,14 @@ export default async function QuantChapterPage({ params }: Props) {
       </div>
 
       {/* Player — owns its own max-width and layout */}
-      <QuestionPlayer
-        questions={questions}
-        backHref="/cat-prep"
-        backLabel="Back to Roadmap"
-        storageKey={`quant-${topicSlug}-${chapterSlug}`}
-      />
+      <Suspense>
+        <QuestionPlayer
+          questions={questions}
+          backHref="/cat-prep"
+          backLabel="Back to Roadmap"
+          storageKey={`quant-${topicSlug}-${chapterSlug}`}
+        />
+      </Suspense>
     </div>
     </>
   );
