@@ -215,7 +215,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
       <SectionHeader
-        challengeName="Daily Challenge"
+        sectionName={section.name}
         sectionTimeLeft={sectionTimeLeft}
         questionTimeLeft={questionTimeLeft}
         onSubmitChallenge={() => setShowConfirmModal(true)}

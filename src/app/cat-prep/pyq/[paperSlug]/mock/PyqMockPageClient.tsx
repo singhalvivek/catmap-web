@@ -160,8 +160,8 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
         saveError={false}
         is_returning={true}
         title={`${paperLabel} · Mock Results`}
-        backHref={`/cat-prep/pyq/${paperSlug}`}
-        backLabel="← Back to Paper"
+        backHref="/cat-prep/pyq"
+        backLabel="← Back to PYQs"
         analyticsEvent="pyq_mock_result_viewed"
         reviewHref={`/cat-prep/pyq/${paperSlug}/mock/review`}
       />
