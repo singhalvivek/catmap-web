@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { Resource } from "../../models/resource";
-import { extractPlaylistId, extractYouTubeId, getYouTubeEmbedUrl } from "../../lib/youtubeUtils";
+import { extractPlaylistId, extractYouTubeId, getYouTubeEmbedUrl, getYouTubeThumbnail } from "../../lib/youtubeUtils";
 import { YOUTUBE_API_KEY } from "@/config/env";
 
 type ResourceViewerProps = {
@@ -28,11 +28,64 @@ type YouTubePlaylistResponse = {
   }>;
 };
 
+// Shown in place of the player when a video's uploader has disabled embedding.
+// Honest > broken: we own the interruption and ask them to come right back.
+function EmbedBlockedNotice({ videoId }: { videoId: string | null }) {
+  const watchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : "#";
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        gap: 10,
+        padding: 24,
+        background: "#FFFDF8",
+      }}
+    >
+      <div aria-hidden style={{ fontSize: 30 }}>📺</div>
+      <div className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
+        Its creator turned off in-site playback
+      </div>
+      <p style={{ fontSize: 13, color: "#64748B", maxWidth: 320, lineHeight: 1.6, margin: 0 }}>
+        Please watch and finish this video and don&apos;t get lost, we are waiting for you.
+      </p>
+      <a
+        href={watchUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          marginTop: 6,
+          display: "inline-block",
+          padding: "9px 18px",
+          borderRadius: 8,
+          background: "#14B8A6",
+          color: "#fff",
+          fontSize: 13,
+          fontWeight: 700,
+          textDecoration: "none",
+        }}
+      >
+        Watch on YouTube ↗
+      </a>
+    </div>
+  );
+}
+
 export default function ResourceViewer({ resource, onBack }: ResourceViewerProps) {
   const playlistId =
     resource.type === "VIDEO" ? extractPlaylistId(resource.link) : null;
   const initialVideoId =
-    resource.type === "VIDEO" ? extractYouTubeId(resource.link) : null;
+    resource.type === "VIDEO" || resource.type === "SERIES"
+      ? extractYouTubeId(resource.link)
+      : null;
+  // A SERIES carries its own ordered items — same player+list UI as a YouTube
+  // playlist, but sourced from resource.items instead of the Data API.
+  const seriesItems = resource.type === "SERIES" ? resource.items ?? null : null;
 
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [autoplay, setAutoplay] = useState(false);
@@ -89,6 +142,27 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
 
   const iframeSrc = buildEmbedUrl();
   const isPlaylist = playlistId !== null;
+
+  // Unified list for both playlists (API-fetched) and series (from resource.items)
+  const listItems: PlaylistItem[] = seriesItems
+    ? seriesItems.map((it, i) => ({
+        videoId: extractYouTubeId(it.url) ?? "",
+        title: it.title || `Video ${i + 1}`,
+        thumbnail: getYouTubeThumbnail(it.url) ?? "",
+      }))
+    : playlistItems;
+  const showList = isPlaylist || seriesItems !== null;
+
+  // Videos flagged embeddable:false in videoSeries.json can't play in an iframe —
+  // swap the player for an honest notice + link out instead of a broken frame.
+  const embedFlag = new Map<string, boolean>();
+  if (seriesItems) {
+    for (const it of seriesItems) {
+      const vid = extractYouTubeId(it.url);
+      if (vid) embedFlag.set(vid, it.embeddable !== false);
+    }
+  }
+  const activeEmbeddable = activeVideoId ? embedFlag.get(activeVideoId) ?? true : true;
 
   function handleVideoSelect(videoId: string) {
     setSelectedVideoId(videoId);
@@ -161,21 +235,25 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
         </a>
       </div>
 
-      {isPlaylist ? (
+      {showList ? (
         <>
           {/* Player — aspect-ratio keeps it proportional at any panel width */}
           <div
             className="flex-shrink-0 w-full"
             style={{ aspectRatio: "16/9", position: "relative" }}
           >
-            <iframe
-              key={iframeSrc}
-              src={iframeSrc}
-              title={resource.title}
-              style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            {activeEmbeddable ? (
+              <iframe
+                key={iframeSrc}
+                src={iframeSrc}
+                title={resource.title}
+                style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <EmbedBlockedNotice videoId={activeVideoId} />
+            )}
           </div>
 
           {/* Playlist items */}
@@ -192,14 +270,16 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                 letterSpacing: "0.5px",
               }}
             >
-              {loadingItems
+              {seriesItems
+                ? `Series · ${listItems.length} videos`
+                : loadingItems
                 ? "Playlist"
-                : playlistItems.length > 0
-                ? `Playlist · ${playlistItems.length} videos`
+                : listItems.length > 0
+                ? `Playlist · ${listItems.length} videos`
                 : "Playlist"}
             </div>
 
-            {loadingItems && (
+            {isPlaylist && loadingItems && (
               <div
                 style={{ padding: 20, textAlign: "center", color: "#94A3B8", fontSize: 13 }}
               >
@@ -207,7 +287,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
               </div>
             )}
 
-            {!loadingItems && (itemsError || playlistItems.length === 0) && (
+            {isPlaylist && !loadingItems && (itemsError || playlistItems.length === 0) && (
               <div style={{ padding: "12px 16px" }}>
                 {itemsError && (
                   <p style={{ fontSize: 12, color: "#EF4444", marginBottom: 8 }}>
@@ -236,7 +316,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
             )}
 
             {!loadingItems &&
-              playlistItems.map((item, idx) => {
+              listItems.map((item, idx) => {
                 const isActive =
                   selectedVideoId === item.videoId ||
                   (!selectedVideoId && initialVideoId === item.videoId);
