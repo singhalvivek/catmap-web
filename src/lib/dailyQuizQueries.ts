@@ -28,6 +28,7 @@ type QuestionDoc = {
   options?: { index: number; text: string; imageUrls: string[] }[];
   correctOptionIndex?: number;
   correctAnswer?: string;
+  explanation?: { text: string | null; imageUrls: string[]; imagePositions?: number[] };
   comprehension_id?: ObjectId;
 };
 
@@ -70,8 +71,15 @@ function getQuestionTimeLimitSeconds(): number | null {
 /**
  * Fetch today's quiz from MongoDB and return a DailyTest (without correct answers).
  * Returns null when no quiz is scheduled for the given date.
+ *
+ * Pass `{ includeExplanation: true }` on the post-attempt review path so each
+ * question carries its explanation (text + images). It's omitted by default so the
+ * live-test fetch never ships explanations to an in-progress attempt.
  */
-export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
+export async function fetchDailyTest(
+  date: string,
+  opts: { includeExplanation?: boolean } = {}
+): Promise<DailyTest | null> {
   const db = await getDb();
 
   const quiz = await db.collection<QuizDoc>("daily_quizzes").findOne({ date });
@@ -124,6 +132,14 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
       : null,
     timeLimitSeconds: questionTimeLimit,
     comprehension,
+    explanation:
+      opts.includeExplanation && q.explanation
+        ? {
+            text: q.explanation.text,
+            imageUrls: q.explanation.imageUrls,
+            imagePositions: q.explanation.imagePositions,
+          }
+        : undefined,
   }));
 
   return {

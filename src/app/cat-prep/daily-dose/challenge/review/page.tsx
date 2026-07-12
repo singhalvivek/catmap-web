@@ -14,7 +14,8 @@ export default async function DailyChallengeReviewPage({ searchParams }: Props) 
   const { date: requestedDate } = await searchParams;
   const date = requestedDate ?? getTodayDate();
 
-  const test = await fetchDailyTest(date);
+  // Review is post-attempt, so include explanations (mirrors the mock review).
+  const test = await fetchDailyTest(date, { includeExplanation: true });
   if (!test) notFound();
 
   return <DailyChallengeReviewPageClient test={test} date={date} />;
