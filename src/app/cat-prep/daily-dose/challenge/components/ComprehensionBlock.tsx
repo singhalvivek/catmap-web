@@ -29,16 +29,17 @@ export default function ComprehensionBlock({
       >
         Passage
       </span>
-      {comprehension.imageUrl && (
-        /* imageUrl origin is user-supplied and unknown at build time — next/image requires
+      {comprehension.imageUrls.map((url) => (
+        /* image origin is scraper-supplied and unknown at build time — next/image requires
            pre-configured remotePatterns, so a plain img is used here */
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={comprehension.imageUrl}
+          key={url}
+          src={url}
           alt="Passage illustration"
           style={{ maxWidth: "100%", borderRadius: 6, marginBottom: 12 }}
         />
-      )}
+      ))}
       <p
         style={{
           fontSize: 14,

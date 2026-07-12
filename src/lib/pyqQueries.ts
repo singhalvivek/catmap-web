@@ -218,14 +218,14 @@ export async function fetchPyqMockTest(paperSlug: string): Promise<DailyTest | n
       order: i + 1,
       type: q.type,
       text: q.text ?? "",
-      imageUrl: q.imageUrls[0] ?? null,
+      imageUrls: q.imageUrls,
       options: q.options
-        ? q.options.map((o) => ({ index: o.index, text: o.text, imageUrl: o.imageUrls[0] ?? null }))
+        ? q.options.map((o) => ({ index: o.index, text: o.text, imageUrls: o.imageUrls }))
         : null,
       // CAT has no per-question time limit — only a per-section budget
       timeLimitSeconds: null,
       comprehension: q.comprehension
-        ? { text: q.comprehension.text ?? "", imageUrl: q.comprehension.imageUrls[0] ?? null }
+        ? { text: q.comprehension.text ?? "", imageUrls: q.comprehension.imageUrls }
         : null,
     })),
   }));
@@ -261,12 +261,12 @@ export async function fetchPyqMockReviewTest(paperSlug: string): Promise<DailyTe
       order: doc.questionNumber,
       type: doc.type,
       text: doc.text ?? "",
-      imageUrl: doc.imageUrls[0] ?? null,
+      imageUrls: doc.imageUrls,
       options: doc.options
-        ? doc.options.map((o) => ({ index: o.index, text: o.text, imageUrl: o.imageUrls[0] ?? null }))
+        ? doc.options.map((o) => ({ index: o.index, text: o.text, imageUrls: o.imageUrls }))
         : null,
       timeLimitSeconds: null,
-      comprehension: comp ? { text: comp.text ?? "", imageUrl: comp.imageUrls[0] ?? null } : null,
+      comprehension: comp ? { text: comp.text ?? "", imageUrls: comp.imageUrls } : null,
       explanation: doc.explanation ? { text: doc.explanation.text, imageUrls: doc.explanation.imageUrls } : null,
     });
   }

@@ -11,12 +11,12 @@ export type VisitStatus =
 export type QuestionOption = {
   index: number;
   text: string | null;
-  imageUrl: string | null;
+  imageUrls: string[];
 };
 
 export type Comprehension = {
   text: string;
-  imageUrl: string | null;
+  imageUrls: string[];
 };
 
 export type Explanation = {
@@ -29,7 +29,7 @@ export type Question = {
   order: number;
   type: QuestionType;
   text: string;
-  imageUrl: string | null;
+  imageUrls: string[];
   options: QuestionOption[] | null;
   timeLimitSeconds: number | null;
   comprehension: Comprehension | null;

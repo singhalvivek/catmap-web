@@ -54,14 +54,17 @@ export default function MCQOptions({ options, selected, onSelect }: Props) {
               {String.fromCharCode(65 + opt.index)}
             </span>
 
-            {opt.imageUrl ? (
-              /* imageUrl origin is user-supplied and unknown at build time */
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={opt.imageUrl}
-                alt={`Option ${String.fromCharCode(65 + opt.index)}`}
-                style={{ maxHeight: 60, borderRadius: 4 }}
-              />
+            {opt.imageUrls.length > 0 ? (
+              opt.imageUrls.map((url) => (
+                /* image origin is scraper-supplied and unknown at build time */
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={url}
+                  src={url}
+                  alt={`Option ${String.fromCharCode(65 + opt.index)}`}
+                  style={{ maxHeight: 60, borderRadius: 4 }}
+                />
+              ))
             ) : (
               <MathText text={opt.text ?? ""} />
             )}

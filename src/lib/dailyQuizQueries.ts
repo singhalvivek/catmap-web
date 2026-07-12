@@ -94,13 +94,13 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
       (questionOrder.get(b._id.toString()) ?? 0)
   );
 
-  let comprehension: { text: string; imageUrl: string | null } | null = null;
+  let comprehension: { text: string; imageUrls: string[] } | null = null;
   if (quiz.isComprehension && quiz.comprehensionId) {
     const comp = await db
       .collection<ComprehensionDoc>("cracku_pyq_comprehensions")
       .findOne({ _id: quiz.comprehensionId });
     if (comp) {
-      comprehension = { text: comp.text, imageUrl: comp.imageUrls[0] ?? null };
+      comprehension = { text: comp.text, imageUrls: comp.imageUrls };
     }
   }
 
@@ -111,12 +111,12 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
     order: i + 1,
     type: q.type,
     text: q.text,
-    imageUrl: q.imageUrls[0] ?? null,
+    imageUrls: q.imageUrls,
     options: q.options
       ? q.options.map((o) => ({
           index: o.index,
           text: o.text ?? null,
-          imageUrl: o.imageUrls[0] ?? null,
+          imageUrls: o.imageUrls,
         }))
       : null,
     timeLimitSeconds: questionTimeLimit,

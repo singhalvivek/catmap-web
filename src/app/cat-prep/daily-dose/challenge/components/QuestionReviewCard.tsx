@@ -84,15 +84,16 @@ export default function QuestionReviewCard({ question, response, questionNumber 
         <MathText text={question.text} />
       </p>
 
-      {question.imageUrl && (
-        /* imageUrl origin is user-supplied and unknown at build time */
+      {question.imageUrls.map((url) => (
+        /* image origin is scraper-supplied and unknown at build time */
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={question.imageUrl}
+          key={url}
+          src={url}
           alt="Question diagram"
           style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 16 }}
         />
-      )}
+      ))}
 
       {question.type === "mcq" && question.options ? (
         <ReviewMCQOptions options={question.options} selectedIndex={given} correctIndex={correctAnswer} />
