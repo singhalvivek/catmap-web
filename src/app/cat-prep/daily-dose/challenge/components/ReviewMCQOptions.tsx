@@ -62,14 +62,19 @@ export default function ReviewMCQOptions({ options, selectedIndex, correctIndex 
               {String.fromCharCode(65 + opt.index)}
             </span>
 
-            {opt.imageUrl ? (
-              /* imageUrl origin is user-supplied and unknown at build time */
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={opt.imageUrl}
-                alt={`Option ${String.fromCharCode(65 + opt.index)}`}
-                style={{ maxHeight: 60, borderRadius: 4 }}
-              />
+            {opt.imageUrls.length > 0 ? (
+              <span style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+                {opt.imageUrls.map((url) => (
+                  /* image origin is scraper-supplied and unknown at build time */
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={url}
+                    src={url}
+                    alt={`Option ${String.fromCharCode(65 + opt.index)}`}
+                    style={{ maxHeight: 60, borderRadius: 4 }}
+                  />
+                ))}
+              </span>
             ) : (
               <span style={{ flex: 1 }}>
                 <MathText text={opt.text ?? ""} />

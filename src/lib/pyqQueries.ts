@@ -42,10 +42,11 @@ type PyqQuestionDoc = {
   type: PyqQuestionType;
   text: string | null;
   imageUrls: string[];
+  imagePositions?: number[];
   options: PyqOption[] | null;
   correctOptionIndex?: number | null;
   correctAnswer?: string | null;
-  explanation?: { text: string | null; imageUrls: string[] };
+  explanation?: { text: string | null; imageUrls: string[]; imagePositions?: number[] };
   comprehensionId: ObjectId | null;
 };
 
@@ -53,6 +54,7 @@ type PyqComprehensionDoc = {
   _id: ObjectId;
   text: string | null;
   imageUrls: string[];
+  imagePositions?: number[];
 };
 
 // ---- Helpers ----
@@ -74,11 +76,12 @@ function toPyqQuestion(
     type: doc.type,
     text: doc.text,
     imageUrls: doc.imageUrls,
+    imagePositions: doc.imagePositions,
     options: doc.options
       ? doc.options.map(({ index, text, imageUrls }) => ({ index, text, imageUrls }))
       : null,
     comprehension: comp
-      ? { id: comp._id.toString(), text: comp.text, imageUrls: comp.imageUrls }
+      ? { id: comp._id.toString(), text: comp.text, imageUrls: comp.imageUrls, imagePositions: comp.imagePositions }
       : null,
   };
 }
@@ -218,14 +221,15 @@ export async function fetchPyqMockTest(paperSlug: string): Promise<DailyTest | n
       order: i + 1,
       type: q.type,
       text: q.text ?? "",
-      imageUrl: q.imageUrls[0] ?? null,
+      imageUrls: q.imageUrls,
+      imagePositions: q.imagePositions,
       options: q.options
-        ? q.options.map((o) => ({ index: o.index, text: o.text, imageUrl: o.imageUrls[0] ?? null }))
+        ? q.options.map((o) => ({ index: o.index, text: o.text, imageUrls: o.imageUrls }))
         : null,
       // CAT has no per-question time limit — only a per-section budget
       timeLimitSeconds: null,
       comprehension: q.comprehension
-        ? { text: q.comprehension.text ?? "", imageUrl: q.comprehension.imageUrls[0] ?? null }
+        ? { text: q.comprehension.text ?? "", imageUrls: q.comprehension.imageUrls, imagePositions: q.comprehension.imagePositions }
         : null,
     })),
   }));
@@ -261,13 +265,16 @@ export async function fetchPyqMockReviewTest(paperSlug: string): Promise<DailyTe
       order: doc.questionNumber,
       type: doc.type,
       text: doc.text ?? "",
-      imageUrl: doc.imageUrls[0] ?? null,
+      imageUrls: doc.imageUrls,
+      imagePositions: doc.imagePositions,
       options: doc.options
-        ? doc.options.map((o) => ({ index: o.index, text: o.text, imageUrl: o.imageUrls[0] ?? null }))
+        ? doc.options.map((o) => ({ index: o.index, text: o.text, imageUrls: o.imageUrls }))
         : null,
       timeLimitSeconds: null,
-      comprehension: comp ? { text: comp.text ?? "", imageUrl: comp.imageUrls[0] ?? null } : null,
-      explanation: doc.explanation ? { text: doc.explanation.text, imageUrls: doc.explanation.imageUrls } : null,
+      comprehension: comp ? { text: comp.text ?? "", imageUrls: comp.imageUrls, imagePositions: comp.imagePositions } : null,
+      explanation: doc.explanation
+        ? { text: doc.explanation.text, imageUrls: doc.explanation.imageUrls, imagePositions: doc.explanation.imagePositions }
+        : null,
     });
   }
 

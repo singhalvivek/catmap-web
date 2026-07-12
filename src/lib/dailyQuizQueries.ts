@@ -24,6 +24,7 @@ type QuestionDoc = {
   type: "mcq" | "tita";
   text: string;
   imageUrls: string[];
+  imagePositions?: number[];
   options?: { index: number; text: string; imageUrls: string[] }[];
   correctOptionIndex?: number;
   correctAnswer?: string;
@@ -34,6 +35,7 @@ type ComprehensionDoc = {
   _id: ObjectId;
   text: string;
   imageUrls: string[];
+  imagePositions?: number[];
 };
 
 // Stored attempt — includes full result object for easy retrieval
@@ -94,13 +96,13 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
       (questionOrder.get(b._id.toString()) ?? 0)
   );
 
-  let comprehension: { text: string; imageUrl: string | null } | null = null;
+  let comprehension: { text: string; imageUrls: string[]; imagePositions?: number[] } | null = null;
   if (quiz.isComprehension && quiz.comprehensionId) {
     const comp = await db
       .collection<ComprehensionDoc>("cracku_pyq_comprehensions")
       .findOne({ _id: quiz.comprehensionId });
     if (comp) {
-      comprehension = { text: comp.text, imageUrl: comp.imageUrls[0] ?? null };
+      comprehension = { text: comp.text, imageUrls: comp.imageUrls, imagePositions: comp.imagePositions };
     }
   }
 
@@ -111,12 +113,13 @@ export async function fetchDailyTest(date: string): Promise<DailyTest | null> {
     order: i + 1,
     type: q.type,
     text: q.text,
-    imageUrl: q.imageUrls[0] ?? null,
+    imageUrls: q.imageUrls,
+    imagePositions: q.imagePositions,
     options: q.options
       ? q.options.map((o) => ({
           index: o.index,
           text: o.text ?? null,
-          imageUrl: o.imageUrls[0] ?? null,
+          imageUrls: o.imageUrls,
         }))
       : null,
     timeLimitSeconds: questionTimeLimit,

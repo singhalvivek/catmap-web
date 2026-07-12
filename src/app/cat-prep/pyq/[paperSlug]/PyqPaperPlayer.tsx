@@ -6,6 +6,7 @@ import Link from "next/link";
 import { onAuthStateChanged, signInWithPopup, type User } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import type { PyqPaper, PyqQuestion, PyqSection, PyqSolution } from "@/app/cat-prep/models/pyq";
+import { interleaveImages } from "@/lib/interleaveImages";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
 import { PracticePalette, type PillState } from "@/app/cat-prep/components/practice/PracticePalette";
@@ -20,6 +21,7 @@ type Group = {
   comprehensionId: string | null;
   comprehensionText: string | null;
   comprehensionImages: string[];
+  comprehensionImagePositions?: number[];
   questions: PyqQuestion[];
 };
 
@@ -36,6 +38,7 @@ function buildGroupsByQuestionNumber(questions: PyqQuestion[]): Map<number, Grou
         comprehensionId: q.comprehension?.id ?? null,
         comprehensionText: q.comprehension?.text ?? null,
         comprehensionImages: q.comprehension?.imageUrls ?? [],
+        comprehensionImagePositions: q.comprehension?.imagePositions,
         questions: [q],
       };
     }
@@ -93,6 +96,42 @@ function MathContent({ text, containerRef }: { text: string; containerRef: React
     }
   }, [html, containerRef]);
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+// Renders scraped text with its images interleaved at their original positions
+// (see interleaveImages); falls back to text-then-appended-images when a block has
+// no positions. Mirrors InlineImageText but uses this player's MathContent renderer.
+function InlineContent({
+  text,
+  imageUrls,
+  imagePositions,
+  containerRef,
+  textStyle,
+  imgStyle,
+}: {
+  text: string;
+  imageUrls: string[];
+  imagePositions?: number[];
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  textStyle?: React.CSSProperties;
+  imgStyle?: React.CSSProperties;
+}) {
+  const items = interleaveImages(text ?? "", imageUrls ?? [], imagePositions);
+  return (
+    <>
+      {items.map((item) =>
+        item.kind === "text" ? (
+          <p key={item.key} style={textStyle}>
+            <MathContent text={item.value} containerRef={containerRef} />
+          </p>
+        ) : (
+          // image origin is scraper-supplied and unknown at build time
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={item.key} src={item.url} alt="" style={imgStyle} />
+        )
+      )}
+    </>
+  );
 }
 
 export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
@@ -181,10 +220,14 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
 
   const passageContent = group?.comprehensionText ? (
     <div>
-      <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.8, whiteSpace: "pre-line", margin: 0 }}>
-        <MathContent text={group.comprehensionText} containerRef={containerRef} />
-      </p>
-      <ImageStack urls={group.comprehensionImages} />
+      <InlineContent
+        text={group.comprehensionText}
+        imageUrls={group.comprehensionImages}
+        imagePositions={group.comprehensionImagePositions}
+        containerRef={containerRef}
+        textStyle={{ fontSize: 14, color: "#334155", lineHeight: 1.8, whiteSpace: "pre-line", margin: "0 0 10px" }}
+        imgStyle={{ maxWidth: "100%", borderRadius: 8, marginBottom: 10 }}
+      />
     </div>
   ) : null;
 
@@ -198,10 +241,14 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
         </span>
       </div>
 
-      <div style={{ fontSize: 15, color: "#1E3A5F", fontWeight: 500, lineHeight: 1.7, whiteSpace: "pre-line" }}>
-        <MathContent text={question.text ?? ""} containerRef={containerRef} />
-      </div>
-      <ImageStack urls={question.imageUrls} />
+      <InlineContent
+        text={question.text ?? ""}
+        imageUrls={question.imageUrls}
+        imagePositions={question.imagePositions}
+        containerRef={containerRef}
+        textStyle={{ fontSize: 15, color: "#1E3A5F", fontWeight: 500, lineHeight: 1.7, whiteSpace: "pre-line", margin: "0 0 8px" }}
+        imgStyle={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }}
+      />
 
       <div style={{ marginTop: 16 }}>
         {question.type === "mcq" && question.options ? (
@@ -275,14 +322,18 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
           <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 8 }}>
             Explanation
           </div>
-          {solution.explanation.text ? (
-            <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>
-              <MathContent text={solution.explanation.text} containerRef={containerRef} />
-            </p>
+          {solution.explanation.text || solution.explanation.imageUrls.length > 0 ? (
+            <InlineContent
+              text={solution.explanation.text ?? ""}
+              imageUrls={solution.explanation.imageUrls}
+              imagePositions={solution.explanation.imagePositions}
+              containerRef={containerRef}
+              textStyle={{ fontSize: 14, color: "#334155", lineHeight: 1.7, whiteSpace: "pre-line", margin: "0 0 8px" }}
+              imgStyle={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }}
+            />
           ) : (
             <p style={{ fontSize: 14, color: "#94A3B8", margin: 0 }}>No explanation available.</p>
           )}
-          <ImageStack urls={solution.explanation.imageUrls} />
         </div>
       )}
 
