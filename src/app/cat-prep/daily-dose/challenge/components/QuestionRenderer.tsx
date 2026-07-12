@@ -3,6 +3,7 @@
 
 import type { Question } from "../../../models/dailyChallenge";
 import ComprehensionBlock from "./ComprehensionBlock";
+import InlineImageText from "./InlineImageText";
 import MathText from "./MathText";
 import MCQOptions from "./MCQOptions";
 import TITAInput from "./TITAInput";
@@ -49,25 +50,23 @@ export default function QuestionRenderer({
         >
           Q{questionNumber} · {question.type === "mcq" ? "MCQ" : "TITA"}
         </span>
-        <p
-          className="font-semibold text-trust-navy"
-          style={{ fontSize: 15, lineHeight: 1.75, margin: 0 }}
-        >
-          <MathText text={question.text} />
-        </p>
-      </div>
-
-      {/* Question images */}
-      {question.imageUrls.map((url) => (
-        /* image origin is scraper-supplied and unknown at build time */
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={url}
-          src={url}
-          alt="Question diagram"
-          style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 16 }}
+        <InlineImageText
+          text={question.text}
+          imageUrls={question.imageUrls}
+          imagePositions={question.imagePositions}
+          imgAlt="Question diagram"
+          imgStyle={{ maxWidth: "100%", borderRadius: 8, marginTop: 12, marginBottom: 4 }}
+          renderParagraph={(segment, key) => (
+            <p
+              key={key}
+              className="font-semibold text-trust-navy"
+              style={{ fontSize: 15, lineHeight: 1.75, margin: 0, marginBottom: 8 }}
+            >
+              <MathText text={segment} />
+            </p>
+          )}
         />
-      ))}
+      </div>
 
       {/* Answer input */}
       {question.type === "mcq" && question.options ? (

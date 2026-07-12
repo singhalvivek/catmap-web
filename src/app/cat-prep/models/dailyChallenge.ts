@@ -17,11 +17,15 @@ export type QuestionOption = {
 export type Comprehension = {
   text: string;
   imageUrls: string[];
+  // Inline position per image: paragraphs preceding image i. Optional — absent on
+  // docs not yet backfilled, in which case images render appended at the end.
+  imagePositions?: number[];
 };
 
 export type Explanation = {
   text: string | null;
   imageUrls: string[];
+  imagePositions?: number[];
 };
 
 export type Question = {
@@ -30,6 +34,7 @@ export type Question = {
   type: QuestionType;
   text: string;
   imageUrls: string[];
+  imagePositions?: number[];
   options: QuestionOption[] | null;
   timeLimitSeconds: number | null;
   comprehension: Comprehension | null;

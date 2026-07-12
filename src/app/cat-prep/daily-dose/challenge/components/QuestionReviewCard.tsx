@@ -2,6 +2,7 @@
 // question, image, options) but with answers locked and correctness highlighted
 import type { Question, QuestionResponse } from "../../../models/dailyChallenge";
 import ComprehensionBlock from "./ComprehensionBlock";
+import InlineImageText from "./InlineImageText";
 import MathText from "./MathText";
 import ReviewMCQOptions from "./ReviewMCQOptions";
 import ReviewTITAAnswer from "./ReviewTITAAnswer";
@@ -77,23 +78,22 @@ export default function QuestionReviewCard({ question, response, questionNumber 
 
       {question.comprehension && <ComprehensionBlock comprehension={question.comprehension} />}
 
-      <p
-        className="font-semibold text-trust-navy"
-        style={{ fontSize: 15, lineHeight: 1.75, margin: "0 0 14px" }}
-      >
-        <MathText text={question.text} />
-      </p>
-
-      {question.imageUrls.map((url) => (
-        /* image origin is scraper-supplied and unknown at build time */
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={url}
-          src={url}
-          alt="Question diagram"
-          style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 16 }}
-        />
-      ))}
+      <InlineImageText
+        text={question.text}
+        imageUrls={question.imageUrls}
+        imagePositions={question.imagePositions}
+        imgAlt="Question diagram"
+        imgStyle={{ maxWidth: "100%", borderRadius: 8, marginTop: 10, marginBottom: 14 }}
+        renderParagraph={(segment, key) => (
+          <p
+            key={key}
+            className="font-semibold text-trust-navy"
+            style={{ fontSize: 15, lineHeight: 1.75, margin: "0 0 10px" }}
+          >
+            <MathText text={segment} />
+          </p>
+        )}
+      />
 
       {question.type === "mcq" && question.options ? (
         <ReviewMCQOptions options={question.options} selectedIndex={given} correctIndex={correctAnswer} />
@@ -101,7 +101,7 @@ export default function QuestionReviewCard({ question, response, questionNumber 
         <ReviewTITAAnswer given={given} correctAnswer={correctAnswer} isCorrect={isCorrect} />
       )}
 
-      {question.explanation?.text && (
+      {question.explanation && (question.explanation.text || question.explanation.imageUrls.length > 0) && (
         <div
           style={{
             marginTop: 16,
@@ -123,14 +123,18 @@ export default function QuestionReviewCard({ question, response, questionNumber 
           >
             Explanation
           </span>
-          <p style={{ fontSize: 13.5, color: "#334155", lineHeight: 1.75, margin: 0, whiteSpace: "pre-line" }}>
-            <MathText text={question.explanation.text} />
-          </p>
-          {question.explanation.imageUrls.map((url) => (
-            /* imageUrl origin is scraper-supplied and unknown at build time */
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={url} src={url} alt="Explanation diagram" style={{ maxWidth: "100%", borderRadius: 8, marginTop: 10 }} />
-          ))}
+          <InlineImageText
+            text={question.explanation.text ?? ""}
+            imageUrls={question.explanation.imageUrls}
+            imagePositions={question.explanation.imagePositions}
+            imgAlt="Explanation diagram"
+            imgStyle={{ maxWidth: "100%", borderRadius: 8, marginTop: 10, marginBottom: 6 }}
+            renderParagraph={(segment, key) => (
+              <p key={key} style={{ fontSize: 13.5, color: "#334155", lineHeight: 1.75, margin: "0 0 8px", whiteSpace: "pre-line" }}>
+                <MathText text={segment} />
+              </p>
+            )}
+          />
         </div>
       )}
     </div>
