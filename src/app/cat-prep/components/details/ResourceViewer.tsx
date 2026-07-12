@@ -49,10 +49,10 @@ function EmbedBlockedNotice({ videoId }: { videoId: string | null }) {
     >
       <div aria-hidden style={{ fontSize: 30 }}>📺</div>
       <div className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
-        Its creator turned off in-site playback
+        This video plays on YouTube
       </div>
-      <p style={{ fontSize: 13, color: "#64748B", maxWidth: 320, lineHeight: 1.6, margin: 0 }}>
-        Please watch and finish this video and don&apos;t get lost, we are waiting for you.
+      <p style={{ fontSize: 13, color: "#64748B", maxWidth: 300, lineHeight: 1.6, margin: 0 }}>
+        Watch it there and come straight back &mdash; we&apos;re waiting for you with the next video.
       </p>
       <a
         href={watchUrl}
@@ -322,7 +322,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                   (!selectedVideoId && initialVideoId === item.videoId);
                 return (
                   <button
-                    key={item.videoId}
+                    key={item.videoId || idx}
                     onClick={() => handleVideoSelect(item.videoId)}
                     className="flex items-center gap-3 w-full text-left"
                     style={{

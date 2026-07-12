@@ -17,6 +17,9 @@ function seriesToResources(doc: VideoSeriesDoc): Resource[] {
     .filter((s) => s.items.length > 0)
     .map((s, i) => ({
       id: 100000 + i, // dedicated id range, never collides with resources.json
+      // s.id is the node id and the ONLY field that governs placement.
+      // videoSeries.json also carries topic_id/subtopic_index, but those are
+      // informational only — not read here; editing them changes nothing.
       parent_id: s.id,
       title: `${doc.instructor} — ${s.name}`,
       type: "SERIES" as const,
