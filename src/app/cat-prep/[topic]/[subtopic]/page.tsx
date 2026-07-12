@@ -3,12 +3,11 @@ import type { Metadata } from "next";
 import data from "../../data.json";
 import descriptions from "../../description.json";
 import faqs from "../../faq.json";
-import resources from "../../resources.json";
 import { buildTree } from "../../lib/buildTree";
+import { ALL_RESOURCES } from "../../lib/allResources";
 import { findTopicBySlug, findSubtopicBySlug, buildNodePageMeta, toSlug, buildLearningResourceSchema } from "../../lib/nodeMetadata";
 import { Node } from "../../models/node";
 import { Description } from "../../models/description";
-import { Resource } from "../../models/resource";
 import type { Faq as FaqType } from "../../models/faq";
 import { ProgressProvider } from "../../lib/ProgressContext";
 import RoadmapContent from "../../components/RoadmapContent";
@@ -69,7 +68,7 @@ export default async function SubtopicPage({ params }: Props) {
         <RoadmapContent
           subjects={subjects}
           allDescriptions={descriptions as Description[]}
-          allResources={resources as Resource[]}
+          allResources={ALL_RESOURCES}
           allFaqs={faqs as FaqType[]}
           initialNode={subtopicNode}
           initialExpandedTopicId={topicNode.id}

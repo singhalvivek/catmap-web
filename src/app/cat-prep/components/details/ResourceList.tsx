@@ -8,10 +8,9 @@ import { getYouTubeThumbnail } from "../../lib/youtubeUtils";
 
 function ResourceThumbnail({ resource }: { resource: Resource }) {
   const [imgError, setImgError] = useState(false);
+  const hasVideoThumb = resource.type === "VIDEO" || resource.type === "SERIES";
   const ytThumbnail =
-    resource.type === "VIDEO" && !imgError
-      ? getYouTubeThumbnail(resource.link)
-      : null;
+    hasVideoThumb && !imgError ? getYouTubeThumbnail(resource.link) : null;
 
   const containerClass =
     "relative w-full aspect-video flex-shrink-0 md:w-28 md:aspect-auto md:self-stretch md:min-h-[72px] overflow-hidden";
@@ -58,7 +57,7 @@ function ResourceThumbnail({ resource }: { resource: Resource }) {
     );
   }
 
-  const isVideo = resource.type === "VIDEO";
+  const isVideo = resource.type === "VIDEO" || resource.type === "SERIES";
   return (
     <div
       aria-hidden
@@ -142,9 +141,13 @@ export default function ResourceList({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {r.title}
+                    {r.type === "SERIES" ? r.instructor ?? "Video series" : r.title}
                   </div>
-                  <div style={{ fontSize: 11, color: "#94A3B8" }}>{r.type}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8" }}>
+                    {r.type === "SERIES"
+                      ? `Series · ${r.items?.length ?? 0} videos`
+                      : r.type}
+                  </div>
                 </div>
                 <span
                   aria-hidden

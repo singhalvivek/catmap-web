@@ -474,5 +474,61 @@
     "title": "Tone and Structure of Passage",
     "type": "SUBTOPIC",
     "order_index": 5
+  },
+  {
+    "id": 69,
+    "parent_id": 6,
+    "title": "Speed Math",
+    "type": "SUBTOPIC",
+    "order_index": 9
+  },
+  {
+    "id": 70,
+    "parent_id": 5,
+    "title": "Advanced Algebra",
+    "type": "SUBTOPIC",
+    "order_index": 7
+  },
+  {
+    "id": 71,
+    "parent_id": 5,
+    "title": "Graphs",
+    "type": "SUBTOPIC",
+    "order_index": 8
+  },
+  {
+    "id": 72,
+    "parent_id": 9,
+    "title": "Statistics",
+    "type": "SUBTOPIC",
+    "order_index": 4
+  },
+  {
+    "id": 73,
+    "parent_id": 7,
+    "title": "Number Basics",
+    "type": "SUBTOPIC",
+    "order_index": 6
+  },
+  {
+    "id": 74,
+    "parent_id": 7,
+    "title": "Divisibility Rules",
+    "type": "SUBTOPIC",
+    "order_index": 7
+  },
+  {
+    "id": 75,
+    "parent_id": 7,
+    "title": "Base Systems",
+    "type": "SUBTOPIC",
+    "order_index": 8
+  },
+  {
+    "id": 76,
+    "parent_id": 7,
+    "title": "Recurring Decimals",
+    "type": "SUBTOPIC",
+    "order_index": 9
   }
 ]
