@@ -13,6 +13,7 @@ export type PyqComprehension = {
   id: string;
   text: string | null;
   imageUrls: string[];
+  imagePositions?: number[];
 };
 
 export type PyqQuestion = {
@@ -22,6 +23,7 @@ export type PyqQuestion = {
   type: PyqQuestionType;
   text: string | null;
   imageUrls: string[];
+  imagePositions?: number[];
   options: PyqOption[] | null;
   comprehension: PyqComprehension | null;
 };
@@ -46,7 +48,7 @@ export type PyqSolution = {
   type: PyqQuestionType;
   correctOptionIndex: number | null;
   correctAnswer: string | null;
-  explanation: { text: string | null; imageUrls: string[] };
+  explanation: { text: string | null; imageUrls: string[]; imagePositions?: number[] };
 };
 
 export type PyqPaperSummary = {

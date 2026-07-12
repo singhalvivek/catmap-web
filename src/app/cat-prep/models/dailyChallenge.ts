@@ -11,17 +11,21 @@ export type VisitStatus =
 export type QuestionOption = {
   index: number;
   text: string | null;
-  imageUrl: string | null;
+  imageUrls: string[];
 };
 
 export type Comprehension = {
   text: string;
-  imageUrl: string | null;
+  imageUrls: string[];
+  // Inline position per image: paragraphs preceding image i. Optional — absent on
+  // docs not yet backfilled, in which case images render appended at the end.
+  imagePositions?: number[];
 };
 
 export type Explanation = {
   text: string | null;
   imageUrls: string[];
+  imagePositions?: number[];
 };
 
 export type Question = {
@@ -29,7 +33,8 @@ export type Question = {
   order: number;
   type: QuestionType;
   text: string;
-  imageUrl: string | null;
+  imageUrls: string[];
+  imagePositions?: number[];
   options: QuestionOption[] | null;
   timeLimitSeconds: number | null;
   comprehension: Comprehension | null;
