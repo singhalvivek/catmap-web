@@ -95,7 +95,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
   useEffect(() => {
     if (isComplete) return;
     const id = setTimeout(() => {
-      saveDailyChallengeDraft(date, {
+      saveDailyChallengeDraft(uid, date, {
         testId: test.testId,
         sectionIndex,
         questionIndex: questionIndexRef.current,
@@ -105,7 +105,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
       });
     }, 1000);
     return () => clearTimeout(id);
-  }, [responses, sectionIndex, isComplete, date, test.testId]);
+  }, [responses, sectionIndex, isComplete, date, uid, test.testId]);
 
   // When the test ends: submit to API, save result to localStorage
   useEffect(() => {
@@ -129,7 +129,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
           if (stored.ok) {
             const data = (await stored.json()) as SerializedDailyChallengeResult;
             const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
-            saveResultLocally(date, computed);
+            saveResultLocally(uid, date, computed);
             setResult(computed);
           }
           return;
@@ -139,8 +139,8 @@ export default function TestView({ test, date, uid, initialState }: Props) {
 
         const data = (await res.json()) as SerializedDailyChallengeResult;
         const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
-        saveResultLocally(date, computed);
-        clearDailyChallengeDraft(date);
+        saveResultLocally(uid, date, computed);
+        clearDailyChallengeDraft(uid, date);
         setResult(computed);
         const correct = computed.sections.reduce((n, s) => n + Object.values(s.responses).filter((r) => r.correct).length, 0);
         trackEvent("daily_challenge_submitted", {

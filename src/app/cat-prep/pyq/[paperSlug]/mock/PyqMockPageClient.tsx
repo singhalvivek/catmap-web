@@ -52,7 +52,7 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
             trackEvent("pyq_mock_landed", { paper_slug: paperSlug, auth_state: "signed_in", resuming_draft: false });
           }
         } else {
-          const existingDraft = getPyqMockDraft(paperSlug);
+          const existingDraft = getPyqMockDraft(nextUser.uid, paperSlug);
           if (existingDraft && existingDraft.testId === test.testId) {
             setDraft(existingDraft);
             setStatus("resume_prompt");
@@ -95,7 +95,8 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
   };
 
   const handleFreshStart = () => {
-    clearPyqMockDraft(paperSlug);
+    if (!user) return;
+    clearPyqMockDraft(user.uid, paperSlug);
     setDraft(null);
     setStatus("ready");
   };
