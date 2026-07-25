@@ -7,12 +7,9 @@ import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import type { DailyEssay } from "@/app/cat-prep/models/essay";
 import type { EssaySubmissionView } from "@/app/cat-prep/models/essay";
+import { getTodayIST } from "@/lib/dateIST";
 
 type CardState = "loading" | "cta" | "completed" | "login";
-
-function getTodayIST(): string {
-  return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-}
 
 const HEADER = (badge: React.ReactNode) => (
   <div

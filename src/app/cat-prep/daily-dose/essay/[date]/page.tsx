@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchOrPickDailyEssay, getEssaySubmissions } from "@/lib/essayQueries";
+import { getTodayIST } from "@/lib/dateIST";
 import DailyEssayPageClient from "../components/DailyEssayPageClient";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
@@ -25,10 +26,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description },
     twitter: { title, description },
   };
-}
-
-function getTodayIST(): string {
-  return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
 export default async function PastEssayPage({ params }: Props) {

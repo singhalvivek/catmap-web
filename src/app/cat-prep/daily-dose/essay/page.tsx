@@ -2,9 +2,12 @@
 import type { Metadata } from "next";
 import { ENV } from "@/config/env";
 import { fetchOrPickDailyEssay } from "@/lib/essayQueries";
+import { getTodayIST } from "@/lib/dateIST";
 import DailyEssayPageClient from "./components/DailyEssayPageClient";
 
-export const revalidate = 3600;
+// Dynamic, not ISR: a cached render would freeze `date` and keep serving
+// yesterday's essay for up to an hour past IST midnight.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Daily Essay | StudyNaksha",
@@ -15,10 +18,6 @@ export const metadata: Metadata = {
     description: "Read today's Aeon essay and respond. VARC practice for CAT aspirants.",
   },
 };
-
-function getTodayIST(): string {
-  return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-}
 
 export default async function DailyEssayPage() {
   const date = getTodayIST();

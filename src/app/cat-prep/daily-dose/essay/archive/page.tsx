@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getEssayArchive } from "@/lib/essayQueries";
+import { getTodayIST } from "@/lib/dateIST";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,6 @@ export const metadata: Metadata = {
   title: "Essay Archive | StudyNaksha",
   description: "Browse all past Aeon essays used for daily VARC practice on StudyNaksha.",
 };
-
-function getTodayIST(): string {
-  return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-}
 
 function formatDate(date: string): string {
   return new Date(date + "T00:00:00").toLocaleDateString("en-IN", {

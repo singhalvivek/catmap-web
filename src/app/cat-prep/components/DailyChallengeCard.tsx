@@ -7,11 +7,8 @@ import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { getDailyChallengeResult } from "../lib/dailyChallengeStore";
 import type { DailyChallengeResult } from "../models/dailyChallenge";
+import { getTodayIST } from "@/lib/dateIST";
 import { trackEvent } from "@/app/components/analytics";
-
-function getTodayDate(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function formatTime(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
@@ -57,7 +54,7 @@ export default function DailyChallengeCard() {
   const [result, setResult] = useState<DailyChallengeResult | null>(null);
   const [loginError, setLoginError] = useState(false);
 
-  const date = getTodayDate();
+  const date = getTodayIST();
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
