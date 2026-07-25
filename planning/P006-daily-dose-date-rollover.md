@@ -151,11 +151,24 @@ this change. All are now fixed, plus a fifth found while fixing them.
    inserted, so a lost race no longer burns an essay nobody was served. The
    index is created once per process and non-fatally — a pre-existing duplicate
    must not take the essay pages down.
-5. **`DailyChallengeCard` date label.** Rendered `toLocaleDateString` with no
-   `timeZone` inside a statically prerendered page, shipping the build day's
-   date in the HTML and mismatching on hydration. Now derived from the IST date
-   string via `formatISTDateLong`, and gated behind `useSyncExternalStore` so it
-   is omitted from the static HTML rather than baked in.
+5. **Both roadmap cards baked the build day into static HTML.**
+   `DailyChallengeCard` rendered `toLocaleDateString` with no `timeZone`;
+   `DailyEssayCard` rendered the raw `getTodayIST()` string. Both sit on
+   statically prerendered pages, so the build day shipped in the HTML and
+   mismatched on hydration. The challenge card was fixed first and the essay
+   card missed — a second review caught it, having confirmed `2026-07-25` in
+   `.next/server/app/cat-prep/daily-dose.html`. Both are now gated behind a
+   shared `useIsHydrated()` hook (rather than the guard being open-coded in one
+   component and forgotten in its sibling), with the challenge card's label
+   derived from the IST date string via `formatISTDateLong`. Verified: no date
+   appears in either prerendered page after the fix.
+6. **Legacy `localStorage` keys are purged, not migrated.** The uid rename
+   orphaned pre-existing `dc_draft_<date>` / `pyq_mock_result_<slug>` keys,
+   which would otherwise sit in the browser forever holding another user's
+   answers. They are now removed on first read per prefix. Deliberately not
+   migrated: adopting one would hand the previous user's data to whoever is
+   signed in, which is the bug being fixed. A draft in flight at deploy time is
+   still lost — unavoidable without reintroducing the leak.
 
 ## Corrected: the `essay/[date]` "cached 404" was not real
 

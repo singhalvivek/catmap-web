@@ -8,6 +8,7 @@ import { auth, googleProvider } from "@/lib/firebase";
 import type { DailyEssay } from "@/app/cat-prep/models/essay";
 import type { EssaySubmissionView } from "@/app/cat-prep/models/essay";
 import { getTodayIST } from "@/lib/dateIST";
+import { useIsHydrated } from "../lib/useIsHydrated";
 
 type CardState = "loading" | "cta" | "completed" | "login";
 
@@ -37,6 +38,10 @@ export default function DailyEssayCard() {
   const [loginError, setLoginError] = useState(false);
 
   const date = getTodayIST();
+  // Client-only: this card is statically prerendered, so rendering the date
+  // during SSR bakes the build day into the HTML and mismatches on hydration.
+  const hydrated = useIsHydrated();
+  const dateLabel = hydrated ? date : "";
 
   useEffect(() => {
     // Fetch today's essay regardless of auth state
@@ -94,7 +99,7 @@ export default function DailyEssayCard() {
   if (cardState === "loading") {
     return cardWrap(
       <>
-        {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{date}</span>)}
+        {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{dateLabel}</span>)}
         <div
           className="animate-pulse"
           style={{
@@ -166,7 +171,7 @@ export default function DailyEssayCard() {
   // cta state — essay available, not yet submitted
   return cardWrap(
     <>
-      {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{date}</span>)}
+      {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{dateLabel}</span>)}
       <div style={{ background: "#fff", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginBottom: 3 }}>

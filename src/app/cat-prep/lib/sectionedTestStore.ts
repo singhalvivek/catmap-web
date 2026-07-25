@@ -11,6 +11,24 @@ import type {
 const draftKey = (keyPrefix: string, uid: string, id: string) => `${keyPrefix}_${uid}_draft_${id}`;
 const resultKey = (keyPrefix: string, uid: string, id: string) => `${keyPrefix}_${uid}_result_${id}`;
 
+// Keys written before uid scoping (`dc_draft_<date>`) are unreadable now and
+// would otherwise sit in localStorage forever holding another user's answers.
+// They are dropped rather than migrated: adopting one would hand the previous
+// user's data to whoever is signed in, which is the bug being fixed.
+const purgedPrefixes = new Set<string>();
+function purgeLegacyKeys(keyPrefix: string): void {
+  if (purgedPrefixes.has(keyPrefix)) return;
+  purgedPrefixes.add(keyPrefix);
+  try {
+    const legacy = new RegExp(`^${keyPrefix}_(draft|result)_`);
+    Object.keys(localStorage)
+      .filter((k) => legacy.test(k))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch {
+    // localStorage unavailable — nothing to purge
+  }
+}
+
 // ---- Result helpers ----
 
 export function saveResultLocally(
@@ -50,6 +68,7 @@ export async function getStoredResult(
   id: string,
   fetchUrl: string
 ): Promise<DailyChallengeResult | null> {
+  purgeLegacyKeys(keyPrefix);
   const local = readLocalResult(keyPrefix, uid, id);
   if (local) return local;
 
@@ -73,6 +92,7 @@ export async function getStoredResult(
 // ---- Draft helpers ----
 
 export function getDraft(keyPrefix: string, uid: string, id: string): DailyChallengeDraft | null {
+  purgeLegacyKeys(keyPrefix);
   try {
     const raw = localStorage.getItem(draftKey(keyPrefix, uid, id));
     if (!raw) return null;

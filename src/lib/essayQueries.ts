@@ -117,7 +117,14 @@ function ensureEssayIndex(db: Db): Promise<void> {
     .createIndex({ date: 1 }, { unique: true })
     .then(() => undefined)
     .catch((err: unknown) => {
-      console.error("[essayQueries] could not create unique index on daily_essays.date:", err);
+      // Most likely cause: duplicate `date` docs already written by the old
+      // unindexed insert path. Until they are removed and the index builds, the
+      // upsert below is still an improvement but is NOT race-proof. Check with:
+      //   db.daily_essays.aggregate([{$group:{_id:"$date",n:{$sum:1}}},{$match:{n:{$gt:1}}}])
+      console.error(
+        "[essayQueries] unique index on daily_essays.date NOT created — essay picks remain race-prone:",
+        err
+      );
     });
   return essayIndexReady;
 }

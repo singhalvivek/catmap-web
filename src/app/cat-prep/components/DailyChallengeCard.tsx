@@ -1,13 +1,14 @@
 // DailyChallengeCard — roadmap widget: no-challenge / login / CTA / completed states
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { getDailyChallengeResult } from "../lib/dailyChallengeStore";
 import type { DailyChallengeResult } from "../models/dailyChallenge";
 import { getTodayIST, formatISTDateLong } from "@/lib/dateIST";
+import { useIsHydrated } from "../lib/useIsHydrated";
 import { trackEvent } from "@/app/components/analytics";
 
 function formatTime(totalSeconds: number): string {
@@ -18,12 +19,6 @@ function formatTime(totalSeconds: number): string {
 }
 
 type CardStatus = "loading" | "no-challenge" | "login" | "cta" | "completed";
-
-// Distinguishes the server/prerender pass from the hydrated client, so a
-// clock-dependent value can be left out of the static HTML.
-const subscribeNever = () => () => {};
-const onClient = () => true;
-const onServer = () => false;
 
 const CARD_HEADER = (
   rightSlot: React.ReactNode,
@@ -64,7 +59,7 @@ export default function DailyChallengeCard() {
   // Client-only: this card sits on a statically prerendered page, so rendering
   // the date during SSR would ship the build-day's date in the HTML and
   // mismatch on hydration.
-  const hydrated = useSyncExternalStore(subscribeNever, onClient, onServer);
+  const hydrated = useIsHydrated();
   const today = hydrated ? formatISTDateLong(date) : "";
 
   useEffect(() => {
