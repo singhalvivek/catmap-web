@@ -7,7 +7,10 @@ import DailyEssayPageClient from "../components/DailyEssayPageClient";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 
-export const revalidate = 86400;
+// No `revalidate` here: without generateStaticParams this segment renders on
+// demand, so a revalidate value is silently inert and only reads like caching
+// that isn't happening. Verified against a production build — this route sends
+// `no-store`, identical to a force-dynamic route.
 
 type Props = { params: Promise<{ date: string }> };
 

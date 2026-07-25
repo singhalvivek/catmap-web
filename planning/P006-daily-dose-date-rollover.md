@@ -157,15 +157,68 @@ this change. All are now fixed, plus a fifth found while fixing them.
    string via `formatISTDateLong`, and gated behind `useSyncExternalStore` so it
    is omitted from the static HTML rather than baked in.
 
+## Corrected: the `essay/[date]` "cached 404" was not real
+
+An earlier revision of this doc filed a bug saying `essay/[date]` caches its own
+404 for up to 24h because of `revalidate = 86400`. That was wrong — it was read
+out of the source without checking the build classification.
+
+The route has no `generateStaticParams`, so the segment never enters the
+static/ISR pipeline and `revalidate` is inert. Measured against a production
+build:
+
+| Route | Build mark | `Cache-Control` | `x-nextjs-cache` |
+|---|---|---|---|
+| `/cat-prep` | ○ Static | `s-maxage=31536000` | `HIT` |
+| `/cat-prep/pyq/[slug]` | ● SSG | `s-maxage=31536000` | `HIT` |
+| `challenge` (`force-dynamic`) | ƒ | `private, no-cache, no-store` | *(none)* |
+| `essay/[date]` (`revalidate=86400`) | ƒ | `private, no-cache, no-store` | *(none)* |
+
+`essay/[date]` is byte-identical to a force-dynamic route: no cache entry is
+ever written, so there is no stale 404 to serve. The `revalidate` line has been
+removed as dead, misleading config; headers are unchanged afterwards, which
+confirms it was doing nothing.
+
+Still available as a real improvement, deliberately not taken here: adding
+`generateStaticParams` over past essay dates would prerender ~33 pages and is a
+genuine SEO win — but it would *create* the cached-404 boundary problem
+described above, so it needs that handled and is not a merge-day change.
+
+## Fixed: `localStorage` keys were not user-scoped
+
+`dc_result_<date>` and `dc_draft_<date>` carried no `uid`, and `getStoredResult`
+returns the local hit *before* ever calling the API:
+
+```ts
+const local = readLocalResult(keyPrefix, id);
+if (local) return local;   // never reaches the API
+```
+
+So on a shared browser, user B signing in after user A read A's stored result
+and was told they had already completed today's challenge — permanently, not
+transiently, and with no way to take it. Drafts were worse: B could resume A's
+half-finished attempt and submit it under B's own account.
+
+`pyqMockStore` wraps the same `sectionedTestStore` and had the identical bug
+keyed on `paperSlug` rather than a date, so a PYQ mock result leaked between
+users indefinitely rather than for one day.
+
+Keys are now `${keyPrefix}_${uid}_draft_${id}` / `..._result_${id}`, scoped in
+the shared store so both features are fixed at once. `uid` (not `displayName`)
+because display names are neither unique nor stable — two users with the same
+name would still collide, and renaming a Google profile would orphan that
+user's own saved result.
+
+Known consequence: pre-existing unscoped keys are orphaned. Harmless for
+results, which re-fetch from the API and re-cache under the new key, but anyone
+mid-attempt at deploy time loses their draft. Scoping also fixes *app*
+behaviour, not data-at-rest — A's answers remain in B's browser storage and
+readable via devtools. Clearing keys on sign-out would close that, and is not
+done here.
+
 ## Out of scope — found while investigating, filed not fixed
 
-1. **`essay/[date]` caches its own 404.** The page is `revalidate = 86400` and
-   calls `notFound()` when `date >= today`. Today's date is therefore cached as
-   a 404 for up to 24h, so the URL can stay 404 well into the day it becomes
-   valid. Fixing properly means either making the page dynamic (costing the
-   static caching that these past-essay pages *should* have for SEO) or
-   switching to a read-only `fetchDailyEssay` and rethinking the view-only gate.
-   Needs a design decision.
-2. **`localStorage` result key is not user-scoped.** `dc_result_<date>` has no
-   `uid` (`sectionedTestStore.ts`), so on a shared browser a second user sees
-   the first user's score until the API call corrects it.
+1. **Essay data is not cached at all now.** Both "today" pages and `essay/[date]`
+   hit Mongo on every request. Correct, but if the DB read ever shows up in
+   metrics, the fix is `"use cache"` keyed on date — which needs `cacheComponents`
+   enabled app-wide.

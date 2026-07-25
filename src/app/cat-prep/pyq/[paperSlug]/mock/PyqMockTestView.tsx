@@ -96,7 +96,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
   useEffect(() => {
     if (isComplete) return;
     const id = setTimeout(() => {
-      savePyqMockDraft(paperSlug, {
+      savePyqMockDraft(uid, paperSlug, {
         testId: test.testId,
         sectionIndex,
         questionIndex: questionIndexRef.current,
@@ -106,7 +106,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
       });
     }, 1000);
     return () => clearTimeout(id);
-  }, [responses, sectionIndex, isComplete, paperSlug, test.testId]);
+  }, [responses, sectionIndex, isComplete, paperSlug, uid, test.testId]);
 
   // When the test ends: submit to API, save result to localStorage
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
           if (stored.ok) {
             const data = (await stored.json()) as SerializedDailyChallengeResult;
             const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
-            saveResultLocally(paperSlug, computed);
+            saveResultLocally(uid, paperSlug, computed);
             setResult(computed);
           }
           return;
@@ -138,8 +138,8 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
 
         const data = (await res.json()) as SerializedDailyChallengeResult;
         const computed: DailyChallengeResult = { ...data, completedAt: new Date(data.completedAt) };
-        saveResultLocally(paperSlug, computed);
-        clearPyqMockDraft(paperSlug);
+        saveResultLocally(uid, paperSlug, computed);
+        clearPyqMockDraft(uid, paperSlug);
         setResult(computed);
         const correct = computed.sections.reduce((n, s) => n + Object.values(s.responses).filter((r) => r.correct).length, 0);
         trackEvent("pyq_mock_submitted", {

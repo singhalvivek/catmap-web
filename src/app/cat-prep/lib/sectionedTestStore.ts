@@ -5,15 +5,23 @@ import type {
   SerializedDailyChallengeResult,
 } from "../models/dailyChallenge";
 
-const draftKey = (keyPrefix: string, id: string) => `${keyPrefix}_draft_${id}`;
-const resultKey = (keyPrefix: string, id: string) => `${keyPrefix}_result_${id}`;
+// Keys are scoped by uid: localStorage is per-browser, not per-account, so an
+// unscoped key hands the previous signed-in user's draft or result to the next
+// one on a shared device.
+const draftKey = (keyPrefix: string, uid: string, id: string) => `${keyPrefix}_${uid}_draft_${id}`;
+const resultKey = (keyPrefix: string, uid: string, id: string) => `${keyPrefix}_${uid}_result_${id}`;
 
 // ---- Result helpers ----
 
-export function saveResultLocally(keyPrefix: string, id: string, result: DailyChallengeResult): void {
+export function saveResultLocally(
+  keyPrefix: string,
+  uid: string,
+  id: string,
+  result: DailyChallengeResult
+): void {
   try {
     localStorage.setItem(
-      resultKey(keyPrefix, id),
+      resultKey(keyPrefix, uid, id),
       JSON.stringify({ ...result, completedAt: result.completedAt.toISOString() })
     );
   } catch {
@@ -21,9 +29,9 @@ export function saveResultLocally(keyPrefix: string, id: string, result: DailyCh
   }
 }
 
-function readLocalResult(keyPrefix: string, id: string): DailyChallengeResult | null {
+function readLocalResult(keyPrefix: string, uid: string, id: string): DailyChallengeResult | null {
   try {
-    const raw = localStorage.getItem(resultKey(keyPrefix, id));
+    const raw = localStorage.getItem(resultKey(keyPrefix, uid, id));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as SerializedDailyChallengeResult;
     return { ...parsed, completedAt: new Date(parsed.completedAt) };
@@ -38,10 +46,11 @@ function readLocalResult(keyPrefix: string, id: string): DailyChallengeResult | 
  */
 export async function getStoredResult(
   keyPrefix: string,
+  uid: string,
   id: string,
   fetchUrl: string
 ): Promise<DailyChallengeResult | null> {
-  const local = readLocalResult(keyPrefix, id);
+  const local = readLocalResult(keyPrefix, uid, id);
   if (local) return local;
 
   try {
@@ -54,7 +63,7 @@ export async function getStoredResult(
       completedAt: new Date(data.completedAt),
     };
     // Cache in localStorage for future page loads on this device
-    saveResultLocally(keyPrefix, id, result);
+    saveResultLocally(keyPrefix, uid, id, result);
     return result;
   } catch {
     return null;
@@ -63,9 +72,9 @@ export async function getStoredResult(
 
 // ---- Draft helpers ----
 
-export function getDraft(keyPrefix: string, id: string): DailyChallengeDraft | null {
+export function getDraft(keyPrefix: string, uid: string, id: string): DailyChallengeDraft | null {
   try {
-    const raw = localStorage.getItem(draftKey(keyPrefix, id));
+    const raw = localStorage.getItem(draftKey(keyPrefix, uid, id));
     if (!raw) return null;
     return JSON.parse(raw) as DailyChallengeDraft;
   } catch {
@@ -73,17 +82,22 @@ export function getDraft(keyPrefix: string, id: string): DailyChallengeDraft | n
   }
 }
 
-export function saveDraft(keyPrefix: string, id: string, draft: DailyChallengeDraft): void {
+export function saveDraft(
+  keyPrefix: string,
+  uid: string,
+  id: string,
+  draft: DailyChallengeDraft
+): void {
   try {
-    localStorage.setItem(draftKey(keyPrefix, id), JSON.stringify(draft));
+    localStorage.setItem(draftKey(keyPrefix, uid, id), JSON.stringify(draft));
   } catch {
     // silently skip
   }
 }
 
-export function clearDraft(keyPrefix: string, id: string): void {
+export function clearDraft(keyPrefix: string, uid: string, id: string): void {
   try {
-    localStorage.removeItem(draftKey(keyPrefix, id));
+    localStorage.removeItem(draftKey(keyPrefix, uid, id));
   } catch {
     // silently skip
   }
