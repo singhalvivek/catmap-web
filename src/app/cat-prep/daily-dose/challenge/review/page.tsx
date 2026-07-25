@@ -1,3 +1,4 @@
+// page — /cat-prep/daily-dose/challenge/review; per-question review of a completed challenge
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchDailyTest } from "@/lib/dailyQuizQueries";
