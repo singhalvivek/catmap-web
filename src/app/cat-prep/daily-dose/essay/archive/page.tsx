@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getEssayArchive } from "@/lib/essayQueries";
+import { getTodayIST } from "@/lib/dateIST";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,6 @@ export const metadata: Metadata = {
   title: "Essay Archive | StudyNaksha",
   description: "Browse all past Aeon essays used for daily VARC practice on StudyNaksha.",
 };
-
-function getTodayIST(): string {
-  return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-}
 
 function formatDate(date: string): string {
   return new Date(date + "T00:00:00").toLocaleDateString("en-IN", {
@@ -63,6 +60,7 @@ export default async function EssayArchivePage() {
                 style={{ textDecoration: "none" }}
               >
                 <div
+                  className="hover:shadow-[0_4px_16px_rgba(30,58,95,0.1)]"
                   style={{
                     border: "1px solid #E2E8F0",
                     borderRadius: 12,
@@ -73,12 +71,6 @@ export default async function EssayArchivePage() {
                     justifyContent: "space-between",
                     gap: 16,
                     transition: "box-shadow 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 16px rgba(30,58,95,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>

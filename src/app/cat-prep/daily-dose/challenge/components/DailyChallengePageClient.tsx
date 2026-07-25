@@ -52,7 +52,7 @@ export default function DailyChallengePageClient({ test, date }: Props) {
             trackEvent("daily_challenge_landed", { challenge_date: date, auth_state: "signed_in", resuming_draft: false });
           }
         } else if (test) {
-          const existingDraft = getDailyChallengeDraft(date);
+          const existingDraft = getDailyChallengeDraft(nextUser.uid, date);
           if (existingDraft && existingDraft.testId === test.testId) {
             setDraft(existingDraft);
             setStatus("resume_prompt");
@@ -101,7 +101,8 @@ export default function DailyChallengePageClient({ test, date }: Props) {
   };
 
   const handleFreshStart = () => {
-    clearDailyChallengeDraft(date);
+    if (!user) return;
+    clearDailyChallengeDraft(user.uid, date);
     setDraft(null);
     setStatus("ready");
   };

@@ -1,6 +1,7 @@
 // daily-essay/submit — POST /api/daily-essay/submit; saves a user's essay responses
 import { NextRequest, NextResponse } from "next/server";
 import { saveEssaySubmission, DuplicateEssaySubmissionError } from "@/lib/essayQueries";
+import { getTodayIST } from "@/lib/dateIST";
 
 type RequestBody = {
   date: string;
@@ -24,8 +25,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Submissions only allowed for today (IST)
-  const todayIST = new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  if (date !== todayIST) {
+  if (date !== getTodayIST()) {
     return NextResponse.json({ error: "Submissions are only open for today's essay" }, { status: 403 });
   }
 

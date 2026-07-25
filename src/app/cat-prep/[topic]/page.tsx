@@ -16,6 +16,12 @@ import { ENV } from "@/config/env";
 
 type Props = { params: Promise<{ topic: string }> };
 
+export function generateStaticParams() {
+  return (data as Node[])
+    .filter((n) => n.type === "TOPIC")
+    .map((n) => ({ topic: toSlug(n.title) }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic } = await params;
   const node = findTopicBySlug(topic);

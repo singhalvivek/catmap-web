@@ -154,6 +154,9 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
   const { answers, correctAnswers, setAnswer, setCorrectAnswer } = usePracticeProgress(paper.paperSlug);
   const [sessionSolutions, setSessionSolutions] = useState<Record<number, PyqSolution>>({});
   const [loading, setLoading] = useState(false);
+  // Questions whose solution we've already kicked off a fetch for, so the
+  // auto-load effect below never re-fetches or loops.
+  const autoLoadedRef = useRef<Set<number>>(new Set());
 
   const currentIndex = section.questions.findIndex((q) => q.questionNumber === currentQNum);
   const question = section.questions[currentIndex];
@@ -163,6 +166,31 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
   const correctLetter = question ? correctAnswers[question.questionNumber] : undefined;
   const isChecked = !!correctLetter;
   const solution = question ? sessionSolutions[question.questionNumber] : undefined;
+
+  // A question stays "checked" across reloads/navigation because correctAnswers is
+  // persisted — but its solution lives only in component state and is lost. Without
+  // this, a revisited question shows the answer key with no explanation and no
+  // "Check Answer" button to re-fetch it. Re-load the solution when that happens.
+  useEffect(() => {
+    if (!question || !isChecked || sessionSolutions[question.questionNumber]) return;
+    const qNum = question.questionNumber;
+    if (autoLoadedRef.current.has(qNum)) return;
+    autoLoadedRef.current.add(qNum);
+    const qId = question.id;
+    (async () => {
+      try {
+        const res = await fetch(`/api/pyq/${paper.paperSlug}/questions/${qId}/solution`);
+        if (!res.ok) {
+          autoLoadedRef.current.delete(qNum);
+          return;
+        }
+        const data = (await res.json()) as PyqSolution;
+        setSessionSolutions((prev) => ({ ...prev, [qNum]: data }));
+      } catch {
+        autoLoadedRef.current.delete(qNum);
+      }
+    })();
+  }, [question, isChecked, sessionSolutions, paper.paperSlug]);
 
   function switchSection(name: PyqSection) {
     setActiveSection(name);
@@ -177,6 +205,8 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
 
   async function checkAnswer() {
     if (!question || !given) return;
+    // Mark as loaded so the auto-load effect doesn't also fire for this question.
+    autoLoadedRef.current.add(question.questionNumber);
     setLoading(true);
     try {
       const res = await fetch(`/api/pyq/${paper.paperSlug}/questions/${question.id}/solution`);

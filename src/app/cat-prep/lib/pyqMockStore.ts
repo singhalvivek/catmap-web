@@ -4,8 +4,12 @@ import * as store from "./sectionedTestStore";
 
 const PREFIX = "pyq_mock";
 
-export function saveResultLocally(paperSlug: string, result: DailyChallengeResult): void {
-  store.saveResultLocally(PREFIX, paperSlug, result);
+export function saveResultLocally(
+  uid: string,
+  paperSlug: string,
+  result: DailyChallengeResult
+): void {
+  store.saveResultLocally(PREFIX, uid, paperSlug, result);
 }
 
 /**
@@ -18,19 +22,24 @@ export async function getPyqMockResult(
 ): Promise<DailyChallengeResult | null> {
   return store.getStoredResult(
     PREFIX,
+    uid,
     paperSlug,
     `/api/pyq/${encodeURIComponent(paperSlug)}/result?uid=${encodeURIComponent(uid)}`
   );
 }
 
-export function getPyqMockDraft(paperSlug: string): DailyChallengeDraft | null {
-  return store.getDraft(PREFIX, paperSlug);
+export function getPyqMockDraft(uid: string, paperSlug: string): DailyChallengeDraft | null {
+  return store.getDraft(PREFIX, uid, paperSlug);
 }
 
-export function savePyqMockDraft(paperSlug: string, draft: DailyChallengeDraft): void {
-  store.saveDraft(PREFIX, paperSlug, draft);
+export function savePyqMockDraft(
+  uid: string,
+  paperSlug: string,
+  draft: DailyChallengeDraft
+): void {
+  store.saveDraft(PREFIX, uid, paperSlug, draft);
 }
 
-export function clearPyqMockDraft(paperSlug: string): void {
-  store.clearDraft(PREFIX, paperSlug);
+export function clearPyqMockDraft(uid: string, paperSlug: string): void {
+  store.clearDraft(PREFIX, uid, paperSlug);
 }

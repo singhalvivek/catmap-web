@@ -7,11 +7,9 @@ import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { getDailyChallengeResult } from "../lib/dailyChallengeStore";
 import type { DailyChallengeResult } from "../models/dailyChallenge";
+import { getTodayIST, formatISTDateLong } from "@/lib/dateIST";
+import { useIsHydrated } from "../lib/useIsHydrated";
 import { trackEvent } from "@/app/components/analytics";
-
-function getTodayDate(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function formatTime(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
@@ -57,12 +55,12 @@ export default function DailyChallengeCard() {
   const [result, setResult] = useState<DailyChallengeResult | null>(null);
   const [loginError, setLoginError] = useState(false);
 
-  const date = getTodayDate();
-  const today = new Date().toLocaleDateString("en-IN", {
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-  });
+  const date = getTodayIST();
+  // Client-only: this card sits on a statically prerendered page, so rendering
+  // the date during SSR would ship the build-day's date in the HTML and
+  // mismatch on hydration.
+  const hydrated = useIsHydrated();
+  const today = hydrated ? formatISTDateLong(date) : "";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

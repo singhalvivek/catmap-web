@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: { canonical: `${ENV.SITE_URL}/cat-prep/practice/varc/reading-comprehensions/${rcNumber}` },
     openGraph: { title, description },
     twitter: { title, description },
   };

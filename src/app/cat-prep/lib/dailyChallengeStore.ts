@@ -4,8 +4,8 @@ import * as store from "./sectionedTestStore";
 
 const PREFIX = "dc";
 
-export function saveResultLocally(date: string, result: DailyChallengeResult): void {
-  store.saveResultLocally(PREFIX, date, result);
+export function saveResultLocally(uid: string, date: string, result: DailyChallengeResult): void {
+  store.saveResultLocally(PREFIX, uid, date, result);
 }
 
 /**
@@ -18,19 +18,24 @@ export async function getDailyChallengeResult(
 ): Promise<DailyChallengeResult | null> {
   return store.getStoredResult(
     PREFIX,
+    uid,
     date,
     `/api/daily-challenge-result?uid=${encodeURIComponent(uid)}&date=${encodeURIComponent(date)}`
   );
 }
 
-export function getDailyChallengeDraft(date: string): DailyChallengeDraft | null {
-  return store.getDraft(PREFIX, date);
+export function getDailyChallengeDraft(uid: string, date: string): DailyChallengeDraft | null {
+  return store.getDraft(PREFIX, uid, date);
 }
 
-export function saveDailyChallengeDraft(date: string, draft: DailyChallengeDraft): void {
-  store.saveDraft(PREFIX, date, draft);
+export function saveDailyChallengeDraft(
+  uid: string,
+  date: string,
+  draft: DailyChallengeDraft
+): void {
+  store.saveDraft(PREFIX, uid, date, draft);
 }
 
-export function clearDailyChallengeDraft(date: string): void {
-  store.clearDraft(PREFIX, date);
+export function clearDailyChallengeDraft(uid: string, date: string): void {
+  store.clearDraft(PREFIX, uid, date);
 }

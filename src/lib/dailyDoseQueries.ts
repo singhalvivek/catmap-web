@@ -1,17 +1,13 @@
 // dailyDoseQueries — server-side streak computation for the Daily Dose section.
 // A day "counts" toward the streak if the user did the daily essay OR the daily challenge.
 import { getDb } from "./mongodb";
+import { getTodayIST } from "./dateIST";
 
 export type DailyDoseStreak = {
   streak: number;
   essayDoneToday: boolean;
   challengeDoneToday: boolean;
 };
-
-/** Today's date in IST (YYYY-MM-DD) — matches the date keys used across daily features. */
-function getTodayIST(): string {
-  return new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-}
 
 /** Returns the date `n` days before `dateStr` (YYYY-MM-DD), in UTC-safe arithmetic. */
 function shiftDate(dateStr: string, deltaDays: number): string {
