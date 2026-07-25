@@ -1,7 +1,7 @@
 // page — /cat-prep/daily-dose/essay/[date]; past essay discussion, view-only (no submission)
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { fetchOrPickDailyEssay, getEssaySubmissions } from "@/lib/essayQueries";
+import { fetchDailyEssay, getEssaySubmissions } from "@/lib/essayQueries";
 import { getTodayIST } from "@/lib/dateIST";
 import DailyEssayPageClient from "../components/DailyEssayPageClient";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -11,9 +11,14 @@ export const revalidate = 86400;
 
 type Props = { params: Promise<{ date: string }> };
 
+/** Past dates only, and only well-formed ones — this route must never pick a new essay. */
+function isViewablePastDate(date: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) && date < getTodayIST();
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params;
-  const essay = await fetchOrPickDailyEssay(date).catch(() => null);
+  const essay = isViewablePastDate(date) ? await fetchDailyEssay(date).catch(() => null) : null;
   if (!essay) {
     return { title: `Essay – ${date} | StudyNaksha` };
   }
@@ -31,13 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PastEssayPage({ params }: Props) {
   const { date } = await params;
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
+  // Past only — today's essay lives on the canonical page
+  if (!isViewablePastDate(date)) notFound();
 
-  // Past only — redirect today's date to the canonical page
-  const today = getTodayIST();
-  if (date >= today) notFound();
-
-  const essay = await fetchOrPickDailyEssay(date).catch(() => null);
+  const essay = await fetchDailyEssay(date).catch(() => null);
   if (!essay) notFound();
 
   // Past essays: fetch all submissions publicly (no submit gate needed)

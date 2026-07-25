@@ -121,6 +121,42 @@ unaffected — the pages still server-render in full for crawlers.
 4. Signed out → sign-in gate. Sign in → result loads.
 5. `/cat-prep/daily-dose/essay/<yesterday>` still renders; `<today>` still 404s.
 
+## Follow-up fixes (post-review)
+
+Code review of the first commit surfaced four bugs in the touched files. Three
+were pre-existing (from `50038b6 daily-dose (#31)`); one was a consequence of
+this change. All are now fixed, plus a fifth found while fixing them.
+
+1. **`essay/[date]` burned essays on arbitrary URLs.** `generateMetadata` called
+   the write-on-miss `fetchOrPickDailyEssay` on the *raw* route param, before
+   the format and past-date guards that only ran in the page body. Any URL like
+   `/essay/1999-01-01` inserted a `daily_essays` row and permanently retired an
+   essay into `used_essays`; enumeration drained the pool. Added a read-only
+   `fetchDailyEssay`, extracted the guard into `isViewablePastDate`, and applied
+   it in both `generateMetadata` and the page. This route can no longer write.
+2. **Same hole in `GET /api/daily-essay`** — validated the date's *format* but
+   not that it was today, so a public endpoint could drain the pool. Now only
+   today picks; other dates read. Returns 404 (not 503) when a non-today date
+   has no stored essay.
+3. **Archive page 500'd whenever it had content.** `archive/page.tsx` passed
+   `onMouseEnter`/`onMouseLeave` to a `<div>` in a Server Component — a hard
+   render error on any request returning ≥1 entry, invisible to typecheck and
+   build. Replaced with a Tailwind `hover:` class, keeping it a Server
+   Component. Verified: the page now returns 200 with 33 entries.
+4. **The pick race, widened by this change** (was filed out-of-scope below, now
+   closed). `fetchOrPickDailyEssay` did an unguarded find-then-insert; going
+   dynamic moved it from once/hour to once/request. Now a unique index on
+   `daily_essays.date` plus a `$setOnInsert` upsert, with duplicate-key fallback
+   to re-read. `used_essays` is only written by the request that actually
+   inserted, so a lost race no longer burns an essay nobody was served. The
+   index is created once per process and non-fatally — a pre-existing duplicate
+   must not take the essay pages down.
+5. **`DailyChallengeCard` date label.** Rendered `toLocaleDateString` with no
+   `timeZone` inside a statically prerendered page, shipping the build day's
+   date in the HTML and mismatching on hydration. Now derived from the IST date
+   string via `formatISTDateLong`, and gated behind `useSyncExternalStore` so it
+   is omitted from the static HTML rather than baked in.
+
 ## Out of scope — found while investigating, filed not fixed
 
 1. **`essay/[date]` caches its own 404.** The page is `revalidate = 86400` and
@@ -130,11 +166,6 @@ unaffected — the pages still server-render in full for crawlers.
    static caching that these past-essay pages *should* have for SEO) or
    switching to a read-only `fetchDailyEssay` and rethinking the view-only gate.
    Needs a design decision.
-2. **`fetchOrPickDailyEssay` write race.** It picks and inserts an essay on the
-   first request for a date. Under `force-dynamic` concurrent first-hits after
-   midnight can both miss the `findOne` and insert twice, burning two essays.
-   The race already exists with ISR regeneration; this widens it. Fix is a
-   unique index on `daily_essays.date` plus an upsert — a schema change.
-3. **`localStorage` result key is not user-scoped.** `dc_result_<date>` has no
+2. **`localStorage` result key is not user-scoped.** `dc_result_<date>` has no
    `uid` (`sectionedTestStore.ts`), so on a shared browser a second user sees
    the first user's score until the API call corrects it.

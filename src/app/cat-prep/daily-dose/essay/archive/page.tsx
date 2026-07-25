@@ -60,6 +60,7 @@ export default async function EssayArchivePage() {
                 style={{ textDecoration: "none" }}
               >
                 <div
+                  className="hover:shadow-[0_4px_16px_rgba(30,58,95,0.1)]"
                   style={{
                     border: "1px solid #E2E8F0",
                     borderRadius: 12,
@@ -70,12 +71,6 @@ export default async function EssayArchivePage() {
                     justifyContent: "space-between",
                     gap: 16,
                     transition: "box-shadow 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 16px rgba(30,58,95,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>

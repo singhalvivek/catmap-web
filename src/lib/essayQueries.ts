@@ -1,5 +1,5 @@
 // essayQueries — server-side helpers: pick/fetch daily essay, save submissions, compute votes
-import { ObjectId } from "mongodb";
+import { ObjectId, type Db } from "mongodb";
 import { getDb } from "./mongodb";
 import type { DailyEssay, EssaySubmissionView } from "@/app/cat-prep/models/essay";
 
@@ -101,24 +101,58 @@ async function fetchRandomUnusedItem(
 
 // ---- Public API ----
 
+/** True for a MongoDB duplicate-key error (another request won the insert race). */
+function isDuplicateKeyError(err: unknown): boolean {
+  return typeof err === "object" && err !== null && (err as { code?: number }).code === 11000;
+}
+
+// The unique index is what makes the upsert below race-safe: without it, two
+// concurrent upserts on the same missing date can both insert. Created once per
+// process, non-fatally — a pre-existing duplicate would make createIndex fail,
+// and that must not take the essay pages down.
+let essayIndexReady: Promise<void> | null = null;
+function ensureEssayIndex(db: Db): Promise<void> {
+  essayIndexReady ??= db
+    .collection("daily_essays")
+    .createIndex({ date: 1 }, { unique: true })
+    .then(() => undefined)
+    .catch((err: unknown) => {
+      console.error("[essayQueries] could not create unique index on daily_essays.date:", err);
+    });
+  return essayIndexReady;
+}
+
 /**
- * Returns today's essay from MongoDB, picking and saving a new one on the first request of the day.
+ * Reads the stored essay for a date. Never picks or writes — safe to call with
+ * an unvalidated date. Returns null when no essay was stored for that date.
+ */
+export async function fetchDailyEssay(date: string): Promise<DailyEssay | null> {
+  const db = await getDb();
+  const doc = await db.collection<EssayDoc>("daily_essays").findOne({ date });
+  if (!doc) return null;
+  return {
+    date: doc.date,
+    title: doc.title,
+    url: doc.url,
+    author: doc.author,
+    excerpt: doc.excerpt,
+  };
+}
+
+/**
+ * Returns today's essay, picking and saving a new one on the first request of the day.
+ *
+ * Writes on a miss, so only ever call this for today's date — a past or
+ * arbitrary date would backfill a fresh essay under the wrong day and burn it
+ * out of the pool. Use `fetchDailyEssay` everywhere else.
  */
 export async function fetchOrPickDailyEssay(date: string): Promise<DailyEssay | null> {
+  const existing = await fetchDailyEssay(date);
+  if (existing) return existing;
+
   const db = await getDb();
+  await ensureEssayIndex(db);
 
-  const existing = await db.collection<EssayDoc>("daily_essays").findOne({ date });
-  if (existing) {
-    return {
-      date: existing.date,
-      title: existing.title,
-      url: existing.url,
-      author: existing.author,
-      excerpt: existing.excerpt,
-    };
-  }
-
-  // First request of the day — pick one
   const usedUrls = new Set(
     (await db.collection<UsedEssayDoc>("used_essays").find({}, { projection: { url: 1 } }).toArray()).map(
       (d) => d.url
@@ -129,17 +163,27 @@ export async function fetchOrPickDailyEssay(date: string): Promise<DailyEssay | 
   if (!picked) return null;
 
   const now = new Date();
-  await db.collection<Omit<EssayDoc, "_id">>("daily_essays").insertOne({
-    date,
-    ...picked,
-    fetchedAt: now,
-  } as Omit<EssayDoc, "_id">);
-  await db.collection<Omit<UsedEssayDoc, "_id">>("used_essays").insertOne({
-    url: picked.url,
-    usedAt: now,
-  } as Omit<UsedEssayDoc, "_id">);
+  try {
+    const upsert = await db.collection<Omit<EssayDoc, "_id">>("daily_essays").updateOne(
+      { date },
+      { $setOnInsert: { date, ...picked, fetchedAt: now } },
+      { upsert: true }
+    );
 
-  return { date, ...picked };
+    // Only retire the URL if this request is the one that actually inserted;
+    // otherwise a lost race would burn an essay nobody was ever served.
+    if (upsert.upsertedCount === 1) {
+      await db.collection<Omit<UsedEssayDoc, "_id">>("used_essays").insertOne({
+        url: picked.url,
+        usedAt: now,
+      } as Omit<UsedEssayDoc, "_id">);
+    }
+  } catch (err) {
+    if (!isDuplicateKeyError(err)) throw err;
+    // Another request inserted between our read and our write — use theirs.
+  }
+
+  return fetchDailyEssay(date);
 }
 
 /**
