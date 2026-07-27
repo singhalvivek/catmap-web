@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fetchPyqPaper } from "@/lib/pyqQueries";
+import { fetchPyqPaper, fetchPyqPaperSolutions } from "@/lib/pyqQueries";
 import { PYQ_PAPERS, pyqPaperLabel } from "@/constants/pyqPapers";
 import { ENV } from "@/config/env";
 import PyqPaperPlayer from "./PyqPaperPlayer";
+import PyqPaperSolutions from "./PyqPaperSolutions";
 
 type Props = { params: Promise<{ paperSlug: string }> };
 
@@ -30,7 +31,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PyqPaperPage({ params }: Props) {
   const { paperSlug } = await params;
-  const paper = await fetchPyqPaper(paperSlug);
+  // Two queries rather than one derived shape: the player's answer-free paper stays
+  // excluded at the query level, so a solution can't reach it by a mapping slip.
+  const [paper, solvedPaper] = await Promise.all([
+    fetchPyqPaper(paperSlug),
+    fetchPyqPaperSolutions(paperSlug),
+  ]);
   if (!paper) notFound();
 
   const label = pyqPaperLabel(paper);
@@ -70,6 +76,7 @@ export default async function PyqPaperPage({ params }: Props) {
 
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px" }}>
         <PyqPaperPlayer paper={paper} />
+        {solvedPaper && <PyqPaperSolutions paper={solvedPaper} label={label} />}
       </div>
     </div>
   );

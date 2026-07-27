@@ -3,8 +3,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import type { PyqPaper, PyqQuestion, PyqSection, PyqSolution } from "@/app/cat-prep/models/pyq";
+import type { PyqPaper, PyqSection, PyqSolution } from "@/app/cat-prep/models/pyq";
 import { interleaveImages } from "@/lib/interleaveImages";
+import {
+  buildComprehensionGroups,
+  indexGroupsByQuestionNumber,
+  letterFromIndex,
+} from "@/lib/pyqPresentation";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
 import { PracticePalette, type PillState } from "@/app/cat-prep/components/practice/PracticePalette";
@@ -14,40 +19,6 @@ const SECTION_ORDER: PyqSection[] = ["VARC", "DILR", "QA"];
 // Locks a question as "checked" without matching any real option letter or
 // parseFloat-able number, for the rare case the scraped answer is missing.
 const NO_ANSWER_SENTINEL = "—";
-
-type Group = {
-  comprehensionId: string | null;
-  comprehensionText: string | null;
-  comprehensionImages: string[];
-  comprehensionImagePositions?: number[];
-  questions: PyqQuestion[];
-};
-
-// Maps each question to the group of consecutive questions it shares a comprehension
-// with (for split-panel rendering); standalone questions are their own group of one.
-function buildGroupsByQuestionNumber(questions: PyqQuestion[]): Map<number, Group> {
-  const byQuestionNumber = new Map<number, Group>();
-  let last: Group | undefined;
-  for (const q of questions) {
-    if (q.comprehension && last && last.comprehensionId === q.comprehension.id) {
-      last.questions.push(q);
-    } else {
-      last = {
-        comprehensionId: q.comprehension?.id ?? null,
-        comprehensionText: q.comprehension?.text ?? null,
-        comprehensionImages: q.comprehension?.imageUrls ?? [],
-        comprehensionImagePositions: q.comprehension?.imagePositions,
-        questions: [q],
-      };
-    }
-    byQuestionNumber.set(q.questionNumber, last);
-  }
-  return byQuestionNumber;
-}
-
-function letterFromIndex(index: number): string {
-  return String.fromCharCode(65 + index);
-}
 
 function roundTo2dp(n: number): number {
   return Math.round(n * 100) / 100;
@@ -138,7 +109,10 @@ export default function PyqPaperPlayer({ paper }: { paper: PyqPaper }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const section = paper.sections.find((s) => s.name === activeSection) ?? paper.sections[0];
-  const byQuestionNumber = useMemo(() => buildGroupsByQuestionNumber(section.questions), [section]);
+  const byQuestionNumber = useMemo(
+    () => indexGroupsByQuestionNumber(buildComprehensionGroups(section.questions)),
+    [section]
+  );
 
   const [currentQNum, setCurrentQNum] = useState(section.questions[0]?.questionNumber ?? 0);
 
