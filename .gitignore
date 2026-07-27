@@ -47,5 +47,8 @@ next-env.d.ts
 # local analysis reports
 /report
 
+# business strategy — kept out of the public repo
+/strategy
+
 # Claude Code configuration
 .claude
