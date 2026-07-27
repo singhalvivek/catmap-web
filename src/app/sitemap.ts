@@ -8,8 +8,6 @@ import { toSlug } from "@/app/cat-prep/lib/nodeMetadata";
 import { PRACTICE_SUBJECTS, toSlug as toChapterSlug } from "@/constants/practiceChapters";
 import { PYQ_PAPERS } from "@/constants/pyqPapers";
 import { fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
-import { getPastEssayDates } from "@/lib/essayQueries";
-import { getTodayIST } from "@/lib/dateIST";
 
 const allNodes = data as Node[];
 
@@ -33,10 +31,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const db = await getDb();
-  const [rcCount, dilrSetsByChapter, pastEssayDates] = await Promise.all([
+  const [rcCount, dilrSetsByChapter] = await Promise.all([
     db.collection("percentyl_rcs").countDocuments(),
     fetchDilrSetNumbersByChapter(),
-    getPastEssayDates(getTodayIST()),
   ]);
 
   const topicEntries: MetadataRoute.Sitemap = allNodes
@@ -93,14 +90,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
     : [];
 
-  // 37 pages of unique long-form content that had no sitemap entry at all. Each
-  // carries the essay's own date as lastModified rather than the build time.
-  const essayEntries: MetadataRoute.Sitemap = pastEssayDates.map((date) => ({
-    url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay/${date}`,
-    lastModified: new Date(`${date}T00:00:00Z`),
-    changeFrequency: "yearly" as const,
-    priority: 0.5,
-  }));
+  // Past essay pages are deliberately NOT listed. Each holds an Aeon title, author and
+  // a ~150-character excerpt — roughly 190 characters, none of it ours — plus community
+  // responses that currently number six across all 37 essays. Asking Google to index 30-odd
+  // near-empty pages wrapped around someone else's writing spends crawl budget that
+  // belongs to the PYQ papers, and invites a thin-content judgement on the whole domain.
+  // The daily-dose hubs below are the right level of granularity for this section.
+  // They stay prerendered and reachable from the archive for people; they just aren't
+  // put forward for indexing.
 
   const rcEntries: MetadataRoute.Sitemap = Array.from({ length: rcCount }, (_, i) => ({
     url: `${ENV.SITE_URL}/cat-prep/practice/varc/reading-comprehensions/${i + 1}`,
@@ -124,7 +121,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${ENV.SITE_URL}/cat-prep/pyq`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
-    { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay/archive`, lastModified: now, changeFrequency: "daily", priority: 0.5 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/challenge`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: `${ENV.SITE_URL}/sitemap-page`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     ...pyqEntries,
@@ -133,6 +129,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...quantEntries,
     ...dilrEntries,
     ...rcEntries,
-    ...essayEntries,
   ];
 }
