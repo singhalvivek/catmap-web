@@ -52,6 +52,17 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 
 ---
 
+## Growth Phase — August 2026
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| G001 | 🔄 | [G001-pyq-open-access.md](./G001-pyq-open-access.md) | Remove the PYQ sign-in walls; paper links become crawlable `<a href>` |
+| G002 | 🔄 | [G002-pyq-ssr-full-paper.md](./G002-pyq-ssr-full-paper.md) | Server-render every question, option and explanation below the player |
+| G003 | 🔄 | [G003-waitlist-capture.md](./G003-waitlist-capture.md) | Waitlist writes to a MongoDB `waitlist` collection instead of discarding the address |
+| G004 | 🔄 | [G004-pricing-copy-cleanup.md](./G004-pricing-copy-cleanup.md) | Remove "later ₹200/mo" from the comparison table and the FAQ |
+| G005 | 🔄 | [G005-practice-chip-link.md](./G005-practice-chip-link.md) | Practice chapter chips become real links, same defect as G001 |
+
+---
+
 ## Deferred
 | ID | Status | Blocker |
 |----|--------|---------|
