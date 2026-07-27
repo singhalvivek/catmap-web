@@ -1,9 +1,8 @@
-// QuestionPlayer — interactive MCQ/jumble question player with cross-session state persistence
+// QuestionPlayer — interactive question player for MCQ and para-jumble sequences, with cross-session state persistence
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PracticeQuestion, PracticeQuestionSolution, OptionsMap } from "@/app/cat-prep/models/practice";
-import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
@@ -11,6 +10,18 @@ import { PracticePalette, type PillState } from "@/app/cat-prep/components/pract
 
 type OptionKey = keyof OptionsMap;
 const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
+
+// Marks a question checked without matching any real option letter or sequence, for the
+// questions whose answer key is simply missing from the source data (10 Odd One Out).
+const NO_ANSWER_SENTINEL = "—";
+
+// Para Jumbles give four sentences and ask for their order, so the answer is a sequence
+// like "2413" rather than an option. Stored in correct_text; correct_answer is null.
+const JUMBLE_SEQUENCE = /^[1-4]{4}$/;
+
+function isCompleteSequence(value: string): boolean {
+  return JUMBLE_SEQUENCE.test(value) && new Set(value).size === 4;
+}
 
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
   const color =
@@ -72,12 +83,17 @@ export default function QuestionPlayer({
   backLabel: string;
   storageKey: string;
 }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialQ = parseInt(searchParams.get("q") ?? "1", 10);
-  const [currentNum, setCurrentNum] = useState(
-    isNaN(initialQ) || initialQ < 1 || initialQ > questions.length ? 1 : initialQ
-  );
+  // `?q=` is read from the URL after mount rather than through useSearchParams, which is
+  // a dynamic API: using it during render opted this whole subtree out of prerendering,
+  // so every practice chapter page served Googlebot a breadcrumb, a heading and no
+  // questions at all. Starting at question 1 makes the first render deterministic, so the
+  // page prerenders; a deep link still lands on its question immediately after hydration.
+  const [currentNum, setCurrentNum] = useState(1);
+
+  useEffect(() => {
+    const q = parseInt(new URLSearchParams(window.location.search).get("q") ?? "1", 10);
+    if (!isNaN(q) && q >= 1 && q <= questions.length) setCurrentNum(q);
+  }, [questions.length]);
 
   const { answers, correctAnswers, setAnswer, setCorrectAnswer } = usePracticeProgress(storageKey);
   const [sessionSolutions, setSessionSolutions] = useState<Record<number, PracticeQuestionSolution>>({});
@@ -85,32 +101,41 @@ export default function QuestionPlayer({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const question = questions.find((q) => q.question_number === currentNum) ?? questions[0];
-  const selected = question ? ((answers[question.question_number] as OptionKey) ?? null) : null;
+  const isJumble = question?.question_type === "jumble";
+  // For an MCQ this is the chosen letter; for a jumble it is the typed sequence.
+  const given = question ? (answers[question.question_number] ?? null) : null;
+  const selected = isJumble ? null : (given as OptionKey | null);
   const sessionSolution = question ? (sessionSolutions[question.question_number] ?? null) : null;
   const isChecked = question ? !!correctAnswers[question.question_number] : false;
-  const correctLetter = question
-    ? (correctAnswers[question.question_number] as OptionKey | undefined)
-    : undefined;
+  const recordedAnswer = question ? correctAnswers[question.question_number] : undefined;
+  const correctLetter = isJumble ? undefined : (recordedAnswer as OptionKey | undefined);
+  const answerUnavailable = recordedAnswer === NO_ANSWER_SENTINEL;
+  const canCheck = isJumble ? isCompleteSequence(given ?? "") : !!selected;
 
-  const navigateTo = useCallback(
-    (num: number) => {
-      setCurrentNum(num);
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("q", String(num));
-      router.push(`?${params.toString()}`, { scroll: false });
-    },
-    [router, searchParams]
-  );
+  // History is updated directly rather than through the router: this only records which
+  // question is showing, and a router push would re-render the route for a value the
+  // component already holds.
+  const navigateTo = useCallback((num: number) => {
+    setCurrentNum(num);
+    const params = new URLSearchParams(window.location.search);
+    params.set("q", String(num));
+    window.history.replaceState(null, "", `?${params.toString()}`);
+  }, []);
 
   async function checkSolution() {
-    if (!question || !selected) return;
+    if (!question || !canCheck) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/practice/questions/${question._id}/solution`);
       if (res.ok) {
         const data = (await res.json()) as PracticeQuestionSolution;
         setSessionSolutions((prev) => ({ ...prev, [question.question_number]: data }));
-        setCorrectAnswer(question.question_number, data.correct_answer);
+        // A jumble's answer lives in correct_text; the sentinel keeps a question with no
+        // key at all from leaving the user on a button that does nothing.
+        setCorrectAnswer(
+          question.question_number,
+          data.correct_answer ?? data.correct_text ?? NO_ANSWER_SENTINEL
+        );
       }
     } finally {
       setLoading(false);
@@ -119,8 +144,10 @@ export default function QuestionPlayer({
 
   function getPillState(qNum: number): PillState {
     if (qNum === currentNum) return "current";
-    const cl = correctAnswers[qNum] as OptionKey | undefined;
-    const ans = answers[qNum] as OptionKey | undefined;
+    const cl = correctAnswers[qNum];
+    const ans = answers[qNum];
+    // A question we could never grade counts as attempted, not as wrong.
+    if (cl === NO_ANSWER_SENTINEL) return "answered";
     if (cl && ans) return ans === cl ? "correct" : "wrong";
     if (ans) return "answered";
     return "unanswered";
@@ -129,7 +156,9 @@ export default function QuestionPlayer({
   if (!question) return null;
 
   const optionState = (key: OptionKey): OptionState => {
-    if (correctLetter) {
+    // With no key to grade against, the choice stays merely selected — marking it wrong
+    // would be asserting something we don't know.
+    if (correctLetter && !answerUnavailable) {
       if (key === correctLetter) return "correct";
       if (key === selected) return "wrong";
       return "idle";
@@ -186,36 +215,119 @@ export default function QuestionPlayer({
               <MathContent html={question.question} containerRef={containerRef} />
             </div>
 
-            {/* Options */}
-            <div>
-              {OPTION_KEYS.map((key) => (
-                <PracticeOptionButton
-                  key={key}
-                  label={key}
-                  state={optionState(key)}
-                  disabled={isChecked}
-                  onClick={() => !isChecked && setAnswer(question.question_number, key)}
+            {/* Answer area — options for an MCQ, ordered sentences plus a sequence for a jumble */}
+            {isJumble ? (
+              <div>
+                <ol style={{ listStyle: "none", padding: 0, margin: "0 0 18px" }}>
+                  {OPTION_KEYS.map((key, i) => (
+                    <li
+                      key={key}
+                      style={{
+                        display: "flex",
+                        gap: 10,
+                        padding: "10px 14px",
+                        borderRadius: 10,
+                        border: "1.5px solid #E2E8F0",
+                        marginBottom: 8,
+                        fontSize: 14,
+                        color: "#334155",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      <span className="font-bold" style={{ color: "#0F766E", flexShrink: 0 }}>{i + 1}.</span>
+                      <span style={{ minWidth: 0 }}>
+                        <MathContent html={question.options[key]} containerRef={containerRef} />
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+
+                <label
+                  htmlFor="jumble-sequence"
+                  style={{ display: "block", fontSize: 13, color: "#64748B", marginBottom: 6, fontWeight: 600 }}
                 >
-                  <MathContent html={question.options[key]} containerRef={containerRef} />
-                </PracticeOptionButton>
-              ))}
-            </div>
+                  Enter the correct order (e.g. 2413)
+                </label>
+                <input
+                  id="jumble-sequence"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={4}
+                  value={given ?? ""}
+                  disabled={isChecked}
+                  // Only digits 1-4 are meaningful, so anything else never reaches state.
+                  onChange={(e) => {
+                    const next = e.target.value.replace(/[^1-4]/g, "").slice(0, 4);
+                    setAnswer(question.question_number, next);
+                  }}
+                  style={{
+                    width: 140,
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    border: `1.5px solid ${isChecked ? "#E2E8F0" : "#CBD5E1"}`,
+                    background: isChecked ? "#F8FAFC" : "#fff",
+                    color: "#1E3A5F",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    letterSpacing: "6px",
+                    fontFamily: "inherit",
+                    outline: "none",
+                  }}
+                />
+
+                {isChecked && (
+                  <p
+                    className="font-bold"
+                    style={{
+                      marginTop: 10,
+                      fontSize: 13,
+                      color: answerUnavailable ? "#92400E" : given === recordedAnswer ? "#065F46" : "#991B1B",
+                    }}
+                  >
+                    {answerUnavailable
+                      ? "The answer key is missing for this question."
+                      : given === recordedAnswer
+                        ? "Correct"
+                        : `Incorrect — correct order: ${recordedAnswer}`}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div>
+                {OPTION_KEYS.map((key) => (
+                  <PracticeOptionButton
+                    key={key}
+                    label={key}
+                    state={optionState(key)}
+                    disabled={isChecked}
+                    onClick={() => !isChecked && setAnswer(question.question_number, key)}
+                  >
+                    <MathContent html={question.options[key]} containerRef={containerRef} />
+                  </PracticeOptionButton>
+                ))}
+                {isChecked && answerUnavailable && (
+                  <p className="font-bold" style={{ marginTop: 10, fontSize: 13, color: "#92400E" }}>
+                    The answer key is missing for this question.
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Check Solution button — hidden once checked in any session */}
             {!isChecked && (
               <button
                 onClick={checkSolution}
-                disabled={!selected || loading}
+                disabled={!canCheck || loading}
                 style={{
                   marginTop: 8,
                   padding: "11px 24px",
                   borderRadius: 10,
                   border: "none",
-                  background: selected ? "#1E3A5F" : "#E2E8F0",
-                  color: selected ? "#fff" : "#94A3B8",
+                  background: canCheck ? "#1E3A5F" : "#E2E8F0",
+                  color: canCheck ? "#fff" : "#94A3B8",
                   fontSize: 14,
                   fontWeight: 700,
-                  cursor: selected ? "pointer" : "not-allowed",
+                  cursor: canCheck ? "pointer" : "not-allowed",
                   fontFamily: "inherit",
                   transition: "all 0.18s",
                 }}
