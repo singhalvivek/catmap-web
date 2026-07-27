@@ -60,6 +60,7 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 | G003 | 🔄 | [G003-waitlist-capture.md](./G003-waitlist-capture.md) | Waitlist writes to a MongoDB `waitlist` collection instead of discarding the address |
 | G004 | 🔄 | [G004-pricing-copy-cleanup.md](./G004-pricing-copy-cleanup.md) | Remove "later ₹200/mo" from the comparison table and the FAQ |
 | G005 | 🔄 | [G005-practice-chip-link.md](./G005-practice-chip-link.md) | Practice chapter chips become real links, same defect as G001 |
+| G006 | 🔄 | [G006-pyq-single-reader.md](./G006-pyq-single-reader.md) | One reader per paper — answer inline, no login, no duplicated questions; supersedes G002's two-copy layout |
 
 ---
 
