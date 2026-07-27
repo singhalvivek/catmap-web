@@ -5,16 +5,39 @@ import { getDb } from "@/lib/mongodb";
 import data from "@/app/cat-prep/data.json";
 import type { Node } from "@/app/cat-prep/models/node";
 import { toSlug } from "@/app/cat-prep/lib/nodeMetadata";
-import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
+import { PRACTICE_SUBJECTS, toSlug as toChapterSlug } from "@/constants/practiceChapters";
 import { PYQ_PAPERS } from "@/constants/pyqPapers";
+import { fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
+import { getPastEssayDates } from "@/lib/essayQueries";
+import { getTodayIST } from "@/lib/dateIST";
 
 const allNodes = data as Node[];
+
+// Mongo stores the chapter's display name; the URL uses the constants slug. Match on
+// the name, falling back to a slug comparison for chapters whose stored name has since
+// been reworded, so a rename drops the entries rather than emitting broken URLs.
+function dilrSetNumbersFor(
+  setsByChapter: Map<string, number[]>,
+  chapterName: string,
+  chapterSlug: string
+): number[] {
+  const byName = setsByChapter.get(chapterName);
+  if (byName) return byName;
+  for (const [name, setNumbers] of setsByChapter) {
+    if (toChapterSlug(name) === chapterSlug) return setNumbers;
+  }
+  return [];
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const db = await getDb();
-  const rcCount = await db.collection("percentyl_rcs").countDocuments();
+  const [rcCount, dilrSetsByChapter, pastEssayDates] = await Promise.all([
+    db.collection("percentyl_rcs").countDocuments(),
+    fetchDilrSetNumbersByChapter(),
+    getPastEssayDates(getTodayIST()),
+  ]);
 
   const topicEntries: MetadataRoute.Sitemap = allNodes
     .filter((n) => n.type === "TOPIC")
@@ -52,17 +75,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       )
     : [];
 
+  // Every set that exists, not one per chapter. The chapter name in Mongo is resolved
+  // back to its constants slug, so a chapter without a constants entry is skipped
+  // rather than becoming a sitemap URL that 404s.
   const dilrSubject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
   const dilrEntries: MetadataRoute.Sitemap = dilrSubject
     ? dilrSubject.topics
         .flatMap((t) => t.chapters)
-        .map((chapter) => ({
-          url: `${ENV.SITE_URL}/cat-prep/practice/dilr/${chapter.slug}/1`,
-          lastModified: now,
-          changeFrequency: "monthly" as const,
-          priority: 0.5,
-        }))
+        .flatMap((chapter) => {
+          const setNumbers = dilrSetNumbersFor(dilrSetsByChapter, chapter.name, chapter.slug);
+          return setNumbers.map((setNumber) => ({
+            url: `${ENV.SITE_URL}/cat-prep/practice/dilr/${chapter.slug}/${setNumber}`,
+            lastModified: now,
+            changeFrequency: "monthly" as const,
+            priority: 0.5,
+          }));
+        })
     : [];
+
+  // 37 pages of unique long-form content that had no sitemap entry at all. Each
+  // carries the essay's own date as lastModified rather than the build time.
+  const essayEntries: MetadataRoute.Sitemap = pastEssayDates.map((date) => ({
+    url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay/${date}`,
+    lastModified: new Date(`${date}T00:00:00Z`),
+    changeFrequency: "yearly" as const,
+    priority: 0.5,
+  }));
 
   const rcEntries: MetadataRoute.Sitemap = Array.from({ length: rcCount }, (_, i) => ({
     url: `${ENV.SITE_URL}/cat-prep/practice/varc/reading-comprehensions/${i + 1}`,
@@ -86,6 +124,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${ENV.SITE_URL}/cat-prep/pyq`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay/archive`, lastModified: now, changeFrequency: "daily", priority: 0.5 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/challenge`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: `${ENV.SITE_URL}/sitemap-page`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     ...pyqEntries,
@@ -94,5 +133,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...quantEntries,
     ...dilrEntries,
     ...rcEntries,
+    ...essayEntries,
   ];
 }

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { fetchDilrSet, fetchDilrSets } from "@/lib/practiceQueries";
+import { fetchDilrSet, fetchDilrSets, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
@@ -10,11 +10,18 @@ import Link from "next/link";
 
 type Props = { params: Promise<{ chapter: string; setNumber: string }> };
 
-export function generateStaticParams() {
+// Every set that has data, not just set 1 — 18 of 20 sets used to render on demand.
+export async function generateStaticParams() {
   const dilrSubject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
   if (!dilrSubject) return [];
+  const setsByChapter = await fetchDilrSetNumbersByChapter();
   return dilrSubject.topics.flatMap((t) =>
-    t.chapters.map((chapter) => ({ chapter: chapter.slug, setNumber: "1" }))
+    t.chapters.flatMap((chapter) =>
+      (setsByChapter.get(chapter.name) ?? []).map((setNumber) => ({
+        chapter: chapter.slug,
+        setNumber: String(setNumber),
+      }))
+    )
   );
 }
 
@@ -27,8 +34,9 @@ function resolveChapterName(slug: string): string | undefined {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { chapter, setNumber } = await params;
   const chapterName = resolveChapterName(chapter) ?? chapter;
-  const title = `${chapterName} Set ${setNumber} — DILR Practice | StudyNaksha`;
-  const description = `Solve ${chapterName} Set ${setNumber} for CAT DILR prep. Free practice sets with detailed solutions on StudyNaksha.`;
+  // Leads with "CAT DILR" — the old title buried the only searched term at the end.
+  const title = `CAT DILR Practice: ${chapterName} Set ${setNumber}`;
+  const description = `Solve a CAT DILR ${chapterName.toLowerCase()} set with full reasoning and step-by-step solutions. Free practice, no sign-up needed.`;
   return {
     title,
     description,
