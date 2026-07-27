@@ -11,7 +11,7 @@ import { isValidEmail, normaliseEmail } from "@/lib/waitlistValidation";
 const COURSES = ["CAT", "GMAT", "GRE", "UPSC", "Other"] as const;
 
 const COMPARISON_ROWS = [
-  { label: "Cost",                   sn: "Free (later ₹200/mo)", coaching: "₹30k–₹80k+",  yt: "Free"           },
+  { label: "Cost",                   sn: "Free",                 coaching: "₹30k–₹80k+",  yt: "Free"           },
   { label: "Structured path",        sn: "Yes — full roadmap",   coaching: "Yes",           yt: "No — you guess" },
   { label: "Distraction-free",       sn: "Yes — embedded",       coaching: "Yes",           yt: "No"             },
   { label: "Self-paced",             sn: "Yes",                  coaching: "Mostly fixed",  yt: "Yes"            },
@@ -26,7 +26,7 @@ const COMPARISON_COLS = [
 ] as const;
 
 function comparisonValColor(val: string): string {
-  if (val.toLowerCase().startsWith("yes") || val === "Free (later ₹200/mo)" || val === "Free") return "#059669";
+  if (val.toLowerCase().startsWith("yes") || val === "Free") return "#059669";
   if (val.toLowerCase().startsWith("no")) return "#DC2626";
   return "#64748B";
 }

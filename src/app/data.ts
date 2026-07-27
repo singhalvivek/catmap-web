@@ -9,7 +9,7 @@ export const FAQS = [
   {
     id: "cost",
     question: "Is it really free? What's the catch?",
-    answer: "Yes. The learning material is free because it's the best openly-available content, just organised. Later we'll add an optional ₹200/month plan for extra features and an ad-free experience — but the roadmap, videos, and quizzes stay accessible."
+    answer: "Yes. The learning material is free because it's the best openly-available content, just organised — and it stays free. There are no ads. If we ever charge, it will be for analysis we build ourselves, like a breakdown of your weak areas, never for the questions or the roadmap."
   },
   {
     id: "crack-cat-free",
