@@ -44,11 +44,26 @@ export type PyqPaper = {
   sections: PyqSectionQuestions[];
 };
 
-export type PyqSolution = {
-  type: PyqQuestionType;
+export type PyqExplanation = {
+  text: string | null;
+  imageUrls: string[];
+  imagePositions?: number[];
+};
+
+// A question with its answer key attached. Only ever built for the paper reader —
+// the mock test reads the answer-free PyqPaper shape, so a solution cannot reach it
+// by accident.
+export type PyqSolvedQuestion = PyqQuestion & {
   correctOptionIndex: number | null;
   correctAnswer: string | null;
-  explanation: { text: string | null; imageUrls: string[]; imagePositions?: number[] };
+  explanation: PyqExplanation;
+};
+
+export type PyqSolvedPaper = {
+  paperSlug: string;
+  examYear: number;
+  examSlot: number | null;
+  sections: { name: PyqSection; questions: PyqSolvedQuestion[] }[];
 };
 
 export type PyqPaperSummary = {

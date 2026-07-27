@@ -12,16 +12,33 @@ import {
   type PracticeProgress,
 } from "./practiceProgressStore";
 
+const EMPTY: PracticeProgress = { answers: {}, correctAnswers: {} };
+
+// Newer answers win over older ones; nothing here ever deletes an answer.
+function merge(base: PracticeProgress, incoming: PracticeProgress): PracticeProgress {
+  return {
+    answers: { ...base.answers, ...incoming.answers },
+    correctAnswers: { ...base.correctAnswers, ...incoming.correctAnswers },
+  };
+}
+
 export function usePracticeProgress(storageKey: string) {
   const [uid, setUid] = useState<string | null>(auth.currentUser?.uid ?? null);
-  const [progress, setProgress] = useState<PracticeProgress>(
-    () => loadLocalProgress(storageKey) ?? { answers: {}, correctAnswers: {} }
-  );
+  const [progress, setProgress] = useState<PracticeProgress>(EMPTY);
   const uidRef = useRef(uid);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync ref after every render so persist() always sees the latest uid without stale closure
   useEffect(() => { uidRef.current = uid; });
+
+  // localStorage is read after mount rather than in a useState initializer. The PYQ
+  // paper page is prerendered with every question unanswered, so seeding state from
+  // storage during the first client render would mismatch that HTML for anyone
+  // returning to a paper they have already worked on.
+  useEffect(() => {
+    const local = loadLocalProgress(storageKey);
+    if (local) setProgress((prev) => merge(local, prev));
+  }, [storageKey]);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
@@ -31,22 +48,22 @@ export function usePracticeProgress(storageKey: string) {
   useEffect(() => {
     if (!uid) return;
     loadFirestoreProgress(uid, storageKey).then((remote) => {
-      if (remote) {
-        setProgress((prev) => ({
-          answers: { ...prev.answers, ...remote.answers },
-          correctAnswers: { ...prev.correctAnswers, ...remote.correctAnswers },
-        }));
-      }
+      if (remote) setProgress((prev) => merge(prev, remote));
     });
   }, [storageKey, uid]);
 
+  // Writes merge over whatever is already stored, so an answer given in the moment
+  // before the load effect runs cannot wipe an earlier session.
   function persist(next: PracticeProgress) {
-    saveLocalProgress(storageKey, next);
+    const stored = loadLocalProgress(storageKey);
+    const merged = stored ? merge(stored, next) : next;
+    saveLocalProgress(storageKey, merged);
+
     const currentUid = uidRef.current;
     if (currentUid) {
       if (saveTimer.current) clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(() => {
-        saveFirestoreProgress(currentUid, storageKey, next);
+        saveFirestoreProgress(currentUid, storageKey, merged);
       }, 500);
     }
   }
