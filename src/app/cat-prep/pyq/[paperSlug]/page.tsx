@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fetchPyqPaper, fetchPyqPaperSolutions } from "@/lib/pyqQueries";
+import { fetchPyqPaperSolutions } from "@/lib/pyqQueries";
 import { PYQ_PAPERS, pyqPaperLabel } from "@/constants/pyqPapers";
 import { ENV } from "@/config/env";
-import PyqPaperPlayer from "./PyqPaperPlayer";
-import PyqPaperSolutions from "./PyqPaperSolutions";
+import Header from "@/app/cat-prep/components/Header";
+import PyqPaperReader from "./PyqPaperReader";
 
 type Props = { params: Promise<{ paperSlug: string }> };
 
@@ -15,7 +15,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { paperSlug } = await params;
-  const paper = await fetchPyqPaper(paperSlug);
+  const paper = await fetchPyqPaperSolutions(paperSlug);
   if (!paper) return { title: "PYQ Paper | StudyNaksha" };
   const label = pyqPaperLabel(paper);
   const title = `${label} — CAT Previous Year Paper | StudyNaksha`;
@@ -31,12 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PyqPaperPage({ params }: Props) {
   const { paperSlug } = await params;
-  // Two queries rather than one derived shape: the player's answer-free paper stays
-  // excluded at the query level, so a solution can't reach it by a mapping slip.
-  const [paper, solvedPaper] = await Promise.all([
-    fetchPyqPaper(paperSlug),
-    fetchPyqPaperSolutions(paperSlug),
-  ]);
+  const paper = await fetchPyqPaperSolutions(paperSlug);
   if (!paper) notFound();
 
   const label = pyqPaperLabel(paper);
@@ -44,6 +39,8 @@ export default async function PyqPaperPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+      <Header />
+
       <div
         style={{
           background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
@@ -69,14 +66,30 @@ export default async function PyqPaperPage({ params }: Props) {
             {label}
           </h1>
           <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
-            {totalQuestions} questions
+            {totalQuestions} questions with answers and explanations
           </p>
+          <Link
+            href={`/cat-prep/pyq/${paperSlug}/mock`}
+            className="font-bold"
+            style={{
+              display: "inline-block",
+              marginTop: 14,
+              padding: "9px 18px",
+              borderRadius: 8,
+              border: "1.5px solid #1E3A5F",
+              background: "#1E3A5F",
+              color: "#fff",
+              fontSize: 13,
+              textDecoration: "none",
+            }}
+          >
+            Take this as a timed mock →
+          </Link>
         </div>
       </div>
 
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px" }}>
-        <PyqPaperPlayer paper={paper} />
-        {solvedPaper && <PyqPaperSolutions paper={solvedPaper} label={label} />}
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "0 24px 48px" }}>
+        <PyqPaperReader paper={paper} />
       </div>
     </div>
   );

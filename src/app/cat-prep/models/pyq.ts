@@ -50,16 +50,9 @@ export type PyqExplanation = {
   imagePositions?: number[];
 };
 
-export type PyqSolution = {
-  type: PyqQuestionType;
-  correctOptionIndex: number | null;
-  correctAnswer: string | null;
-  explanation: PyqExplanation;
-};
-
-// A question with its answer key attached. Only ever built for the server-rendered
-// "full paper with solutions" section — the browse player and the mock test both read
-// answer-free shapes so a solution can never reach them by accident.
+// A question with its answer key attached. Only ever built for the paper reader —
+// the mock test reads the answer-free PyqPaper shape, so a solution cannot reach it
+// by accident.
 export type PyqSolvedQuestion = PyqQuestion & {
   correctOptionIndex: number | null;
   correctAnswer: string | null;

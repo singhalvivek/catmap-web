@@ -8,7 +8,6 @@ import type {
   PyqOption,
   PyqQuestion,
   PyqPaper,
-  PyqSolution,
   PyqSolvedPaper,
   PyqPaperSummary,
 } from "@/app/cat-prep/models/pyq";
@@ -209,32 +208,6 @@ export async function fetchPyqPaperSolutions(paperSlug: string): Promise<PyqSolv
       correctAnswer: doc.correctAnswer ?? null,
       explanation: doc.explanation ?? { text: null, imageUrls: [] },
     })),
-  };
-}
-
-/**
- * Fetches the answer + explanation for a single question, scoped to its
- * paper (defense-in-depth against mismatched route params).
- */
-export async function fetchPyqQuestionSolution(
-  paperSlug: string,
-  questionId: string
-): Promise<PyqSolution | null> {
-  if (!ObjectId.isValid(questionId)) return null;
-  const db = await getDb();
-  const doc = await db
-    .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
-    .findOne(
-      { _id: new ObjectId(questionId), paperSlug },
-      { projection: { type: 1, correctOptionIndex: 1, correctAnswer: 1, explanation: 1 } }
-    );
-  if (!doc) return null;
-
-  return {
-    type: doc.type,
-    correctOptionIndex: doc.correctOptionIndex ?? null,
-    correctAnswer: doc.correctAnswer ?? null,
-    explanation: doc.explanation ?? { text: null, imageUrls: [] },
   };
 }
 
