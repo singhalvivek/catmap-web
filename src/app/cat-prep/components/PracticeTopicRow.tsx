@@ -32,8 +32,10 @@ export default function PracticeTopicRow({
     if (chapterSlug === "reading-comprehensions") {
       return `/cat-prep/practice/varc/reading-comprehensions/1`;
     }
-    // Odd One Out, Para Jumbles, Para Summary — same MCQ player via quant route pattern
-    return `/cat-prep/practice/varc/${topicSlug}/${chapterSlug}`;
+    // Odd One Out, Para Jumbles, Para Summary. The topic slug is deliberately absent:
+    // every VARC chapter hangs off one topic, so it added a segment carrying no meaning
+    // — and this used to point at /varc/varc/<chapter>, a route that never existed.
+    return `/cat-prep/practice/varc/${chapterSlug}`;
   }
 
   return (
