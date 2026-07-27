@@ -25,9 +25,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic } = await params;
   const node = findTopicBySlug(topic);
-  if (!node) return { title: "CAT Prep | StudyNaksha" };
+  if (!node) return { title: "CAT Prep" };
   const meta = buildNodePageMeta(node.id);
-  if (!meta) return { title: "CAT Prep | StudyNaksha" };
+  if (!meta) return { title: "CAT Prep" };
   const canonical = `${ENV.SITE_URL}/cat-prep/${toSlug(node.title)}`;
   return {
     title: meta.title,

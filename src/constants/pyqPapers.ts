@@ -53,6 +53,15 @@ export function pyqPaperLabel(paper: { examYear: number; examSlot: number | null
   return paper.examSlot ? `CAT ${paper.examYear} — Slot ${paper.examSlot}` : `CAT ${paper.examYear}`;
 }
 
+/**
+ * The paper as a searcher types it — "CAT 2025 Slot 1" rather than the display label's
+ * em dash. Kept separate from `pyqPaperLabel` because that one is an on-screen heading,
+ * where the dash reads better, and this one goes in the title tag.
+ */
+export function pyqPaperSearchName(paper: { examYear: number; examSlot: number | null }): string {
+  return paper.examSlot ? `CAT ${paper.examYear} Slot ${paper.examSlot}` : `CAT ${paper.examYear}`;
+}
+
 export function getPyqPaper(slug: string): PyqPaperMeta | undefined {
   return PYQ_PAPERS.find((p) => p.slug === slug);
 }

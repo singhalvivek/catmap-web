@@ -6,7 +6,7 @@ import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
 import { ENV } from "@/config/env";
 
 export const metadata: Metadata = {
-  title: "All Pages | StudyNaksha",
+  title: "All Pages",
   description:
     "Complete index of all pages on StudyNaksha — CAT prep resources, PYQ papers from 1990 to 2025, and chapter-level practice.",
   alternates: { canonical: `${ENV.SITE_URL}/sitemap-page` },

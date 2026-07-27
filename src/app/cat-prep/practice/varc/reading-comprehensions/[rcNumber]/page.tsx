@@ -12,8 +12,9 @@ type Props = { params: Promise<{ rcNumber: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { rcNumber } = await params;
-  const title = `Reading Comprehension ${rcNumber} — VARC Practice | StudyNaksha`;
-  const description = `Practise CAT Reading Comprehension passage ${rcNumber}. Timed RC practice with detailed solutions — free on StudyNaksha.`;
+  // The old title never contained "CAT", so it competed for "reading comprehension 12".
+  const title = `CAT Reading Comprehension Practice: Passage ${rcNumber}`;
+  const description = `Practise CAT VARC reading comprehension with passage ${rcNumber} and its questions. Detailed solutions, free, no sign-up needed.`;
   return {
     title,
     description,

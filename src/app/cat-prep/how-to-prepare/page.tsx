@@ -7,7 +7,7 @@ import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 
 export const metadata: Metadata = {
-  title: "How to Prepare for CAT | StudyNaksha",
+  title: "How to Prepare for CAT",
   description:
     "An honest, no-fluff guide to CAT preparation — when to start, whether you need coaching, what score to target, and how to use PYQ practice to build real exam readiness.",
   alternates: { canonical: `${ENV.SITE_URL}/cat-prep/how-to-prepare` },
