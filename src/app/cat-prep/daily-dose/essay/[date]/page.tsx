@@ -26,17 +26,28 @@ function isViewablePastDate(date: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) && date < getTodayIST();
 }
 
+// Kept out of the index deliberately. An archive page holds an Aeon title, author and a
+// ~150-character excerpt — roughly 190 characters, none of it ours — plus community
+// responses that number six across all 37 essays. Leaving these open would put thin,
+// third-party-derived pages forward at scale on a domain that has almost nothing indexed
+// yet, and spend crawl budget that belongs to the PYQ papers. They stay live, linked
+// from the archive and fast for readers; they are simply not offered to search.
+// Revisit if the response layer ever carries real volume — community answers would be
+// genuinely original content and would change this calculation.
+const NOINDEX = { index: false, follow: true } as const;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params;
   const essay = isViewablePastDate(date) ? await fetchDailyEssay(date).catch(() => null) : null;
   if (!essay) {
-    return { title: `Essay – ${date}` };
+    return { title: `Essay – ${date}`, robots: NOINDEX };
   }
   const title = `${essay.title} — Daily Essay`;
   const description = essay.excerpt || `Read the community essay discussion from ${date} on StudyNaksha.`;
   return {
     title,
     description,
+    robots: NOINDEX,
     alternates: { canonical: `${ENV.SITE_URL}/cat-prep/daily-dose/essay/${date}` },
     openGraph: { title, description },
     twitter: { title, description },
