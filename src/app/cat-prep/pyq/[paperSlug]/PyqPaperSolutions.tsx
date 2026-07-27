@@ -55,7 +55,7 @@ function QuestionBlock({ question }: { question: PyqSolvedQuestion }) {
       id={`q-${question.section.toLowerCase()}-${question.questionNumber}`}
       className="scroll-mt-20 rounded-xl border-[1.5px] border-[#E8EAF0] bg-white px-5 py-4"
     >
-      <h3 className="mb-2.5 text-sm font-bold text-trust-navy">Question {question.questionNumber}</h3>
+      <h4 className="mb-2.5 text-sm font-bold text-trust-navy">Question {question.questionNumber}</h4>
 
       <InlineContent
         text={question.text}
@@ -113,7 +113,9 @@ export default function PyqPaperSolutions({ paper, label }: { paper: PyqSolvedPa
   if (sections.length === 0) return null;
 
   return (
-    <section className="mt-14 border-t border-slate-200 pt-10">
+    // The player's mobile question palette is fixed to the bottom of the viewport, so
+    // without the trailing padding it covers the last explanation on small screens.
+    <section className="mt-14 border-t border-slate-200 pt-10 pb-24 md:pb-0">
       <h2 className="m-0 mb-1.5 text-xl font-extrabold tracking-tight text-trust-navy">
         {label} — full paper with answers and explanations
       </h2>
@@ -124,9 +126,9 @@ export default function PyqPaperSolutions({ paper, label }: { paper: PyqSolvedPa
 
       {sections.map((section) => (
         <div key={section.name} className="mb-10">
-          <h2 className="m-0 mb-3.5 text-[17px] font-extrabold tracking-tight text-trust-navy">
+          <h3 className="m-0 mb-3.5 text-[17px] font-extrabold tracking-tight text-trust-navy">
             {section.name} — {section.questions.length} questions
-          </h2>
+          </h3>
 
           <div className="flex flex-col gap-5">
             {buildComprehensionGroups(section.questions).map((group) => (
