@@ -2,7 +2,11 @@
 
 ## Goal
 
-The 61 subtopic pages and 11 topic pages render the roadmap tree and nothing about the node they are named after. The node's description and resource list live in a click-to-open client panel, so neither appears in the HTML.
+The 61 subtopic pages and 11 topic pages render the roadmap tree and are near-identical to one another.
+
+**Corrected after review.** The first version of this spec claimed the node's description and resources appear nowhere in the HTML. That is true only of **topic** pages. Subtopic pages pass `initialNode` to `RoadmapContent`, which server-renders `DetailsPanel` — and that already emits both. The check that concluded otherwise tested a fragment of `description.json[0]`, a *subject* description that never appears on a subtopic page.
+
+So the two page types needed different things, and only topic pages needed content added.
 
 Measured on the production build before this change:
 
@@ -38,9 +42,10 @@ Until one of those lands, these pages remain thin and near-duplicate. Whether to
 
 ## Files Affected
 
-- `src/app/cat-prep/components/NodeContent.tsx` — **new** server component: heading, description, resource list, related-node links.
-- `src/app/cat-prep/[topic]/[subtopic]/page.tsx` — renders it with the node's siblings.
-- `src/app/cat-prep/[topic]/page.tsx` — renders it with the topic's children.
+- `src/app/cat-prep/components/NodeContent.tsx` — **new** server component: heading, description, resource list, related-node links. `showDetails` is false on subtopic pages, where `DetailsPanel` already renders the first two.
+- `src/app/cat-prep/[topic]/[subtopic]/page.tsx` — sibling links only.
+- `src/app/cat-prep/[topic]/page.tsx` — the full block; no panel opens here.
+- `src/app/cat-prep/components/RoadmapContent.tsx` — a `beforeFooter` slot. This component renders `<Footer />` itself, so a route rendering `NodeContent` as its sibling put the block *below* the footer on all 72 pages.
 
 Headings stay at `h2`: `RoadmapContent` already emits an `h1` ("CAT Preparation Roadmap") on every one of these pages, and a second `h1` would be worse than a generic one. That shared `h1` is itself a weak signal worth fixing separately.
 
