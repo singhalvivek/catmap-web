@@ -99,6 +99,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // They stay prerendered and reachable from the archive for people; they just aren't
   // put forward for indexing.
 
+  // Para Jumbles, Para Summary and Odd One Out. Reading Comprehension is excluded — its
+  // questions live in another collection and it has its own per-passage route below.
+  const varcSubject = PRACTICE_SUBJECTS.find((s) => s.section === "VARC");
+  const varcEntries: MetadataRoute.Sitemap = (varcSubject?.topics.flatMap((t) => t.chapters) ?? [])
+    .filter((chapter) => chapter.slug !== "reading-comprehensions")
+    .map((chapter) => ({
+      url: `${ENV.SITE_URL}/cat-prep/practice/varc/${chapter.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
+
   const rcEntries: MetadataRoute.Sitemap = Array.from({ length: rcCount }, (_, i) => ({
     url: `${ENV.SITE_URL}/cat-prep/practice/varc/reading-comprehensions/${i + 1}`,
     lastModified: now,
@@ -128,6 +140,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...subtopicEntries,
     ...quantEntries,
     ...dilrEntries,
+    ...varcEntries,
     ...rcEntries,
   ];
 }
