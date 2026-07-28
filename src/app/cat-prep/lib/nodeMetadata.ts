@@ -28,21 +28,25 @@ export function findSubtopicBySlug(topicId: number, slug: string): Node | undefi
 
 export type NodePageMeta = { title: string; description: string };
 
+// Google renders roughly 60 characters of a title, and the layout template appends
+// " | StudyNaksha" (14) to whatever is returned here.
+const TITLE_BUDGET = 60 - " | StudyNaksha".length;
+
 export function buildNodePageMeta(nodeId: number): NodePageMeta | null {
   const node = findNodeById(nodeId);
   if (!node || node.type === "SUBJECT") return null;
 
   const parent = node.parent_id != null ? findNodeById(node.parent_id) : undefined;
-  const grandparent = parent?.parent_id != null ? findNodeById(parent.parent_id) : undefined;
 
-  let title: string;
-  if (node.type === "SUBTOPIC" && parent && grandparent?.type === "SUBJECT") {
-    title = `${node.title} — ${parent.title} (${grandparent.title}) for CAT`;
-  } else if (node.type === "SUBTOPIC" && parent) {
-    title = `${node.title} — ${parent.title} for CAT`;
-  } else {
-    title = `${node.title} for CAT`;
-  }
+  // The subject name used to be interpolated into every subtopic title, producing
+  // titles up to 137 characters — "… — Critical Reasoning (Verbal Ability and Reading
+  // Comprehension) for CAT | StudyNaksha" — of which a searcher saw the first 60.
+  // The node's own name is the part that distinguishes the page, so it leads, and the
+  // parent is added only when it still fits.
+  const base = `${node.title} for CAT`;
+  const withParent = parent ? `${node.title} — ${parent.title} for CAT` : base;
+  const title =
+    node.type === "SUBTOPIC" && withParent.length <= TITLE_BUDGET ? withParent : base;
 
   const rawDesc = allDescs.find((d) => d.parent_id === nodeId)?.text;
   const description = rawDesc

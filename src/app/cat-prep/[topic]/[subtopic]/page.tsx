@@ -30,11 +30,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic, subtopic } = await params;
   const topicNode = findTopicBySlug(topic);
-  if (!topicNode) return { title: "CAT Prep | StudyNaksha" };
+  if (!topicNode) return { title: "CAT Prep" };
   const subtopicNode = findSubtopicBySlug(topicNode.id, subtopic);
-  if (!subtopicNode) return { title: "CAT Prep | StudyNaksha" };
+  if (!subtopicNode) return { title: "CAT Prep" };
   const meta = buildNodePageMeta(subtopicNode.id);
-  if (!meta) return { title: "CAT Prep | StudyNaksha" };
+  if (!meta) return { title: "CAT Prep" };
   const canonical = `${ENV.SITE_URL}/cat-prep/${toSlug(topicNode.title)}/${toSlug(subtopicNode.title)}`;
   return {
     title: meta.title,

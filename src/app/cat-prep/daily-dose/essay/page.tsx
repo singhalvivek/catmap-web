@@ -10,11 +10,11 @@ import DailyEssayPageClient from "./components/DailyEssayPageClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Daily Essay | StudyNaksha",
+  title: "Daily Essay",
   description: "Read today's Aeon essay, reflect on it, and see how others responded. Daily VARC practice for CAT.",
   alternates: { canonical: `${ENV.SITE_URL}/cat-prep/daily-dose/essay` },
   openGraph: {
-    title: "Daily Essay | StudyNaksha",
+    title: "Daily Essay",
     description: "Read today's Aeon essay and respond. VARC practice for CAT aspirants.",
   },
 };

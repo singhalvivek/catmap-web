@@ -14,7 +14,7 @@ import { ProgressProvider } from "../lib/ProgressContext";
 import RoadmapContent from "../components/RoadmapContent";
 
 export const metadata: Metadata = {
-  title: "CAT Practice Questions | StudyNaksha",
+  title: "CAT Practice Questions",
   description:
     "Topic-wise CAT practice questions across VARC, DILR and Quant. Work through chapter-level drills to build mastery before tackling full PYQ papers.",
   alternates: { canonical: `${ENV.SITE_URL}/cat-prep/practice` },

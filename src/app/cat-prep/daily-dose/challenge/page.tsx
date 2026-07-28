@@ -10,15 +10,15 @@ import DailyChallengePageClient from "./components/DailyChallengePageClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Daily Challenge | StudyNaksha",
+  title: "Daily Challenge",
   description: "Take today's timed CAT practice test across VARC, DILR, and Quant. Track your score and build exam stamina.",
   alternates: { canonical: `${ENV.SITE_URL}/cat-prep/daily-dose/challenge` },
   openGraph: {
-    title: "Daily Challenge | StudyNaksha",
+    title: "Daily Challenge",
     description: "Take today's timed CAT practice test across VARC, DILR, and Quant.",
   },
   twitter: {
-    title: "Daily Challenge | StudyNaksha",
+    title: "Daily Challenge",
     description: "Take today's timed CAT practice test across VARC, DILR, and Quant.",
   },
 };

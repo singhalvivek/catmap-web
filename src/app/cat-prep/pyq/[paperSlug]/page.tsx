@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchPyqPaperSolutions } from "@/lib/pyqQueries";
-import { PYQ_PAPERS, pyqPaperLabel } from "@/constants/pyqPapers";
+import { PYQ_PAPERS, pyqPaperLabel, pyqPaperSearchName } from "@/constants/pyqPapers";
 import { ENV } from "@/config/env";
 import Header from "@/app/cat-prep/components/Header";
 import PyqPaperReader from "./PyqPaperReader";
@@ -16,10 +16,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { paperSlug } = await params;
   const paper = await fetchPyqPaperSolutions(paperSlug);
-  if (!paper) return { title: "PYQ Paper | StudyNaksha" };
-  const label = pyqPaperLabel(paper);
-  const title = `${label} — CAT Previous Year Paper | StudyNaksha`;
-  const description = `Practice ${label} question by question with answers and explanations. Free CAT previous-year paper on StudyNaksha.`;
+  if (!paper) return { title: "PYQ Paper" };
+  const name = pyqPaperSearchName(paper);
+  const questionCount = paper.sections.reduce((sum, s) => sum + s.questions.length, 0);
+  // "<year> <slot> question paper with solutions" is the phrase people actually search,
+  // and it already matches the URL slug; the old title said "CAT" twice and never used it.
+  const title = `${name} Question Paper with Solutions`;
+  const description = `All ${questionCount} questions from the ${name} CAT paper with answer keys and detailed explanations. Solve VARC, DILR and Quant online free, or attempt it as a timed mock.`;
   return {
     title,
     description,

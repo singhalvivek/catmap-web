@@ -12,7 +12,7 @@ import type { Faq as FaqType } from "../models/faq";
 import { ProgressProvider } from "../lib/ProgressContext";
 import RoadmapContent from "../components/RoadmapContent";
 
-const TITLE = "Daily Dose — Daily Essay & Daily Challenge | StudyNaksha";
+const TITLE = "Daily Dose — Daily Essay & Daily Challenge";
 const DESCRIPTION =
   "Your daily CAT habit in one place: read today's Aeon essay for VARC and take a timed Daily Challenge. Build a streak and stay exam-warm.";
 

@@ -7,7 +7,7 @@ import { getTodayIST } from "@/lib/dateIST";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Essay Archive | StudyNaksha",
+  title: "Essay Archive",
   description: "Browse all past Aeon essays used for daily VARC practice on StudyNaksha.",
 };
 
