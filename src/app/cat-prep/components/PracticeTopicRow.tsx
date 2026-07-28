@@ -1,7 +1,7 @@
 // PracticeTopicRow — accordion row for a practice topic; expands to show chapter chips
 "use client";
 
-import type { PracticeTopic } from "@/constants/practiceChapters";
+import { RC_CHAPTER_SLUG, type PracticeTopic } from "@/constants/practiceChapters";
 import PracticeChapterChip from "./PracticeChapterChip";
 
 export default function PracticeTopicRow({
@@ -29,8 +29,8 @@ export default function PracticeTopicRow({
     if (section === "DILR") {
       return `/cat-prep/practice/dilr/${chapterSlug}/1`;
     }
-    if (chapterSlug === "reading-comprehensions") {
-      return `/cat-prep/practice/varc/reading-comprehensions/1`;
+    if (chapterSlug === RC_CHAPTER_SLUG) {
+      return `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/1`;
     }
     // Odd One Out, Para Jumbles, Para Summary. The topic slug is deliberately absent:
     // every VARC chapter hangs off one topic, so it added a segment carrying no meaning

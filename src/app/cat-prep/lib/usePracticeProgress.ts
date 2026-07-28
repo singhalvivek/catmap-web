@@ -59,11 +59,14 @@ export function usePracticeProgress(storageKey: string) {
     });
   }, [storageKey, uid]);
 
-  // Writes re-read storage and merge over it, so a second tab's answers survive and a
-  // write can never replace a session it didn't know about.
+  // Writes re-read storage and merge over it, so a second tab's answers survive.
+  // `remote` is deliberately absent: it is this tab's Firestore snapshot from mount, and
+  // layering it over what was just read from disk would resurrect a stale answer over a
+  // newer one another tab wrote. It is already folded into `progress` at render, and
+  // reaches storage on the next write that touches the same question.
   function persist(nextEdits: PracticeProgress) {
     const onDisk = loadLocalProgress(storageKey);
-    const merged = merge(merge(onDisk ?? EMPTY, remote), nextEdits);
+    const merged = merge(onDisk ?? EMPTY, nextEdits);
     saveLocalProgress(storageKey, merged);
 
     const currentUid = uidRef.current;

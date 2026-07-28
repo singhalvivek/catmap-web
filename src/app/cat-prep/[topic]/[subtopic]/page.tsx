@@ -11,6 +11,7 @@ import { Description } from "../../models/description";
 import type { Faq as FaqType } from "../../models/faq";
 import { ProgressProvider } from "../../lib/ProgressContext";
 import RoadmapContent from "../../components/RoadmapContent";
+import NodeContent from "../../components/NodeContent";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 
@@ -72,6 +73,15 @@ export default async function SubtopicPage({ params }: Props) {
     ...(meta ? [buildLearningResourceSchema(meta.title, meta.description, canonical)] : []),
   ];
 
+  // Passing initialNode makes RoadmapContent render DetailsPanel during prerender, which
+  // already emits this node's description and resource list — so NodeContent contributes
+  // only the sibling links here, and passes them through the beforeFooter slot because
+  // RoadmapContent owns <Footer /> and a sibling element would land beneath it.
+  const allNodes = data as Node[];
+  const siblings = allNodes.filter(
+    (n) => n.type === "SUBTOPIC" && n.parent_id === topicNode.id && n.id !== subtopicNode.id
+  );
+
   return (
     <>
       <JsonLd data={jsonLd} />
@@ -83,6 +93,17 @@ export default async function SubtopicPage({ params }: Props) {
           allFaqs={faqs as FaqType[]}
           initialNode={subtopicNode}
           initialExpandedTopicId={topicNode.id}
+          beforeFooter={
+            <NodeContent
+              node={subtopicNode}
+              parent={topicNode}
+              showDetails={false}
+              resources={[]}
+              related={siblings}
+              relatedTopicSlug={topicSlug}
+              relatedHeading={`More ${topicNode.title} topics`}
+            />
+          }
         />
       </ProgressProvider>
     </>

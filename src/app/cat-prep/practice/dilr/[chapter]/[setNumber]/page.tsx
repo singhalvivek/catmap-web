@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { fetchDilrSet, fetchDilrSets, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
+import { fetchDilrSet, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
@@ -55,10 +55,15 @@ export default async function DilrSetPage({ params }: Props) {
   const num = parseInt(setNumber, 10);
   if (isNaN(num) || num < 1) notFound();
 
-  const [set, allSets] = await Promise.all([
+  // Only the count is needed here. fetchDilrSets loaded every set's passage, questions and
+  // SVG blobs to produce it — tolerable when 2 pages were prerendered, wasteful now that
+  // all 20 are. The aggregation this route already uses for generateStaticParams returns
+  // the same number from one $group.
+  const [set, setsByChapter] = await Promise.all([
     fetchDilrSet(chapterName, num),
-    fetchDilrSets(chapterName),
+    fetchDilrSetNumbersByChapter(),
   ]);
+  const totalSets = setsByChapter.get(chapterName)?.length ?? 0;
 
   if (!set) notFound();
 
@@ -109,7 +114,7 @@ export default async function DilrSetPage({ params }: Props) {
             {chapterName}
           </h1>
           <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
-            Set {num} of {allSets.length}
+            Set {num} of {totalSets}
           </p>
         </div>
       </div>
@@ -118,7 +123,7 @@ export default async function DilrSetPage({ params }: Props) {
         <DilrPlayer
           set={set}
           chapterSlug={chapterSlug}
-          totalSets={allSets.length}
+          totalSets={totalSets}
           storageKey={`dilr-${chapterSlug}-${num}`}
         />
       </div>
