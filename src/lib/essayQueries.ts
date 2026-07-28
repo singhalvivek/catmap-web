@@ -336,6 +336,21 @@ export async function getPastEssayDates(todayIST: string): Promise<string[]> {
 /**
  * Returns all past essays (excluding today) sorted newest-first, with response counts.
  */
+/**
+ * Dates of every essay whose archive page is publicly viewable — past dates only,
+ * matching what `/cat-prep/daily-dose/essay/[date]` will actually serve. Feeds both
+ * the sitemap and that route's `generateStaticParams`, so the two cannot drift.
+ */
+export async function getPastEssayDates(todayIST: string): Promise<string[]> {
+  const db = await getDb();
+  // `distinct`, not `find`: the collection currently holds two documents for
+  // 2026-06-30, and one date is one page — a repeated <loc> is an invalid sitemap.
+  const dates = await db
+    .collection<EssayDoc>("daily_essays")
+    .distinct("date", { date: { $lt: todayIST } });
+  return dates.sort().reverse();
+}
+
 export async function getEssayArchive(todayIST: string): Promise<EssayArchiveEntry[]> {
   const db = await getDb();
 
