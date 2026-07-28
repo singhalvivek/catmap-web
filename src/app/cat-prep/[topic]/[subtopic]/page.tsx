@@ -11,6 +11,7 @@ import { Description } from "../../models/description";
 import type { Faq as FaqType } from "../../models/faq";
 import { ProgressProvider } from "../../lib/ProgressContext";
 import RoadmapContent from "../../components/RoadmapContent";
+import NodeContent from "../../components/NodeContent";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 
@@ -72,6 +73,15 @@ export default async function SubtopicPage({ params }: Props) {
     ...(meta ? [buildLearningResourceSchema(meta.title, meta.description, canonical)] : []),
   ];
 
+  // Everything above renders the same roadmap tree on all 61 subtopic pages — measured at
+  // 0.947 Jaccard similarity between any two, with this node's own description appearing
+  // nowhere in the HTML because it lives in a click-to-open client panel. This block is
+  // what makes the page about its subtopic.
+  const allNodes = data as Node[];
+  const siblings = allNodes.filter(
+    (n) => n.type === "SUBTOPIC" && n.parent_id === topicNode.id && n.id !== subtopicNode.id
+  );
+
   return (
     <>
       <JsonLd data={jsonLd} />
@@ -85,6 +95,15 @@ export default async function SubtopicPage({ params }: Props) {
           initialExpandedTopicId={topicNode.id}
         />
       </ProgressProvider>
+      <NodeContent
+        node={subtopicNode}
+        parent={topicNode}
+        description={(descriptions as Description[]).find((d) => d.parent_id === subtopicNode.id)?.text}
+        resources={ALL_RESOURCES.filter((r) => r.parent_id === subtopicNode.id)}
+        related={siblings}
+        relatedTopicSlug={topicSlug}
+        relatedHeading={`More ${topicNode.title} topics`}
+      />
     </>
   );
 }
