@@ -19,6 +19,14 @@ export type PracticeSubject = {
   topics: PracticeTopic[];
 };
 
+/**
+ * Reading Comprehension is the one VARC chapter served by its own per-passage route
+ * rather than the shared verbal one, so several places have to special-case it. Exported
+ * so that stays one string instead of a literal repeated across routes, the sitemap, the
+ * HTML sitemap and the drift checker.
+ */
+export const RC_CHAPTER_SLUG = "reading-comprehensions";
+
 export function toSlug(name: string): string {
   return name
     .toLowerCase()

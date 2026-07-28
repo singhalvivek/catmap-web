@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { PYQ_PAPERS } from "@/constants/pyqPapers";
-import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
+import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import { ENV } from "@/config/env";
 
 export const metadata: Metadata = {
@@ -46,9 +46,11 @@ function chapterHref(
 ): string | null {
   if (section === "Quant") return `/cat-prep/practice/quant/${topicSlug}/${chapterSlug}`;
   if (section === "DILR") return `/cat-prep/practice/dilr/${chapterSlug}/1`;
-  if (section === "VARC" && chapterSlug === "reading-comprehensions")
-    return `/cat-prep/practice/varc/reading-comprehensions/1`;
-  return null;
+  if (section !== "VARC") return null;
+  // Reading Comprehension is one passage per URL; the verbal chapters are one page each.
+  return chapterSlug === RC_CHAPTER_SLUG
+    ? `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/1`
+    : `/cat-prep/practice/varc/${chapterSlug}`;
 }
 
 export default function SitemapPage() {

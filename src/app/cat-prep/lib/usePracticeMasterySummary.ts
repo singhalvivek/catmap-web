@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
+import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import { loadLocalProgress } from "./practiceProgressStore";
 
 // Both confirmed to always have exactly 4 questions per unit (see PYQ-scraper/planning/percentyl_frontend_guide.md);
@@ -32,14 +32,19 @@ function buildTrackableSubtopics(): Subtopic[] {
     }
   }
 
-  // Only Reading Comprehensions has a built player today — Odd One Out / Para Jumbles /
-  // Para Summary are listed in practiceChapters.ts but have no route yet, so they're excluded
-  // (including them would permanently cap this metric below 100%).
+  // Reading Comprehension is one trackable unit per passage; the verbal chapters are one
+  // unit each. They used to be excluded because they had no route — that exclusion is
+  // gone now that /cat-prep/practice/varc/[chapter] serves all three.
   const varc = PRACTICE_SUBJECTS.find((s) => s.section === "VARC");
-  const rcChapter = varc?.topics.flatMap((t) => t.chapters).find((c) => c.slug === "reading-comprehensions");
-  const rcCount = rcChapter ? Math.round(rcChapter.questionCount / RC_QUESTIONS_PER_PASSAGE) : 0;
-  for (let rcNum = 1; rcNum <= rcCount; rcNum++) {
-    subtopics.push({ key: `varc-rc-${rcNum}`, totalQuestions: RC_QUESTIONS_PER_PASSAGE });
+  for (const chapter of varc?.topics.flatMap((t) => t.chapters) ?? []) {
+    if (chapter.slug === RC_CHAPTER_SLUG) {
+      const rcCount = Math.round(chapter.questionCount / RC_QUESTIONS_PER_PASSAGE);
+      for (let rcNum = 1; rcNum <= rcCount; rcNum++) {
+        subtopics.push({ key: `varc-rc-${rcNum}`, totalQuestions: RC_QUESTIONS_PER_PASSAGE });
+      }
+    } else {
+      subtopics.push({ key: `varc-${chapter.slug}`, totalQuestions: chapter.questionCount });
+    }
   }
 
   return subtopics;

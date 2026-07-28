@@ -11,6 +11,7 @@ import { Description } from "../models/description";
 import type { Faq as FaqType } from "../models/faq";
 import { ProgressProvider } from "../lib/ProgressContext";
 import RoadmapContent from "../components/RoadmapContent";
+import NodeContent from "../components/NodeContent";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 
@@ -61,6 +62,12 @@ export default async function TopicPage({ params }: Props) {
     ...(meta ? [buildLearningResourceSchema(meta.title, meta.description, canonical)] : []),
   ];
 
+  // A topic page opens no DetailsPanel — nothing here passes initialNode — so this is the
+  // only place the topic's own description and resources reach the HTML, and the subtopic
+  // links double as the internal linking these pages have always lacked.
+  const allNodes = data as Node[];
+  const children = allNodes.filter((n) => n.type === "SUBTOPIC" && n.parent_id === node.id);
+
   return (
     <>
       <JsonLd data={jsonLd} />
@@ -71,6 +78,17 @@ export default async function TopicPage({ params }: Props) {
           allResources={ALL_RESOURCES}
           allFaqs={faqs as FaqType[]}
           initialExpandedTopicId={node.id}
+          beforeFooter={
+            <NodeContent
+              node={node}
+              showDetails
+              description={(descriptions as Description[]).find((d) => d.parent_id === node.id)?.text}
+              resources={ALL_RESOURCES.filter((r) => r.parent_id === node.id)}
+              related={children}
+              relatedTopicSlug={toSlug(node.title)}
+              relatedHeading={`${node.title} topics`}
+            />
+          }
         />
       </ProgressProvider>
     </>
