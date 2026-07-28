@@ -319,12 +319,9 @@ export type EssayArchiveEntry = {
 };
 
 /**
- * Returns all past essays (excluding today) sorted newest-first, with response counts.
- */
-/**
  * Dates of every essay whose archive page is publicly viewable — past dates only,
- * matching what `/cat-prep/daily-dose/essay/[date]` will actually serve. Feeds both
- * the sitemap and that route's `generateStaticParams`, so the two cannot drift.
+ * matching what `/cat-prep/daily-dose/essay/[date]` will actually serve. Feeds that
+ * route's `generateStaticParams`; the sitemap deliberately does not list these pages.
  */
 export async function getPastEssayDates(todayIST: string): Promise<string[]> {
   const db = await getDb();
@@ -336,6 +333,9 @@ export async function getPastEssayDates(todayIST: string): Promise<string[]> {
   return dates.sort().reverse();
 }
 
+/**
+ * Returns all past essays (excluding today) sorted newest-first, with response counts.
+ */
 export async function getEssayArchive(todayIST: string): Promise<EssayArchiveEntry[]> {
   const db = await getDb();
 

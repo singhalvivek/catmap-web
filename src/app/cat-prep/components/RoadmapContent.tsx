@@ -1,7 +1,7 @@
 // RoadmapContent — client-side roadmap UI; receives pre-built tree data from server page
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
@@ -44,6 +44,7 @@ export default function RoadmapContent({
   initialExpandedTopicId = null,
   initialMode = "learn",
   initialPapers = null,
+  beforeFooter = null,
 }: {
   subjects: Node[];
   allDescriptions: Description[];
@@ -53,6 +54,8 @@ export default function RoadmapContent({
   initialExpandedTopicId?: number | null;
   initialMode?: Mode;
   initialPapers?: PyqPaperSummary[] | null;
+  /** Server-rendered page content placed just above the footer. */
+  beforeFooter?: ReactNode;
 }) {
   const allTopics = useMemo(() => subjects.flatMap((s) => s.children ?? []), [subjects]);
 
@@ -532,6 +535,11 @@ export default function RoadmapContent({
           </div>
         </div>
       </div>
+
+      {/* Page-specific content, above the footer. Server-rendered by the route and passed
+          through as a slot — this component owns <Footer />, so anything a page renders
+          as a sibling of <RoadmapContent> lands below it. */}
+      {beforeFooter}
 
       <Footer />
 

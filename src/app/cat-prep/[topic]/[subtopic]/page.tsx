@@ -73,10 +73,10 @@ export default async function SubtopicPage({ params }: Props) {
     ...(meta ? [buildLearningResourceSchema(meta.title, meta.description, canonical)] : []),
   ];
 
-  // Everything above renders the same roadmap tree on all 61 subtopic pages — measured at
-  // 0.947 Jaccard similarity between any two, with this node's own description appearing
-  // nowhere in the HTML because it lives in a click-to-open client panel. This block is
-  // what makes the page about its subtopic.
+  // Passing initialNode makes RoadmapContent render DetailsPanel during prerender, which
+  // already emits this node's description and resource list — so NodeContent contributes
+  // only the sibling links here, and passes them through the beforeFooter slot because
+  // RoadmapContent owns <Footer /> and a sibling element would land beneath it.
   const allNodes = data as Node[];
   const siblings = allNodes.filter(
     (n) => n.type === "SUBTOPIC" && n.parent_id === topicNode.id && n.id !== subtopicNode.id
@@ -93,17 +93,19 @@ export default async function SubtopicPage({ params }: Props) {
           allFaqs={faqs as FaqType[]}
           initialNode={subtopicNode}
           initialExpandedTopicId={topicNode.id}
+          beforeFooter={
+            <NodeContent
+              node={subtopicNode}
+              parent={topicNode}
+              showDetails={false}
+              resources={[]}
+              related={siblings}
+              relatedTopicSlug={topicSlug}
+              relatedHeading={`More ${topicNode.title} topics`}
+            />
+          }
         />
       </ProgressProvider>
-      <NodeContent
-        node={subtopicNode}
-        parent={topicNode}
-        description={(descriptions as Description[]).find((d) => d.parent_id === subtopicNode.id)?.text}
-        resources={ALL_RESOURCES.filter((r) => r.parent_id === subtopicNode.id)}
-        related={siblings}
-        relatedTopicSlug={topicSlug}
-        relatedHeading={`More ${topicNode.title} topics`}
-      />
     </>
   );
 }

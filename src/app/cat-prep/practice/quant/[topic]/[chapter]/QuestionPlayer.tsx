@@ -114,13 +114,25 @@ export default function QuestionPlayer({
 
   // History is updated directly rather than through the router: this only records which
   // question is showing, and a router push would re-render the route for a value the
-  // component already holds.
+  // component already holds. pushState, not replaceState — Back must return to the
+  // previous question, as it did before, rather than leaving the chapter entirely.
   const navigateTo = useCallback((num: number) => {
     setCurrentNum(num);
     const params = new URLSearchParams(window.location.search);
     params.set("q", String(num));
-    window.history.replaceState(null, "", `?${params.toString()}`);
+    window.history.pushState(null, "", `?${params.toString()}`);
   }, []);
+
+  // pushState alone does not fire popstate handling, so Back would change the URL without
+  // moving the player. This keeps the two in step.
+  useEffect(() => {
+    const onPop = () => {
+      const q = parseInt(new URLSearchParams(window.location.search).get("q") ?? "1", 10);
+      setCurrentNum(!isNaN(q) && q >= 1 && q <= questions.length ? q : 1);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [questions.length]);
 
   async function checkSolution() {
     if (!question || !canCheck) return;
@@ -132,9 +144,13 @@ export default function QuestionPlayer({
         setSessionSolutions((prev) => ({ ...prev, [question.question_number]: data }));
         // A jumble's answer lives in correct_text; the sentinel keeps a question with no
         // key at all from leaving the user on a button that does nothing.
+        // `||`, not `??`: PracticeQuestionSolution types correct_answer as a plain string
+        // while the collection stores null for keyless rows, so an empty string is just as
+        // plausible a shape — and an empty key would leave isChecked false forever, with a
+        // live Check button and no verdict.
         setCorrectAnswer(
           question.question_number,
-          data.correct_answer ?? data.correct_text ?? NO_ANSWER_SENTINEL
+          data.correct_answer || data.correct_text || NO_ANSWER_SENTINEL
         );
       }
     } finally {
@@ -256,9 +272,12 @@ export default function QuestionPlayer({
                   value={given ?? ""}
                   disabled={isChecked}
                   // Only digits 1-4 are meaningful, so anything else never reaches state.
+                  // Clearing the field must not persist an empty answer: ContinuePractice
+                  // counts answer keys, so a blank one reports an abandoned chapter as
+                  // in-progress and inflates its N-of-total.
                   onChange={(e) => {
                     const next = e.target.value.replace(/[^1-4]/g, "").slice(0, 4);
-                    setAnswer(question.question_number, next);
+                    if (next || given) setAnswer(question.question_number, next);
                   }}
                   style={{
                     width: 140,

@@ -3,8 +3,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
+import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import { loadLocalProgress, PROGRESS_PREFIX } from "@/app/cat-prep/lib/practiceProgressStore";
+
+const VARC_CHAPTERS =
+  PRACTICE_SUBJECTS.find((s) => s.section === "VARC")
+    ?.topics.flatMap((t) => t.chapters)
+    .filter((c) => c.slug !== RC_CHAPTER_SLUG) ?? [];
 
 type EntryConfig = {
   key: string;
@@ -104,7 +109,29 @@ function buildEntries(): InProgressEntry[] {
         key: rawKey,
         title: `RC ${rcNum}`,
         subtitle: "Reading Comprehension · VARC",
-        href: `/cat-prep/practice/varc/reading-comprehensions/${rcNum}`,
+        href: `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/${rcNum}`,
+        color: "#92400E",
+        bgColor: "#FFFBEB",
+        borderColor: "#FDE68A",
+        answered,
+      });
+      continue;
+    }
+
+    // Para Jumbles / Para Summary / Odd One Out write `varc-<slug>`. Without this they
+    // matched none of the branches above and were silently dropped, so those three
+    // chapters were the only practice surfaces with no resume path.
+    if (rawKey.startsWith("varc-")) {
+      const chapter = VARC_CHAPTERS.find((c) => rawKey === `varc-${c.slug}`);
+      if (!chapter) continue;
+      const progress = loadLocalProgress(rawKey);
+      const answered = progress ? Object.keys(progress.answers).length : 0;
+      if (answered === 0) continue;
+      result.push({
+        key: rawKey,
+        title: chapter.name,
+        subtitle: "VARC",
+        href: `/cat-prep/practice/varc/${chapter.slug}`,
         color: "#92400E",
         bgColor: "#FFFBEB",
         borderColor: "#FDE68A",

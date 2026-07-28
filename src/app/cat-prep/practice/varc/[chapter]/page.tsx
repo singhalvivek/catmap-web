@@ -1,9 +1,10 @@
+// page — /cat-prep/practice/varc/[chapter]; Para Jumbles, Para Summary and Odd One Out practice
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchPracticeQuestions } from "@/lib/practiceQueries";
-import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
+import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 import { buildLearningResourceSchema } from "@/app/cat-prep/lib/nodeMetadata";
@@ -13,11 +14,9 @@ type Props = { params: Promise<{ chapter: string }> };
 
 // Reading Comprehension has its own route a level deeper, so it is excluded here and
 // redirected instead of 404ing when someone lands on the bare chapter URL.
-const RC_SLUG = "reading-comprehensions";
-
 function varcChapters() {
   const subject = PRACTICE_SUBJECTS.find((s) => s.section === "VARC");
-  return (subject?.topics.flatMap((t) => t.chapters) ?? []).filter((c) => c.slug !== RC_SLUG);
+  return (subject?.topics.flatMap((t) => t.chapters) ?? []).filter((c) => c.slug !== RC_CHAPTER_SLUG);
 }
 
 export function generateStaticParams() {
@@ -46,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function VarcChapterPage({ params }: Props) {
   const { chapter: slug } = await params;
 
-  if (slug === RC_SLUG) redirect(`/cat-prep/practice/varc/${RC_SLUG}/1`);
+  if (slug === RC_CHAPTER_SLUG) redirect(`/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/1`);
 
   const chapter = resolveChapter(slug);
   if (!chapter) notFound();

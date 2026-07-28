@@ -54,10 +54,17 @@ function parsePracticeSubjects() {
   });
 }
 
+// Missing credentials fail rather than skip. A guard that cannot fail is not a guard: a
+// green pipeline with no database reached would report "checked" while the exact class of
+// 404 this exists to catch shipped unverified. Pass --allow-missing-db to opt out
+// explicitly, in an environment where that is genuinely intended.
 const env = loadEnv();
 if (!env.MONGODB_URI || !env.MONGODB_DATABASE) {
-  console.error("check:content needs MONGODB_URI and MONGODB_DATABASE — skipping.");
-  process.exit(0);
+  const optOut = process.argv.includes("--allow-missing-db");
+  console.error(
+    `check:content needs MONGODB_URI and MONGODB_DATABASE${optOut ? " — skipped via --allow-missing-db." : "."}`
+  );
+  process.exit(optOut ? 0 : 1);
 }
 
 const client = new MongoClient(env.MONGODB_URI);

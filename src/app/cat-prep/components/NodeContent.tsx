@@ -4,12 +4,19 @@ import type { Node } from "../models/node";
 import type { Resource } from "../models/resource";
 import { toSlug } from "../lib/nodeMetadata";
 
+// Subtopic pages pass initialNode to RoadmapContent, which server-renders DetailsPanel —
+// and that already emits the node's description and resource list. Rendering them again
+// here duplicated both on all 61 subtopic pages, so `showDetails` is false there and the
+// block contributes only the related-node links. Topic pages open no panel, so they get
+// the full block, which is why their similarity to one another dropped sharply.
 type Props = {
   node: Node;
   /** Absent for a topic; the parent topic for a subtopic. */
   parent?: Node;
   description?: string;
   resources: Resource[];
+  /** False when DetailsPanel is already rendering this node's description and resources. */
+  showDetails: boolean;
   /** Sibling subtopics for a subtopic page, child subtopics for a topic page. */
   related: Node[];
   relatedTopicSlug: string;
@@ -27,11 +34,13 @@ export default function NodeContent({
   parent,
   description,
   resources,
+  showDetails,
   related,
   relatedTopicSlug,
   relatedHeading,
 }: Props) {
   const context = parent ? `${parent.title} · CAT` : "CAT";
+  if (!showDetails && related.length === 0) return null;
 
   return (
     <section className="mx-auto w-full max-w-[1120px] border-t border-slate-200 px-6 pb-16 pt-10">
@@ -40,11 +49,11 @@ export default function NodeContent({
       </h2>
       <p className="m-0 mb-5 text-[13px] font-semibold uppercase tracking-wide text-slate-400">{context}</p>
 
-      {description && (
+      {showDetails && description && (
         <p className="m-0 mb-8 max-w-[70ch] text-[15px] leading-[1.8] text-slate-700">{description}</p>
       )}
 
-      {resources.length > 0 && (
+      {showDetails && resources.length > 0 && (
         <>
           <h3 className="m-0 mb-3 text-[15px] font-bold text-trust-navy">
             Free resources for {node.title}
