@@ -9,9 +9,9 @@ type Props = { params: Promise<{ paperSlug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { paperSlug } = await params;
   const meta = getPyqPaper(paperSlug);
-  if (!meta) return { title: "PYQ Mock Test | StudyNaksha" };
+  if (!meta) return { title: "PYQ Mock Test" };
   const label = pyqPaperLabel(meta);
-  const title = `${label} — Mock Test | StudyNaksha`;
+  const title = `${label} — Mock Test`;
   const description = `Attempt ${label} as a timed, sectioned mock test — just like the real CAT exam.`;
   return {
     title,

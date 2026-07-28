@@ -19,6 +19,14 @@ export type PracticeSubject = {
   topics: PracticeTopic[];
 };
 
+/**
+ * Reading Comprehension is the one VARC chapter served by its own per-passage route
+ * rather than the shared verbal one, so several places have to special-case it. Exported
+ * so that stays one string instead of a literal repeated across routes, the sitemap, the
+ * HTML sitemap and the drift checker.
+ */
+export const RC_CHAPTER_SLUG = "reading-comprehensions";
+
 export function toSlug(name: string): string {
   return name
     .toLowerCase()
@@ -39,12 +47,12 @@ export const PRACTICE_SUBJECTS: PracticeSubject[] = [
           { name: "Interest", slug: "interest", questionCount: 20 },
           { name: "Mixtures & Alligations", slug: "mixtures-alligations", questionCount: 20 },
           { name: "Percentages", slug: "percentages", questionCount: 20 },
-          { name: "Pipes/Trains/Boats", slug: "pipes-trains-boats", questionCount: 20 },
+          { name: "Pipes, Trains & Boats", slug: "pipes-trains-boats", questionCount: 20 },
           { name: "Profit & Loss", slug: "profit-loss", questionCount: 20 },
           { name: "Races", slug: "races", questionCount: 20 },
-          { name: "Ratio/Proportion/Variation", slug: "ratio-proportion-variation", questionCount: 20 },
+          { name: "Ratio, Proportion & Variation", slug: "ratio-proportion-variation", questionCount: 20 },
           { name: "Time & Work", slug: "time-work", questionCount: 20 },
-          { name: "Time/Speed/Distance", slug: "time-speed-distance", questionCount: 20 },
+          { name: "Time, Speed & Distance", slug: "time-speed-distance", questionCount: 20 },
         ],
       },
       {

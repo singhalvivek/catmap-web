@@ -26,7 +26,9 @@ export type PracticeQuestion = {
 
 export type PracticeQuestionSolution = {
   _id: string;
-  correct_answer: string;
+  // Null for the 50 para-jumble rows, whose answer is the sequence in correct_text, and
+  // for 10 Odd One Out rows that have no key at all. Typed honestly so callers must handle it.
+  correct_answer: string | null;
   correct_text: string | null;
   explanation: string | null;
   solution_svg: string | null;

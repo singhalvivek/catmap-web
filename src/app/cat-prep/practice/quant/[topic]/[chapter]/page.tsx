@@ -29,8 +29,8 @@ function resolveChapterMeta(topicSlug: string, chapterSlug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic, chapter } = await params;
   const meta = resolveChapterMeta(topic, chapter);
-  if (!meta.chapter || !meta.topic) return { title: "Practice Questions | StudyNaksha" };
-  const title = `${meta.chapter.name} Practice — ${meta.topic.name} | StudyNaksha`;
+  if (!meta.chapter || !meta.topic) return { title: "Practice Questions" };
+  const title = `${meta.chapter.name} Practice — ${meta.topic.name}`;
   const description = `Practice ${meta.chapter.questionCount}+ CAT-level ${meta.chapter.name} questions. Free, self-paced ${meta.topic.name} practice on StudyNaksha.`;
   return {
     title,

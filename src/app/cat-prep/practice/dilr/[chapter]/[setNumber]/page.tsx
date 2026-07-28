@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { fetchDilrSet, fetchDilrSets } from "@/lib/practiceQueries";
+import { fetchDilrSet, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
@@ -10,11 +10,18 @@ import Link from "next/link";
 
 type Props = { params: Promise<{ chapter: string; setNumber: string }> };
 
-export function generateStaticParams() {
+// Every set that has data, not just set 1 — 18 of 20 sets used to render on demand.
+export async function generateStaticParams() {
   const dilrSubject = PRACTICE_SUBJECTS.find((s) => s.section === "DILR");
   if (!dilrSubject) return [];
+  const setsByChapter = await fetchDilrSetNumbersByChapter();
   return dilrSubject.topics.flatMap((t) =>
-    t.chapters.map((chapter) => ({ chapter: chapter.slug, setNumber: "1" }))
+    t.chapters.flatMap((chapter) =>
+      (setsByChapter.get(chapter.name) ?? []).map((setNumber) => ({
+        chapter: chapter.slug,
+        setNumber: String(setNumber),
+      }))
+    )
   );
 }
 
@@ -27,8 +34,9 @@ function resolveChapterName(slug: string): string | undefined {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { chapter, setNumber } = await params;
   const chapterName = resolveChapterName(chapter) ?? chapter;
-  const title = `${chapterName} Set ${setNumber} — DILR Practice | StudyNaksha`;
-  const description = `Solve ${chapterName} Set ${setNumber} for CAT DILR prep. Free practice sets with detailed solutions on StudyNaksha.`;
+  // Leads with "CAT DILR" — the old title buried the only searched term at the end.
+  const title = `CAT DILR Practice: ${chapterName} Set ${setNumber}`;
+  const description = `Solve a CAT DILR ${chapterName.toLowerCase()} set with full reasoning and step-by-step solutions. Free practice, no sign-up needed.`;
   return {
     title,
     description,
@@ -47,10 +55,15 @@ export default async function DilrSetPage({ params }: Props) {
   const num = parseInt(setNumber, 10);
   if (isNaN(num) || num < 1) notFound();
 
-  const [set, allSets] = await Promise.all([
+  // Only the count is needed here. fetchDilrSets loaded every set's passage, questions and
+  // SVG blobs to produce it — tolerable when 2 pages were prerendered, wasteful now that
+  // all 20 are. The aggregation this route already uses for generateStaticParams returns
+  // the same number from one $group.
+  const [set, setsByChapter] = await Promise.all([
     fetchDilrSet(chapterName, num),
-    fetchDilrSets(chapterName),
+    fetchDilrSetNumbersByChapter(),
   ]);
+  const totalSets = setsByChapter.get(chapterName)?.length ?? 0;
 
   if (!set) notFound();
 
@@ -101,7 +114,7 @@ export default async function DilrSetPage({ params }: Props) {
             {chapterName}
           </h1>
           <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
-            Set {num} of {allSets.length}
+            Set {num} of {totalSets}
           </p>
         </div>
       </div>
@@ -110,7 +123,7 @@ export default async function DilrSetPage({ params }: Props) {
         <DilrPlayer
           set={set}
           chapterSlug={chapterSlug}
-          totalSets={allSets.length}
+          totalSets={totalSets}
           storageKey={`dilr-${chapterSlug}-${num}`}
         />
       </div>

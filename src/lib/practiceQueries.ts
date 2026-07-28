@@ -130,6 +130,25 @@ export async function fetchDilrSets(chapter: string): Promise<DilrSet[]> {
   }));
 }
 
+/**
+ * Set numbers that actually have data, keyed by chapter name as stored in Mongo.
+ * Callers resolve the name to a URL slug through PRACTICE_SUBJECTS, so a chapter
+ * with data but no constants entry is skipped rather than turned into a 404 URL.
+ *
+ * The sitemap and the route's `generateStaticParams` both read this — both used to
+ * assume one set per chapter, leaving 18 of 20 sets unlisted and unprerendered.
+ */
+export async function fetchDilrSetNumbersByChapter(): Promise<Map<string, number[]>> {
+  const db = await getDb();
+  const rows = await db
+    .collection<DilrSetDoc>("percentyl_dilr_sets")
+    .aggregate<{ _id: string; setNumbers: number[] }>([
+      { $group: { _id: "$chapter", setNumbers: { $addToSet: "$set_number" } } },
+    ])
+    .toArray();
+  return new Map(rows.map((r) => [r._id, [...r.setNumbers].sort((a, b) => a - b)]));
+}
+
 export async function fetchDilrSet(
   chapter: string,
   setNumber: number

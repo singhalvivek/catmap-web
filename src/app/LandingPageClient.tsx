@@ -6,11 +6,12 @@ import Link from "next/link";
 import SNLogo from "./cat-prep/components/SNLogo";
 import { FAQS } from "./data";
 import { trackEvent } from "./components/analytics";
+import { isValidEmail, normaliseEmail } from "@/lib/waitlistValidation";
 
 const COURSES = ["CAT", "GMAT", "GRE", "UPSC", "Other"] as const;
 
 const COMPARISON_ROWS = [
-  { label: "Cost",                   sn: "Free (later ₹200/mo)", coaching: "₹30k–₹80k+",  yt: "Free"           },
+  { label: "Cost",                   sn: "Free",                 coaching: "₹30k–₹80k+",  yt: "Free"           },
   { label: "Structured path",        sn: "Yes — full roadmap",   coaching: "Yes",           yt: "No — you guess" },
   { label: "Distraction-free",       sn: "Yes — embedded",       coaching: "Yes",           yt: "No"             },
   { label: "Self-paced",             sn: "Yes",                  coaching: "Mostly fixed",  yt: "Yes"            },
@@ -25,7 +26,7 @@ const COMPARISON_COLS = [
 ] as const;
 
 function comparisonValColor(val: string): string {
-  if (val.toLowerCase().startsWith("yes") || val === "Free (later ₹200/mo)" || val === "Free") return "#059669";
+  if (val.toLowerCase().startsWith("yes") || val === "Free") return "#059669";
   if (val.toLowerCase().startsWith("no")) return "#DC2626";
   return "#64748B";
 }
@@ -42,6 +43,8 @@ export default function LandingPageClient() {
   const [email, setEmail] = useState("");
   const [course, setCourse] = useState("");
   const [joined, setJoined] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [waitlistError, setWaitlistError] = useState<string | null>(null);
   const sectionRefs = useRef<Partial<Record<SectionId, HTMLElement | null>>>({});
   const firedSections = useRef<Set<SectionId>>(new Set());
 
@@ -65,6 +68,34 @@ export default function LandingPageClient() {
   const sectionRef = (id: SectionId) => (el: HTMLElement | null) => {
     sectionRefs.current[id] = el;
   };
+
+  const canSubmitWaitlist = isValidEmail(normaliseEmail(email)) && !!course && !submitting;
+
+  // The analytics event fires only after a confirmed save — the old version counted
+  // signups that were never stored anywhere.
+  async function submitWaitlist() {
+    if (!canSubmitWaitlist) return;
+    setSubmitting(true);
+    setWaitlistError(null);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normaliseEmail(email), exam: course }),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setWaitlistError(data?.error ?? "Could not save your email. Please try again.");
+        return;
+      }
+      setJoined(true);
+      trackEvent("waitlist_submitted", { exam: course });
+    } catch {
+      setWaitlistError("Could not reach the server. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   useEffect(() => {
     const thresholds = [25, 50, 75, 100] as const;
@@ -820,12 +851,8 @@ export default function LandingPageClient() {
                   }}
                 />
                 <button
-                  onClick={() => {
-                    if (email && course) {
-                      setJoined(true);
-                      trackEvent("waitlist_submitted", { exam: course });
-                    }
-                  }}
+                  onClick={submitWaitlist}
+                  disabled={!canSubmitWaitlist}
                   className="font-bold text-white"
                   style={{
                     background: "#14B8A6",
@@ -833,14 +860,17 @@ export default function LandingPageClient() {
                     borderRadius: 8,
                     padding: "10px 20px",
                     fontSize: 14,
-                    cursor: email && course ? "pointer" : "not-allowed",
+                    cursor: canSubmitWaitlist ? "pointer" : "not-allowed",
                     fontFamily: "inherit",
-                    opacity: email && course ? 1 : 0.6,
+                    opacity: canSubmitWaitlist ? 1 : 0.6,
                   }}
                 >
-                  Join Waitlist
+                  {submitting ? "Saving…" : "Join Waitlist"}
                 </button>
               </div>
+            )}
+            {waitlistError && (
+              <p style={{ color: "#FCA5A5", fontSize: 12, margin: "12px 0 0" }}>{waitlistError}</p>
             )}
           </div>
         </div>

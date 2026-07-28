@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fetchPyqPaper } from "@/lib/pyqQueries";
-import { PYQ_PAPERS, pyqPaperLabel } from "@/constants/pyqPapers";
+import { fetchPyqPaperSolutions } from "@/lib/pyqQueries";
+import { PYQ_PAPERS, pyqPaperLabel, pyqPaperSearchName } from "@/constants/pyqPapers";
 import { ENV } from "@/config/env";
-import PyqPaperPlayer from "./PyqPaperPlayer";
+import Header from "@/app/cat-prep/components/Header";
+import PyqPaperReader from "./PyqPaperReader";
 
 type Props = { params: Promise<{ paperSlug: string }> };
 
@@ -14,11 +15,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { paperSlug } = await params;
-  const paper = await fetchPyqPaper(paperSlug);
-  if (!paper) return { title: "PYQ Paper | StudyNaksha" };
-  const label = pyqPaperLabel(paper);
-  const title = `${label} — CAT Previous Year Paper | StudyNaksha`;
-  const description = `Practice ${label} question by question with answers and explanations. Free CAT previous-year paper on StudyNaksha.`;
+  const paper = await fetchPyqPaperSolutions(paperSlug);
+  if (!paper) return { title: "PYQ Paper" };
+  const name = pyqPaperSearchName(paper);
+  const questionCount = paper.sections.reduce((sum, s) => sum + s.questions.length, 0);
+  // "<year> <slot> question paper with solutions" is the phrase people actually search,
+  // and it already matches the URL slug; the old title said "CAT" twice and never used it.
+  const title = `${name} Question Paper with Solutions`;
+  const description = `All ${questionCount} questions from the ${name} CAT paper with answer keys and detailed explanations. Solve VARC, DILR and Quant online free, or attempt it as a timed mock.`;
   return {
     title,
     description,
@@ -30,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PyqPaperPage({ params }: Props) {
   const { paperSlug } = await params;
-  const paper = await fetchPyqPaper(paperSlug);
+  const paper = await fetchPyqPaperSolutions(paperSlug);
   if (!paper) notFound();
 
   const label = pyqPaperLabel(paper);
@@ -38,6 +42,8 @@ export default async function PyqPaperPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+      <Header />
+
       <div
         style={{
           background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
@@ -63,13 +69,30 @@ export default async function PyqPaperPage({ params }: Props) {
             {label}
           </h1>
           <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
-            {totalQuestions} questions
+            {totalQuestions} questions with answers and explanations
           </p>
+          <Link
+            href={`/cat-prep/pyq/${paperSlug}/mock`}
+            className="font-bold"
+            style={{
+              display: "inline-block",
+              marginTop: 14,
+              padding: "9px 18px",
+              borderRadius: 8,
+              border: "1.5px solid #1E3A5F",
+              background: "#1E3A5F",
+              color: "#fff",
+              fontSize: 13,
+              textDecoration: "none",
+            }}
+          >
+            Take this as a timed mock →
+          </Link>
         </div>
       </div>
 
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px" }}>
-        <PyqPaperPlayer paper={paper} />
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "0 24px 48px" }}>
+        <PyqPaperReader paper={paper} />
       </div>
     </div>
   );

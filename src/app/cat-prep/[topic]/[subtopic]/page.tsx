@@ -11,6 +11,7 @@ import { Description } from "../../models/description";
 import type { Faq as FaqType } from "../../models/faq";
 import { ProgressProvider } from "../../lib/ProgressContext";
 import RoadmapContent from "../../components/RoadmapContent";
+import NodeContent from "../../components/NodeContent";
 import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 
@@ -30,11 +31,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic, subtopic } = await params;
   const topicNode = findTopicBySlug(topic);
-  if (!topicNode) return { title: "CAT Prep | StudyNaksha" };
+  if (!topicNode) return { title: "CAT Prep" };
   const subtopicNode = findSubtopicBySlug(topicNode.id, subtopic);
-  if (!subtopicNode) return { title: "CAT Prep | StudyNaksha" };
+  if (!subtopicNode) return { title: "CAT Prep" };
   const meta = buildNodePageMeta(subtopicNode.id);
-  if (!meta) return { title: "CAT Prep | StudyNaksha" };
+  if (!meta) return { title: "CAT Prep" };
   const canonical = `${ENV.SITE_URL}/cat-prep/${toSlug(topicNode.title)}/${toSlug(subtopicNode.title)}`;
   return {
     title: meta.title,
@@ -72,6 +73,15 @@ export default async function SubtopicPage({ params }: Props) {
     ...(meta ? [buildLearningResourceSchema(meta.title, meta.description, canonical)] : []),
   ];
 
+  // Passing initialNode makes RoadmapContent render DetailsPanel during prerender, which
+  // already emits this node's description and resource list — so NodeContent contributes
+  // only the sibling links here, and passes them through the beforeFooter slot because
+  // RoadmapContent owns <Footer /> and a sibling element would land beneath it.
+  const allNodes = data as Node[];
+  const siblings = allNodes.filter(
+    (n) => n.type === "SUBTOPIC" && n.parent_id === topicNode.id && n.id !== subtopicNode.id
+  );
+
   return (
     <>
       <JsonLd data={jsonLd} />
@@ -83,6 +93,17 @@ export default async function SubtopicPage({ params }: Props) {
           allFaqs={faqs as FaqType[]}
           initialNode={subtopicNode}
           initialExpandedTopicId={topicNode.id}
+          beforeFooter={
+            <NodeContent
+              node={subtopicNode}
+              parent={topicNode}
+              showDetails={false}
+              resources={[]}
+              related={siblings}
+              relatedTopicSlug={topicSlug}
+              relatedHeading={`More ${topicNode.title} topics`}
+            />
+          }
         />
       </ProgressProvider>
     </>

@@ -8,7 +8,7 @@ import type {
   PyqOption,
   PyqQuestion,
   PyqPaper,
-  PyqSolution,
+  PyqSolvedPaper,
   PyqPaperSummary,
 } from "@/app/cat-prep/models/pyq";
 import type {
@@ -134,63 +134,80 @@ export async function fetchPyqPapersIndex(): Promise<PyqPaperSummary[]> {
   }));
 }
 
+// Loads a paper's question docs (ordered) with their comprehensions resolved.
+// `includeAnswers` decides at the *query* level whether answer fields are read at all,
+// so an answer-free caller cannot leak one by forgetting to strip a field when mapping.
+async function loadPaperDocs(
+  paperSlug: string,
+  includeAnswers: boolean
+): Promise<{ questionDocs: PyqQuestionDoc[]; compMap: Map<string, PyqComprehensionDoc> } | null> {
+  const db = await getDb();
+  const questionDocs = await db
+    .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
+    .find({ paperSlug }, includeAnswers ? {} : { projection: ANSWER_FIELDS })
+    .sort({ questionNumber: 1 })
+    .toArray();
+  if (questionDocs.length === 0) return null;
+
+  return { questionDocs, compMap: await fetchComprehensionMap(questionDocs) };
+}
+
+function groupBySection<T>(
+  questionDocs: PyqQuestionDoc[],
+  map: (doc: PyqQuestionDoc) => T
+): { name: PyqSection; questions: T[] }[] {
+  const bySection = new Map<PyqSection, T[]>(SECTION_ORDER.map((name) => [name, []]));
+  for (const doc of questionDocs) {
+    bySection.get(doc.section)?.push(map(doc));
+  }
+  return SECTION_ORDER.map((name) => ({ name, questions: bySection.get(name) ?? [] }));
+}
+
+// The static PYQ_PAPERS entry is authoritative; the scraped doc is the fallback for a
+// paper that has data but no constants entry yet.
+function resolvePaperMeta(paperSlug: string, first: PyqQuestionDoc) {
+  const meta = getPyqPaper(paperSlug);
+  return {
+    paperSlug,
+    examYear: meta?.examYear ?? first.examYear,
+    examSlot: meta?.examSlot ?? first.examSlot,
+  };
+}
+
 /**
  * Fetches a full paper as flat per-section question lists (VARC -> DILR -> QA),
  * each question carrying its shared comprehension inline (if any). Answers and
  * explanations are excluded at the query level, not just omitted when mapping.
  */
 export async function fetchPyqPaper(paperSlug: string): Promise<PyqPaper | null> {
-  const db = await getDb();
-  const questionDocs = await db
-    .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
-    .find({ paperSlug }, { projection: ANSWER_FIELDS })
-    .sort({ questionNumber: 1 })
-    .toArray();
-  if (questionDocs.length === 0) return null;
-
-  const compMap = await fetchComprehensionMap(questionDocs);
-
-  const questionsBySection = new Map<PyqSection, PyqQuestion[]>(
-    SECTION_ORDER.map((name) => [name, []])
-  );
-  for (const doc of questionDocs) {
-    questionsBySection.get(doc.section)?.push(toPyqQuestion(doc, compMap));
-  }
-
-  const meta = getPyqPaper(paperSlug);
-  const first = questionDocs[0];
+  const loaded = await loadPaperDocs(paperSlug, false);
+  if (!loaded) return null;
+  const { questionDocs, compMap } = loaded;
 
   return {
-    paperSlug,
-    examYear: meta?.examYear ?? first.examYear,
-    examSlot: meta?.examSlot ?? first.examSlot,
-    sections: SECTION_ORDER.map((name) => ({ name, questions: questionsBySection.get(name) ?? [] })),
+    ...resolvePaperMeta(paperSlug, questionDocs[0]),
+    sections: groupBySection(questionDocs, (doc) => toPyqQuestion(doc, compMap)),
   };
 }
 
 /**
- * Fetches the answer + explanation for a single question, scoped to its
- * paper (defense-in-depth against mismatched route params).
+ * The same paper with every answer key and explanation attached, for the server-rendered
+ * "full paper with solutions" section. Kept separate from `fetchPyqPaper` so the browse
+ * player and the mock test keep reading an answer-free shape.
  */
-export async function fetchPyqQuestionSolution(
-  paperSlug: string,
-  questionId: string
-): Promise<PyqSolution | null> {
-  if (!ObjectId.isValid(questionId)) return null;
-  const db = await getDb();
-  const doc = await db
-    .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
-    .findOne(
-      { _id: new ObjectId(questionId), paperSlug },
-      { projection: { type: 1, correctOptionIndex: 1, correctAnswer: 1, explanation: 1 } }
-    );
-  if (!doc) return null;
+export async function fetchPyqPaperSolutions(paperSlug: string): Promise<PyqSolvedPaper | null> {
+  const loaded = await loadPaperDocs(paperSlug, true);
+  if (!loaded) return null;
+  const { questionDocs, compMap } = loaded;
 
   return {
-    type: doc.type,
-    correctOptionIndex: doc.correctOptionIndex ?? null,
-    correctAnswer: doc.correctAnswer ?? null,
-    explanation: doc.explanation ?? { text: null, imageUrls: [] },
+    ...resolvePaperMeta(paperSlug, questionDocs[0]),
+    sections: groupBySection(questionDocs, (doc) => ({
+      ...toPyqQuestion(doc, compMap),
+      correctOptionIndex: doc.correctOptionIndex ?? null,
+      correctAnswer: doc.correctAnswer ?? null,
+      explanation: doc.explanation ?? { text: null, imageUrls: [] },
+    })),
   };
 }
 

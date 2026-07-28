@@ -15,7 +15,7 @@ import { ProgressProvider } from "../lib/ProgressContext";
 import RoadmapContent from "../components/RoadmapContent";
 
 export const metadata: Metadata = {
-  title: "CAT Previous Year Question Papers (PYQ) 1990–2025 | StudyNaksha",
+  title: "CAT Previous Year Question Papers (PYQ) 1990–2025",
   description:
     "Free CAT previous year question papers from 1990 to 2025 with detailed solutions. Practice question by question or attempt a full timed mock test. Covers VARC, DILR and Quant sections.",
   alternates: { canonical: `${ENV.SITE_URL}/cat-prep/pyq` },

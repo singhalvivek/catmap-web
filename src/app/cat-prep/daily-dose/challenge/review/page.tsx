@@ -7,7 +7,7 @@ import DailyChallengeReviewPageClient from "./DailyChallengeReviewPageClient";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Daily Challenge · Review | StudyNaksha" };
+export const metadata: Metadata = { title: "Daily Challenge · Review" };
 
 type Props = { searchParams: Promise<{ date?: string }> };
 
