@@ -25,49 +25,24 @@ export default function SubjectTab({
   const pct = allSubs.length > 0 ? Math.round((done / allSubs.length) * 100) : 0;
 
   return (
+    // aria-pressed rather than colour alone: this is a toggle between three subjects, and
+    // nothing in the accessible name said which one was showing.
     <button
+      type="button"
       onClick={onClick}
-      style={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        padding: "12px 16px",
-        borderRadius: 10,
-        border: `2px solid ${isActive ? meta.color : "#E2E8F0"}`,
-        background: isActive ? meta.light : "#fff",
-        cursor: "pointer",
-        fontFamily: "inherit",
-        transition: "all 0.18s",
-        textAlign: "left",
-        boxShadow: isActive ? `0 0 0 1px ${meta.color}20` : "none",
-      }}
+      className="subject-tab"
+      aria-pressed={isActive}
+      aria-label={`${meta.label}, ${pct}% complete`}
     >
-      <ProgressRing percent={pct} size={40} stroke={3} color={meta.color} />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          className="font-bold"
-          style={{
-            fontSize: 15,
-            color: isActive ? meta.color : "#1E3A5F",
-            letterSpacing: "-0.2px",
-            marginBottom: 1,
-          }}
-        >
+      <ProgressRing percent={pct} size={38} stroke={3} color={meta.ring} />
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span className="subject-tab__abbr" style={{ display: "block" }}>
           {meta.abbr}
-        </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: "#94A3B8",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
+        </span>
+        <span className="subject-tab__pct" style={{ display: "block" }}>
           {pct}% done
-        </div>
-      </div>
+        </span>
+      </span>
     </button>
   );
 }

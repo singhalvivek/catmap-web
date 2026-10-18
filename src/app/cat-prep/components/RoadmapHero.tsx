@@ -3,6 +3,7 @@ import RoadmapNav from "./RoadmapNav";
 import ModeProgressBar from "./ModeProgressBar";
 import DailyDoseStreakBanner from "./DailyDoseStreakBanner";
 import type { Mode } from "../models/mode";
+import { HOME_COUNTS, PYQ_YEAR_RANGE } from "@/app/lib/homeCounts";
 
 /**
  * Copy per mode, as data. This replaced two parallel four-branch ternaries inline in the
@@ -25,7 +26,10 @@ const MODE_COPY: Record<Mode, { title: string; subtitle: string }> = {
   },
   pyq: {
     title: "CAT Previous Year Papers",
-    subtitle: "Every official CAT paper from 1990 to 2025, in one place.",
+    // Was "Every official CAT paper from 1990 to 2025", which is not true: there are 39
+    // papers covering 24 years, with 1992-95 and 2009-16 absent. The count is derived so
+    // it cannot drift from the data the page lists.
+    subtitle: `${HOME_COUNTS.pyqPapers} official papers, ${PYQ_YEAR_RANGE}. Read one with full solutions, or sit it timed.`,
   },
 };
 
@@ -42,30 +46,18 @@ export default function RoadmapHero({ mode, showNav, learn, practice, pyq }: Roa
   const copy = MODE_COPY[mode];
 
   return (
-    <div
-      style={{
-        background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
-        padding: "36px 24px 40px",
-      }}
-    >
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
-        <div
-          className="font-semibold mb-1"
-          style={{ fontSize: 12, color: "#94A3B8", letterSpacing: "0.5px" }}
-        >
-          CAT
-        </div>
-        <h1
-          className="font-extrabold text-trust-navy"
-          style={{ fontSize: "clamp(24px,4vw,36px)", margin: "0 0 6px", letterSpacing: "-0.5px" }}
-        >
-          {copy.title}
-        </h1>
-        <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 16px" }}>{copy.subtitle}</p>
+    <div className="roadmap-hero">
+      <div className="roadmap-hero__inner">
+        <p className="ed-kicker" style={{ margin: "0 0 12px" }}>
+          CAT preparation
+        </p>
+        <h1 className="display roadmap-hero__title">{copy.title}</h1>
+        <p className="roadmap-hero__subtitle">{copy.subtitle}</p>
 
         {showNav && <RoadmapNav />}
 
         {/* Overall progress — contextual to the active mode. */}
+        <div className="roadmap-hero__progress">
         {mode === "daily-dose" ? (
           <DailyDoseStreakBanner />
         ) : mode === "learn" ? (
@@ -90,6 +82,7 @@ export default function RoadmapHero({ mode, showNav, learn, practice, pyq }: Roa
             infoText="~20 official questions gives solid hands-on exposure to the real CAT format. Both Practice and Mock Test answers count."
           />
         )}
+        </div>
       </div>
     </div>
   );

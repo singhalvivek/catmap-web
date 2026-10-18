@@ -1384,3 +1384,120 @@ textarea.ed-field {
   white-space: nowrap;
   border: 0;
 }
+
+/* ---- Roadmap surface switcher ---- */
+/*
+ * Replaces a pill row that ran two competing active-state languages at once: a solid-navy
+ * active pill, plus a hardcoded `isTeal` branch that left Daily Dose and How to Prepare
+ * permanently teal-outlined whether active or not. One rule now, and the active surface is
+ * marked with aria-current rather than by colour alone.
+ */
+.roadmap-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-top: 1px solid var(--rule-firm);
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+.roadmap-nav__item {
+  position: relative;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.14s ease, background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .roadmap-nav__item:hover {
+    color: var(--ink);
+    background: var(--paper-sunk);
+  }
+}
+
+/* The active surface gets ink type and a rule beneath it — a tab, not a filled lozenge. */
+.roadmap-nav__item[aria-current="page"] {
+  color: var(--ink);
+}
+.roadmap-nav__item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: var(--accent);
+}
+
+@media (max-width: 599px) {
+  .roadmap-nav__item {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+}
+
+/* ---- Roadmap page hero ---- */
+.roadmap-hero {
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 28px 0 0;
+}
+.roadmap-hero__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.roadmap-hero__title {
+  font-size: clamp(28px, 4vw, 40px);
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.roadmap-hero__subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 20px;
+  max-width: 62ch;
+}
+.roadmap-hero__progress {
+  padding: 16px 0 18px;
+}
+
+/* ---- Subject tab ---- */
+.subject-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 15px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: var(--paper);
+  border: 1.5px solid var(--rule-firm);
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .subject-tab:hover {
+    border-color: var(--rule-hard);
+    background: var(--paper-sunk);
+  }
+}
+.subject-tab[aria-pressed="true"] {
+  border-color: var(--ink);
+  border-width: 2px;
+  background: var(--paper-sunk);
+}
+.subject-tab__abbr {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.subject-tab__pct {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
