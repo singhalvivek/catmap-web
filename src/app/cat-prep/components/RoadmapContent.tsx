@@ -18,22 +18,22 @@ import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
 import DailyDoseCard from "./DailyDoseCard";
 import DailyDoseSection from "./DailyDoseSection";
-import DailyDoseStreakBanner from "./DailyDoseStreakBanner";
 import ContinueLearning from "./ContinueLearning";
 import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
-import RoadmapNav from "./RoadmapNav";
 import PracticeTopicRow from "./PracticeTopicRow";
 
-export type Mode = "learn" | "practice" | "pyq" | "daily-dose";
 import PyqPapersList from "./PyqPapersList";
-import ModeProgressBar from "./ModeProgressBar";
 import { useProgressContext } from "../lib/ProgressContext";
 import { useTopicExpandState } from "../lib/useTopicExpandState";
 import { usePracticeMasterySummary } from "../lib/usePracticeMasterySummary";
 import { usePyqSolvedSummary } from "../lib/usePyqSolvedSummary";
 import { getPracticeSubject } from "@/constants/practiceChapters";
 import type { PyqPaperSummary } from "../models/pyq";
+import type { Mode } from "../models/mode";
+import RoadmapHero from "./RoadmapHero";
+
+export type { Mode };
 
 export default function RoadmapContent({
   subjects,
@@ -75,7 +75,8 @@ export default function RoadmapContent({
   // tracks the "URL-active" topic for replaceState when no subtopic panel is open
   const [activeTopicId, setActiveTopicId] = useState<number | null>(initialExpandedTopicId);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [mode] = useState<Mode>(initialMode);
+  // Never setState-d: this is a per-route constant, not state.
+  const mode = initialMode;
   const [openPracticeTopics, setOpenPracticeTopics] = useState<Record<string, boolean>>({});
   const [pyqPapers, setPyqPapers] = useState<PyqPaperSummary[] | null>(initialPapers ?? null);
   // ref-based guard prevents duplicate fetches without a synchronous setState in the effect body
@@ -154,68 +155,13 @@ export default function RoadmapContent({
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
       <Header />
 
-      {/* Page hero */}
-      <div
-        style={{
-          background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
-          padding: "36px 24px 40px",
-        }}
-      >
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div className="font-semibold mb-1" style={{ fontSize: 12, color: "#94A3B8", letterSpacing: "0.5px" }}>
-            CAT
-          </div>
-          <h1
-            className="font-extrabold text-trust-navy"
-            style={{ fontSize: "clamp(24px,4vw,36px)", margin: "0 0 6px", letterSpacing: "-0.5px" }}
-          >
-            {mode === "learn"
-              ? "CAT Preparation Roadmap"
-              : mode === "practice"
-              ? "CAT Practice"
-              : mode === "daily-dose"
-              ? "Your Daily Dose"
-              : "CAT Previous Year Papers"}
-          </h1>
-          <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 16px" }}>
-            {mode === "learn"
-              ? "Follow structured learning paths across all three sections"
-              : mode === "practice"
-              ? "Topic-wise practice questions across VARC, DILR and Quant"
-              : mode === "daily-dose"
-              ? "One essay, one challenge — a small daily habit that compounds."
-              : "Every official CAT paper from 1990 to 2025, in one place."}
-          </p>
-
-          {meta && activeSubject && <RoadmapNav />}
-
-          {/* Overall progress bar — contextual to the active mode */}
-          {mode === "daily-dose" ? (
-            <DailyDoseStreakBanner />
-          ) : mode === "learn" ? (
-            <ModeProgressBar
-              current={doneSubs}
-              total={totalSubs}
-              label="subtopics"
-              infoText="Counts subtopics you've marked complete in Learn mode."
-            />
-          ) : mode === "practice" ? (
-            <ModeProgressBar
-              current={practiceMastery.done}
-              total={practiceMastery.total}
-              label="subtopics practiced"
-              infoText="A subtopic counts once you've attempted every question in it — 20 for a Quant chapter, 4 for a DILR set or RC passage."
-            />
-          ) : (
-            <ModeProgressBar
-              current={pyqSolved.solved}
-              total={pyqSolved.target}
-              label="PYQ solved"
-              infoText="~20 official questions gives solid hands-on exposure to the real CAT format. Both Practice and Mock Test answers count."
-            />
-          )}
-        </div>
-      </div>
+      <RoadmapHero
+        mode={mode}
+        showNav={Boolean(meta && activeSubject)}
+        learn={{ done: doneSubs, total: totalSubs }}
+        practice={{ done: practiceMastery.done, total: practiceMastery.total }}
+        pyq={{ solved: pyqSolved.solved, target: pyqSolved.target }}
+      />
 
       {/* Main content */}
       <div
