@@ -363,8 +363,6 @@ export default function RoadmapContent({
                   key={topic.slug}
                   topic={topic}
                   section={meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"}
-                  accentColor={meta?.color ?? "var(--ink)"}
-                  chipColor={meta?.chip ?? "var(--ink-soft)"}
                   isOpen={openPracticeTopics[topic.slug] ?? false}
                   onToggle={() =>
                     setOpenPracticeTopics((prev) => ({
@@ -385,11 +383,10 @@ export default function RoadmapContent({
 
         {/* Community feedback */}
         <div
+          className="ed-invert"
           style={{
             marginTop: 48,
-            borderRadius: 16,
-            background: "linear-gradient(135deg, #1E3A5F 0%, #0F766E 100%)",
-            padding: "28px 28px",
+            padding: "28px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -398,10 +395,17 @@ export default function RoadmapContent({
           }}
         >
           <div>
-            <p className="font-extrabold" style={{ fontSize: 18, color: "#fff", margin: "0 0 4px" }}>
+            <p className="display" style={{ fontSize: 22, color: "#fff", margin: "0 0 6px" }}>
               Got feedback or found an issue?
             </p>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", margin: 0, lineHeight: 1.6 }}>
+            <p
+              style={{
+                fontSize: 15,
+                color: "rgba(255,255,255,0.7)",
+                margin: 0,
+                lineHeight: 1.6,
+              }}
+            >
               Share what&apos;s working, what&apos;s broken, or what you wish existed.
             </p>
           </div>
@@ -409,16 +413,8 @@ export default function RoadmapContent({
             href="https://t.me/studynaksha"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold flex-shrink-0"
-            style={{
-              display: "inline-block",
-              padding: "11px 22px",
-              borderRadius: 8,
-              background: "#fff",
-              color: "#1E3A5F",
-              fontSize: 14,
-              textDecoration: "none",
-            }}
+            className="ed-btn"
+            style={{ background: "var(--accent-bright)", color: "var(--ink)", flexShrink: 0 }}
           >
             Join on Telegram →
           </a>
