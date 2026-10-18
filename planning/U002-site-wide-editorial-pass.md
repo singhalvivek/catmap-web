@@ -21,6 +21,32 @@ handlers and 12 `isHovered` state variables that exist only to simulate `:hover`
 61 `SubtopicChip`s and 28 `PracticeChapterChip`s re-rendering on pointer move. Each of those
 deletes itself when the element becomes a class.
 
+## Governing principle
+
+**Functionality is frozen. UI and code are not.**
+
+Decided by the user. Every feature, state, rule and behaviour the site has today it must still
+have afterwards — same gates, same scoring, same resume, same empty states, same edge cases.
+Within that, the markup, the styling and the structure of the code are all open: U002 is a
+refactor as much as a restyle, and improving the codebase is in scope rather than a side
+effect to be minimised.
+
+What that licenses:
+- Rewriting a component's markup wholesale rather than restyling it in place.
+- Extracting shared primitives and deleting the duplicated implementations behind them.
+- Replacing inline style objects, hover handlers and `isHovered` state with CSS.
+- Splitting oversized components, tightening types, removing magic strings.
+
+What it does not license:
+- Removing, gating, or quietly changing any behaviour — including ones that look like bugs.
+- Changing a stored value's shape or key, which would discard a user's saved progress.
+- Changing what a score is, when a timer fires, or what a sign-in gate gates.
+
+The **Do not touch** section below is therefore about *behaviour*, not about files. Those files
+may be reformatted or moved if a phase genuinely needs it, but what they do must be provably
+identical afterwards — which is why the test plan ends with a manual end-to-end score
+comparison rather than a visual check.
+
 ## Three defects U001 shipped, fixed here
 
 Found by surveying for this spec, verified independently before being written down. All three
@@ -139,7 +165,7 @@ fixed mobile palette bar both clip a ring on an element scrolled under them.
 
 | # | Phase | Risk | Effort |
 |---|-------|------|--------|
-| 6 | `RoadmapContent` shell + `RoadmapNav` — four routes, 77 pages, one edit | medium | 3d |
+| 6 | `RoadmapContent` shell + `RoadmapNav` — four routes, 77 pages, one edit. **Produces the per-subject colour options to pick from** | medium | 3d |
 | 7 | How to Prepare + sitemap page | low | 1.5d |
 
 `RoadmapNav` is the single most visible piece of old design left: the pill row renders on every
@@ -201,9 +227,13 @@ Each must exist before the phase that consumes it.
     and converge `MCQOptions` and `ReviewMCQOptions` onto it rather than restyling three
     implementations into a fourth divergence.
 
-## Do not touch
+## Behaviour that must not change
 
-Logic, not presentation. Opening these for a restyle is how a visual refactor corrupts a score.
+Per the **Governing principle**, these files may be reformatted, moved or refactored — but what
+they *do* must be provably identical afterwards. They are listed because each is a place where
+a plausible-looking edit silently changes a score, a saved draft or a date, with no visible
+symptom until a user loses work. Treat every one as requiring a before/after behavioural check,
+not a visual one.
 
 - **`src/lib/pyqQueries.ts`** — all 448 lines. Especially `ANSWER_FIELDS` (:31) applied as a
   query-level projection (:147) so a caller cannot leak an answer by forgetting to strip it,
@@ -238,8 +268,20 @@ Logic, not presentation. Opening these for a restyle is how a visual refactor co
 - **`pyqPresentation.ts`, `dateIST.ts`, `essayQueries.ts`, `dailyQuizQueries.ts`,
   `dailyDoseQueries.ts`, `constants/practiceChapters.ts`** — logic and data only.
 - **All JSON-LD blocks** — FAQPage, Breadcrumb, LearningResource, Article. SEO-load-bearing.
+- **The 70% topic gate** (`DetailsPanel.tsx:69`) — intentional per the user. Same threshold,
+  same copy, same lock card; restyled only.
 
 ## Acceptance Criteria
+
+### Functionality (the hard gate)
+- [ ] **No feature, state, rule or edge case behaves differently after a phase than before it.**
+      Every sign-in gate gates the same thing, every score is the same number, every timer
+      fires at the same moment, every empty state still appears on the same condition.
+- [ ] No storage key, draft shape or stored value changes format. A draft written by the
+      pre-change build resumes on the post-change build.
+- [ ] The 70% topic gate is intact at the same threshold.
+- [ ] Any behaviour that looks like a bug is reported, not silently fixed, unless the phase
+      names it explicitly.
 
 ### Per phase
 - [ ] Each phase ships as its own branch and commit, cut fresh from `staging`.
@@ -301,48 +343,69 @@ Logic, not presentation. Opening these for a restyle is how a visual refactor co
 - The "Mixtures and Allegations" spelling fix — changes a slug and a prerendered URL.
 - Any content, copy or data change not required by a conversion.
 
+## Resolved Decisions
+
+1. **Per-subject colour — decide on sight, at build time.** Not settled in advance. Phase 6
+   produces two or three rendered options for how QA / DILR / VARC are distinguished, captured
+   with `npm run shot` so they can be compared as pixels rather than argued as hex values. The
+   candidates to build: (a) keep three identities, retoned to the editorial palette and
+   contrast-checked on both grounds; (b) collapse to ink-plus-accent and distinguish subject by
+   a non-colour channel — a rule weight, a numeral, or a kicker label; (c) a hybrid where colour
+   survives only in the progress ring and nowhere else. Whichever is picked is applied to all
+   four consumers at once (`SubjectTab`, `ProgressRing`, `SubtopicChip`, `SUBJECT_META_BY_ABBR`)
+   so the identity cannot drift.
+
+2. **Daily Dose and PYQ share one theme — convert once.** Decided by the user. The seven
+   components in `daily-dose/challenge/components/` that PYQ already imports
+   (`PyqMockTestView.tsx:15-18`, `PyqMockPageClient.tsx:14`, `PyqMockReviewPageClient.tsx:10`,
+   `PyqPaperReader.tsx:11`) are converted in place as **the** shared test player, with no
+   variant prop and no clone. Phases 14 and 15 therefore change both surfaces together, and the
+   manual test plan covers both — a daily challenge *and* a PYQ mock, end to end, on the same
+   build.
+
+3. **The 70% topic gate stays.** Decided by the user: it is intentional, not an oversight. It
+   is preserved exactly — same threshold, same copy, same lock card — and only restyled.
+   Nothing in U002 deletes, loosens or bypasses it.
+
+   One observation recorded without acting on it, because it is a product question and not a
+   styling one: progress only persists for signed-in users, so for a signed-out visitor the
+   gate has no path to 70% and the locked content is permanently unreachable. That may be
+   exactly the intent. If it is not, it needs its own item — U002 changes neither the gate nor
+   the sign-in behaviour.
+
+4. **Refactoring is in scope.** See **Governing principle**. U002 is explicitly allowed to
+   restructure components and extract primitives rather than restyle in place, so long as
+   behaviour is identical.
+
 ## Open Questions
 
-1. **Per-subject colour.** `subjectMeta.ts:11-33` gives each subject a three-colour identity
-   (QA navy, DILR teal, VARC amber, each with light and chip tints) feeding `SubjectTab`,
-   `ProgressRing`, `SubtopicChip` and `SUBJECT_META_BY_ABBR`. The single-accent palette has no
-   slot for it. Keep three identities as a token triple, collapse to ink-plus-accent, or encode
-   subject by a non-colour channel? **Decide before Phase 6** or it gets decided implicitly
-   across four components.
-2. **Does the Daily Dose challenge player convert as collateral with the PYQ mock?** Seven
-   components in `daily-dose/challenge/components/` are imported by PYQ (`PyqMockTestView.tsx:15-18`,
-   `PyqMockPageClient.tsx:14`, `PyqMockReviewPageClient.tsx:10`, `PyqPaperReader.tsx:11`) and
-   there is no theming seam. Cloning violates DRY; a variant prop adds code for questionable
-   value. Recommend converting once and saying so — but it doubles the manual test surface.
-3. **Do the chromeless routes adopt the shared Header and Footer?** There is no
+
+
+1. **Do the chromeless routes adopt the shared Header and Footer?** There is no
    `src/app/cat-prep/layout.tsx`, so Header and Footer reach only what `RoadmapContent` imports.
    The four practice players, the essay routes, the archive, the challenge and both mock routes
    have no shared chrome. Adding a layout file is structural, with SEO and navigation
    consequences — not a restyle.
-4. **Does the mock palette get a non-colour channel?** Five states must be distinguishable at a
+2. **Does the mock palette get a non-colour channel?** Five states must be distinguishable at a
    glance under exam pressure, and review needs three more. The scale clears contrast, but
    rendering five states as cream-and-tint risks turning the one screen where legibility *is*
    the product from glanceable into decoded.
-5. **Is the 70% topic gate deleted or wired up?** It is unreachable today
-   (`DetailsPanel.tsx:69`). Deleting it is the no-dead-code answer; wiring it up is a product
-   decision that also means `NodeHeader`'s hardcoded "Subtopic" badge and the lock card's copy
-   naming non-existent features both need fixing.
-6. **Does Learn get scroll reveals?** `SectionTracker` is mounted in exactly one place
+3. **Does Learn get scroll reveals?** `SectionTracker` is mounted in exactly one place
    (`src/app/page.tsx:55`), so `.reveal*` is inert everywhere else. Mounting it on `/cat-prep`
    means importing across a `home/` boundary or moving the file, and it emits `section_viewed`
    keyed on a `page` prop — so event naming must be settled or roadmap views pollute the home
    funnel. **The PYQ reading view should not get reveals**: 68 question blocks means 68
    observer targets and `opacity: 0` on a 564 KB indexed page.
-7. **Does `RoadmapContent` get split first?** One 557-line client component serves `/cat-prep`,
+4. **Does `RoadmapContent` get split first?** One 557-line client component serves `/cat-prep`,
    `/practice`, `/pyq`, `/daily-dose`, `[topic]` and `[topic]/[subtopic]` in four modes, and
    `const [mode] = useState<Mode>(initialMode)` at :78 is never set — a per-route constant in a
    `useState` wrapper. The plan converts the shell once and the bodies separately, which works;
    but if a body conversion needs structural change, splitting first is cheaper.
-8. **Does the amber family get its own token or fold into `--caution`?** How to Prepare opposes
+5. **Does the amber family get its own token or fold into `--caution`?** How to Prepare opposes
    teal "worth it" against gold "not necessary" — a rhetorical opposition, not a status. VARC's
    identity is the same amber. `--caution` carries timer-warning and in-progress semantics that
    may not want to share.
-9. **OG cards and favicon: U002 or U003?** Needs Instrument Serif fetched as an `ArrayBuffer`
+6. **OG cards and favicon: U002 or U003?** Needs Instrument Serif fetched as an `ArrayBuffer`
    under `runtime = "edge"` because `next/font/google` does not reach `ImageResponse`, plus
    stale copy ("CAT Roadmap" vs "Free CAT Preparation") and an emoji rendering as tofu. Nothing
    on-site depends on it, which makes it the clean cut if U002 runs long.
