@@ -60,32 +60,33 @@ export default async function RcPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
       <div
         style={{
-          background: "linear-gradient(160deg, #FFFBEB 0%, #FEF3C7 100%)",
+          background: "var(--paper)",
+          borderBottom: "1px solid var(--rule)",
           padding: "24px 24px 28px",
         }}
       >
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
-            <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
+          <div style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 6 }}>
+            <Link href="/cat-prep" style={{ color: "var(--ink-faint)", textDecoration: "none" }}>
               CAT Prep
             </Link>
             {" / "}
-            <span style={{ color: "#64748B" }}>Practice</span>
+            <span style={{ color: "var(--ink-soft)" }}>Practice</span>
             {" / "}
-            <span style={{ color: "#64748B" }}>VARC</span>
+            <span style={{ color: "var(--ink-soft)" }}>VARC</span>
             {" / "}
-            <span style={{ color: "#92400E", fontWeight: 600 }}>Reading Comprehensions</span>
+            <span style={{ color: "var(--caution-text)", fontWeight: 600 }}>Reading Comprehensions</span>
           </div>
           <h1
             className="font-extrabold"
-            style={{ fontSize: "clamp(18px,3vw,26px)", margin: 0, color: "#92400E", letterSpacing: "-0.3px" }}
+            style={{ fontSize: "clamp(18px,3vw,26px)", margin: 0, color: "var(--caution-text)", letterSpacing: "-0.3px" }}
           >
             Reading Comprehension
           </h1>
-          <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 4, marginBottom: 0 }}>
             Passage {num} of {total}
           </p>
         </div>

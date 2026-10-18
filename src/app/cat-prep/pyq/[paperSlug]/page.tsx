@@ -42,34 +42,35 @@ export default async function PyqPaperPage({ params }: Props) {
   const totalQuestions = paper.sections.reduce((sum, s) => sum + s.questions.length, 0);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+    <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
       <Header />
 
       <div
         style={{
-          background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
+          background: "var(--paper)",
+          borderBottom: "1px solid var(--rule)",
           padding: "24px 24px 28px",
         }}
       >
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
-            <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
+          <div style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 6 }}>
+            <Link href="/cat-prep" style={{ color: "var(--ink-faint)", textDecoration: "none" }}>
               CAT Prep
             </Link>
             {" / "}
-            <Link href="/cat-prep/pyq" style={{ color: "#94A3B8", textDecoration: "none" }}>
+            <Link href="/cat-prep/pyq" style={{ color: "var(--ink-faint)", textDecoration: "none" }}>
               PYQ
             </Link>
             {" / "}
-            <span style={{ color: "#1E3A5F", fontWeight: 600 }}>{label}</span>
+            <span style={{ color: "var(--ink)", fontWeight: 600 }}>{label}</span>
           </div>
           <h1
-            className="font-extrabold text-trust-navy"
+            className="font-extrabold"
             style={{ fontSize: "clamp(20px,3vw,28px)", margin: 0, letterSpacing: "-0.3px" }}
           >
             {label}
           </h1>
-          <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 4, marginBottom: 0 }}>
             {totalQuestions} questions with answers and explanations
           </p>
           <Link
@@ -79,9 +80,8 @@ export default async function PyqPaperPage({ params }: Props) {
               display: "inline-block",
               marginTop: 14,
               padding: "9px 18px",
-              borderRadius: 8,
-              border: "1.5px solid #1E3A5F",
-              background: "#1E3A5F",
+              border: "1.5px solid var(--ink)",
+              background: "var(--ink)",
               color: "#fff",
               fontSize: 13,
               textDecoration: "none",

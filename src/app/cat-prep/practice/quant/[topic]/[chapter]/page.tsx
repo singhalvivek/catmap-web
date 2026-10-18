@@ -83,33 +83,34 @@ export default async function QuantChapterPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
       {/* Header breadcrumb */}
       <div
         style={{
-          background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
+          background: "var(--paper)",
+          borderBottom: "1px solid var(--rule)",
           padding: "24px 24px 28px",
         }}
       >
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
-            <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
+          <div style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 6 }}>
+            <Link href="/cat-prep" style={{ color: "var(--ink-faint)", textDecoration: "none" }}>
               CAT Prep
             </Link>
             {" / "}
-            <span style={{ color: "#64748B" }}>Practice</span>
+            <span style={{ color: "var(--ink-soft)" }}>Practice</span>
             {" / "}
-            <span style={{ color: "#64748B" }}>{topic.name}</span>
+            <span style={{ color: "var(--ink-soft)" }}>{topic.name}</span>
             {" / "}
-            <span style={{ color: "#1E3A5F", fontWeight: 600 }}>{chapter.name}</span>
+            <span style={{ color: "var(--ink)", fontWeight: 600 }}>{chapter.name}</span>
           </div>
           <h1
-            className="font-extrabold text-trust-navy"
+            className="font-extrabold"
             style={{ fontSize: "clamp(20px,3vw,28px)", margin: 0, letterSpacing: "-0.3px" }}
           >
             {chapter.name}
           </h1>
-          <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 4, marginBottom: 0 }}>
             {topic.name} · {questions.length} questions
           </p>
         </div>

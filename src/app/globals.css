@@ -1685,3 +1685,19 @@ textarea.ed-field {
   color: var(--ink-soft);
   margin: 0 0 22px;
 }
+
+/* ---- MathJax containment ---- */
+/*
+ * A long formula renders wider than a phone viewport and pushes the whole page sideways —
+ * 384 elements overflowed on a PYQ paper at 390px. Scroll the formula inside its own box
+ * instead. `auto`, never `hidden`: hidden would clip the generated mjx-container, which is
+ * the one thing the conversion notes say must never happen to question content.
+ */
+mjx-container {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+mjx-container[display="true"] {
+  padding-bottom: 2px;
+}
