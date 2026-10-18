@@ -23,25 +23,23 @@ const WRAP_STYLE = {
   flexWrap: "wrap" as const,
   background: "#fff",
   border: "1.5px solid rgba(20,184,166,0.35)",
-  borderRadius: 12,
   padding: "12px 16px",
 };
 
 function Dot({ done, label }: { done: boolean; label: string }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "#64748B" }}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--ink-soft)" }}>
       <span
         style={{
           width: 16,
           height: 16,
-          borderRadius: 999,
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
           fontSize: 10,
           fontWeight: 700,
-          background: done ? "#14B8A6" : "#E2E8F0",
-          color: done ? "#fff" : "#94A3B8",
+          background: done ? "var(--accent)" : "var(--rule)",
+          color: done ? "#fff" : "var(--ink-faint)",
         }}
       >
         {done ? "✓" : ""}
@@ -74,7 +72,7 @@ export default function DailyDoseStreakBanner() {
   if (state.status === "loading") {
     return (
       <div className="animate-pulse" style={{ ...WRAP_STYLE, height: 48 }}>
-        <div style={{ width: 140, height: 16, borderRadius: 6, background: "#E2E8F0" }} />
+        <div style={{ width: 140, height: 16, background: "var(--rule)" }} />
       </div>
     );
   }
@@ -83,7 +81,7 @@ export default function DailyDoseStreakBanner() {
     return (
       <div style={WRAP_STYLE}>
         <span style={{ fontSize: 20 }}>🔥</span>
-        <span style={{ fontSize: 13, color: "#64748B" }}>
+        <span style={{ fontSize: 13, color: "var(--ink-soft)" }}>
           Sign in to build and track your daily streak.
         </span>
       </div>
@@ -96,10 +94,10 @@ export default function DailyDoseStreakBanner() {
     <div style={WRAP_STYLE}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
         <span style={{ fontSize: 20 }}>🔥</span>
-        <span className="font-extrabold text-trust-navy" style={{ fontSize: 22, lineHeight: 1 }}>
+        <span className="font-extrabold" style={{ fontSize: 22, lineHeight: 1 }}>
           {streak}
         </span>
-        <span style={{ fontSize: 13, color: "#64748B" }}>
+        <span style={{ fontSize: 13, color: "var(--ink-soft)" }}>
           day{streak === 1 ? "" : "s"} streak
         </span>
       </div>

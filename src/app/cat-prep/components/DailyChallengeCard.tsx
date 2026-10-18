@@ -27,7 +27,7 @@ const CARD_HEADER = (
 ) => (
   <div
     style={{
-      background: "#1E3A5F",
+      background: "var(--ink)",
       padding: "11px 20px",
       display: "flex",
       alignItems: "center",
@@ -108,8 +108,7 @@ export default function DailyChallengeCard() {
   const cardWrap = (children: React.ReactNode) => (
     <div
       style={{
-        borderRadius: 16,
-        border: "1.5px solid #1E3A5F25",
+        border: "1.5px solid var(--ink)25",
         boxShadow: "0 4px 20px rgba(30,58,95,0.08)",
         overflow: "hidden",
         marginBottom: 28,
@@ -137,8 +136,7 @@ export default function DailyChallengeCard() {
             <div
               style={{
                 height: 14,
-                borderRadius: 6,
-                background: "#E2E8F0",
+                background: "var(--rule)",
                 width: "55%",
                 marginBottom: 9,
               }}
@@ -146,8 +144,7 @@ export default function DailyChallengeCard() {
             <div
               style={{
                 height: 11,
-                borderRadius: 5,
-                background: "#F1F5F9",
+                background: "var(--paper-sunk)",
                 width: "38%",
               }}
             />
@@ -156,8 +153,7 @@ export default function DailyChallengeCard() {
             style={{
               height: 34,
               width: 100,
-              borderRadius: 8,
-              background: "#E2E8F0",
+              background: "var(--rule)",
               marginLeft: 16,
               flexShrink: 0,
             }}
@@ -175,7 +171,7 @@ export default function DailyChallengeCard() {
           <p className="font-semibold text-slate-400" style={{ fontSize: 14 }}>
             No challenge scheduled for today
           </p>
-          <p style={{ fontSize: 12, color: "#94A3B8", marginTop: 3 }}>
+          <p style={{ fontSize: 12, color: "var(--ink-faint)", marginTop: 3 }}>
             Check back tomorrow!
           </p>
         </div>
@@ -197,14 +193,14 @@ export default function DailyChallengeCard() {
           }}
         >
           <div>
-            <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginBottom: 3 }}>
+            <p className="font-semibold" style={{ fontSize: 14, marginBottom: 3 }}>
               Test your CAT skills today
             </p>
-            <p style={{ fontSize: 12, color: "#94A3B8" }}>
+            <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>
               Sign in to start — your results are saved automatically
             </p>
             {loginError && (
-              <p style={{ fontSize: 11, color: "#EF4444", marginTop: 4 }}>
+              <p style={{ fontSize: 11, color: "var(--wrong-text)", marginTop: 4 }}>
                 Could not sign in. Please try again.
               </p>
             )}
@@ -214,8 +210,7 @@ export default function DailyChallengeCard() {
             className="font-bold text-white"
             style={{
               padding: "8px 18px",
-              borderRadius: 8,
-              background: "#1E3A5F",
+              background: "var(--ink)",
               border: "none",
               fontSize: 13,
               cursor: "pointer",
@@ -241,9 +236,8 @@ export default function DailyChallengeCard() {
               fontSize: 11,
               fontWeight: 600,
               padding: "2px 10px",
-              borderRadius: 100,
               background: "rgba(34,197,94,0.15)",
-              color: "#86EFAC",
+              color: "var(--correct-bright)",
               border: "1px solid rgba(134,239,172,0.3)",
             }}
           >
@@ -261,7 +255,7 @@ export default function DailyChallengeCard() {
           }}
         >
           <div>
-            <p className="font-extrabold text-trust-navy" style={{ fontSize: 22, lineHeight: 1, marginBottom: 5 }}>
+            <p className="font-extrabold" style={{ fontSize: 22, lineHeight: 1, marginBottom: 5 }}>
               {result.score}
               <span className="font-medium text-slate-300" style={{ fontSize: 15 }}>
                 {" "}/ {result.totalMarks}
@@ -269,14 +263,14 @@ export default function DailyChallengeCard() {
             </p>
             <div className="flex items-center gap-3" style={{ flexWrap: "wrap" }}>
               {result.sections.map((sec) => (
-                <span key={sec.name} style={{ fontSize: 12, color: "#64748B" }}>
+                <span key={sec.name} style={{ fontSize: 12, color: "var(--ink-soft)" }}>
                   {sec.name}:{" "}
-                  <span className="font-semibold" style={{ color: sec.score >= 0 ? "#166534" : "#991B1B" }}>
+                  <span className="font-semibold" style={{ color: sec.score >= 0 ? "var(--correct-text)" : "var(--wrong-text)" }}>
                     {sec.score > 0 ? `+${sec.score}` : sec.score}
                   </span>
                 </span>
               ))}
-              <span style={{ fontSize: 12, color: "#94A3B8" }}>
+              <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
                 · {formatTime(result.totalTimeSeconds)}
               </span>
             </div>
@@ -286,8 +280,7 @@ export default function DailyChallengeCard() {
             className="font-bold text-white"
             style={{
               padding: "8px 18px",
-              borderRadius: 8,
-              background: "#1E3A5F",
+              background: "var(--ink)",
               fontSize: 13,
               textDecoration: "none",
               whiteSpace: "nowrap",
@@ -317,10 +310,10 @@ export default function DailyChallengeCard() {
         }}
       >
         <div>
-          <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginBottom: 3 }}>
+          <p className="font-semibold" style={{ fontSize: 14, marginBottom: 3 }}>
             Test your CAT skills today
           </p>
-          <p style={{ fontSize: 12, color: "#94A3B8" }}>
+          <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>
             VARC · Quantitative · DILR · Timed sections
           </p>
         </div>
@@ -329,8 +322,7 @@ export default function DailyChallengeCard() {
           className="font-bold text-white"
           style={{
             padding: "8px 18px",
-            borderRadius: 8,
-            background: "#1E3A5F",
+            background: "var(--ink)",
             fontSize: 13,
             textDecoration: "none",
             whiteSpace: "nowrap",

@@ -15,7 +15,7 @@ type CardState = "loading" | "cta" | "completed" | "login";
 const HEADER = (badge: React.ReactNode) => (
   <div
     style={{
-      background: "#1E3A5F",
+      background: "var(--ink)",
       padding: "11px 20px",
       display: "flex",
       alignItems: "center",
@@ -85,8 +85,7 @@ export default function DailyEssayCard() {
   const cardWrap = (children: React.ReactNode) => (
     <div
       style={{
-        borderRadius: 16,
-        border: "1.5px solid #1E3A5F25",
+        border: "1.5px solid var(--ink)25",
         boxShadow: "0 4px 20px rgba(30,58,95,0.08)",
         overflow: "hidden",
         marginBottom: 28,
@@ -111,10 +110,10 @@ export default function DailyEssayCard() {
           }}
         >
           <div style={{ flex: 1 }}>
-            <div style={{ height: 14, borderRadius: 6, background: "#E2E8F0", width: "60%", marginBottom: 9 }} />
-            <div style={{ height: 11, borderRadius: 5, background: "#F1F5F9", width: "35%" }} />
+            <div style={{ height: 14, background: "var(--rule)", width: "60%", marginBottom: 9 }} />
+            <div style={{ height: 11, background: "var(--paper-sunk)", width: "35%" }} />
           </div>
-          <div style={{ height: 34, width: 110, borderRadius: 8, background: "#E2E8F0", marginLeft: 16, flexShrink: 0 }} />
+          <div style={{ height: 34, width: 110, background: "var(--rule)", marginLeft: 16, flexShrink: 0 }} />
         </div>
       </>
     );
@@ -129,9 +128,8 @@ export default function DailyEssayCard() {
               fontSize: 11,
               fontWeight: 600,
               padding: "2px 10px",
-              borderRadius: 100,
               background: "rgba(34,197,94,0.15)",
-              color: "#86EFAC",
+              color: "var(--correct-bright)",
               border: "1px solid rgba(134,239,172,0.3)",
             }}
           >
@@ -140,10 +138,10 @@ export default function DailyEssayCard() {
         )}
         <div style={{ background: "#fff", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginBottom: 3 }}>
+            <p className="font-semibold" style={{ fontSize: 14, marginBottom: 3 }}>
               {essay?.title ?? "Today's essay"}
             </p>
-            <p style={{ fontSize: 12, color: "#94A3B8" }}>
+            <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>
               {essay?.author ? `by ${essay.author}` : "Aeon"}
             </p>
           </div>
@@ -152,8 +150,7 @@ export default function DailyEssayCard() {
             className="font-bold text-white"
             style={{
               padding: "8px 16px",
-              borderRadius: 8,
-              background: "#1E3A5F",
+              background: "var(--ink)",
               fontSize: 13,
               textDecoration: "none",
               whiteSpace: "nowrap",
@@ -174,14 +171,14 @@ export default function DailyEssayCard() {
       {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{dateLabel}</span>)}
       <div style={{ background: "#fff", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginBottom: 3 }}>
+          <p className="font-semibold" style={{ fontSize: 14, marginBottom: 3 }}>
             {essay?.title ?? "Today's essay is ready"}
           </p>
-          <p style={{ fontSize: 12, color: "#94A3B8" }}>
+          <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>
             {essay?.author ? `by ${essay.author} · ` : ""}Read &amp; respond · VARC practice
           </p>
           {loginError && (
-            <p style={{ fontSize: 11, color: "#EF4444", marginTop: 4 }}>Could not sign in. Try again.</p>
+            <p style={{ fontSize: 11, color: "var(--wrong-text)", marginTop: 4 }}>Could not sign in. Try again.</p>
           )}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", marginLeft: 16, flexShrink: 0 }}>
@@ -190,8 +187,7 @@ export default function DailyEssayCard() {
             className="font-bold text-white"
             style={{
               padding: "8px 16px",
-              borderRadius: 8,
-              background: "#1E3A5F",
+              background: "var(--ink)",
               fontSize: 13,
               textDecoration: "none",
               whiteSpace: "nowrap",
@@ -204,7 +200,7 @@ export default function DailyEssayCard() {
               onClick={handleSignIn}
               style={{
                 fontSize: 11,
-                color: "#64748B",
+                color: "var(--ink-soft)",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
