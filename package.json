@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "check:content": "node scripts/check-content-links.mjs"
+    "check:content": "node scripts/check-content-links.mjs",
+    "shot": "node scripts/screenshot.mjs"
   },
   "dependencies": {
     "firebase": "^12.11.0",
@@ -25,6 +26,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "playwright": "^1.64.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.5"
