@@ -1664,3 +1664,24 @@ textarea.ed-field {
   color: var(--ink-soft);
   margin: 0;
 }
+
+/* ---- Sign-in dialog ---- */
+.sign-in-modal {
+  transform: translate(-50%, -50%);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--accent);
+  padding: 26px 24px;
+  width: min(340px, calc(100vw - 48px));
+}
+.sign-in-modal__title {
+  font-size: 22px;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.sign-in-modal__body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 22px;
+}

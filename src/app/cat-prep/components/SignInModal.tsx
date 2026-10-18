@@ -1,7 +1,8 @@
 // SignInModal — reusable Google sign-in prompt modal
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import { useDialog } from "../lib/useDialog";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { trackEvent } from "@/app/components/analytics";
@@ -18,6 +19,8 @@ export default function SignInModal({
   triggerLocation?: string;
 }) {
   const [signing, setSigning] = useState(false);
+  const titleId = useId();
+  const dialogRef = useDialog(onClose);
 
   async function handleSignIn() {
     setSigning(true);
@@ -41,52 +44,32 @@ export default function SignInModal({
         aria-hidden
       />
       <div
-        className="fixed z-[202] top-1/2 left-1/2"
-        style={{
-          transform: "translate(-50%, -50%)",
-          background: "#fff",
-          borderRadius: 16,
-          padding: "28px 24px",
-          textAlign: "center",
-          width: "min(300px, calc(100vw - 48px))",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-        }}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="fixed z-[202] top-1/2 left-1/2 sign-in-modal"
       >
-        <div className="font-bold text-trust-navy" style={{ fontSize: 17, marginBottom: 8 }}>
+        <p id={titleId} className="display sign-in-modal__title">
           Sign in to practice
-        </div>
-        <p style={{ fontSize: 13, color: "#64748B", marginBottom: 24, lineHeight: 1.6 }}>
-          {message}
         </p>
+        <p className="sign-in-modal__body">{message}</p>
         <button
           onClick={handleSignIn}
           disabled={signing}
-          className="w-full font-semibold"
-          style={{
-            background: "#1E3A5F",
-            color: "#fff",
-            border: "none",
-            borderRadius: 10,
-            padding: "12px 16px",
-            fontSize: 14,
-            cursor: signing ? "not-allowed" : "pointer",
-            fontFamily: "inherit",
-            opacity: signing ? 0.7 : 1,
-          }}
+          aria-busy={signing}
+          className="ed-btn"
+          data-weight="primary"
+          style={{ width: "100%" }}
         >
           {signing ? "Signing in…" : "Sign in with Google"}
         </button>
         <button
           onClick={onClose}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#94A3B8",
-            fontSize: 13,
-            cursor: "pointer",
-            marginTop: 12,
-            fontFamily: "inherit",
-          }}
+          className="ed-btn"
+          data-weight="quiet"
+          style={{ width: "100%", marginTop: 8 }}
         >
           Cancel
         </button>

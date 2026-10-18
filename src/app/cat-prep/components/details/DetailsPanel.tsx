@@ -2,6 +2,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { useDialog } from "../../lib/useDialog";
 import { Node } from "../../models/node";
 import { Description } from "../../models/description";
 import { Resource } from "../../models/resource";
@@ -61,6 +62,8 @@ export default function DetailsPanel({
   const panelRef    = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const touchDeltaY = useRef(0);
+  // Escape, focus trap and focus restoration — the panel had none of the three.
+  const dialogRef = useDialog(onClose);
 
   const { percent } = useMemo(
     () => calculateNodeProgress(selected, progress),
@@ -119,9 +122,14 @@ export default function DetailsPanel({
           Desktop (lg+)          : right drawer, 1/3 width, top-0 to bottom, slide from right
       */}
       <div
-        ref={panelRef}
-        role="complementary"
-        aria-label="Node details"
+        ref={(node) => {
+          panelRef.current = node;
+          dialogRef.current = node;
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-label={selected ? `${selected.title} details` : "Subtopic details"}
+        tabIndex={-1}
         className={[
           "details-panel",
           "fixed z-[200] flex flex-col",
