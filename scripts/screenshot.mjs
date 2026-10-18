@@ -35,8 +35,25 @@ function slugify(route) {
  */
 async function settle(page) {
   await page.evaluate(() => {
+    // Scroll reveals are staggered up to ~640ms and run for 700ms, so a shot taken while
+    // they are in flight differs run to run. The hidden state is scoped to
+    // [data-anim="on"], so dropping the attribute lands every element on its final frame.
+    document.documentElement.removeAttribute("data-anim");
+
+    // The home hero's roadmap plate cycles QA -> DILR -> VARC on a timer; clicking its
+    // first tab stops the cycle and pins the default subject.
     const firstTab = document.querySelector(".plate-tab");
     if (firstTab instanceof HTMLElement) firstTab.click();
+
+    // Next.js renders its dev indicator into a <nextjs-portal> element, and it changes as
+    // routes compile ("Compiling…", a spinner, a route badge). It sits over the page, so
+    // it lands in every viewport capture and makes two runs of one build differ.
+    if (!document.getElementById("shot-hide-devtools")) {
+      const style = document.createElement("style");
+      style.id = "shot-hide-devtools";
+      style.textContent = "nextjs-portal{display:none!important}";
+      document.head.appendChild(style);
+    }
   });
   await page.waitForTimeout(250);
 }
@@ -71,11 +88,8 @@ try {
         // view — walking the page is not enough for a fullPage shot, because everything
         // resets on the way back up. The hidden state is scoped to [data-anim="on"], so
         // dropping that attribute settles every element into its revealed position.
-        await page.evaluate(() => {
-          document.documentElement.removeAttribute("data-anim");
-          window.scrollTo(0, 0);
-        });
-        await page.waitForTimeout(500);
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await page.waitForTimeout(400);
         await settle(page);
 
         await page.screenshot({ path: `${stem}-full.png`, fullPage: true });

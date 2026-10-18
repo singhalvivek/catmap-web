@@ -322,7 +322,11 @@ not a visual one.
 
 ## Test Plan
 
-0. **Before any screenshot verification, restart the dev server with `.next` deleted.**
+0a. **A phase that adds unconsumed CSS proves itself by selector match, not by screenshot.**
+   Ask the browser how many elements match each new class across every surface; zero matches
+   is a stronger guarantee than a pixel diff, which only covers the states that happen to be
+   on screen.
+0b. **Before any screenshot verification, restart the dev server with `.next` deleted.**
    Turbopack caches `globals.css` and will serve a stale copy across an ordinary restart —
    the chunk hash does not even change. This was hit twice: once in U001, where header
    styles appeared not to apply at all, and once in U002 Phase 2, where a "no visual change"

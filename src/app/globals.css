@@ -878,3 +878,509 @@ body {
   max-width: 100%;
   height: auto;
 }
+
+/* =========================================== */
+/* U002 — primitive layer                       */
+/*                                              */
+/* Written ahead of its consumers. Nothing in   */
+/* the app uses these yet; the surface phases   */
+/* adopt them one at a time.                    */
+/*                                              */
+/* Variants live on data-* attributes rather    */
+/* than in concatenated class names, so a       */
+/* component passes state straight through to   */
+/* CSS instead of computing a className. Square */
+/* corners by default: the editorial language   */
+/* has no rounded cards, and the 18 distinct    */
+/* borderRadius values in the old surfaces are  */
+/* exactly what this replaces.                  */
+/* =========================================== */
+
+/* ---- Buttons ---- */
+.ed-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 12px 22px;
+  border: 1.5px solid transparent;
+  background: none;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease,
+    box-shadow 0.14s ease,
+    transform 0.14s ease;
+}
+
+.ed-btn[data-weight="primary"] {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--accent);
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="primary"]:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--accent);
+  }
+}
+.ed-btn[data-weight="primary"]:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+
+.ed-btn[data-weight="secondary"] {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="secondary"]:hover:not(:disabled) {
+    background: var(--paper-sunk);
+  }
+}
+
+.ed-btn[data-weight="quiet"] {
+  color: var(--ink-soft);
+  padding-inline: 10px;
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="quiet"]:hover:not(:disabled) {
+    color: var(--ink);
+    background: var(--paper-sunk);
+  }
+}
+
+/* For the navy test bars, where the ground is ink rather than paper. */
+.ed-btn[data-weight="on-dark"] {
+  border-color: rgba(255, 255, 255, 0.42);
+  color: #fff;
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="on-dark"]:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-bright);
+  }
+}
+
+/* A real disabled and pending state. Five sites today express "pending" only by swapping
+   the label to a loading word, with no spinner and nothing announced. */
+.ed-btn:disabled,
+.ed-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ed-btn[aria-busy="true"] {
+  cursor: progress;
+}
+.ed-btn[aria-busy="true"]::after {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: edSpin 0.7s linear infinite;
+}
+@keyframes edSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-btn {
+    transition: none;
+  }
+  .ed-btn[aria-busy="true"]::after {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.5;
+  }
+}
+
+/* ---- Text fields ---- */
+.ed-field {
+  font-family: inherit;
+  /* 16px is deliberate: iOS Safari zooms the viewport on focus for anything smaller. */
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--rule-firm);
+  padding: 11px 14px;
+  width: 100%;
+  transition: border-color 0.14s ease;
+}
+.ed-field::placeholder {
+  color: var(--ink-faint);
+}
+@media (hover: hover) {
+  .ed-field:hover:not(:disabled) {
+    border-color: var(--rule-hard);
+  }
+}
+.ed-field:disabled {
+  background: var(--paper-sunk);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+.ed-field[aria-invalid="true"] {
+  border-color: var(--wrong-text);
+}
+textarea.ed-field {
+  resize: vertical;
+  min-height: 104px;
+}
+
+/* ---- Question palette cell ---- */
+.ed-cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border: 1.5px solid var(--rule-hard);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/*
+ * Every state carries a MARK as well as a tint. Correctness and progress are colour-only
+ * across the whole site today, and this is the one screen where legibility is the product.
+ * The mark is decorative; the state itself belongs in the accessible name, which the
+ * component supplies — today it announces only the question number in all five states.
+ */
+.ed-cell::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.ed-cell[data-state="visited"] {
+  border-color: var(--caution-text);
+}
+.ed-cell[data-state="visited"]::after {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--caution-text);
+  bottom: 3px;
+}
+.ed-cell[data-state="answered"] {
+  border-color: var(--correct-text);
+  background: var(--correct-wash);
+  color: var(--correct-text);
+}
+.ed-cell[data-state="answered"]::after {
+  width: 7px;
+  height: 4px;
+  border-left: 2px solid var(--correct-text);
+  border-bottom: 2px solid var(--correct-text);
+  transform: rotate(-45deg);
+  bottom: 4px;
+  right: 3px;
+}
+.ed-cell[data-state="review"] {
+  border-color: var(--review-text);
+  background: var(--review-wash);
+  color: var(--review-text);
+}
+/* A corner wedge, so review reads differently from answered without relying on hue. */
+.ed-cell[data-state="review"]::after {
+  top: 0;
+  right: 0;
+  border-top: 8px solid var(--review-text);
+  border-left: 8px solid transparent;
+}
+.ed-cell[data-state="wrong"] {
+  border-color: var(--wrong-text);
+  background: var(--wrong-wash);
+  color: var(--wrong-text);
+}
+.ed-cell[aria-current="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/*
+ * The ring REPLACES the border rather than offsetting it: the global 2px ring at 2px offset
+ * collides with neighbouring cells at a 6px gap. Inset, so the geometry never shifts.
+ */
+.ed-cell:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--focus-ring);
+}
+
+/* ---- Progress meter ---- */
+.ed-meter {
+  display: block;
+  width: 100%;
+  height: 6px;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+/* The element carries role="progressbar" and aria-valuenow — no progress indicator on the
+   site has either today. --meter-value is a plain 0-100 number. */
+.ed-meter__fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--meter-value, 0) * 1%);
+  background: var(--accent);
+  transition: width 0.3s var(--ease-out-expo);
+}
+.ed-meter[data-state="inert"] .ed-meter__fill {
+  background: var(--inert-text);
+}
+.ed-meter[data-state="caution"] .ed-meter__fill {
+  background: var(--caution-text);
+}
+.ed-meter[data-state="correct"] .ed-meter__fill {
+  background: var(--correct-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-meter__fill {
+    transition: none;
+  }
+}
+
+/* ---- Chips, pills, badges ---- */
+/* Interactive tag — the subtopic and chapter chips. Converting these to CSS is what lets
+   the 8 onMouseEnter handlers and 12 isHovered state variables be deleted. */
+.ed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 9px 14px;
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .ed-chip:hover {
+    border-color: var(--accent);
+    background: var(--paper-sunk);
+  }
+}
+.ed-chip[aria-current="true"],
+.ed-chip[data-selected="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.ed-chip[data-state="inert"] {
+  color: var(--inert-text);
+}
+.ed-chip[data-state="caution"] {
+  border-color: var(--caution-text);
+}
+.ed-chip[data-state="correct"] {
+  border-color: var(--correct-text);
+}
+
+/* Non-interactive status label. */
+.ed-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 5px 9px;
+  border: 1px solid currentColor;
+  color: var(--inert-text);
+}
+.ed-pill[data-state="correct"] {
+  color: var(--correct-text);
+  background: var(--correct-wash);
+}
+.ed-pill[data-state="wrong"] {
+  color: var(--wrong-text);
+  background: var(--wrong-wash);
+}
+.ed-pill[data-state="caution"] {
+  color: var(--caution-text);
+  background: var(--caution-wash);
+}
+.ed-pill[data-state="review"] {
+  color: var(--review-text);
+  background: var(--review-wash);
+}
+
+/*
+ * Difficulty and similar scales. Deliberately NOT the correct/wrong palette: today
+ * DifficultyBadge reuses the exact same green and red, so one tint means "correct" on an
+ * option and "Easy" on a badge 200px away on the same screen. Rule weight carries the
+ * scale instead, which also survives greyscale and print.
+ */
+.ed-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 4px 8px;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--rule-hard);
+  background: var(--paper-sunk);
+}
+.ed-badge[data-level="2"] {
+  border-left-width: 4px;
+}
+.ed-badge[data-level="3"] {
+  border-left-width: 6px;
+  color: var(--ink);
+}
+
+/* ---- Answer option ---- */
+.ed-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.55;
+  text-align: left;
+  padding: 13px 16px;
+  border: 1.5px solid var(--rule-hard);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .ed-option:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--paper-sunk);
+  }
+}
+.ed-option[data-state="selected"] {
+  border-color: var(--ink);
+  background: var(--paper-sunk);
+}
+.ed-option[data-state="correct"] {
+  border-color: var(--correct-text);
+  background: var(--correct-wash);
+}
+.ed-option[data-state="wrong"] {
+  border-color: var(--wrong-text);
+  background: var(--wrong-wash);
+}
+.ed-option:disabled {
+  cursor: default;
+}
+/* The letter marker. Its fill changes with state so correctness is never hue alone, and
+   the component puts the state word in the accessible name. */
+.ed-option__key {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1.5px solid currentColor;
+  color: var(--ink-soft);
+}
+.ed-option[data-state="selected"] .ed-option__key {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.ed-option[data-state="correct"] .ed-option__key {
+  background: var(--correct-text);
+  border-color: var(--correct-text);
+  color: #fff;
+}
+.ed-option[data-state="wrong"] .ed-option__key {
+  background: var(--wrong-text);
+  border-color: var(--wrong-text);
+  color: #fff;
+}
+
+/* ---- Empty states, skeletons, notices ---- */
+.ed-empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--rule-firm);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* animate-pulse is a Tailwind built-in and survived U001's cleanup, so skeletons keep it. */
+.ed-skeleton {
+  display: block;
+  height: 1em;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+}
+
+.ed-notice {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-left: 3px solid var(--inert-text);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+}
+.ed-notice[data-state="wrong"] {
+  border-left-color: var(--wrong-text);
+  background: var(--wrong-wash);
+  color: var(--wrong-text);
+}
+.ed-notice[data-state="correct"] {
+  border-left-color: var(--correct-text);
+  background: var(--correct-wash);
+  color: var(--correct-text);
+}
+.ed-notice[data-state="caution"] {
+  border-left-color: var(--caution-text);
+  background: var(--caution-wash);
+  color: var(--caution-text);
+}
+
+/* Visually hidden but announced. For status text that must reach a screen reader without
+   occupying space — the palette's state words, and later the timer's threshold calls. */
+.ed-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
