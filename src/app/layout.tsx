@@ -20,10 +20,9 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
   variable: "--font-instrument",
-  // Registered here because the CSS variable has to resolve site-wide, but not preloaded:
-  // only /home-preview sets display type today, and preloading would make every other
-  // page pay for a font it never paints. Flip to true when this becomes the home page.
-  preload: false,
+  // Preloaded: the home page paints display type above the fold, so the font is on the
+  // critical path for the site's most-linked route.
+  preload: true,
 });
 
 const websiteSchema = {
@@ -32,36 +31,36 @@ const websiteSchema = {
   name: "StudyNaksha",
   url: ENV.SITE_URL,
   description:
-    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+    "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
 };
 
 export const metadata: Metadata = {
   title: {
-    default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+    default: "StudyNaksha — Free CAT Preparation",
     template: "%s | StudyNaksha",
   },
   description:
-    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+    "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
   metadataBase: new URL(ENV.SITE_URL),
   openGraph: {
     type: "website",
     siteName: "StudyNaksha",
     locale: "en_IN",
     title: {
-      default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+      default: "StudyNaksha — Free CAT Preparation",
       template: "%s | StudyNaksha",
     },
     description:
-      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+      "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
   },
   twitter: {
     card: "summary_large_image",
     title: {
-      default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+      default: "StudyNaksha — Free CAT Preparation",
       template: "%s | StudyNaksha",
     },
     description:
-      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+      "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
   },
 };
 

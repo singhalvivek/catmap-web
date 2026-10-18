@@ -307,6 +307,32 @@ within minutes of the first capture and were not findable from the HTML:
    and the two long-form sections became heading-left / content-right splits so they stop
    leaving half the page blank.
 
+**Phase B — the swap, as shipped**
+
+- `/home-preview` moved into `src/app/page.tsx` and the preview route deleted. The page keeps
+  the analytics id `landing` from the old page, so the GA4 funnel stays continuous rather
+  than reading as the landing page losing all its traffic.
+- `LandingPageClient.tsx` (1,006 lines) deleted. `src/app/data.ts` deleted with it — once the
+  client page was gone nothing imported `FAQS`, and `COURSES` was already dead.
+- Title and description on `/` now derive their figures from `homeCounts`, and the page emits
+  `FAQPage` structured data from `HOME_FAQS`.
+- `layout.tsx`: the site-wide title, description, OG, Twitter and the `websiteSchema` JSON-LD
+  all drop "community-driven" and "CAT and other competitive exam preparation" — 7 occurrences
+  across 4 metadata blocks plus the schema, which sits outside the `metadata` object and is
+  easy to miss. Instrument Serif flipped to `preload: true` now that `/` paints display type
+  above the fold.
+- Dead CSS removed: `.btn-primary`, `.btn-secondary`, `.card-hover` and the three `animate-*`
+  utilities with their keyframes. `.faq-answer`, `.details-panel` and `.svg-diagram` were
+  verified as still used by the `/cat-prep` surfaces and kept. The legacy `@theme` tokens
+  (`--trust-blue`, `--calm-bg`, the shadow set) generate Tailwind utilities those pages still
+  use, so pruning them belongs to U002.
+
+**Waitlist removed entirely**, at the user's direction — the open question above is closed in
+favour of deletion. Gone: `src/app/api/waitlist/route.ts`, `src/lib/waitlistQueries.ts`,
+`src/lib/waitlistValidation.ts`, `src/app/cat-prep/models/waitlist.ts` and
+`src/__tests__/waitlistValidation.test.ts`. The suite drops from 31 tests to 26 accordingly,
+and `planning/G003` is marked superseded.
+
 **Two content defects found, not fixed, both outside U001:**
 - Node 20 is titled "Mixtures and Allegations" — a misspelling of *Alligations*, which
   `practiceChapters.ts` spells correctly. Fixing it changes a slug and a prerendered URL, so

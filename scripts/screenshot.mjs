@@ -2,7 +2,7 @@
 //
 // Usage:  npm run dev           (in one terminal)
 //         npm run shot          (in another)
-//         npm run shot -- /home-preview /cat-prep/pyq
+//         npm run shot -- /cat-prep/pyq /cat-prep/practice
 //
 // Writes PNGs to .screenshots/ (git-ignored). Needs Chromium:
 //         npx playwright install chromium
@@ -13,7 +13,7 @@ const BASE = process.env.SHOT_BASE_URL ?? "http://localhost:3000";
 const OUT = process.env.SHOT_OUT ?? ".screenshots";
 
 const routes = process.argv.slice(2);
-const ROUTES = routes.length > 0 ? routes : ["/", "/home-preview"];
+const ROUTES = routes.length > 0 ? routes : ["/", "/cat-prep"];
 
 const VIEWPORTS = [
   { name: "desktop", width: 1440, height: 900 },
