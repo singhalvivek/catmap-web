@@ -323,15 +323,35 @@ within minutes of the first capture and were not findable from the HTML:
   above the fold.
 - Dead CSS removed: `.btn-primary`, `.btn-secondary`, `.card-hover` and the three `animate-*`
   utilities with their keyframes. `.faq-answer`, `.details-panel` and `.svg-diagram` were
-  verified as still used by the `/cat-prep` surfaces and kept. The legacy `@theme` tokens
-  (`--trust-blue`, `--calm-bg`, the shadow set) generate Tailwind utilities those pages still
-  use, so pruning them belongs to U002.
+  verified as still used by the `/cat-prep` surfaces and kept.
+
+  **Correction (U002 survey).** This spec originally claimed the legacy `@theme` tokens
+  generate Tailwind utilities the `/cat-prep` pages still use. That is wrong. Verified counts
+  across `src/**/*.{ts,tsx}`: `--trust-navy` has **82** usages; `--trust-blue`, `--hope-teal`,
+  `--warm-gold`, `--calm-bg`, `--calm-border`, `--page-bg` and all four `--shadow-*` have
+  **zero each**. The surfaces use raw hex (`#1E3A5F` ×107, `#94A3B8` ×80, `#E2E8F0` ×70), not
+  the utilities. Only `--trust-navy` is load-bearing; the rest are deleted in U002 Phase 1.
 
 **Waitlist removed entirely**, at the user's direction — the open question above is closed in
 favour of deletion. Gone: `src/app/api/waitlist/route.ts`, `src/lib/waitlistQueries.ts`,
 `src/lib/waitlistValidation.ts`, `src/app/cat-prep/models/waitlist.ts` and
 `src/__tests__/waitlistValidation.test.ts`. The suite drops from 31 tests to 26 accordingly,
 and `planning/G003` is marked superseded.
+
+**Three defects in this work, found by the U002 survey and fixed there**
+
+Recorded here because they are U001's, not U002's. All verified independently.
+
+1. `--ink-faint` (`#6b7589`) is **4.41:1** on `--paper` and **4.04:1** on `--paper-sunk`, below
+   the 4.5:1 AA threshold for normal text, and is live at 12-13px in `SurfaceList.tsx:65`,
+   `RoadmapPlate.tsx:170` and `FaqAccordion.tsx:62`. The acceptance criterion above claiming
+   "primary copy meets WCAG AA" was checked against `--accent-text` and not against this.
+   Retired to `#5A6478` (5.66 / 5.19) in U002 Phase 2.
+2. `.ed-page > *` (`globals.css:252-255`) forces `z-index: 1` on every direct child. Tailwind
+   v4 emits utilities inside `@layer utilities`, so this unlayered rule beats them — adding
+   `ed-page` to a `/cat-prep` root would clamp `DetailsPanel` and `SignInModal` behind the
+   sticky header. Latent today because `ed-page` is on exactly one element.
+3. `--measure: 68ch` (`globals.css:78`) was added and never used.
 
 **Two content defects found, not fixed, both outside U001:**
 - Node 20 is titled "Mixtures and Allegations" — a misspelling of *Alligations*, which
