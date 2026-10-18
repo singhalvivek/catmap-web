@@ -1,3 +1,4 @@
+// layout — root layout: fonts, site-wide metadata, analytics and MathJax
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import Script from "next/script";

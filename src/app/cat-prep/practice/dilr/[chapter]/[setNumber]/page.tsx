@@ -1,3 +1,4 @@
+// page — one DILR practice set, prerendered per chapter/set number
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchDilrSet, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";

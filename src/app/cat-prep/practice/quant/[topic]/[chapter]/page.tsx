@@ -1,3 +1,4 @@
+// page — one Quant practice chapter, prerendered per topic/chapter slug
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";

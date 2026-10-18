@@ -1,3 +1,4 @@
+// page — /cat-prep/how-to-prepare: the written CAT preparation guide
 import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";

@@ -1,3 +1,4 @@
+// page — /cat-prep/daily-dose: the Daily Dose hub
 import type { Metadata } from "next";
 import data from "../data.json";
 import descriptions from "../description.json";

@@ -1,3 +1,4 @@
+// firebase — browser Firebase app, auth and Google provider singletons
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";

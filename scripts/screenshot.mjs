@@ -27,6 +27,20 @@ function slugify(route) {
   return trimmed === "" ? "home" : trimmed.replace(/\//g, "-");
 }
 
+/**
+ * Pin anything that animates on a timer, so two runs of the same build produce
+ * byte-identical PNGs and a diff means a real change. Currently that is the home hero's
+ * roadmap plate, which cycles QA -> DILR -> VARC every few seconds; clicking its first tab
+ * stops the cycle and pins the default subject.
+ */
+async function settle(page) {
+  await page.evaluate(() => {
+    const firstTab = document.querySelector(".plate-tab");
+    if (firstTab instanceof HTMLElement) firstTab.click();
+  });
+  await page.waitForTimeout(250);
+}
+
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();
@@ -48,6 +62,8 @@ try {
         await page.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(500);
 
+        await settle(page);
+
         const stem = `${OUT}/${slugify(route)}-${viewport.name}`;
         await page.screenshot({ path: `${stem}-top.png` });
 
@@ -60,6 +76,7 @@ try {
           window.scrollTo(0, 0);
         });
         await page.waitForTimeout(500);
+        await settle(page);
 
         await page.screenshot({ path: `${stem}-full.png`, fullPage: true });
 

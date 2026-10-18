@@ -4,22 +4,11 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* existing brand tokens */
+  /* Legacy brand fill. 82 usages across the /cat-prep surfaces; retired in U002 Phase 16,
+     which is a visible darkening to --ink rather than a rename. The other nine legacy
+     tokens were removed in Phase 1 — all had zero usages, because the surfaces carry raw
+     hex rather than the utilities the @theme block generated. */
   --trust-navy: #1e3a5f;
-  --trust-blue: #2563eb;
-  --hope-teal: #14b8a6;
-  --warm-gold: #f59e0b;
-  --calm-bg: #f8fafc;
-  --calm-border: #e2e8f0;
-
-  /* new tokens from design handoff */
-  --page-bg: #fffdf8;
-
-  /* shadows */
-  --shadow-card: 0 4px 20px rgba(30, 58, 95, 0.07);
-  --shadow-card-hover: 0 12px 32px rgba(30, 58, 95, 0.1);
-  --shadow-panel: -8px 0 32px rgba(30, 58, 95, 0.1);
-  --shadow-btn-teal: 0 2px 8px rgba(20, 184, 166, 0.35);
 }
 
 @theme inline {
@@ -27,17 +16,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-jakarta);
 
-  /* brand colours */
   --color-trust-navy: var(--trust-navy);
-  --color-trust-blue: var(--trust-blue);
-  --color-hope-teal: var(--hope-teal);
-  --color-warm-gold: var(--warm-gold);
-  --color-calm-bg: var(--calm-bg);
-  --color-calm-border: var(--calm-border);
-  --color-page-bg: var(--page-bg);
-
-  /* colour token aliases */
-  --color-page-bg: var(--page-bg);
 }
 
 body {
@@ -63,7 +42,7 @@ body {
 
   /*
    * Teal is the accent and it is used boldly — fills, numerals, rules — not as a tint.
-   * --hope-teal (#14B8A6) is 1.9:1 on cream and fails AA at any size, so it is reserved
+   * The old brand teal #14B8A6 is 1.9:1 on cream and fails AA at any size, so it is reserved
    * for large fills and for type on dark ground; --accent-text is the one that carries
    * words on paper.
    */
@@ -75,7 +54,6 @@ body {
   --paper: #fcf9f2;
   --paper-sunk: #f4efe3;
 
-  --measure: 68ch;
 }
 
 @theme inline {

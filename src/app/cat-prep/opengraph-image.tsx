@@ -67,7 +67,7 @@ export default function CatPrepOGImage() {
             marginBottom: 28,
           }}
         >
-          CAT Roadmap
+          Free CAT Preparation
         </div>
 
         <div
@@ -78,7 +78,7 @@ export default function CatPrepOGImage() {
             textAlign: "center",
           }}
         >
-          Structured · Trackable · Distraction-free
+          The whole syllabus, past papers and practice. No sign-up.
         </div>
 
         <div

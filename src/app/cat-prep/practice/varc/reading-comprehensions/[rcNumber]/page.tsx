@@ -1,3 +1,4 @@
+// page — one VARC reading-comprehension passage and its questions
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchRcPassage } from "@/lib/practiceQueries";
