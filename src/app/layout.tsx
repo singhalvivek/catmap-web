@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
 import { ENV } from "@/config/env";
 import { GoogleAnalytics } from "@/app/components/GoogleAnalytics";
@@ -10,6 +10,20 @@ const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
+});
+
+// Display face for editorial headings. Google serves this family at weight 400 only —
+// there is no bold cut, which suits large display setting and is why `.display` in
+// globals.css pins font-weight to 400.
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
+  // Registered here because the CSS variable has to resolve site-wide, but not preloaded:
+  // only /home-preview sets display type today, and preloading would make every other
+  // page pay for a font it never paints. Flip to true when this becomes the home page.
+  preload: false,
 });
 
 const websiteSchema = {
@@ -58,7 +72,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakartaSans.variable} antialiased`}>
+      <body className={`${jakartaSans.variable} ${instrumentSerif.variable} antialiased`}>
         {children}
         <JsonLd data={websiteSchema} />
         <GoogleAnalytics />
