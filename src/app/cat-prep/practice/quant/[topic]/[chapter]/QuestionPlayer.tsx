@@ -290,8 +290,7 @@ export default function QuestionPlayer({
                     fontWeight: 700,
                     letterSpacing: "6px",
                     fontFamily: "inherit",
-                    outline: "none",
-                  }}
+                                      }}
                 />
 
                 {isChecked && (

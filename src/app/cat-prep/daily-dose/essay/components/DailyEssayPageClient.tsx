@@ -441,8 +441,7 @@ export default function DailyEssayPageClient({
                       color: "#334155",
                       fontFamily: "inherit",
                       resize: "vertical",
-                      outline: "none",
-                      background: "#FAFBFC",
+                                            background: "#FAFBFC",
                       boxSizing: "border-box",
                     }}
                   />

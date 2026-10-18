@@ -139,6 +139,7 @@ half-converted in a way a user would see.
 | 1 | Inert groundwork: delete dead files and the 9 unused legacy tokens, fix the duplicate `--color-page-bg` (`globals.css:37` and `:40`), add 4 missing file headers, correct the stale "CAT Roadmap" string in both OG images | low | 0.5d |
 | 2 | Token layer: the semantic scale above, `--rule-hard`, and the three U001 defects | low | 1d |
 | 3 | Site-wide focus system | low | 1d |
+| | *Shipped. `aria-live` deliberately deferred — see note below the table.* | | |
 | 4 | CSS primitive layer, written but not yet consumed | low | 2d |
 | 5 | Brand mark and shared micro-chrome | low | 1.5d |
 | 5b | Split `RoadmapContent` into four mode bodies; `useState` wrapper becomes a prop. **Zero pixel change** | low | 1d |
@@ -161,6 +162,15 @@ Three geometry constraints to design around, all present today: `outline-offset:
 clipped by `overflow: hidden`, which `RoadmapContent.tsx:524` and `DailyChallengeCard.tsx:245`
 both set; 32×32 palette cells at 6px gaps collide at 3px offset; and the sticky header plus the
 fixed mobile palette bar both clip a ring on an element scrolled under them.
+
+**Phase 3 deviation, recorded.** The phase plan bundled `aria-live` for the timer and error
+paths with the focus ring. It shipped without them, on purpose. The ring is pure CSS with zero
+specificity and cannot change behaviour; live regions are *new behaviour* in components the
+**Behaviour that must not change** list covers, and the timer specifically needs a
+visually-hidden region firing at thresholds rather than `aria-live="polite"` on a per-second
+counter. Bundling them would have made a provably inert phase into a risky one. They move to
+the phases that own those components — the timer to 14/15, error paths to the surface phase
+that touches each.
 
 ### Stage B — Shells and static pages
 

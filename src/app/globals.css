@@ -56,6 +56,9 @@ body {
   --accent-text: #0a675f;
   --accent-bright: #2dd4bf;
 
+  /* Default focus ring; dark grounds flip it to --accent-bright by inheritance. */
+  --focus-ring: var(--accent-text);
+
   /* Warmer than the old near-white, so the paper reads as paper. */
   --paper: #fcf9f2;
   --paper-sunk: #f4efe3;
@@ -218,17 +221,35 @@ body {
 }
 
 /*
- * Focus rings. Scoped to .ed-page rather than applied globally: the rest of the site has
- * no focus styling at all, and fixing that everywhere is a real accessibility change that
- * deserves its own spec and its own review, not a silent ride-along on a preview route.
+ * ---- Focus ring, site-wide (U002 phase 3) ----
+ *
+ * The U001 version of this was scoped to .ed-page and said in its own comment that doing it
+ * properly "deserves its own spec". This is that. `.ed-page` sits on exactly one element, so
+ * until now all 77 prerendered roadmap pages had no focus indicator on anything.
+ *
+ * `:where()` contributes ZERO specificity, so this reaches all 65 buttons under
+ * src/app/cat-prep/ without editing one of them — and any component that wants a different
+ * ring still wins by default, with no !important anywhere.
+ *
+ * The colour is a variable rather than a literal so a dark container can flip it by
+ * inheritance instead of every control on dark ground needing its own rule.
+ *
+ * Offset is 2px, not U001's 3px: `overflow: hidden` ancestors clip an outline
+ * (RoadmapContent.tsx:524, DailyChallengeCard.tsx:245 both set it), and 32px palette cells
+ * at 6px gaps collide at 3px. No border-radius here — an outline already follows the
+ * element's own corner radius, and forcing one would reshape square controls on focus.
  */
-.ed-page a:focus-visible,
-.ed-page button:focus-visible,
-.ed-page summary:focus-visible,
-.ed-page [tabindex]:focus-visible {
-  outline: 2px solid var(--accent-text);
-  outline-offset: 3px;
-  border-radius: 2px;
+:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Dark ground: anything inside these inherits the bright ring instead. --accent-text is
+   6.40:1 on cream but only 1.6:1 on --ink, so the flip is legibility, not taste. */
+.ed-invert,
+.site-footer,
+[data-ground="dark"] {
+  --focus-ring: var(--accent-bright);
 }
 
 /* Editorial row: a rule-separated list, not a card grid. On hover the row warms and an
@@ -520,11 +541,6 @@ body {
     border-color: var(--accent-bright);
   }
 }
-.plate-tab:focus-visible {
-  outline: 2px solid var(--accent-bright);
-  outline-offset: 2px;
-}
-
 /* Switching section cross-fades the panel rather than snapping it. */
 .plate-body {
   animation: plateSwap 0.4s var(--ease-out-expo) both;
@@ -586,11 +602,6 @@ body {
     color: var(--accent-text);
   }
 }
-.plate-topic__summary:focus-visible {
-  outline: 2px solid var(--accent-text);
-  outline-offset: 2px;
-}
-
 .plate-topic__list {
   list-style: none;
   margin: 0 0 10px;
@@ -683,11 +694,6 @@ body {
     color: var(--accent-text);
   }
 }
-.site-header__auth:focus-visible {
-  outline: 2px solid var(--accent-text);
-  outline-offset: 3px;
-}
-
 /* ---- Shared site footer ---- */
 .site-footer {
   background: var(--ink);
@@ -781,11 +787,6 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   font-size: 12.5px;
   color: rgba(255, 255, 255, 0.42);
-}
-
-.site-footer a:focus-visible {
-  outline: 2px solid var(--accent-bright);
-  outline-offset: 3px;
 }
 
 /* Row without a numeral column — body and arrow only, so the text aligns with the

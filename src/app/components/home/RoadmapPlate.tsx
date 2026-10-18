@@ -76,6 +76,7 @@ export default function RoadmapPlate({ subjects }: Props) {
         }}
       >
         <div
+          data-ground="dark"
           style={{
             display: "flex",
             alignItems: "center",

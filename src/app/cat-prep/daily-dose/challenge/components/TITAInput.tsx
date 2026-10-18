@@ -44,8 +44,7 @@ export default function TITAInput({ value, onChange, disabled }: Props) {
           fontFamily: "inherit",
           background: disabled ? "#F8FAFC" : "#fff",
           color: "#1E3A5F",
-          outline: "none",
-        }}
+                  }}
       />
       <p className="text-slate-400" style={{ fontSize: 12, marginTop: 6 }}>
         Up to 2 decimal places. No negative marking for TITA.
