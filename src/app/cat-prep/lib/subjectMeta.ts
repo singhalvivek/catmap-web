@@ -18,11 +18,16 @@ export type SubjectIdentityMode = "retoned" | "ink" | "ring-only";
  *               weight instead of by hue.
  * "ring-only" — ink everywhere except the progress ring, which keeps a per-subject hue.
  *
- * Currently "ring-only", which is also what the three modes render identically today: the
- * only consumers converted so far (SubjectTab, ProgressRing) take `ring`, which is always
- * per-subject. The modes diverge in `chip` and `light`, consumed by SubtopicChip and the
- * selected-topic tints — all of which convert in phase 8. The choice is therefore made
- * there, against a screen where it is actually visible, rather than guessed here.
+ * RESOLVED in phase 8, and not by preference — by a constraint that only appeared once the
+ * chips were converted. A subtopic chip's border now encodes PROGRESS (inert / caution /
+ * correct), because the semantic scale requires status to be visible and not colour-only.
+ * If the same border also encoded subject, one visual channel would carry two meanings and
+ * neither would read. So `chip` and `light` have no consumer left, and subject identity
+ * survives only where it competes with nothing: the progress ring.
+ *
+ * That makes "ring-only" the live mode. "retoned" and "ink" are kept because the choice is
+ * now a real either/or worth revisiting — whether the ring keeps a per-subject hue at all,
+ * or the site is ink throughout. Switching is this one constant.
  */
 export const IDENTITY_MODE: SubjectIdentityMode = "ring-only";
 

@@ -1,4 +1,4 @@
-// TopicRow — accordion row for a TOPIC node; expands to show subtopic chips
+// TopicRow — expandable row for a TOPIC node; opens to show its subtopic chips
 "use client";
 
 import { Node } from "../models/node";
@@ -6,13 +6,17 @@ import { ProgressStatus } from "../models/progress";
 import SubtopicChip from "./SubtopicChip";
 import { trackEvent } from "@/app/components/analytics";
 
+function progressState(pct: number): string {
+  if (pct === 100) return "correct";
+  if (pct > 0) return "caution";
+  return "inert";
+}
+
 export default function TopicRow({
   topic,
   onSelectNode,
   selectedId,
   progress,
-  accentColor,
-  chipColor,
   isOpen,
   onToggle,
 }: {
@@ -20,8 +24,6 @@ export default function TopicRow({
   onSelectNode: (node: Node) => void;
   selectedId: number | null;
   progress: Record<number, ProgressStatus>;
-  accentColor: string;
-  chipColor: string;
   isOpen: boolean;
   onToggle: () => void;
 }) {
@@ -31,137 +33,73 @@ export default function TopicRow({
     (s) => (progress[s.id] ?? ProgressStatus.NOT_STARTED) === ProgressStatus.COMPLETED
   ).length;
   const pct = subtopics.length > 0 ? Math.round((done / subtopics.length) * 100) : 0;
-
-  const dotColor =
-    pct === 100 ? "#10B981" : pct > 0 ? "#F59E0B" : "#CBD5E1";
+  const state = progressState(pct);
 
   return (
-    <div style={{ marginBottom: 8 }}>
+    <div className="topic-row" data-open={isOpen}>
       <button
+        type="button"
         onClick={() => {
-          if (!isOpen) trackEvent("topic_expanded", { topic_id: String(topic.id), topic_name: topic.title });
+          if (!isOpen) {
+            trackEvent("topic_expanded", { topic_id: String(topic.id), topic_name: topic.title });
+          }
           onToggle();
         }}
         aria-expanded={isOpen}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "13px 18px",
-          borderRadius: isOpen ? "10px 10px 0 0" : 10,
-          border: `1.5px solid ${isOpen ? accentColor : "#E2E8F0"}`,
-          background: isOpen ? "#FFFDF8" : "#fff",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          transition: "all 0.18s",
-          gap: 12,
-        }}
+        className="topic-row__header"
       >
-        <div className="flex items-center gap-2.5" style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: dotColor,
-              flexShrink: 0,
-            }}
-          />
-          <span
-            className="font-bold text-trust-navy text-left"
-            style={{ fontSize: 14 }}
-          >
-            {topic.title}
-          </span>
-          <span className="font-medium text-slate-400" style={{ fontSize: 11 }}>
-            {subtopics.length} subtopics
-          </span>
-        </div>
+        <span className="topic-row__lead">
+          <span className="topic-row__dot" data-state={state} aria-hidden="true" />
+          <span className="topic-row__title">{topic.title}</span>
+          <span className="topic-row__count">{subtopics.length} subtopics</span>
+        </span>
 
-        <div className="flex items-center gap-2.5" style={{ flexShrink: 0 }}>
+        <span className="topic-row__meta">
           {subtopics.length > 0 && (
-            <div className="flex items-center gap-1.5">
-              <div
-                style={{
-                  width: 60,
-                  height: 4,
-                  borderRadius: 2,
-                  background: "#E2E8F0",
-                  overflow: "hidden",
-                }}
+            <>
+              <span
+                className="ed-meter topic-row__meter"
+                data-state={state}
+                role="progressbar"
+                aria-valuenow={done}
+                aria-valuemin={0}
+                aria-valuemax={subtopics.length}
+                aria-valuetext={`${done} of ${subtopics.length} subtopics complete`}
+                style={{ "--meter-value": pct } as React.CSSProperties}
               >
-                <div
-                  style={{
-                    width: `${pct}%`,
-                    height: "100%",
-                    background: accentColor,
-                    borderRadius: 2,
-                    transition: "width 0.6s ease",
-                  }}
-                />
-              </div>
-              <span className="font-semibold text-slate-400" style={{ fontSize: 11 }}>
-                {pct}%
+                <span className="ed-meter__fill" />
               </span>
-            </div>
+              <span className="topic-row__pct">{pct}%</span>
+            </>
           )}
-          <div
-            style={{
-              width: 22,
-              height: 22,
-              borderRadius: 6,
-              background: isOpen ? accentColor : "#F1F5F9",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: isOpen ? "#fff" : "#94A3B8",
-              fontSize: 13,
-              fontWeight: 700,
-              transition: "all 0.18s",
-              flexShrink: 0,
-            }}
-          >
+          <span className="topic-row__toggle" aria-hidden="true">
             {isOpen ? "−" : "+"}
-          </div>
-        </div>
+          </span>
+        </span>
       </button>
 
-      {/* Subtopics panel */}
-      <div
-        style={{
-          maxHeight: isOpen ? 400 : 0,
-          overflow: "hidden",
-          transition: "max-height 0.3s cubic-bezier(0.4,0,0.2,1)",
-        }}
-      >
-        <div
-          style={{
-            padding: "12px 16px 14px",
-            borderRadius: "0 0 10px 10px",
-            border: `1.5px solid ${accentColor}`,
-            borderTop: "none",
-            background: "#FAFBFC",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 8,
-          }}
-        >
-          {subtopics.map((s) => (
-            <SubtopicChip
-              key={s.id}
-              node={s}
-              isSelected={selectedId === s.id}
-              onClick={onSelectNode}
-              progress={progress}
-              chipColor={chipColor}
-            />
-          ))}
-          {subtopics.length === 0 && (
-            <span className="text-slate-400" style={{ fontSize: 13 }}>
-              Subtopics coming soon
-            </span>
-          )}
+      {/*
+        Grid-rows collapse rather than a max-height cap. The previous 400px ceiling would
+        clip a topic whose chips wrapped past it — the same defect the FAQ accordion had.
+      */}
+      <div className="ed-collapse" data-open={isOpen}>
+        <div>
+          <div className="topic-row__chips">
+            {subtopics.map((s) => (
+              <SubtopicChip
+                key={s.id}
+                node={s}
+                isSelected={selectedId === s.id}
+                onClick={onSelectNode}
+                progress={progress}
+              />
+            ))}
+            {subtopics.length === 0 && (
+              <span style={{ fontSize: 15, color: "var(--ink-faint)" }}>
+                Subtopics coming soon
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

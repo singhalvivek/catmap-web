@@ -1501,3 +1501,166 @@ textarea.ed-field {
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
+
+/* ---- Topic row (Learn) ---- */
+.topic-row {
+  border-top: 1px solid var(--rule-firm);
+}
+.topic-row:last-child {
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+.topic-row__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 4px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .topic-row__header:hover {
+    background: var(--paper-sunk);
+  }
+}
+.topic-row[data-open="true"] .topic-row__header {
+  background: var(--paper-sunk);
+}
+
+.topic-row__lead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Status dot. Shape changes with state too, so progress is never hue alone. */
+.topic-row__dot,
+.subtopic-chip__dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--inert-text);
+  background: transparent;
+}
+.topic-row__dot[data-state="caution"],
+.ed-chip[data-state="caution"] .subtopic-chip__dot {
+  border-color: var(--caution-text);
+  background: linear-gradient(to right, var(--caution-text) 50%, transparent 50%);
+}
+.topic-row__dot[data-state="correct"],
+.ed-chip[data-state="correct"] .subtopic-chip__dot {
+  border-color: var(--correct-text);
+  background: var(--correct-text);
+}
+/* On a selected chip the ground is ink, so the dot needs the bright values. */
+.ed-chip[data-selected="true"] .subtopic-chip__dot {
+  border-color: var(--paper);
+}
+.ed-chip[data-selected="true"][data-state="correct"] .subtopic-chip__dot {
+  background: var(--correct-bright);
+  border-color: var(--correct-bright);
+}
+.ed-chip[data-selected="true"][data-state="caution"] .subtopic-chip__dot {
+  border-color: var(--caution-bright);
+  background: linear-gradient(to right, var(--caution-bright) 50%, transparent 50%);
+}
+
+.topic-row__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.topic-row__count {
+  font-size: 13px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.topic-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.topic-row__meter {
+  width: 64px;
+  height: 4px;
+}
+.topic-row__pct {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.4em;
+  text-align: right;
+}
+.topic-row__toggle {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--rule-firm);
+}
+.topic-row[data-open="true"] .topic-row__toggle {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.topic-row__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 4px 18px;
+}
+
+@media (max-width: 599px) {
+  .topic-row__count,
+  .topic-row__pct {
+    display: none;
+  }
+  .topic-row__meter {
+    width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-row__header {
+    transition: none;
+  }
+}
+
+/* ---- Daily Dose promo card on the Learn surface ---- */
+.dd-promo {
+  border: 1.5px solid var(--rule-firm);
+  border-left: 4px solid var(--accent);
+  background: var(--paper-sunk);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+.dd-promo__title {
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.dd-promo__sub {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin: 0;
+}

@@ -353,8 +353,6 @@ export default function RoadmapContent({
                     }}
                     selectedId={selected?.id ?? null}
                     progress={progress}
-                    accentColor={meta?.color ?? "#1E3A5F"}
-                    chipColor={meta?.chip ?? "#566B87"}
                   />
                 ))}
             </div>
@@ -365,8 +363,8 @@ export default function RoadmapContent({
                   key={topic.slug}
                   topic={topic}
                   section={meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"}
-                  accentColor={meta?.color ?? "#1E3A5F"}
-                  chipColor={meta?.chip ?? "#566B87"}
+                  accentColor={meta?.color ?? "var(--ink)"}
+                  chipColor={meta?.chip ?? "var(--ink-soft)"}
                   isOpen={openPracticeTopics[topic.slug] ?? false}
                   onToggle={() =>
                     setOpenPracticeTopics((prev) => ({
