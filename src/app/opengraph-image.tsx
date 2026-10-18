@@ -23,7 +23,7 @@ export default function OGImage() {
           padding: 80,
         }}
       >
-        <div style={{ width: 72, height: 8, borderRadius: 4, background: OG_BRAND.teal, marginBottom: 40 }} />
+        <div style={{ width: 72, height: 8, background: OG_BRAND.teal, marginBottom: 40 }} />
 
         <div style={{ fontSize: 64, fontWeight: 800, color: OG_BRAND.navy, textAlign: "center", lineHeight: 1.15, marginBottom: 24 }}>
           Free CAT Preparation

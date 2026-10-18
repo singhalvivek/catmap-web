@@ -40,7 +40,6 @@ export default function CatPrepOGImage() {
               top: 0,
               width: 58,
               height: 100,
-              borderRadius: 10,
               background: OG_BRAND.navy,
             }}
           />
@@ -51,7 +50,6 @@ export default function CatPrepOGImage() {
               top: 0,
               width: 58,
               height: 100,
-              borderRadius: 10,
               background: OG_BRAND.teal,
             }}
           />
