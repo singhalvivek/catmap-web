@@ -42,7 +42,7 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 |----|--------|------|-------|
 | H101 | ✅ | [H101-resource-viewer.md](./H101-resource-viewer.md) | In-panel resource viewer with thumbnails |
 | H102 | ⬜ | — | Roadmap page quiz cards; real quiz on separate page |
-| L101 | ⬜ | — | Waitlist: text-box instead of dropdown |
+| L101 | ❌ | — | Waitlist: text-box instead of dropdown — closed as moot, U001 removes the waitlist entirely |
 | P001 | 🔄 | [P001-practice-questions.md](./P001-practice-questions.md) | Practice questions — Quant MCQ, DILR sets, VARC RC; Learn/Practice toggle on roadmap |
 | P002 | 🔄 | [P002-practice-player-fixes.md](./P002-practice-player-fixes.md) | Bug fixes + code reuse: RC solution cache bug, inline component remounts, mobile layout, shared PracticeOptionButton + PracticePalette |
 | P003 | 🔄 | [P003-continue-practice-strip.md](./P003-continue-practice-strip.md) | Continue Practice strip — chips for in-progress practice sessions |
@@ -61,6 +61,14 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 | G004 | 🔄 | [G004-pricing-copy-cleanup.md](./G004-pricing-copy-cleanup.md) | Remove "later ₹200/mo" from the comparison table and the FAQ |
 | G005 | 🔄 | [G005-practice-chip-link.md](./G005-practice-chip-link.md) | Practice chapter chips become real links, same defect as G001 |
 | G006 | 🔄 | [G006-pyq-single-reader.md](./G006-pyq-single-reader.md) | One reader per paper — answer inline, no login, no duplicated questions; supersedes G002's two-copy layout |
+
+---
+
+## UI Phase — October 2026
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| U001 | 🔄 | [U001-home-page-redesign.md](./U001-home-page-redesign.md) | Home page rebuilt CAT-only and surface-first in an editorial visual language; comparison table, waitlist and other-exam framing removed; `LandingPageClient` split into server components. Phase A builds it at `/home-preview` beside the live `/`; Phase B swaps it in after approval. Branch `feat/u001-home-page-redesign` |
+| U002 | ⬜ | — | Site-wide pass applying the U001 editorial tokens to the Learn/Practice/PYQ/Daily Dose surfaces |
 
 ---
 
