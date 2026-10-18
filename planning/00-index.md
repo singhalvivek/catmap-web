@@ -68,7 +68,7 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 | ID | Status | Spec | Notes |
 |----|--------|------|-------|
 | U001 | ✅ | [U001-home-page-redesign.md](./U001-home-page-redesign.md) | Home page rebuilt CAT-only and surface-first in an editorial visual language; comparison table, waitlist and other-exam framing removed; `LandingPageClient` split into server components. Phase A previewed at `/home-preview`; Phase B swapped it into `/` and deleted `LandingPageClient`, `data.ts`, the preview route and the whole waitlist (`/api/waitlist` + libs + model + tests). Branch `feat/u001-home-page-redesign` |
-| U002 | ⬜ | [U002-site-wide-editorial-pass.md](./U002-site-wide-editorial-pass.md) | Site-wide editorial pass across Learn/Practice/PYQ/Daily Dose/How to Prepare. 17 phases in 5 stages, mock engine last. Adds the semantic status scale and a site-wide focus system; fixes three U001 defects (`--ink-faint` fails AA, the `.ed-page > *` z-index trap, dead `--measure`) |
+| U002 | ⬜ | [U002-site-wide-editorial-pass.md](./U002-site-wide-editorial-pass.md) | Site-wide editorial pass across Learn/Practice/PYQ/Daily Dose/How to Prepare. 18 phases in 5 stages, all decisions settled, mock engine last. Adds the semantic status scale and a site-wide focus system; fixes three U001 defects (`--ink-faint` fails AA, the `.ed-page > *` z-index trap, dead `--measure`) |
 
 ---
 

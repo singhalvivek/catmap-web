@@ -136,11 +136,12 @@ half-converted in a way a user would see.
 
 | # | Phase | Risk | Effort |
 |---|-------|------|--------|
-| 1 | Inert groundwork: delete dead files and the 9 unused legacy tokens, fix the duplicate `--color-page-bg` (`globals.css:37` and `:40`), add 4 missing file headers | low | 0.5d |
+| 1 | Inert groundwork: delete dead files and the 9 unused legacy tokens, fix the duplicate `--color-page-bg` (`globals.css:37` and `:40`), add 4 missing file headers, correct the stale "CAT Roadmap" string in both OG images | low | 0.5d |
 | 2 | Token layer: the semantic scale above, `--rule-hard`, and the three U001 defects | low | 1d |
 | 3 | Site-wide focus system | low | 1d |
 | 4 | CSS primitive layer, written but not yet consumed | low | 2d |
 | 5 | Brand mark and shared micro-chrome | low | 1.5d |
+| 5b | Split `RoadmapContent` into four mode bodies; `useState` wrapper becomes a prop. **Zero pixel change** | low | 1d |
 
 **Dead files confirmed with zero importers:** `pyq/PyqProgressBar.tsx`,
 `daily-dose/challenge/components/QuestionReviewList.tsx`.
@@ -343,7 +344,11 @@ not a visual one.
 - The "Mixtures and Allegations" spelling fix — changes a slug and a prerendered URL.
 - Any content, copy or data change not required by a conversion.
 
-## Resolved Decisions
+## Decisions
+
+All settled. Nothing in U002 is blocked on an answer.
+
+### From the user
 
 1. **Per-subject colour — decide on sight, at build time.** Not settled in advance. Phase 6
    produces two or three rendered options for how QA / DILR / VARC are distinguished, captured
@@ -377,35 +382,61 @@ not a visual one.
    restructure components and extract primitives rather than restyle in place, so long as
    behaviour is identical.
 
-## Open Questions
+### Made during specification
 
+**5. Chromeless routes get chrome — but exam surfaces deliberately do not.**
+Split by what the surface is for, not by directory.
+- **Chrome:** the four practice players, the essay route, the essay archive, and the PYQ paper
+  reader. All are indexed, all are places a visitor lands cold, and none has a way back today —
+  the essay, archive and challenge routes have no header at all, and the practice players carry
+  a bespoke inline breadcrumb with its own gradient (`practice/quant/[topic]/[chapter]/page.tsx:86-89`).
+- **No chrome:** the PYQ mock, the mock review, and the daily challenge while running. A
+  sign-out button beside a live timer is a hazard, and navigating away mid-test risks the
+  draft. Chromeless is deliberate exam UI here, not an oversight — U002 keeps it that way.
+- **Not via `cat-prep/layout.tsx`.** A layout at that path nests over the exam routes too, and
+  excluding them would need route groups restructuring the tree. Instead a shared `PageChrome`
+  component is composed explicitly by the routes that want it: DRY, and the exclusion is
+  visible in the code rather than implied by folder shape. It also replaces the players'
+  bespoke breadcrumb.
 
+**6. The mock palette gets a non-colour channel.** Decided by consistency: the semantic scale's
+own rule 2 says correctness is never colour-only, and the palette is the screen where
+legibility *is* the product. Each state carries a distinct mark as well as a tint — plain cell
+(not visited), dot (visited, unanswered), tick (answered), corner wedge (marked for review),
+inverted `--ink` fill with ring (current) — and the status goes into the accessible name, which
+today says only the question number in all five states. Review palette likewise: tick and cross
+glyphs, not red and green alone.
 
-1. **Do the chromeless routes adopt the shared Header and Footer?** There is no
-   `src/app/cat-prep/layout.tsx`, so Header and Footer reach only what `RoadmapContent` imports.
-   The four practice players, the essay routes, the archive, the challenge and both mock routes
-   have no shared chrome. Adding a layout file is structural, with SEO and navigation
-   consequences — not a restyle.
-2. **Does the mock palette get a non-colour channel?** Five states must be distinguishable at a
-   glance under exam pressure, and review needs three more. The scale clears contrast, but
-   rendering five states as cream-and-tint risks turning the one screen where legibility *is*
-   the product from glanceable into decoded.
-3. **Does Learn get scroll reveals?** `SectionTracker` is mounted in exactly one place
-   (`src/app/page.tsx:55`), so `.reveal*` is inert everywhere else. Mounting it on `/cat-prep`
-   means importing across a `home/` boundary or moving the file, and it emits `section_viewed`
-   keyed on a `page` prop — so event naming must be settled or roadmap views pollute the home
-   funnel. **The PYQ reading view should not get reveals**: 68 question blocks means 68
-   observer targets and `opacity: 0` on a 564 KB indexed page.
-4. **Does `RoadmapContent` get split first?** One 557-line client component serves `/cat-prep`,
-   `/practice`, `/pyq`, `/daily-dose`, `[topic]` and `[topic]/[subtopic]` in four modes, and
-   `const [mode] = useState<Mode>(initialMode)` at :78 is never set — a per-route constant in a
-   `useState` wrapper. The plan converts the shell once and the bodies separately, which works;
-   but if a body conversion needs structural change, splitting first is cheaper.
-5. **Does the amber family get its own token or fold into `--caution`?** How to Prepare opposes
-   teal "worth it" against gold "not necessary" — a rhetorical opposition, not a status. VARC's
-   identity is the same amber. `--caution` carries timer-warning and in-progress semantics that
-   may not want to share.
-6. **OG cards and favicon: U002 or U003?** Needs Instrument Serif fetched as an `ArrayBuffer`
-   under `runtime = "edge"` because `next/font/google` does not reach `ImageResponse`, plus
-   stale copy ("CAT Roadmap" vs "Free CAT Preparation") and an emoji rendering as tofu. Nothing
-   on-site depends on it, which makes it the clean cut if U002 runs long.
+**7. Learn does not get scroll reveals, and neither does any other `/cat-prep` surface.**
+Checked rather than assumed. Reveals are a narrative device for a page being *read*; these
+surfaces are tools being *used*, and content fading in on scroll delays the thing the visitor
+came to do. Deciding no also disposes of both complications at once: no cross-boundary import
+of `SectionTracker` out of `components/home/`, and no `section_viewed` naming collision
+polluting the home funnel. `SectionTracker` stays where it is. Stated explicitly because it is
+the tempting mistake: **the PYQ reader never gets reveals** — 39 question blocks on a large
+indexed page, each starting at `opacity: 0`.
+
+**8. `RoadmapContent` is split before it is converted, as its own zero-pixel-change phase.**
+The evidence settles it: 16 `mode === …` branches, and `const [mode] = useState<Mode>(initialMode)`
+at :78 is never set — a per-route constant wearing a state hook. Converting four bodies inside
+one 557-line file would put four conditional branches in every styling diff. Splitting first
+makes each body phase independently reviewable, and the split itself is behaviour-preserving
+and verifiable by build plus screenshots. Lands as **Phase 5b**, between the micro-chrome and
+the shell, with the `useState` wrapper replaced by a plain prop.
+
+**9. No separate amber token.** Two reasons. The How to Prepare "coaching is worth it / is not
+necessary" opposition is *rhetorical*, not a status — in an editorial language that is carried
+by typography and a rule between two columns, which is the same reasoning that removed the
+home page's comparison table. And VARC's amber is a *subject identity*, owned by the
+per-subject colour decision; if the winning option keeps three identities, amber comes from
+that triple rather than from a semantic slot. `--caution` stays reserved for timer-warning and
+in-progress, which are the meanings that would otherwise be diluted.
+
+**10. OG cards split: the copy is fixed now, the redesign defers to U003.**
+Both `src/app/opengraph-image.tsx:29` and `src/app/cat-prep/opengraph-image.tsx:70` render the
+words "CAT Roadmap", which stopped being the site's own language when U001 shipped. That is a
+correctness bug, not a redesign, and the string fix lands in **Phase 1**. The visual rebuild
+does not: it needs Instrument Serif fetched as an `ArrayBuffer` because `next/font/google`
+cannot reach `ImageResponse`, it is a different technique from everything else here, nothing
+on-site depends on it, and U002 is already 17 phases. **Deferred to U003.**
+
