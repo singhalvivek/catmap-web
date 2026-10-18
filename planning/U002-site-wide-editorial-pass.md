@@ -312,8 +312,18 @@ not a visual one.
 
 ## Test Plan
 
+0. **Before any screenshot verification, restart the dev server with `.next` deleted.**
+   Turbopack caches `globals.css` and will serve a stale copy across an ordinary restart —
+   the chunk hash does not even change. This was hit twice: once in U001, where header
+   styles appeared not to apply at all, and once in U002 Phase 2, where a "no visual change"
+   check passed against CSS that did not contain the change. A screenshot diff taken against
+   a stale stylesheet proves nothing, which matters because every phase below is verified
+   exactly that way. `.next` may refuse to delete while the server is running — kill it,
+   wait, then delete.
 1. **Per phase:** `npm run build`, `npm test`, `npm run lint`, `tsc --noEmit`, then
-   `npm run shot` across the touched routes at all three viewports.
+   `npm run shot` across the touched routes at all three viewports. `npm run shot` pins
+   timer-driven UI first (see `settle()` in the script), so two runs of one build are
+   byte-identical and any diff is a real change.
 2. **Route mode diff:** capture the build's route table before and after each phase and diff
    it. Any `○ → ƒ` transition fails the phase.
 3. **Keyboard pass** per converted surface: Tab through every control, confirm a visible ring,

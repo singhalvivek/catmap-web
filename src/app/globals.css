@@ -34,7 +34,13 @@ body {
   /* Ink scale. Darker than --trust-navy, which is a brand fill, not a reading colour. */
   --ink: #101a2b;
   --ink-soft: #35425a;
-  --ink-faint: #6b7589;
+  /*
+   * Was #6b7589, which is 4.41:1 on --paper and 4.04:1 on --paper-sunk — under the 4.5:1
+   * AA floor for normal text, and it was shipped carrying 12-13px copy. U001's acceptance
+   * criteria claimed AA; --accent-text was checked and this was not. #5a6478 is 5.66:1 and
+   * 5.19:1, and doubles as --inert-text.
+   */
+  --ink-faint: #5a6478;
 
   /* Rules carry the structure here, so they come in three weights, not one hairline. */
   --rule: #d7cfbe;
@@ -54,6 +60,53 @@ body {
   --paper: #fcf9f2;
   --paper-sunk: #f4efe3;
 
+  /*
+   * Semantic status scale (U002).
+   *
+   * No single hex clears AA on both --paper and --ink: a colour readable on one is
+   * readable *because* it sits far from the other. So every semantic is a pair, the same
+   * shape --accent-text / --accent-bright already uses. `-text` carries words on cream,
+   * `-bright` carries words on ink, `-wash` is a tint to fill a field with.
+   *
+   * Every -text value was measured, not picked: each clears 4.5:1 on --paper, on
+   * --paper-sunk AND on its own -wash, so a label stays legible whether its row is plain,
+   * recessed or tinted — and each clears 4.5:1 on white, so it also works as a solid fill.
+   * Every -bright clears 9:1 on --ink.
+   *
+   * Three rules these impose:
+   *  1. White on --accent (#0d8b7f) is 4.19:1 and FAILS. An accent fill carries --ink.
+   *  2. Correctness is never colour-only — every state needs a mark and an accessible name.
+   *  3. --accent never means "correct". Teal on cream sits too close to a success green.
+   */
+  --correct-text: #0f6b3c;
+  --correct-bright: #4ade80;
+  --correct-wash: #e8f1e4;
+
+  --wrong-text: #b3261e;
+  --wrong-bright: #fca5a5;
+  --wrong-wash: #fbeae4;
+
+  --caution-text: #8a5200;
+  --caution-bright: #fbbf24;
+  --caution-wash: #faf0da;
+
+  --review-text: #5b2cc2;
+  --review-bright: #c4b5fd;
+  --review-wash: #ede8f9;
+
+  /* "No state yet" and "de-emphasised" are the same idea, so inert aliases the ink scale
+     rather than duplicating a literal that could drift away from it. */
+  --inert-text: var(--ink-faint);
+  --inert-bright: rgba(255, 255, 255, 0.62);
+  --inert-wash: var(--paper-sunk);
+
+  /*
+   * A third rule weight, for a boundary that CONVEYS state rather than decorating.
+   * --rule is 1.47:1 and --rule-firm 2.38:1 — both under the 3:1 WCAG 1.4.11 requires of a
+   * non-text indicator, which is fine for a row separator and not fine as the "unanswered"
+   * border on a palette cell where the border IS the state. This one is 3.60:1.
+   */
+  --rule-hard: #8c8270;
 }
 
 @theme inline {
@@ -68,6 +121,20 @@ body {
   --color-accent-bright: var(--accent-bright);
   --color-paper: var(--paper);
   --color-paper-sunk: var(--paper-sunk);
+  --color-rule-hard: var(--rule-hard);
+  --color-correct-text: var(--correct-text);
+  --color-correct-bright: var(--correct-bright);
+  --color-correct-wash: var(--correct-wash);
+  --color-wrong-text: var(--wrong-text);
+  --color-wrong-bright: var(--wrong-bright);
+  --color-wrong-wash: var(--wrong-wash);
+  --color-caution-text: var(--caution-text);
+  --color-caution-bright: var(--caution-bright);
+  --color-caution-wash: var(--caution-wash);
+  --color-review-text: var(--review-text);
+  --color-review-bright: var(--review-bright);
+  --color-review-wash: var(--review-wash);
+  --color-inert-text: var(--inert-text);
 }
 
 /* ---- Kicker: small-caps label with a rule, the newspaper standfirst idiom ---- */
@@ -217,21 +284,27 @@ body {
  * printed stock rather than a flat fill. Fixed attachment means it does not swim while
  * scrolling, and pointer-events are off so it never intercepts a click.
  */
+.ed-page {
+  /* Contains the grain's negative z-index so it cannot slip behind the page background,
+     without needing to touch a single child. */
+  isolation: isolate;
+}
 .ed-page::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  /*
+   * Behind the content, not in front of it. This replaces a `.ed-page > *` rule that set
+   * `position: relative; z-index: 1` on every direct child — which, being unlayered, beat
+   * Tailwind v4's @layer utilities and would have clamped DetailsPanel (z-[199]) and
+   * SignInModal (z-[201]) to z-index 1, behind the sticky header, the moment `ed-page`
+   * was added to a /cat-prep root. Children now keep their own stacking entirely.
+   */
+  z-index: -1;
   pointer-events: none;
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-/* Content sits above the grain. */
-.ed-page > * {
-  position: relative;
-  z-index: 1;
-}
-
 /* Page measure. 16px gutters at phone width, per the spec's 360px requirement. */
 .ed-shell {
   max-width: 1120px;
