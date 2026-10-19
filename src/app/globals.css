@@ -170,7 +170,9 @@ body {
   padding: 16px 30px;
   text-decoration: none;
   box-shadow: 4px 4px 0 var(--accent);
-  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
 }
 @media (hover: hover) {
   .ed-cta:hover {
@@ -257,7 +259,9 @@ body {
 .ed-row {
   border-top: 1px solid var(--rule-firm);
   box-shadow: inset 0 0 0 0 var(--accent);
-  transition: background-color 0.15s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.18s ease;
 }
 .ed-row:last-child {
   border-bottom: 1px solid var(--rule-firm);
@@ -528,7 +532,10 @@ body {
   background: none;
   color: rgba(255, 255, 255, 0.62);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 .plate-tab[data-active="true"] {
   color: var(--ink);
@@ -546,8 +553,14 @@ body {
   animation: plateSwap 0.4s var(--ease-out-expo) both;
 }
 @keyframes plateSwap {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .plate-body {
@@ -612,8 +625,14 @@ body {
   animation: plateOpen 0.3s var(--ease-out-expo) both;
 }
 @keyframes plateOpen {
-  from { opacity: 0; transform: translateY(-5px); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .plate-topic__link,
@@ -623,7 +642,9 @@ body {
   font-size: 13px;
   color: var(--ink-soft);
   text-decoration: none;
-  transition: color 0.14s ease, transform 0.14s ease;
+  transition:
+    color 0.14s ease,
+    transform 0.14s ease;
 }
 .plate-topic__more {
   color: var(--ink-faint);
@@ -682,7 +703,9 @@ body {
   border-radius: 0;
   padding: 8px 16px;
   cursor: pointer;
-  transition: border-color 0.14s ease, color 0.14s ease;
+  transition:
+    border-color 0.14s ease,
+    color 0.14s ease;
 }
 .site-header__auth:disabled {
   opacity: 0.5;
@@ -769,7 +792,9 @@ body {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
-  transition: color 0.14s ease, padding-left 0.14s ease;
+  transition:
+    color 0.14s ease,
+    padding-left 0.14s ease;
 }
 @media (hover: hover) {
   .site-footer__link:hover {
@@ -838,13 +863,21 @@ body {
 /* =========================================== */
 
 @keyframes slideInFromRight {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideInFromBottom {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Details panel — mobile: bottom sheet; tablet/desktop: right drawer */
@@ -857,7 +890,7 @@ body {
   .details-panel {
     animation: slideInFromRight 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
     box-shadow: -8px 0 32px rgba(30, 58, 95, 0.1);
-    border-left: 1px solid #E2E8F0;
+    border-left: 1px solid #e2e8f0;
   }
 }
 
@@ -866,7 +899,9 @@ body {
 /* =========================================== */
 
 .faq-answer {
-  transition: max-height 0.3s ease, opacity 0.3s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
   overflow: hidden;
 }
 
@@ -1176,7 +1211,9 @@ textarea.ed-field {
   color: var(--ink);
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.14s ease, background-color 0.14s ease;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
 }
 @media (hover: hover) {
   .ed-chip:hover {
@@ -1273,7 +1310,9 @@ textarea.ed-field {
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
-  transition: border-color 0.14s ease, background-color 0.14s ease;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
 }
 @media (hover: hover) {
   .ed-option:hover:not(:disabled) {
@@ -1408,7 +1447,9 @@ textarea.ed-field {
   color: var(--ink-soft);
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.14s ease, background-color 0.14s ease;
+  transition:
+    color 0.14s ease,
+    background-color 0.14s ease;
 }
 @media (hover: hover) {
   .roadmap-nav__item:hover {
@@ -1476,7 +1517,9 @@ textarea.ed-field {
   cursor: pointer;
   background: var(--paper);
   border: 1.5px solid var(--rule-firm);
-  transition: border-color 0.14s ease, background-color 0.14s ease;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
 }
 @media (hover: hover) {
   .subject-tab:hover {
@@ -1552,7 +1595,11 @@ textarea.ed-field {
 .topic-row__dot[data-state="caution"],
 .ed-chip[data-state="caution"] .subtopic-chip__dot {
   border-color: var(--caution-text);
-  background: linear-gradient(to right, var(--caution-text) 50%, transparent 50%);
+  background: linear-gradient(
+    to right,
+    var(--caution-text) 50%,
+    transparent 50%
+  );
 }
 .topic-row__dot[data-state="correct"],
 .ed-chip[data-state="correct"] .subtopic-chip__dot {
@@ -1569,7 +1616,11 @@ textarea.ed-field {
 }
 .ed-chip[data-selected="true"][data-state="caution"] .subtopic-chip__dot {
   border-color: var(--caution-bright);
-  background: linear-gradient(to right, var(--caution-bright) 50%, transparent 50%);
+  background: linear-gradient(
+    to right,
+    var(--caution-bright) 50%,
+    transparent 50%
+  );
 }
 
 .topic-row__title {
@@ -1836,7 +1887,9 @@ mjx-container[display="true"] {
   cursor: pointer;
   background: var(--paper);
   border: 1.5px solid var(--rule-firm);
-  transition: border-color 0.14s ease, background-color 0.14s ease;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
 }
 @media (hover: hover) {
   .continue__item:hover {
@@ -1869,7 +1922,10 @@ mjx-container[display="true"] {
   background: var(--paper);
   border: 1.5px solid var(--rule-firm);
   cursor: pointer;
-  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease;
 }
 /* One shared edge between neighbours rather than two stacked borders. */
 .status-picker__option + .status-picker__option {
@@ -2001,8 +2057,6 @@ mjx-container[display="true"] {
   }
 }
 
-
-
 /* =========================================== */
 /* U002 — the syllabus tree, nested             */
 /*                                              */
@@ -2097,7 +2151,9 @@ mjx-container[display="true"] {
   font-weight: 500;
   color: var(--ink);
   text-align: left;
-  transition: background-color 0.14s ease, padding-left 0.16s var(--ease-out-expo);
+  transition:
+    background-color 0.14s ease,
+    padding-left 0.16s var(--ease-out-expo);
 }
 
 /* The level-2 trunk, per branch: full height on a tee, half on the last so it terminates. */
@@ -2216,19 +2272,27 @@ mjx-container[display="true"] {
 /*                                              */
 /* Same data as the tree, different question.   */
 /* A tree answers "what sits inside what"; a    */
-/* path answers "how far am I and what is       */
+/* route answers "how far am I and what is      */
 /* next", which is what someone with an exam    */
 /* date actually wants to know.                 */
 /*                                              */
-/* Duolingo's structure, this product's         */
-/* register: stations on a line rather than     */
-/* cartoon bubbles, because the reader is       */
-/* 23 and under exam pressure.                  */
+/* The line weaves, and it is drawn rather than */
+/* ruled. A straight vertical rule is a margin; */
+/* a line that bends is a road, and that is     */
+/* most of the difference between this and a    */
+/* numbered list.                               */
 /* =========================================== */
 
 .topic-list[data-layout="path"] {
   position: relative;
-  padding-left: 0;
+  /* Clears the outer ring of a left-hand station, which the list edge would otherwise shave. */
+  padding-left: 4px;
+  /* The gutter the route runs in. Everything below is derived from these three. */
+  --route-w: 92px;
+  --station-y: 36px;
+  --dot: 36px;
+  /* How much of a leg the bend takes. A collapsed row is only a little longer than this. */
+  --bend-h: 56px;
 }
 .topic-list[data-layout="path"]::before {
   content: none;
@@ -2237,53 +2301,139 @@ mjx-container[display="true"] {
 .topic-list[data-layout="path"] > .topic-row {
   position: relative;
   border: none;
-  padding-left: 62px;
+  padding-left: calc(var(--route-w) + 6px);
+  /* Rows already on screen at first paint arrive in sequence. Rows met by scrolling are
+     staggered by the scrolling itself, so the ramp is capped early. */
+  --sd: calc(min(var(--si, 0), 6) * 70ms);
 }
 
-/* The route itself, running station to station. */
-.topic-list[data-layout="path"] > .topic-row::before {
-  content: "";
+/* ---- the road ---- */
+
+.topic-row__road {
   position: absolute;
-  left: 21px;
+  left: 0;
+  /*
+   * Station centre to station centre, so the road hangs below its row by half a station.
+   * The height is explicit because the bend inside is an SVG, a replaced element: given
+   * top and bottom alone it ignores the constraint and takes its size from the viewBox
+   * ratio instead, which pinned every leg to the same length whatever the row did.
+   */
+  top: var(--station-y);
+  width: var(--route-w);
+  height: 100%;
+  pointer-events: none;
+}
+
+.topic-row__bend {
+  position: absolute;
+  left: 0;
   top: 0;
-  bottom: 0;
+  width: 100%;
+  height: var(--bend-h);
+  overflow: visible;
+}
+.topic-row__bend path {
+  fill: none;
+  stroke: var(--rule-firm);
+  /* User units against a 100-unit viewBox drawn 92 wide, so this lands near 3px on screen. */
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  transition:
+    stroke 0.35s ease,
+    stroke-width 0.2s ease;
+}
+
+/* The straight run from the end of the bend down to the next station. */
+.topic-row__run {
+  position: absolute;
+  top: var(--bend-h);
+  left: calc(var(--route-w) * var(--sx2) / 100 - 1.5px);
   width: 3px;
+  /* A collapsed row is barely longer than the bend, so the run can legitimately be nothing. */
+  height: max(0px, calc(100% - var(--bend-h)));
   background: var(--rule-firm);
+  transition:
+    background-color 0.35s ease,
+    transform 0.2s ease;
 }
-/* The line stops at the last station: the route ends, it does not trail off. */
-.topic-list[data-layout="path"] > .topic-row[data-last-topic="true"]::before {
-  bottom: auto;
-  height: 32px;
+
+/* A travelled leg fills in, so progress reads straight down the road. */
+.topic-list[data-layout="path"]
+  > .topic-row[data-state="correct"]
+  .topic-row__bend
+  path {
+  stroke: var(--correct-text);
 }
-/* A finished leg fills in, so progress is readable down the line itself. */
-.topic-list[data-layout="path"] > .topic-row[data-state="correct"]::before {
+.topic-list[data-layout="path"]
+  > .topic-row[data-state="correct"]
+  .topic-row__run {
   background: var(--correct-text);
 }
-.topic-list[data-layout="path"] > .topic-row[data-state="caution"]::before {
-  background: linear-gradient(var(--caution-text) 32px, var(--rule-firm) 32px);
-}
 
-/* The station marker. */
+/* ---- the station ---- */
+
 .topic-list[data-layout="path"] .topic-row__dot {
   position: absolute;
-  left: 8px;
-  top: 16px;
-  width: 30px;
-  height: 30px;
-  border: 3px solid var(--rule-hard);
+  width: var(--dot);
+  height: var(--dot);
+  top: calc(var(--station-y) - var(--dot) / 2);
+  left: calc(var(--route-w) * var(--sx) / 100 - var(--dot) / 2);
+  border: none;
   border-radius: 50%;
   background: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
-}
-.topic-list[data-layout="path"] .topic-row__dot[data-state="caution"] {
-  border-color: var(--caution-text);
+  transition:
+    transform 0.22s var(--ease-out-expo),
+    background-color 0.35s ease,
+    box-shadow 0.22s ease;
 }
 .topic-list[data-layout="path"] .topic-row__dot[data-state="correct"] {
-  border-color: var(--correct-text);
   background: var(--correct-text);
+}
+
+/*
+ * The ring is a meter for the station it encircles: how much of this topic is done, read
+ * round the rim. Masked to an annulus so the conic gradient shows as a ring, not a pie.
+ */
+.topic-row__ring {
+  display: none;
+}
+.topic-list[data-layout="path"] .topic-row__ring {
+  display: block;
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  --ring-on: var(--rule-hard);
+  --ring-off: var(--rule-hard);
+  background: conic-gradient(
+    var(--ring-on) calc(var(--pct, 0) * 1%),
+    var(--ring-off) 0
+  );
+  -webkit-mask: radial-gradient(
+    circle closest-side,
+    transparent calc(100% - 3px),
+    #000 calc(100% - 3px)
+  );
+  mask: radial-gradient(
+    circle closest-side,
+    transparent calc(100% - 3px),
+    #000 calc(100% - 3px)
+  );
+}
+.topic-list[data-layout="path"]
+  .topic-row__dot[data-state="caution"]
+  .topic-row__ring {
+  --ring-on: var(--caution-text);
+  --ring-off: var(--rule-firm);
+}
+.topic-list[data-layout="path"]
+  .topic-row__dot[data-state="correct"]
+  .topic-row__ring {
+  --ring-on: var(--correct-text);
+  --ring-off: var(--correct-text);
 }
 
 .topic-row__station {
@@ -2291,10 +2441,11 @@ mjx-container[display="true"] {
 }
 .topic-list[data-layout="path"] .topic-row__station {
   display: block;
+  position: relative;
   font-family: var(--font-instrument), Georgia, serif;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1;
-  color: var(--ink-soft);
+  color: var(--ink);
 }
 .topic-list[data-layout="path"]
   .topic-row__dot[data-state="correct"]
@@ -2302,26 +2453,83 @@ mjx-container[display="true"] {
   color: var(--paper);
 }
 
-/* The station a reader is on gets a halo — "you are here", the whole point of a map. */
-.topic-list[data-layout="path"] > .topic-row[data-state="caution"] .topic-row__dot {
+/* You are here. A map that cannot answer that is a diagram. */
+.topic-list[data-layout="path"]
+  > .topic-row[data-state="caution"]
+  .topic-row__dot {
   box-shadow: 0 0 0 5px var(--caution-wash);
 }
+@media (prefers-reduced-motion: no-preference) {
+  .topic-list[data-layout="path"]
+    > .topic-row[data-state="caution"]
+    .topic-row__dot::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--caution-text);
+    /* transform and opacity only, so the one looping animation here is composited. */
+    animation: station-ping 3s ease-out infinite;
+    pointer-events: none;
+  }
+}
+@keyframes station-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  65%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ---- the row ---- */
 
 .topic-list[data-layout="path"] .topic-row__header {
-  padding: 18px 4px;
+  padding: 22px 6px;
+  border-radius: 3px;
 }
 .topic-list[data-layout="path"] .topic-row__title {
   font-size: 18px;
   font-weight: 600;
+  transition: transform 0.22s var(--ease-out-expo);
 }
 
-/* Subtopics keep their own small trunk, indented inside the station. */
+/* Hover answers on the road as well as in the row: the station swells and its leg thickens,
+   so the pointer reads as travelling the route rather than skimming a list. */
+@media (hover: hover) {
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__dot {
+    transform: scale(1.09);
+  }
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__bend path {
+    stroke-width: 5.4;
+  }
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__run {
+    transform: scaleX(1.7);
+  }
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__title {
+    transform: translateX(3px);
+  }
+}
+.topic-list[data-layout="path"]
+  > .topic-row
+  .topic-row__header:active
+  .topic-row__dot {
+  transform: scale(0.94);
+}
+/* An open station is the one being read, so it keeps the swell without the pointer. */
+.topic-list[data-layout="path"] > .topic-row[data-open="true"] .topic-row__dot {
+  transform: scale(1.09);
+}
+
+/* Subtopics keep a small trunk of their own, indented inside the station. */
 .topic-list[data-layout="path"] .topic-row__chips {
   margin-left: 0;
-  padding-bottom: 20px;
+  padding-bottom: 22px;
 }
-
-/* In the path layout the route carries containment, so the nested trunk is lighter. */
+/* Here the road carries containment, so the nested trunk is lighter than in the tree. */
 .topic-list[data-layout="path"] .tree-branch::before,
 .topic-list[data-layout="path"] .tree-branch::after {
   background: var(--rule-firm);
@@ -2333,19 +2541,115 @@ mjx-container[display="true"] {
   background: var(--caution-text);
 }
 
+/* ---- arrival ---- */
+/*
+ * The road builds itself as you scroll: the leg draws down from the station above, the
+ * station lands, and the row slides in behind it. All of it is scoped to [data-anim="on"],
+ * which useScrollReveal sets on mount — without JavaScript, or under reduced motion, none
+ * of the hidden states exist at all. The class is removed again when a row leaves the
+ * viewport entirely, so the build replays on the way back up.
+ *
+ * The station animates the scale property rather than transform, because hover above owns
+ * transform and the two compose instead of overwriting one another.
+ */
+/*
+ * The leg is wiped in from the top rather than dash-drawn. stroke-dashoffset is the usual
+ * way to draw a path, but it measures in the user coordinate system while this SVG is
+ * stretched vertically to whatever the row is tall — so on an expanded topic the dash ran
+ * out a fifth of the way down and the road simply stopped. A clip wipe measures in the
+ * rendered box, so it is immune to that, and it reads the same: the road building downward.
+ */
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__road {
+  clip-path: inset(-6px -6px -6px -6px);
+  transition: clip-path 1s var(--ease-out-expo) var(--sd);
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__road {
+  clip-path: inset(-6px -6px 100% -6px);
+  transition: none;
+}
+
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__dot {
+  scale: 1;
+  opacity: 1;
+  transition:
+    transform 0.22s var(--ease-out-expo),
+    scale 0.6s cubic-bezier(0.34, 1.5, 0.5, 1) var(--sd),
+    opacity 0.4s ease var(--sd),
+    background-color 0.35s ease,
+    box-shadow 0.22s ease;
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__dot {
+  scale: 0.2;
+  opacity: 0;
+  transition: none;
+}
+
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__title,
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row
+  .topic-row__count {
+  opacity: 1;
+  translate: 0;
+  transition:
+    opacity 0.5s ease var(--sd),
+    translate 0.65s var(--ease-out-expo) var(--sd),
+    transform 0.22s var(--ease-out-expo);
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__title,
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__count {
+  opacity: 0;
+  translate: -16px 0;
+  transition: none;
+}
+
+/* The meter only fades. It contains its own fill, and translating it would drag that too. */
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__meta {
+  opacity: 1;
+  transition: opacity 0.55s ease calc(var(--sd) + 120ms);
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__meta {
+  opacity: 0;
+  transition: none;
+}
+
 @media (max-width: 599px) {
-  .topic-list[data-layout="path"] > .topic-row {
-    padding-left: 50px;
+  .topic-list[data-layout="path"] {
+    --route-w: 64px;
+    --station-y: 30px;
+    --dot: 32px;
+    --bend-h: 42px;
   }
-  .topic-list[data-layout="path"] > .topic-row::before {
-    left: 17px;
-  }
-  .topic-list[data-layout="path"] .topic-row__dot {
-    left: 5px;
-    width: 26px;
-    height: 26px;
+  .topic-list[data-layout="path"] .topic-row__station {
+    font-size: 15px;
   }
   .topic-list[data-layout="path"] .topic-row__title {
     font-size: 16px;
+  }
+}
+
+/* Nothing below the fold would ever be revealed on paper, so the route would print empty. */
+@media print {
+  [data-anim="on"] .topic-list[data-layout="path"] > .topic-row * {
+    opacity: 1 !important;
+    scale: none !important;
+    translate: none !important;
+    clip-path: none !important;
+    animation: none !important;
   }
 }

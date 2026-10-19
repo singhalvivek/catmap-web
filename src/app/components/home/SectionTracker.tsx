@@ -3,6 +3,7 @@
 
 import { useEffect } from "react";
 import { trackEvent } from "@/app/components/analytics";
+import { useScrollReveal } from "@/app/lib/useScrollReveal";
 
 const SCROLL_THRESHOLDS = [25, 50, 75, 100] as const;
 
@@ -57,6 +58,11 @@ function runCountUp(el: HTMLElement) {
   requestAnimationFrame(frame);
 }
 
+/** A reveal target may itself be the figure, or merely contain it. */
+function countUpTarget(el: HTMLElement): HTMLElement | null {
+  return el.matches(".countup") ? el : el.querySelector<HTMLElement>(".countup");
+}
+
 type Props = {
   /** Identifies which home page fired the event, so preview traffic stays separable. */
   page: string;
@@ -67,66 +73,29 @@ type Props = {
  * why the content components no longer need to be client components to be measured.
  */
 export default function SectionTracker({ page }: Props) {
-  // Scroll reveal. The data-anim flag is set here rather than rendered on the server, so
-  // the hidden CSS state can only ever exist once this effect has run and can undo it.
-  useEffect(() => {
-    const root = document.documentElement;
-    const targets = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
-    if (targets.length === 0) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-
-    root.setAttribute("data-anim", "on");
-
-    /*
-     * Hysteresis: reveal once the element is 12% visible, but only reset once it is fully
-     * out of view. A single threshold would flip the class back and forth while scrolling
-     * slowly across the boundary. Elements are never unobserved, so the reveal replays
-     * every time the element comes back — scrolling up and down keeps the page alive.
-     */
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const el = entry.target as HTMLElement;
-
-          if (!entry.isIntersecting && entry.intersectionRatio === 0) {
-            el.classList.remove("is-visible");
-            const counter = el.matches(".countup")
-              ? el
-              : el.querySelector<HTMLElement>(".countup");
-            // Let the digits run again next time this comes back into view.
-            if (counter) delete counter.dataset.counted;
-            return;
-          }
-
-          if (entry.intersectionRatio < REVEAL_RATIO) return;
-          el.classList.add("is-visible");
-
-          // Digits start running with the reveal, offset by that element's own stagger.
-          const counter = el.matches(".countup")
-            ? el
-            : el.querySelector<HTMLElement>(".countup");
-          if (counter && !counter.dataset.counted) {
-            counter.dataset.counted = "true";
-            const delay = Number.parseInt(el.style.getPropertyValue("--reveal-delay"), 10);
-            window.setTimeout(
-              () => runCountUp(counter),
-              Number.isFinite(delay) ? delay : 0
-            );
-          }
-        });
-      },
-      { threshold: [0, REVEAL_RATIO], rootMargin: REVEAL_MARGIN }
-    );
-
-    targets.forEach((el) => observer.observe(el));
-
-    return () => {
-      observer.disconnect();
-      root.removeAttribute("data-anim");
-    };
-  }, []);
+  /*
+   * Scroll reveal. The observer itself lives in useScrollReveal, which the syllabus route
+   * on /cat-prep also uses; what is specific to the home page is the count-up riding along
+   * with it, so only that stays here.
+   */
+  useScrollReveal({
+    selector: REVEAL_SELECTOR,
+    ratio: REVEAL_RATIO,
+    margin: REVEAL_MARGIN,
+    onReveal: (el) => {
+      // Digits start running with the reveal, offset by that element’s own stagger.
+      const counter = countUpTarget(el);
+      if (!counter || counter.dataset.counted) return;
+      counter.dataset.counted = "true";
+      const delay = Number.parseInt(el.style.getPropertyValue("--reveal-delay"), 10);
+      window.setTimeout(() => runCountUp(counter), Number.isFinite(delay) ? delay : 0);
+    },
+    onReset: (el) => {
+      // Let the digits run again next time this comes back into view.
+      const counter = countUpTarget(el);
+      if (counter) delete counter.dataset.counted;
+    },
+  });
 
   useEffect(() => {
     const fired = new Set<string>();

@@ -464,3 +464,45 @@ does not: it needs Instrument Serif fetched as an `ArrayBuffer` because `next/fo
 cannot reach `ImageResponse`, it is a different technique from everything else here, nothing
 on-site depends on it, and U002 is already 17 phases. **Deferred to U003.**
 
+
+---
+
+## Addendum — the Learn surface as a route (Phase 13b)
+
+Four rounds of "this is not a tree" ended with a different question. A tree answers *what
+sits inside what*; a reader with an exam date is asking *how far am I and what is next*. The
+syllabus now renders both ways, and `TREE_LAYOUT` in `src/app/cat-prep/lib/treeLayout.ts` is
+the one-word switch. Shipped on `"path"`.
+
+**Geometry.** Topics are numbered stations in a left gutter. The station centres alternate
+between 22% and 74% of the gutter, so the road weaves rather than ruling straight down — the
+difference between a margin and a route, and the whole of the "it still looks straight"
+complaint. Each leg is a drawn bend of fixed height (56px desktop, 42px phone) followed by a
+straight run at the arriving x. The obvious alternative, one S-curve stretched across the
+whole leg, fails on an expanded topic: 48px of drift over 430px of height is four degrees off
+vertical, which is to say straight.
+
+**What the road encodes.** The ring around a station is that topic's own meter, drawn as a
+masked conic gradient from `--pct`. A leg fills `--correct-text` once the station above it is
+complete, so progress reads down the road without reading a word. The station a reader is on
+carries a halo plus a slow expanding ring — "you are here", which is the one thing a map
+exists to say.
+
+**Motion.** Rows reveal through `useScrollReveal`, extracted from `SectionTracker` so the
+home page and the syllabus share one hysteresis observer rather than two copies. The road
+builds downward with a `clip-path` wipe, the station lands with a scale overshoot, and the
+title slides in behind it. The reveal is removed again when a row leaves the viewport, so it
+replays on the way back up.
+
+**Two traps worth recording.**
+- `stroke-dashoffset` is the usual way to draw an SVG path, and it is wrong here: it measures
+  in the user coordinate system while the SVG is stretched to the row height, so on an
+  expanded topic the dash ran out a fifth of the way down and the road simply stopped. The
+  wipe measures in the rendered box and is immune.
+- An SVG is a *replaced* element. Given `top` and `bottom` with `height: auto` it ignores the
+  constraint and takes its size from the viewBox ratio, which pinned every leg to 84px
+  whatever the row did. The height has to be explicit.
+
+**The caveat that survives.** The route is taller than the tree, and at 0% progress every
+station is an empty circle — it is most motivating to a reader who has already started. The
+tree remains fully styled under `[data-layout="tree"]`; neither is dead code.

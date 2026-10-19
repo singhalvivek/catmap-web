@@ -5,7 +5,7 @@ import { Node } from "../models/node";
 import { ProgressStatus } from "../models/progress";
 import SubtopicChip from "./SubtopicChip";
 import { trackEvent } from "@/app/components/analytics";
-import { TREE_LAYOUT } from "../lib/treeLayout";
+import { TREE_LAYOUT, bendPath, stationX } from "../lib/treeLayout";
 
 function progressState(pct: number): string {
   if (pct === 100) return "correct";
@@ -45,13 +45,40 @@ export default function TopicRow({
   const pct = subtopics.length > 0 ? Math.round((done / subtopics.length) * 100) : 0;
   const state = progressState(pct);
 
+  const onRoute = TREE_LAYOUT === "path" && station !== undefined;
+
   return (
     <div
       className="topic-row"
       data-open={isOpen}
       data-state={state}
       data-last-topic={isLastTopic}
+      style={
+        onRoute
+          ? ({
+              "--sx": stationX(station),
+              "--sx2": stationX(station + 1),
+              // Staggers the arrival of rows that are already on screen at first paint.
+              // Rows met by scrolling are staggered by the scrolling itself.
+              "--si": station - 1,
+              "--pct": pct,
+            } as React.CSSProperties)
+          : undefined
+      }
     >
+      {/*
+        The leg of the route from this station down to the next: a drawn bend of fixed
+        height, then a straight run at the arriving x. It hangs below the row by half a
+        station, which is why nothing in the row may clip its overflow.
+      */}
+      {onRoute && !isLastTopic && (
+        <span className="topic-row__road" aria-hidden="true">
+          <svg className="topic-row__bend" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d={bendPath(station)} />
+          </svg>
+          <span className="topic-row__run" />
+        </span>
+      )}
       <button
         type="button"
         onClick={() => {
@@ -65,6 +92,7 @@ export default function TopicRow({
       >
         <span className="topic-row__lead">
           <span className="topic-row__dot" data-state={state} aria-hidden="true">
+            <span className="topic-row__ring" />
             <span className="topic-row__station">{station}</span>
           </span>
           <span className="topic-row__title">{topic.title}</span>

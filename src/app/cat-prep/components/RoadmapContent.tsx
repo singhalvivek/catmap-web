@@ -30,11 +30,15 @@ import { usePracticeMasterySummary } from "../lib/usePracticeMasterySummary";
 import { usePyqSolvedSummary } from "../lib/usePyqSolvedSummary";
 import { getPracticeSubject } from "@/constants/practiceChapters";
 import { TREE_LAYOUT } from "../lib/treeLayout";
+import { useScrollReveal } from "@/app/lib/useScrollReveal";
 import type { PyqPaperSummary } from "../models/pyq";
 import type { Mode } from "../models/mode";
 import RoadmapHero from "./RoadmapHero";
 
 export type { Mode };
+
+/** Only the route layout animates its rows in; the tree has no arrival of its own. */
+const STATION_SELECTOR = '.topic-list[data-layout="path"] > .topic-row';
 
 export default function RoadmapContent({
   subjects,
@@ -138,6 +142,17 @@ export default function RoadmapContent({
     }
     window.history.replaceState(null, "", url);
   }, [mode, selected, activeTopicId, allTopics]);
+
+  /*
+   * The route builds itself as it is scrolled into view. The reset key re-observes when
+   * the list remounts under a new subject, which it does on every tab switch — without
+   * it the new subject would inherit the previous one as a set of unobserved rows and
+   * never animate.
+   */
+  useScrollReveal({
+    selector: STATION_SELECTOR,
+    resetKey: mode + ":" + activeSubjectId,
+  });
 
   const activeSubject = subjects.find((s) => s.id === activeSubjectId);
   const meta = SUBJECT_META[activeSubjectId];
