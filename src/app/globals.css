@@ -2002,27 +2002,85 @@ mjx-container[display="true"] {
 }
 
 
+
 /* =========================================== */
-/* U002 — the syllabus tree                     */
+/* U002 — the syllabus tree, nested             */
 /*                                              */
-/* Drawn connectors, because a tree without     */
-/* branches is just an indented list. Each      */
-/* branch is a tee, and the last is an elbow,   */
-/* so a topic visibly ends.                     */
+/* The previous attempt drew connectors at one  */
+/* level only, so it still read as a list with  */
+/* ticks. A tree has to show CONTAINMENT: the   */
+/* topic hangs off a trunk, and its subtopics   */
+/* hang off the topic. Two visible levels is    */
+/* the minimum that reads as nesting.           */
+/*                                              */
+/* Lines are --rule-hard (3.6:1), not           */
+/* --rule-firm (2.4:1). At 1px on cream the     */
+/* lighter weight was close to invisible, which */
+/* is most of why it did not read as a tree.    */
 /* =========================================== */
 
+.topic-list {
+  position: relative;
+  padding-left: 22px;
+}
+
+/* Level 1 trunk: runs the height of the subject's topics. */
+.topic-list::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-hard);
+}
+/* Stops at the last topic's node so the subject visibly ends. */
+.topic-list > .topic-row:last-child::after {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 30px;
+  bottom: 0;
+  width: 3px;
+  background: var(--paper);
+}
+
+/* Rows inside the tree lose their separators — the connectors carry the structure now. */
+.topic-list > .topic-row {
+  position: relative;
+  border-top: none;
+}
+.topic-list > .topic-row:last-child {
+  border-bottom: none;
+}
+
+/* Level 1 branch: the tick from the trunk out to a topic. */
+.topic-list > .topic-row::before {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 30px;
+  width: 15px;
+  height: 2px;
+  background: var(--rule-hard);
+}
+
+/* The topic's own marker becomes the node sitting on that branch. */
+.topic-list .topic-row__dot {
+  width: 10px;
+  height: 10px;
+  border-width: 2px;
+  background: var(--paper);
+}
+
+/* Level 2 trunk: descends from the topic into its subtopics. */
 .topic-row__chips[data-layout="list"],
 .topic-row__chips[data-layout="split"] {
   display: grid;
   gap: 0;
-  padding: 6px 4px 18px 0;
   position: relative;
-}
-@media (min-width: 860px) {
-  .topic-row__chips[data-layout="split"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 36px;
-  }
+  padding: 2px 4px 14px 0;
+  margin-left: 6px;
 }
 
 .tree-branch {
@@ -2032,8 +2090,7 @@ mjx-container[display="true"] {
   align-items: center;
   gap: 16px;
   width: 100%;
-  /* Room for the connector. */
-  padding: 11px 12px 11px 34px;
+  padding: 10px 12px 10px 30px;
   border: none;
   background: none;
   font-size: 15px;
@@ -2043,35 +2100,35 @@ mjx-container[display="true"] {
   transition: background-color 0.14s ease, padding-left 0.16s var(--ease-out-expo);
 }
 
-/* The vertical trunk. Full height on a tee, half on the last branch so it terminates. */
+/* The level-2 trunk, per branch: full height on a tee, half on the last so it terminates. */
 .tree-branch::before {
   content: "";
   position: absolute;
-  left: 12px;
+  left: 8px;
   top: 0;
   bottom: 0;
-  width: 1px;
-  background: var(--rule-firm);
+  width: 2px;
+  background: var(--rule-hard);
 }
 .tree-branch[data-last="true"]::before {
   bottom: 50%;
 }
 
-/* The horizontal tick out to the row. */
+/* The level-2 tick out to the row. */
 .tree-branch::after {
   content: "";
   position: absolute;
-  left: 12px;
+  left: 8px;
   top: 50%;
-  width: 13px;
-  height: 1px;
-  background: var(--rule-firm);
+  width: 14px;
+  height: 2px;
+  background: var(--rule-hard);
 }
 
 @media (hover: hover) {
   .tree-branch:hover {
     background: var(--paper-sunk);
-    padding-left: 38px;
+    padding-left: 34px;
   }
 }
 .tree-branch[data-selected="true"] {
@@ -2086,7 +2143,7 @@ mjx-container[display="true"] {
   color: var(--ink-soft);
 }
 
-/* Lesson count — the reason a row is worth opening, and it was not shown anywhere. */
+/* The count that tells a reader whether a row is worth opening. */
 .tree-branch__lessons {
   font-size: 13px;
   color: var(--ink-faint);
@@ -2094,7 +2151,6 @@ mjx-container[display="true"] {
   white-space: nowrap;
 }
 
-/* Status as a word. "Not started" renders empty: it is the default and earns no ink. */
 .tree-branch__status {
   min-width: 5.6rem;
   text-align: right;
@@ -2112,27 +2168,32 @@ mjx-container[display="true"] {
   color: var(--caution-text);
 }
 
-/* A completed branch marks its own connector, so progress is visible down the trunk
-   without reading a single word. */
-.tree-branch[data-state="correct"]::after,
-.tree-branch[data-state="caution"]::after {
-  height: 2px;
-}
+/* A worked branch colours its own connector, so progress reads straight down the trunk. */
 .tree-branch[data-state="correct"]::after {
   background: var(--correct-text);
+  height: 3px;
 }
 .tree-branch[data-state="caution"]::after {
   background: var(--caution-text);
+  height: 3px;
 }
 
 @media (max-width: 599px) {
+  .topic-list {
+    padding-left: 16px;
+  }
+  .topic-list > .topic-row::before {
+    left: -12px;
+    width: 10px;
+  }
+  .topic-list::before {
+    left: 3px;
+  }
   .tree-branch {
     grid-template-columns: 1fr auto;
     gap: 10px;
-    padding-left: 30px;
-    font-size: 15px;
+    padding-left: 26px;
   }
-  /* The count is the first thing to go; the status word is the useful half. */
   .tree-branch__lessons {
     display: none;
   }
@@ -2146,6 +2207,6 @@ mjx-container[display="true"] {
     transition: none;
   }
   .tree-branch:hover {
-    padding-left: 34px;
+    padding-left: 30px;
   }
 }
