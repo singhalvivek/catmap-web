@@ -149,10 +149,23 @@ export default function RoadmapContent({
     return { totalSubs: allSubs.length, doneSubs: done };
   }, [subjects, progress]);
 
+  // First subtopic of the active subject, in order_index order — the roadmap's own idea of
+  // "the beginning", not merely the first element in the file.
+  const firstSubtopic = useMemo(() => {
+    const topics = [...(activeSubject?.children ?? [])].sort(
+      (a, b) => a.order_index - b.order_index
+    );
+    for (const topic of topics) {
+      const subs = [...(topic.children ?? [])].sort((a, b) => a.order_index - b.order_index);
+      if (subs.length > 0) return subs[0];
+    }
+    return null;
+  }, [activeSubject]);
+
   const faqSlice = allFaqs.slice(0, 3);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--paper)" }}>
       <Header />
 
       <RoadmapHero
@@ -171,6 +184,37 @@ export default function RoadmapContent({
         {/* Continue Learning strip */}
         {mode === "learn" && (
           <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
+        )}
+
+        {/*
+          First-run guidance. A visitor with no progress previously landed on eleven
+          collapsed rows and a 0/61 bar, with nothing indicating where to begin — the most
+          common thing a new reader needs and the one thing the page did not say. It
+          disappears the moment they have ticked anything, so it never nags a returning user.
+        */}
+        {mode === "learn" && doneSubs === 0 && firstSubtopic && (
+          <div className="start-here">
+            <div>
+              <p className="ed-kicker" style={{ margin: "0 0 8px" }}>
+                New here
+              </p>
+              <p className="display start-here__title">
+                Start with {firstSubtopic.title}
+              </p>
+              <p className="start-here__sub">
+                The syllabus is ordered, so working top to bottom is a reasonable plan. You
+                do not need an account to read anything.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="ed-btn"
+              data-weight="primary"
+              onClick={() => handleSelectNode(firstSubtopic)}
+            >
+              Open it
+            </button>
+          </div>
         )}
 
         {/* Daily Dose promo — surfaces the section from the Learn home */}
@@ -210,7 +254,7 @@ export default function RoadmapContent({
             <DailyDoseSection />
           ) : mode === "pyq" ? (
             pyqPapers === null ? (
-              <p style={{ color: "#94A3B8", fontSize: 14 }}>Loading papers…</p>
+              <p style={{ color: "var(--ink-faint)", fontSize: 14 }}>Loading papers…</p>
             ) : (
               <>
                 {/* Stat strip */}
@@ -219,7 +263,7 @@ export default function RoadmapContent({
                   style={{
                     marginBottom: 24,
                     paddingBottom: 20,
-                    borderBottom: "1px solid #E2E8F0",
+                    borderBottom: "1px solid var(--rule)",
                   }}
                 >
                   {[
@@ -228,10 +272,10 @@ export default function RoadmapContent({
                     { value: "VARC · DILR · QA", label: "sections per paper" },
                   ].map((s) => (
                     <div key={s.label}>
-                      <div className="font-extrabold text-trust-navy" style={{ fontSize: 22, lineHeight: 1 }}>
+                      <div className="font-extrabold" style={{ fontSize: 22, lineHeight: 1 }}>
                         {s.value}
                       </div>
-                      <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 3 }}>{s.label}</div>
+                      <div style={{ fontSize: 12, color: "var(--ink-faint)", marginTop: 3 }}>{s.label}</div>
                     </div>
                   ))}
                 </div>
@@ -239,23 +283,23 @@ export default function RoadmapContent({
                 {/* Mode explanation cards */}
                 <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
                   <div
-                    style={{ flex: 1, minWidth: 200, background: "#EEF2FF", borderRadius: 12, padding: "14px 16px" }}
+                    style={{ flex: 1, minWidth: 200, background: "var(--paper-sunk)", padding: "14px 16px" }}
                   >
-                    <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 4 }}>
+                    <div className="font-bold" style={{ fontSize: 13, marginBottom: 4 }}>
                       Practice mode
                     </div>
-                    <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.5 }}>
+                    <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.5 }}>
                       Work through a paper at your own pace. Each question reveals the answer and explanation after
                       you respond — good for targeted revision.
                     </p>
                   </div>
                   <div
-                    style={{ flex: 1, minWidth: 200, background: "#F0FDFA", borderRadius: 12, padding: "14px 16px" }}
+                    style={{ flex: 1, minWidth: 200, background: "var(--paper-sunk)", padding: "14px 16px" }}
                   >
-                    <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 4 }}>
+                    <div className="font-bold" style={{ fontSize: 13, marginBottom: 4 }}>
                       Mock test mode
                     </div>
-                    <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.5 }}>
+                    <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.5 }}>
                       Sit the full paper under timed exam conditions — three sections (VARC → DILR → QA), no
                       peeking at answers until the end. One attempt per paper.
                     </p>
@@ -266,14 +310,14 @@ export default function RoadmapContent({
                 <PyqPapersList papers={pyqPapers} />
 
                 {/* Why solve section */}
-                <div style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid #E2E8F0" }}>
+                <div style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid var(--rule)" }}>
                   <h2
-                    className="font-extrabold text-trust-navy"
+                    className="font-extrabold"
                     style={{ fontSize: 20, margin: "0 0 8px", letterSpacing: "-0.3px" }}
                   >
                     Why solve CAT previous year papers?
                   </h2>
-                  <p style={{ fontSize: 14, color: "#64748B", margin: "0 0 24px", lineHeight: 1.6 }}>
+                  <p style={{ fontSize: 14, color: "var(--ink-soft)", margin: "0 0 24px", lineHeight: 1.6 }}>
                     Coaching material prepares you for the syllabus. PYQs prepare you for the exam. There is a
                     difference — and most toppers credit solving past papers as the single highest-leverage activity
                     in their preparation.
@@ -306,16 +350,15 @@ export default function RoadmapContent({
                       <div
                         key={item.title}
                         style={{
-                          background: "#F8FAFC",
-                          borderRadius: 12,
+                          background: "var(--paper-sunk)",
                           padding: "16px 16px",
-                          borderLeft: "3px solid #14B8A6",
+                          borderLeft: "3px solid var(--accent)",
                         }}
                       >
-                        <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 6 }}>
+                        <div className="font-bold" style={{ fontSize: 13, marginBottom: 6 }}>
                           {item.title}
                         </div>
-                        <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
+                        <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
                       </div>
                     ))}
                   </div>
@@ -373,7 +416,7 @@ export default function RoadmapContent({
                 />
               ))}
               {!getPracticeSubject(activeSubjectId) && (
-                <p style={{ color: "#94A3B8", fontSize: 14, marginTop: 8 }}>
+                <p style={{ color: "var(--ink-faint)", fontSize: 14, marginTop: 8 }}>
                   Practice questions coming soon for this section.
                 </p>
               )}
@@ -395,7 +438,7 @@ export default function RoadmapContent({
           }}
         >
           <div>
-            <p className="display" style={{ fontSize: 22, color: "#fff", margin: "0 0 6px" }}>
+            <p className="display" style={{ fontSize: 22, color: "var(--paper)", margin: "0 0 6px" }}>
               Got feedback or found an issue?
             </p>
             <p
@@ -421,57 +464,75 @@ export default function RoadmapContent({
         </div>
 
         {/* FAQ */}
-        <div
-          style={{
-            marginTop: 24,
-            padding: "32px 28px",
-            background: "#fff",
-            borderRadius: 16,
-            border: "1.5px solid #E8EAF0",
-          }}
-        >
-          <h3 className="font-extrabold text-trust-navy" style={{ fontSize: 18, margin: "0 0 20px" }}>
-            FAQs about CAT Prep
+        <div style={{ marginTop: 44, borderTop: "3px solid var(--ink)", paddingTop: 18 }}>
+          <p className="ed-kicker" style={{ margin: "0 0 10px" }}>
+            Before you ask
+          </p>
+          <h3 className="display" style={{ fontSize: 28, color: "var(--ink)", margin: "0 0 20px" }}>
+            Questions about CAT preparation
           </h3>
-          <div className="flex flex-col gap-2">
-            {faqSlice.map((faq, i) => (
-              <div
-                key={faq.id}
-                style={{
-                  borderRadius: 10,
-                  border: `1.5px solid ${openFaq === i ? "#14B8A6" : "#E8EAF0"}`,
-                  overflow: "hidden",
-                  transition: "border-color 0.2s",
-                }}
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between text-left gap-3"
-                  style={{ padding: "13px 16px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}
-                >
-                  <span className="font-semibold text-trust-navy" style={{ fontSize: 14 }}>
-                    {faq.question}
-                  </span>
-                  <span
-                    style={{
-                      width: 22, height: 22, borderRadius: 6,
-                      background: openFaq === i ? "#14B8A6" : "#F1F5F9",
-                      color: openFaq === i ? "#fff" : "#94A3B8",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 14, flexShrink: 0, fontWeight: 700,
-                      transition: "all 0.2s",
-                    }}
-                  >
-                    {openFaq === i ? "−" : "+"}
-                  </span>
-                </button>
-                <div className="faq-answer" style={{ maxHeight: openFaq === i ? 200 : 0 }}>
-                  <p style={{ padding: "0 16px 13px", fontSize: 13, color: "#64748B", lineHeight: 1.7, margin: 0 }}>
-                    {faq.answer}
-                  </p>
+          <div>
+            {faqSlice.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div key={faq.id} className="ed-row">
+                  <h4 style={{ margin: 0 }}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "baseline",
+                        justifyContent: "space-between",
+                        gap: 14,
+                        padding: "16px 4px",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        textAlign: "left",
+                        fontSize: 16,
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                      }}
+                    >
+                      <span>{faq.question}</span>
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          flexShrink: 0,
+                          fontSize: 19,
+                          lineHeight: 1,
+                          fontWeight: 400,
+                          color: "var(--ink-faint)",
+                        }}
+                      >
+                        {isOpen ? "−" : "+"}
+                      </span>
+                    </button>
+                  </h4>
+                  {/* Grid collapse: the old max-height 200px cap clipped longer answers. */}
+                  <div className="ed-collapse" data-open={isOpen}>
+                    <div>
+                      <p
+                        style={{
+                          padding: "0 4px 18px",
+                          fontSize: 15,
+                          color: "var(--ink-soft)",
+                          lineHeight: 1.7,
+                          margin: 0,
+                          maxWidth: "68ch",
+                        }}
+                      >
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

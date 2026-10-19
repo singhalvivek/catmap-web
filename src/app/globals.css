@@ -1440,7 +1440,6 @@ textarea.ed-field {
 
 /* ---- Roadmap page hero ---- */
 .roadmap-hero {
-  border-bottom: 1px solid var(--rule);
   background: var(--paper);
   padding: 28px 0 0;
 }
@@ -1700,4 +1699,103 @@ mjx-container {
 }
 mjx-container[display="true"] {
   padding-bottom: 2px;
+}
+
+/* ---- Sticky surface switcher ---- */
+/*
+ * The nav used to live inside the hero and scrolled away with the title, so on a long
+ * surface the only way to reach Practice or Past papers was to scroll back to the top.
+ * It now pins directly under the masthead and stays reachable the whole way down.
+ */
+:root {
+  --header-h: 70px;
+}
+
+.roadmap-navbar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 40;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-firm);
+}
+.roadmap-navbar__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/*
+ * Once it is pinned it is floating over content, so it needs an edge. A hairline alone
+ * reads as part of the page; this is the smallest shadow that says "this is above".
+ */
+@supports (animation-timeline: view()) {
+  .roadmap-navbar {
+    animation: roadmapNavPin linear both;
+    animation-timeline: view();
+    animation-range: exit-crossing 0% exit-crossing 1px;
+  }
+  @keyframes roadmapNavPin {
+    to {
+      box-shadow: 0 6px 16px -8px rgba(16, 26, 43, 0.45);
+    }
+  }
+}
+
+.roadmap-navbar .roadmap-nav {
+  border-top: none;
+  border-bottom: none;
+}
+
+/*
+ * On a phone five labels do not fit, and wrapping them to two lines costs a third of the
+ * viewport on a bar that is always on screen. Scroll them horizontally instead, with the
+ * active one brought into view.
+ */
+@media (max-width: 699px) {
+  .roadmap-navbar__inner {
+    padding: 0 16px;
+  }
+  .roadmap-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .roadmap-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .roadmap-nav__item {
+    scroll-snap-align: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-navbar {
+    animation: none;
+  }
+}
+
+/* ---- First-run guidance (Learn, zero progress) ---- */
+.start-here {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px 22px;
+  margin-bottom: 26px;
+  background: var(--paper-sunk);
+  border: 1.5px solid var(--ink);
+}
+.start-here__title {
+  font-size: 24px;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.start-here__sub {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 56ch;
 }

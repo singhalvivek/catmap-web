@@ -55,7 +55,12 @@ export default function TopicRow({
         </span>
 
         <span className="topic-row__meta">
-          {subtopics.length > 0 && (
+          {/*
+            Only show the meter once there is something to meter. Eleven rows each reading
+            "0%" beside an empty bar is noise that tells a new reader nothing, and it made
+            the list look like a broken dashboard rather than a contents page.
+          */}
+          {subtopics.length > 0 && pct > 0 && (
             <>
               <span
                 className="ed-meter topic-row__meter"

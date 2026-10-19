@@ -46,18 +46,17 @@ export default function RoadmapHero({ mode, showNav, learn, practice, pyq }: Roa
   const copy = MODE_COPY[mode];
 
   return (
-    <div className="roadmap-hero">
-      <div className="roadmap-hero__inner">
-        <p className="ed-kicker" style={{ margin: "0 0 12px" }}>
-          CAT preparation
-        </p>
-        <h1 className="display roadmap-hero__title">{copy.title}</h1>
-        <p className="roadmap-hero__subtitle">{copy.subtitle}</p>
+    <>
+      <div className="roadmap-hero">
+        <div className="roadmap-hero__inner">
+          <p className="ed-kicker" style={{ margin: "0 0 12px" }}>
+            CAT preparation
+          </p>
+          <h1 className="display roadmap-hero__title">{copy.title}</h1>
+          <p className="roadmap-hero__subtitle">{copy.subtitle}</p>
 
-        {showNav && <RoadmapNav />}
-
-        {/* Overall progress — contextual to the active mode. */}
-        <div className="roadmap-hero__progress">
+          {/* Overall progress — contextual to the active mode. */}
+          <div className="roadmap-hero__progress">
         {mode === "daily-dose" ? (
           <DailyDoseStreakBanner />
         ) : mode === "learn" ? (
@@ -82,8 +81,24 @@ export default function RoadmapHero({ mode, showNav, learn, practice, pyq }: Roa
             infoText="~20 official questions gives solid hands-on exposure to the real CAT format. Both Practice and Mock Test answers count."
           />
         )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/*
+        Sticky surface switcher, a SIBLING of the hero rather than a child of it: a sticky
+        element only sticks within its parent's box, so nested in the hero it unpinned the
+        moment the hero scrolled past. Here the parent is the page root, so it stays under
+        the masthead the whole way down — previously the only way back to Practice or Past
+        papers from deep in a surface was scrolling to the top.
+      */}
+      {showNav && (
+        <div className="roadmap-navbar">
+          <div className="roadmap-navbar__inner">
+            <RoadmapNav />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
