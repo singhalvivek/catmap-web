@@ -225,7 +225,7 @@ export default function RoadmapContent({
 
         {/* Subject tabs — hidden in PYQ & Daily Dose (not organized by subject) */}
         {mode !== "pyq" && mode !== "daily-dose" && (
-          <div className="flex gap-2.5 mb-7 flex-wrap">
+          <div className="subject-tabs">
             {subjects.map((subject) => {
               const subMeta = SUBJECT_META[subject.id];
               if (!subMeta) return null;
@@ -366,7 +366,9 @@ export default function RoadmapContent({
               </>
             )
           ) : mode === "learn" ? (
-            <div>
+            // Keyed on the subject so switching tabs remounts the list and the crossfade
+            // replays — otherwise the rows swap contents in place with no transition.
+            <div className="topic-list" key={activeSubjectId}>
               {activeSubject?.children
                 ?.slice()
                 .sort((a, b) => a.order_index - b.order_index)
@@ -400,7 +402,7 @@ export default function RoadmapContent({
                 ))}
             </div>
           ) : (
-            <div>
+            <div className="topic-list" key={activeSubjectId}>
               {getPracticeSubject(activeSubjectId)?.topics.map((topic) => (
                 <PracticeTopicRow
                   key={topic.slug}

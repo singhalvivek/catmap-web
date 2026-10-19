@@ -40,7 +40,7 @@ export default function SubjectTab({
           {meta.abbr}
         </span>
         <span className="subject-tab__pct" style={{ display: "block" }}>
-          {pct}% done
+          {pct}%<span className="subject-tab__done"> done</span>
         </span>
       </span>
     </button>

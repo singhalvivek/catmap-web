@@ -78,7 +78,15 @@ export default function TopicRow({
             </>
           )}
           <span className="topic-row__toggle" aria-hidden="true">
-            {isOpen ? "−" : "+"}
+            <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
+              <path
+                d="M3 1.5 L7 5 L3 8.5"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </span>
         </span>
       </button>
@@ -90,9 +98,10 @@ export default function TopicRow({
       <div className="ed-collapse" data-open={isOpen}>
         <div>
           <div className="topic-row__chips">
-            {subtopics.map((s) => (
+            {subtopics.map((s, i) => (
               <SubtopicChip
                 key={s.id}
+                index={i}
                 node={s}
                 isSelected={selectedId === s.id}
                 onClick={onSelectNode}

@@ -27,11 +27,14 @@ export default function SubtopicChip({
   isSelected,
   onClick,
   progress,
+  index = 0,
 }: {
   node: Node;
   isSelected: boolean;
   onClick: (node: Node) => void;
   progress: Record<number, ProgressStatus>;
+  /** Position within its topic, used only to stagger the open animation. */
+  index?: number;
 }) {
   const status = progress[node.id] ?? ProgressStatus.NOT_STARTED;
 
@@ -42,6 +45,7 @@ export default function SubtopicChip({
       className="ed-chip"
       data-state={STATUS_STATE[status]}
       data-selected={isSelected}
+      style={{ "--chip-index": index } as React.CSSProperties}
       // The dot was the only thing distinguishing the three states, and it is colour-only.
       // The status now reaches a screen reader as a word.
       aria-label={`${node.title}, ${STATUS_WORD[status]}`}

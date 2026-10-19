@@ -1901,3 +1901,102 @@ mjx-container[display="true"] {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* =========================================== */
+/* U002 — Learn surface: layout and motion      */
+/*                                              */
+/* Motion here is interaction feedback, not     */
+/* entrance animation. These are tools being    */
+/* used, so nothing should delay content that   */
+/* is already on screen; things move only in    */
+/* response to something the reader just did.   */
+/* =========================================== */
+
+/* Three short labels belong three across, not wrapped 2 + 1. */
+.subject-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 26px;
+}
+@media (max-width: 439px) {
+  .subject-tabs {
+    gap: 6px;
+  }
+  .subject-tab {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+}
+
+/* The subject tab presses in rather than only changing colour. */
+.subject-tab {
+  transform: translateY(0);
+}
+.subject-tab:active {
+  transform: translateY(1px);
+}
+
+/* Chevron rotates on open. A "+" swapped for a "−" cannot animate at all. */
+.topic-row__toggle svg {
+  transition: transform 0.24s var(--ease-out-expo);
+}
+.topic-row[data-open="true"] .topic-row__toggle svg {
+  transform: rotate(90deg);
+}
+
+/*
+ * Chips fade up as their topic opens, staggered by position. Capped at 10 so a topic with
+ * many subtopics does not make the last one arrive noticeably late.
+ */
+.topic-row[data-open="true"] .ed-chip {
+  animation: chipIn 0.32s var(--ease-out-expo) both;
+  animation-delay: calc(min(var(--chip-index, 0), 10) * 22ms);
+}
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+/* A chip acknowledges the press before the drawer has opened. */
+.ed-chip:active {
+  transform: translateY(1px);
+}
+
+/* Switching subject replaces the whole topic list, so it crossfades rather than snapping. */
+.topic-list {
+  animation: topicListIn 0.3s var(--ease-out-expo) both;
+}
+@keyframes topicListIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-row__toggle svg,
+  .subject-tab {
+    transition: none;
+  }
+  .topic-row[data-open="true"] .ed-chip,
+  .topic-list {
+    animation: none;
+  }
+  .ed-chip:active,
+  .subject-tab:active {
+    transform: none;
+  }
+}
+
+/* At phone width the cell is too narrow for "0% done" on one line; the number carries it. */
+@media (max-width: 439px) {
+  .subject-tab__done {
+    display: none;
+  }
+  .subject-tab__abbr {
+    font-size: 14px;
+  }
+}
