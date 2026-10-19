@@ -29,7 +29,7 @@ import { useTopicExpandState } from "../lib/useTopicExpandState";
 import { usePracticeMasterySummary } from "../lib/usePracticeMasterySummary";
 import { usePyqSolvedSummary } from "../lib/usePyqSolvedSummary";
 import { getPracticeSubject } from "@/constants/practiceChapters";
-import { TREE_LAYOUT } from "../lib/treeLayout";
+import { TREE_LAYOUT, type TreeLayout } from "../lib/treeLayout";
 import { useScrollReveal } from "@/app/lib/useScrollReveal";
 import type { PyqPaperSummary } from "../models/pyq";
 import type { Mode } from "../models/mode";
@@ -39,6 +39,14 @@ export type { Mode };
 
 /** Only the route layout animates its rows in; the tree has no arrival of its own. */
 const STATION_SELECTOR = '.topic-list[data-layout="path"] > .topic-row';
+
+/**
+ * Practice is a catalogue — a topic holds chapters you can drill in any order — so it reads
+ * as containment and is fixed to the nested layout, whatever Learn happens to be set to.
+ * A route would be a lie about it, and the route layout also reserves a gutter and a station
+ * disc that these rows never fill.
+ */
+const PRACTICE_LAYOUT: TreeLayout = "tree";
 
 export default function RoadmapContent({
   subjects,
@@ -429,7 +437,7 @@ export default function RoadmapContent({
                 ))}
             </div>
           ) : (
-            <div className="topic-list" data-layout={TREE_LAYOUT} key={activeSubjectId}>
+            <div className="topic-list" data-layout={PRACTICE_LAYOUT} key={activeSubjectId}>
               {getPracticeSubject(activeSubjectId)?.topics.map((topic) => (
                 <PracticeTopicRow
                   key={topic.slug}

@@ -2347,7 +2347,7 @@ mjx-container[display="true"] {
 .topic-row__run {
   position: absolute;
   top: var(--bend-h);
-  left: calc(var(--route-w) * var(--sx2) / 100 - 1.5px);
+  left: calc(var(--route-w) * var(--sx2, 50) / 100 - 1.5px);
   width: 3px;
   /* A collapsed row is barely longer than the bend, so the run can legitimately be nothing. */
   height: max(0px, calc(100% - var(--bend-h)));
@@ -2377,7 +2377,7 @@ mjx-container[display="true"] {
   width: var(--dot);
   height: var(--dot);
   top: calc(var(--station-y) - var(--dot) / 2);
-  left: calc(var(--route-w) * var(--sx) / 100 - var(--dot) / 2);
+  left: calc(var(--route-w) * var(--sx, 50) / 100 - var(--dot) / 2);
   border: none;
   border-radius: 50%;
   background: var(--paper);
