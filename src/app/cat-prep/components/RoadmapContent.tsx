@@ -162,6 +162,14 @@ export default function RoadmapContent({
     return null;
   }, [activeSubject]);
 
+  const lessonCounts = useMemo(() => {
+    const counts: Record<number, number> = {};
+    for (const r of allResources) {
+      counts[r.parent_id] = (counts[r.parent_id] ?? 0) + (r.items?.length ?? 1);
+    }
+    return counts;
+  }, [allResources]);
+
   const faqSlice = allFaqs.slice(0, 3);
 
   return (
@@ -376,6 +384,7 @@ export default function RoadmapContent({
                   <TopicRow
                     key={topic.id}
                     topic={topic}
+                    lessonCounts={lessonCounts}
                     isOpen={isOpen(topic.id)}
                     onToggle={() => {
                       const willClose = isOpen(topic.id);

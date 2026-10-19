@@ -2001,132 +2001,151 @@ mjx-container[display="true"] {
   }
 }
 
+
 /* =========================================== */
-/* U002 — syllabus tree layouts                 */
+/* U002 — the syllabus tree                     */
+/*                                              */
+/* Drawn connectors, because a tree without     */
+/* branches is just an indented list. Each      */
+/* branch is a tee, and the last is an elbow,   */
+/* so a topic visibly ends.                     */
 /* =========================================== */
 
-/* Parts the chip layout does not use. */
-.subtopic-chip__num,
-.subtopic-chip__status {
-  display: none;
-}
-.subtopic-chip__label {
-  display: inline;
-}
-
-/* ---- "list" and "split": ordered rows on a spine ---- */
-/*
- * The spine is the point. A wrapped grid of pills says "these exist"; a numbered column on
- * a continuous rule says "these are in this order, and you are here".
- */
 .topic-row__chips[data-layout="list"],
 .topic-row__chips[data-layout="split"] {
   display: grid;
   gap: 0;
-  padding: 2px 4px 18px 0;
+  padding: 6px 4px 18px 0;
   position: relative;
 }
-@media (min-width: 760px) {
+@media (min-width: 860px) {
   .topic-row__chips[data-layout="split"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 28px;
+    column-gap: 36px;
   }
 }
 
-.topic-row__chips[data-layout="list"] .ed-chip,
-.topic-row__chips[data-layout="split"] .ed-chip {
+.tree-branch {
+  position: relative;
   display: grid;
-  grid-template-columns: 1.6rem 1fr auto;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
-  padding: 10px 12px 10px 0;
+  /* Room for the connector. */
+  padding: 11px 12px 11px 34px;
   border: none;
-  border-bottom: 1px solid var(--rule);
   background: none;
   font-size: 15px;
   font-weight: 500;
-  text-align: left;
-}
-@media (hover: hover) {
-  .topic-row__chips[data-layout="list"] .ed-chip:hover,
-  .topic-row__chips[data-layout="split"] .ed-chip:hover {
-    background: var(--paper-sunk);
-    border-color: var(--rule);
-  }
-}
-
-/* Selected is a left bar, not a filled pill — the row stays readable. */
-.topic-row__chips[data-layout="list"] .ed-chip[data-selected="true"],
-.topic-row__chips[data-layout="split"] .ed-chip[data-selected="true"] {
-  background: var(--paper-sunk);
   color: var(--ink);
-  box-shadow: inset 3px 0 0 var(--accent);
+  text-align: left;
+  transition: background-color 0.14s ease, padding-left 0.16s var(--ease-out-expo);
 }
 
-/* The index, set in the display face so the column reads as a contents list. */
-.topic-row__chips[data-layout="list"] .subtopic-chip__num,
-.topic-row__chips[data-layout="split"] .subtopic-chip__num {
-  display: block;
-  font-family: var(--font-instrument), Georgia, serif;
-  font-size: 15px;
-  color: var(--ink-faint);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.topic-row__chips[data-layout="list"] .ed-chip[data-state="correct"] .subtopic-chip__num,
-.topic-row__chips[data-layout="split"] .ed-chip[data-state="correct"] .subtopic-chip__num {
-  color: var(--correct-text);
-}
-
-/* Status as a word in its own column, so progress is readable and not only a dot. */
-.topic-row__chips[data-layout="list"] .subtopic-chip__status,
-.topic-row__chips[data-layout="split"] .subtopic-chip__status {
-  display: block;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-.topic-row__chips[data-layout="list"] .ed-chip[data-state="correct"] .subtopic-chip__status,
-.topic-row__chips[data-layout="split"] .ed-chip[data-state="correct"] .subtopic-chip__status {
-  color: var(--correct-text);
-}
-.topic-row__chips[data-layout="list"] .ed-chip[data-state="caution"] .subtopic-chip__status,
-.topic-row__chips[data-layout="split"] .ed-chip[data-state="caution"] .subtopic-chip__status {
-  color: var(--caution-text);
-}
-/* "not started" is the default and says nothing worth a column of its own. */
-.topic-row__chips[data-layout="list"] .ed-chip[data-state="inert"] .subtopic-chip__status,
-.topic-row__chips[data-layout="split"] .ed-chip[data-state="inert"] .subtopic-chip__status {
-  visibility: hidden;
-}
-
-/*
- * The dot is redundant here: the index column already anchors the row, and the status
- * column spells the state out in words. Two markers for one fact is clutter.
- */
-.topic-row__chips[data-layout="list"] .subtopic-chip__dot,
-.topic-row__chips[data-layout="split"] .subtopic-chip__dot {
-  display: none;
-}
-
-/* The spine: one continuous rule behind the index column, so the rows read as a sequence
-   rather than as a stack of unrelated lines. */
-.topic-row__chips[data-layout="list"]::before {
+/* The vertical trunk. Full height on a tee, half on the last branch so it terminates. */
+.tree-branch::before {
   content: "";
   position: absolute;
-  left: 0.78rem;
-  top: 6px;
-  bottom: 22px;
+  left: 12px;
+  top: 0;
+  bottom: 0;
   width: 1px;
   background: var(--rule-firm);
 }
+.tree-branch[data-last="true"]::before {
+  bottom: 50%;
+}
 
-@media (prefers-reduced-motion: no-preference) {
-  .topic-row__chips[data-layout="list"] .ed-chip,
-  .topic-row__chips[data-layout="split"] .ed-chip {
-    transition: background-color 0.14s ease, box-shadow 0.14s ease;
+/* The horizontal tick out to the row. */
+.tree-branch::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 13px;
+  height: 1px;
+  background: var(--rule-firm);
+}
+
+@media (hover: hover) {
+  .tree-branch:hover {
+    background: var(--paper-sunk);
+    padding-left: 38px;
+  }
+}
+.tree-branch[data-selected="true"] {
+  background: var(--paper-sunk);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.tree-branch__label {
+  min-width: 0;
+}
+.tree-branch[data-state="correct"] .tree-branch__label {
+  color: var(--ink-soft);
+}
+
+/* Lesson count — the reason a row is worth opening, and it was not shown anywhere. */
+.tree-branch__lessons {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Status as a word. "Not started" renders empty: it is the default and earns no ink. */
+.tree-branch__status {
+  min-width: 5.6rem;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-faint);
+}
+.tree-branch[data-state="correct"] .tree-branch__status {
+  color: var(--correct-text);
+}
+.tree-branch[data-state="caution"] .tree-branch__status {
+  color: var(--caution-text);
+}
+
+/* A completed branch marks its own connector, so progress is visible down the trunk
+   without reading a single word. */
+.tree-branch[data-state="correct"]::after,
+.tree-branch[data-state="caution"]::after {
+  height: 2px;
+}
+.tree-branch[data-state="correct"]::after {
+  background: var(--correct-text);
+}
+.tree-branch[data-state="caution"]::after {
+  background: var(--caution-text);
+}
+
+@media (max-width: 599px) {
+  .tree-branch {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding-left: 30px;
+    font-size: 15px;
+  }
+  /* The count is the first thing to go; the status word is the useful half. */
+  .tree-branch__lessons {
+    display: none;
+  }
+  .tree-branch__status {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tree-branch {
+    transition: none;
+  }
+  .tree-branch:hover {
+    padding-left: 34px;
   }
 }

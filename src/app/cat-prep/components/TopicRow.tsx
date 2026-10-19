@@ -18,10 +18,13 @@ export default function TopicRow({
   onSelectNode,
   selectedId,
   progress,
+  lessonCounts,
   isOpen,
   onToggle,
 }: {
   topic: Node;
+  /** Openable lesson links per subtopic id, for the branch's right-hand column. */
+  lessonCounts?: Record<number, number>;
   onSelectNode: (node: Node) => void;
   selectedId: number | null;
   progress: Record<number, ProgressStatus>;
@@ -103,6 +106,8 @@ export default function TopicRow({
               <SubtopicChip
                 key={s.id}
                 index={i}
+                lessonCount={lessonCounts?.[s.id] ?? 0}
+                isLast={i === subtopics.length - 1}
                 node={s}
                 isSelected={selectedId === s.id}
                 onClick={onSelectNode}

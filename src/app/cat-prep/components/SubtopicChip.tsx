@@ -1,4 +1,4 @@
-// SubtopicChip — chip button for a leaf subtopic; a mark and a word convey progress status
+// SubtopicChip — one branch of the syllabus tree: a subtopic, its lessons and its status
 "use client";
 
 import { Node } from "../models/node";
@@ -17,9 +17,9 @@ const STATUS_STATE: Record<ProgressStatus, string> = {
 };
 
 const STATUS_WORD: Record<ProgressStatus, string> = {
-  [ProgressStatus.COMPLETED]: "completed",
-  [ProgressStatus.IN_PROGRESS]: "in progress",
-  [ProgressStatus.NOT_STARTED]: "not started",
+  [ProgressStatus.COMPLETED]: "Done",
+  [ProgressStatus.IN_PROGRESS]: "In progress",
+  [ProgressStatus.NOT_STARTED]: "Not started",
 };
 
 export default function SubtopicChip({
@@ -28,6 +28,8 @@ export default function SubtopicChip({
   onClick,
   progress,
   index = 0,
+  lessonCount = 0,
+  isLast = false,
 }: {
   node: Node;
   isSelected: boolean;
@@ -35,6 +37,10 @@ export default function SubtopicChip({
   progress: Record<number, ProgressStatus>;
   /** Position within its topic, used only to stagger the open animation. */
   index?: number;
+  /** Openable lesson links for this subtopic. */
+  lessonCount?: number;
+  /** Last branch of its topic — draws an end connector instead of a tee. */
+  isLast?: boolean;
 }) {
   const status = progress[node.id] ?? ProgressStatus.NOT_STARTED;
 
@@ -42,20 +48,23 @@ export default function SubtopicChip({
     <button
       type="button"
       onClick={() => onClick(node)}
-      className="ed-chip"
+      className="ed-chip tree-branch"
       data-state={STATUS_STATE[status]}
       data-selected={isSelected}
+      data-last={isLast}
       style={{ "--chip-index": index } as React.CSSProperties}
-      // The dot was the only thing distinguishing the three states, and it is colour-only.
-      // The status now reaches a screen reader as a word.
-      aria-label={`${node.title}, ${STATUS_WORD[status]}`}
+      // Status and lesson count were conveyed by a dot and nothing respectively. Both now
+      // reach a screen reader as words.
+      aria-label={`${node.title}, ${STATUS_WORD[status]}, ${
+        lessonCount > 0 ? `${lessonCount} lessons` : "no lessons yet"
+      }`}
     >
-      <span className="subtopic-chip__dot" aria-hidden="true" />
-      {/* Hidden in the chip layout; the ordered layouts show it. */}
-      <span className="subtopic-chip__num" aria-hidden="true">{index + 1}</span>
-      <span className="subtopic-chip__label">{node.title}</span>
-      <span className="subtopic-chip__status" aria-hidden="true">
-        {STATUS_WORD[status]}
+      <span className="tree-branch__label">{node.title}</span>
+      <span className="tree-branch__lessons" aria-hidden="true">
+        {lessonCount > 0 ? `${lessonCount} lesson${lessonCount === 1 ? "" : "s"}` : "—"}
+      </span>
+      <span className="tree-branch__status" aria-hidden="true">
+        {status === ProgressStatus.NOT_STARTED ? "" : STATUS_WORD[status]}
       </span>
     </button>
   );
