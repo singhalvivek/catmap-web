@@ -1,5 +1,7 @@
 // page — /cat-prep/practice/varc/[chapter]; Para Jumbles, Para Summary and Odd One Out practice
 import { Suspense } from "react";
+import Header from "@/app/cat-prep/components/Header";
+import Footer from "@/app/cat-prep/components/Footer";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -85,7 +87,8 @@ export default async function VarcChapterPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", flexDirection: "column" }}>
+      <Header />
         <div
           style={{
             background: "var(--paper)",
@@ -106,8 +109,8 @@ export default async function VarcChapterPage({ params }: Props) {
               <span style={{ color: "var(--accent-text)", fontWeight: 600 }}>{chapter.name}</span>
             </div>
             <h1
-              className="font-extrabold"
-              style={{ fontSize: "clamp(20px,3vw,28px)", margin: 0, color: "var(--accent-text)", letterSpacing: "-0.3px" }}
+              className="display"
+              style={{ fontSize: "clamp(26px,3.4vw,34px)", margin: 0, color: "var(--ink)" }}
             >
               {chapter.name}
             </h1>
@@ -126,6 +129,7 @@ export default async function VarcChapterPage({ params }: Props) {
           />
         </Suspense>
       </div>
+      <Footer />
     </>
   );
 }

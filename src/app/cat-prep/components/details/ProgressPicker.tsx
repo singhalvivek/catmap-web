@@ -4,9 +4,9 @@
 import { ProgressStatus } from "../../models/progress";
 
 const STATUS_OPTIONS = [
-  { value: ProgressStatus.NOT_STARTED, label: "Not Started", color: "#94A3B8", bg: "#F8FAFC" },
-  { value: ProgressStatus.IN_PROGRESS, label: "In Progress", color: "#F59E0B", bg: "#FFFBEB" },
-  { value: ProgressStatus.COMPLETED,   label: "Done",        color: "#10B981", bg: "#ECFDF5" },
+  { value: ProgressStatus.NOT_STARTED, label: "Not started", state: "inert" },
+  { value: ProgressStatus.IN_PROGRESS, label: "In progress", state: "caution" },
+  { value: ProgressStatus.COMPLETED, label: "Done", state: "correct" },
 ] as const;
 
 export default function ProgressPicker({
@@ -25,39 +25,40 @@ export default function ProgressPicker({
   onNeedSignIn: () => void;
 }) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <div className="font-semibold mb-2" style={{ fontSize: 12, color: "#64748B" }}>
-        Your Progress
-      </div>
-      <div className="flex gap-2">
+    <div style={{ marginBottom: 22 }}>
+      <p className="ed-kicker" style={{ margin: "0 0 10px" }}>
+        Your progress
+      </p>
+      {/* A three-way choice, so radiogroup rather than three buttons whose selected state
+          existed only as a border colour. */}
+      <div className="status-picker" role="radiogroup" aria-label="Your progress">
         {STATUS_OPTIONS.map((s) => (
           <button
             key={s.value}
+            type="button"
+            role="radio"
+            aria-checked={status === s.value}
             onClick={() => {
-              if (!isLoggedIn) { onNeedSignIn(); return; }
+              if (!isLoggedIn) {
+                onNeedSignIn();
+                return;
+              }
               onStatusChange(s.value);
             }}
             disabled={saving}
-            style={{
-              flex: 1,
-              padding: "7px 4px",
-              borderRadius: 8,
-              border: `2px solid ${status === s.value ? s.color : "#E2E8F0"}`,
-              background: status === s.value ? s.bg : "#fff",
-              color: status === s.value ? s.color : "#94A3B8",
-              fontSize: 11,
-              fontWeight: 700,
-              cursor: saving ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
-              transition: "all 0.15s",
-              opacity: saving ? 0.6 : 1,
-            }}
+            aria-busy={saving}
+            className="status-picker__option"
+            data-state={s.state}
           >
             {s.label}
           </button>
         ))}
       </div>
-      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+      {error && (
+        <p className="ed-notice" data-state="wrong" role="alert" style={{ marginTop: 10 }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }

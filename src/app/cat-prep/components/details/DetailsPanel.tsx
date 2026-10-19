@@ -138,7 +138,7 @@ export default function DetailsPanel({
           // Desktop: right panel from very top
           "lg:top-0 lg:right-0 lg:left-auto lg:bottom-0 lg:w-1/3 lg:h-auto lg:rounded-none",
         ].join(" ")}
-        style={{ background: "#FFFDF8" }}
+        style={{ background: "var(--paper)" }}
       >
         {/* Drag handle — mobile + tablet only */}
         <div
@@ -149,7 +149,7 @@ export default function DetailsPanel({
           onTouchEnd={handleTouchEnd}
           aria-hidden
         >
-          <div style={{ width: 40, height: 4, borderRadius: 2, background: "#CBD5E1" }} />
+          <div style={{ width: 40, height: 4, background: "var(--ink-faint)" }} />
         </div>
 
         {viewingResource ? (
@@ -174,20 +174,19 @@ export default function DetailsPanel({
               {isLocked ? (
                 <div
                   style={{
-                    borderRadius: 12,
-                    border: "1.5px solid #E2E8F0",
-                    background: "#F8FAFC",
+                    border: "1.5px solid var(--rule)",
+                    background: "var(--paper-sunk)",
                     padding: "20px 16px",
                     textAlign: "center",
                   }}
                 >
-                  <p className="font-semibold text-trust-navy mb-1" style={{ fontSize: 14 }}>
+                  <p className="font-semibold mb-1" style={{ fontSize: 14 }}>
                     Revision &amp; Sectional Test Locked
                   </p>
-                  <p style={{ fontSize: 13, color: "#64748B", marginBottom: 6 }}>
+                  <p style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 6 }}>
                     Complete 70% of subtopics to unlock.
                   </p>
-                  <p className="font-medium" style={{ fontSize: 13, color: "#14B8A6" }}>
+                  <p className="font-medium" style={{ fontSize: 13, color: "var(--accent)" }}>
                     {percent}% complete
                   </p>
                 </div>

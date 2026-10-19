@@ -34,9 +34,9 @@ function buildQuantEntries(): EntryConfig[] {
       subtitle: `${topic.name} · QA`,
       href: `/cat-prep/practice/quant/${topic.slug}/${chapter.slug}`,
       total: chapter.questionCount,
-      color: "#1E3A5F",
-      bgColor: "#EEF2FF",
-      borderColor: "#C7D2FE",
+      color: "var(--ink)",
+      bgColor: "var(--paper-sunk)",
+      borderColor: "var(--rule-firm)",
     }))
   );
 }
@@ -91,9 +91,9 @@ function buildEntries(): InProgressEntry[] {
         title: `${chapterName} — Set ${dilr.setNum}`,
         subtitle: "DILR",
         href: `/cat-prep/practice/dilr/${dilr.chapterSlug}/${dilr.setNum}`,
-        color: "#0F766E",
-        bgColor: "#F0FDFA",
-        borderColor: "#99F6E4",
+        color: "var(--accent-text)",
+        bgColor: "var(--paper-sunk)",
+        borderColor: "var(--rule-firm)",
         answered,
       });
       continue;
@@ -110,9 +110,9 @@ function buildEntries(): InProgressEntry[] {
         title: `RC ${rcNum}`,
         subtitle: "Reading Comprehension · VARC",
         href: `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/${rcNum}`,
-        color: "#92400E",
-        bgColor: "#FFFBEB",
-        borderColor: "#FDE68A",
+        color: "var(--caution-text)",
+        bgColor: "var(--caution-wash)",
+        borderColor: "var(--rule-firm)",
         answered,
       });
       continue;
@@ -132,9 +132,9 @@ function buildEntries(): InProgressEntry[] {
         title: chapter.name,
         subtitle: "VARC",
         href: `/cat-prep/practice/varc/${chapter.slug}`,
-        color: "#92400E",
-        bgColor: "#FFFBEB",
-        borderColor: "#FDE68A",
+        color: "var(--caution-text)",
+        bgColor: "var(--caution-wash)",
+        borderColor: "var(--rule-firm)",
         answered,
       });
     }
@@ -151,9 +151,8 @@ export default function ContinuePractice() {
   return (
     <div
       style={{
-        background: "#fff",
-        borderRadius: 16,
-        border: "1.5px solid #BFDBFE",
+        background: "var(--paper)",
+        border: "1.5px solid var(--rule-firm)",
         padding: "16px 20px",
         marginBottom: 28,
         boxShadow: "0 2px 12px rgba(37,99,235,0.07)",
@@ -161,10 +160,10 @@ export default function ContinuePractice() {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
         <span style={{ fontSize: 16 }}>📝</span>
-        <span className="font-extrabold" style={{ fontSize: 14, color: "#1D4ED8" }}>
+        <span className="font-extrabold" style={{ fontSize: 14, color: "var(--accent-text)" }}>
           Continue Practice
         </span>
-        <span className="font-medium" style={{ fontSize: 11, color: "#94A3B8", marginLeft: "auto" }}>
+        <span className="font-medium" style={{ fontSize: 11, color: "var(--ink-faint)", marginLeft: "auto" }}>
           {entries.length} in progress
         </span>
       </div>
@@ -179,7 +178,6 @@ export default function ContinuePractice() {
               flexDirection: "column",
               alignItems: "flex-start",
               padding: "8px 12px",
-              borderRadius: 10,
               border: `1.5px solid ${entry.borderColor}`,
               background: entry.bgColor,
               textDecoration: "none",
@@ -197,7 +195,7 @@ export default function ContinuePractice() {
             <div className="font-bold" style={{ fontSize: 13, color: entry.color }}>
               {entry.title}
             </div>
-            <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 2 }}>
               <span className="font-bold" style={{ color: entry.color }}>
                 {entry.answered}{entry.total ? `/${entry.total}` : ""}
               </span>

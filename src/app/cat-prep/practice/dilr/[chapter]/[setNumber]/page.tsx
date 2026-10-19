@@ -1,5 +1,7 @@
 // page — one DILR practice set, prerendered per chapter/set number
 import { notFound } from "next/navigation";
+import Header from "@/app/cat-prep/components/Header";
+import Footer from "@/app/cat-prep/components/Footer";
 import type { Metadata } from "next";
 import { fetchDilrSet, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
@@ -89,7 +91,8 @@ export default async function DilrSetPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", flexDirection: "column" }}>
+      <Header />
       <div
         style={{
           background: "var(--paper)",
@@ -110,8 +113,8 @@ export default async function DilrSetPage({ params }: Props) {
             <span style={{ color: "var(--accent-text)", fontWeight: 600 }}>{chapterName}</span>
           </div>
           <h1
-            className="font-extrabold"
-            style={{ fontSize: "clamp(18px,3vw,26px)", margin: 0, color: "var(--accent-text)", letterSpacing: "-0.3px" }}
+            className="display"
+            style={{ fontSize: "clamp(26px,3.4vw,34px)", margin: 0, color: "var(--ink)" }}
           >
             {chapterName}
           </h1>
@@ -130,6 +133,7 @@ export default async function DilrSetPage({ params }: Props) {
         />
       </div>
     </div>
+      <Footer />
     </>
   );
 }

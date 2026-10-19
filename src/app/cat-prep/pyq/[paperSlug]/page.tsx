@@ -65,8 +65,8 @@ export default async function PyqPaperPage({ params }: Props) {
             <span style={{ color: "var(--ink)", fontWeight: 600 }}>{label}</span>
           </div>
           <h1
-            className="font-extrabold"
-            style={{ fontSize: "clamp(20px,3vw,28px)", margin: 0, letterSpacing: "-0.3px" }}
+            className="display"
+            style={{ fontSize: "clamp(26px,3.4vw,34px)", color: "var(--ink)", margin: 0 }}
           >
             {label}
           </h1>

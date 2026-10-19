@@ -13,16 +13,15 @@ const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
 function LevelBadge({ level }: { level: string }) {
   const color =
     level === "Medium"
-      ? { bg: "#FEF3C7", text: "#92400E" }
+      ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
       : level === "Medium-Hard"
-        ? { bg: "#FFEDD5", text: "#9A3412" }
-        : { bg: "#FEE2E2", text: "#991B1B" };
+        ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
+        : { bg: "var(--wrong-wash)", text: "var(--wrong-text)" };
   return (
     <span
       style={{
         display: "inline-block",
         padding: "2px 8px",
-        borderRadius: 6,
         background: color.bg,
         color: color.text,
         fontSize: 11,
@@ -86,7 +85,7 @@ export default function RcPlayer({
   const passageContent = (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-        <span className="font-bold" style={{ fontSize: 14, color: "#92400E" }}>Passage</span>
+        <span className="font-bold" style={{ fontSize: 14, color: "var(--caution-text)" }}>Passage</span>
         <LevelBadge level={passage.level} />
       </div>
       {passage.passage_paragraphs.map((para, idx) => (
@@ -99,10 +98,9 @@ export default function RcPlayer({
                 flexShrink: 0,
                 width: 22,
                 height: 22,
-                borderRadius: "50%",
-                border: "1.5px solid #E2E8F0",
-                background: "#FFFBEB",
-                color: "#92400E",
+                border: "1.5px solid var(--rule)",
+                background: "var(--caution-wash)",
+                color: "var(--caution-text)",
                 fontSize: 11,
                 fontWeight: 700,
                 cursor: passage.para_summaries[idx] ? "help" : "default",
@@ -115,7 +113,7 @@ export default function RcPlayer({
             >
               {idx + 1}
             </button>
-            <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.8, margin: 0 }}>{para}</p>
+            <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.8, margin: 0 }}>{para}</p>
           </div>
           {tooltip?.paraIdx === idx && passage.para_summaries[idx] && (
             <div
@@ -126,9 +124,8 @@ export default function RcPlayer({
                 zIndex: 10,
                 maxWidth: 280,
                 padding: "10px 14px",
-                borderRadius: 10,
-                background: "#1E3A5F",
-                color: "#fff",
+                background: "var(--ink)",
+                color: "var(--paper)",
                 fontSize: 12,
                 lineHeight: 1.6,
                 boxShadow: "0 4px 20px rgba(0,0,0,0.18)",
@@ -153,10 +150,9 @@ export default function RcPlayer({
             style={{
               width: 34,
               height: 34,
-              borderRadius: 8,
-              border: `1.5px solid ${q.number === currentQ ? "#92400E" : "#E2E8F0"}`,
-              background: q.number === currentQ ? "#92400E" : "#fff",
-              color: q.number === currentQ ? "#fff" : "#334155",
+              border: `1.5px solid ${q.number === currentQ ? "var(--caution-text)" : "var(--rule)"}`,
+              background: q.number === currentQ ? "var(--caution-text)" : "var(--paper)",
+              color: q.number === currentQ ? "var(--paper)" : "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
@@ -169,7 +165,7 @@ export default function RcPlayer({
       </div>
 
       {/* Question text */}
-      <p style={{ fontSize: 15, color: "#1E3A5F", fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+      <p style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
         {question?.question}
       </p>
 
@@ -194,10 +190,9 @@ export default function RcPlayer({
           style={{
             marginTop: 12,
             padding: "10px 22px",
-            borderRadius: 10,
             border: "none",
-            background: question && answers[question.number] ? "#92400E" : "#E2E8F0",
-            color: question && answers[question.number] ? "#fff" : "#94A3B8",
+            background: question && answers[question.number] ? "var(--caution-text)" : "var(--rule)",
+            color: question && answers[question.number] ? "var(--paper)" : "var(--ink-faint)",
             fontSize: 14,
             fontWeight: 700,
             cursor: question && answers[question.number] ? "pointer" : "not-allowed",
@@ -214,16 +209,15 @@ export default function RcPlayer({
           style={{
             marginTop: 16,
             padding: "14px 18px",
-            borderRadius: 12,
-            background: "#FFFBEB",
-            border: "1.5px solid #FDE68A",
+            background: "var(--caution-wash)",
+            border: "1.5px solid var(--rule-firm)",
           }}
         >
-          <div className="font-bold" style={{ fontSize: 13, color: "#92400E", marginBottom: 8 }}>
+          <div className="font-bold" style={{ fontSize: 13, color: "var(--caution-text)", marginBottom: 8 }}>
             Explanation
           </div>
           {sessionSolution.explanation.split("\n").map((line, i) => (
-            <p key={i} style={{ fontSize: 13, color: "#334155", margin: "0 0 4px", lineHeight: 1.6 }}>
+            <p key={i} style={{ fontSize: 13, color: "var(--ink-soft)", margin: "0 0 4px", lineHeight: 1.6 }}>
               {line}
             </p>
           ))}
@@ -242,7 +236,7 @@ export default function RcPlayer({
           alignItems: "center",
           gap: 6,
           fontSize: 13,
-          color: "#64748B",
+          color: "var(--ink-soft)",
           textDecoration: "none",
           marginBottom: 20,
           fontWeight: 500,
@@ -253,7 +247,7 @@ export default function RcPlayer({
 
       {/* RC number header */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-        <span className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
+        <span className="font-bold" style={{ fontSize: 15 }}>
           RC {passage.rc_number}
         </span>
         <LevelBadge level={passage.level} />
@@ -261,7 +255,7 @@ export default function RcPlayer({
 
       {/* Mobile tabs */}
       <div
-        style={{ display: "flex", gap: 0, marginBottom: 16, borderRadius: 8, overflow: "hidden", border: "1.5px solid #E2E8F0" }}
+        style={{ display: "flex", gap: 0, marginBottom: 16, overflow: "hidden", border: "1.5px solid var(--rule)" }}
         className="md:hidden"
       >
         {(["passage", "questions"] as const).map((tab) => (
@@ -272,8 +266,8 @@ export default function RcPlayer({
               flex: 1,
               padding: "10px 0",
               border: "none",
-              background: activeTab === tab ? "#92400E" : "#fff",
-              color: activeTab === tab ? "#fff" : "#334155",
+              background: activeTab === tab ? "var(--caution-text)" : "var(--paper)",
+              color: activeTab === tab ? "var(--paper)" : "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
@@ -301,7 +295,7 @@ export default function RcPlayer({
         {passage.rc_number > 1 ? (
           <Link
             href={`/cat-prep/practice/varc/reading-comprehensions/${passage.rc_number - 1}`}
-            style={{ padding: "9px 20px", borderRadius: 8, border: "1.5px solid #E2E8F0", color: "#334155", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
+            style={{ padding: "9px 20px", border: "1.5px solid var(--rule)", color: "var(--ink-soft)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
           >
             ← Prev RC
           </Link>
@@ -311,7 +305,7 @@ export default function RcPlayer({
         {passage.rc_number < totalPassages && (
           <Link
             href={`/cat-prep/practice/varc/reading-comprehensions/${passage.rc_number + 1}`}
-            style={{ padding: "9px 20px", borderRadius: 8, border: "1.5px solid #E2E8F0", color: "#334155", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
+            style={{ padding: "9px 20px", border: "1.5px solid var(--rule)", color: "var(--ink-soft)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
           >
             Next RC →
           </Link>

@@ -1,5 +1,7 @@
 // page — one VARC reading-comprehension passage and its questions
 import { notFound } from "next/navigation";
+import Header from "@/app/cat-prep/components/Header";
+import Footer from "@/app/cat-prep/components/Footer";
 import type { Metadata } from "next";
 import { fetchRcPassage } from "@/lib/practiceQueries";
 import { getDb } from "@/lib/mongodb";
@@ -60,7 +62,8 @@ export default async function RcPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", flexDirection: "column" }}>
+      <Header />
       <div
         style={{
           background: "var(--paper)",
@@ -81,8 +84,8 @@ export default async function RcPage({ params }: Props) {
             <span style={{ color: "var(--caution-text)", fontWeight: 600 }}>Reading Comprehensions</span>
           </div>
           <h1
-            className="font-extrabold"
-            style={{ fontSize: "clamp(18px,3vw,26px)", margin: 0, color: "var(--caution-text)", letterSpacing: "-0.3px" }}
+            className="display"
+            style={{ fontSize: "clamp(26px,3.4vw,34px)", margin: 0, color: "var(--ink)" }}
           >
             Reading Comprehension
           </h1>
@@ -96,6 +99,7 @@ export default async function RcPage({ params }: Props) {
         <RcPlayer passage={passage} totalPassages={total} storageKey={`varc-rc-${num}`} />
       </div>
     </div>
+      <Footer />
     </>
   );
 }

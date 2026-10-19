@@ -1,5 +1,7 @@
 // page — one Quant practice chapter, prerendered per topic/chapter slug
 import { Suspense } from "react";
+import Header from "@/app/cat-prep/components/Header";
+import Footer from "@/app/cat-prep/components/Footer";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchPracticeQuestions } from "@/lib/practiceQueries";
@@ -83,7 +85,8 @@ export default async function QuantChapterPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", flexDirection: "column" }}>
+      <Header />
       {/* Header breadcrumb */}
       <div
         style={{
@@ -105,8 +108,8 @@ export default async function QuantChapterPage({ params }: Props) {
             <span style={{ color: "var(--ink)", fontWeight: 600 }}>{chapter.name}</span>
           </div>
           <h1
-            className="font-extrabold"
-            style={{ fontSize: "clamp(20px,3vw,28px)", margin: 0, letterSpacing: "-0.3px" }}
+            className="display"
+            style={{ fontSize: "clamp(26px,3.4vw,34px)", color: "var(--ink)", margin: 0 }}
           >
             {chapter.name}
           </h1>
@@ -126,6 +129,7 @@ export default async function QuantChapterPage({ params }: Props) {
         />
       </Suspense>
     </div>
+      <Footer />
     </>
   );
 }

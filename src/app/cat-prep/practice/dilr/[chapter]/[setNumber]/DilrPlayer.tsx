@@ -13,16 +13,15 @@ const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
 function LevelBadge({ level }: { level: string }) {
   const color =
     level === "Medium"
-      ? { bg: "#FEF3C7", text: "#92400E" }
+      ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
       : level === "Medium-Hard"
-        ? { bg: "#FFEDD5", text: "#9A3412" }
-        : { bg: "#FEE2E2", text: "#991B1B" };
+        ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
+        : { bg: "var(--wrong-wash)", text: "var(--wrong-text)" };
   return (
     <span
       style={{
         display: "inline-block",
         padding: "2px 8px",
-        borderRadius: 6,
         background: color.bg,
         color: color.text,
         fontSize: 11,
@@ -90,7 +89,7 @@ export default function DilrPlayer({
       <p
         style={{
           fontSize: 14,
-          color: "#334155",
+          color: "var(--ink-soft)",
           lineHeight: 1.8,
           whiteSpace: "pre-line",
           margin: "0 0 16px",
@@ -119,10 +118,9 @@ export default function DilrPlayer({
             style={{
               width: 34,
               height: 34,
-              borderRadius: 8,
-              border: `1.5px solid ${q.number === currentQ ? "#0F766E" : "#E2E8F0"}`,
-              background: q.number === currentQ ? "#0F766E" : "#fff",
-              color: q.number === currentQ ? "#fff" : "#334155",
+              border: `1.5px solid ${q.number === currentQ ? "var(--accent-text)" : "var(--rule)"}`,
+              background: q.number === currentQ ? "var(--accent-text)" : "var(--paper)",
+              color: q.number === currentQ ? "var(--paper)" : "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
@@ -135,7 +133,7 @@ export default function DilrPlayer({
       </div>
 
       {/* Question text */}
-      <p style={{ fontSize: 15, color: "#1E3A5F", fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+      <p style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
         {question?.question}
       </p>
 
@@ -160,10 +158,9 @@ export default function DilrPlayer({
           style={{
             marginTop: 12,
             padding: "10px 22px",
-            borderRadius: 10,
             border: "none",
-            background: question && answers[question.number] ? "#0F766E" : "#E2E8F0",
-            color: question && answers[question.number] ? "#fff" : "#94A3B8",
+            background: question && answers[question.number] ? "var(--accent-text)" : "var(--rule)",
+            color: question && answers[question.number] ? "var(--paper)" : "var(--ink-faint)",
             fontSize: 14,
             fontWeight: 700,
             cursor: question && answers[question.number] ? "pointer" : "not-allowed",
@@ -180,15 +177,14 @@ export default function DilrPlayer({
           style={{
             marginTop: 16,
             padding: "16px 20px",
-            borderRadius: 12,
-            background: "#F0FDFA",
-            border: "1.5px solid #14B8A6",
+            background: "var(--paper-sunk)",
+            border: "1.5px solid var(--accent)",
           }}
         >
-          <div className="font-bold" style={{ fontSize: 13, color: "#0F766E", marginBottom: 8 }}>
+          <div className="font-bold" style={{ fontSize: 13, color: "var(--accent-text)", marginBottom: 8 }}>
             Full Solution
           </div>
-          <p style={{ fontSize: 14, color: "#334155", whiteSpace: "pre-line", lineHeight: 1.7, margin: "0 0 12px" }}>
+          <p style={{ fontSize: 14, color: "var(--ink-soft)", whiteSpace: "pre-line", lineHeight: 1.7, margin: "0 0 12px" }}>
             {sessionSolution.solution_text}
           </p>
           {sessionSolution.solution_svg && (
@@ -209,7 +205,7 @@ export default function DilrPlayer({
           alignItems: "center",
           gap: 6,
           fontSize: 13,
-          color: "#64748B",
+          color: "var(--ink-soft)",
           textDecoration: "none",
           marginBottom: 20,
           fontWeight: 500,
@@ -220,14 +216,14 @@ export default function DilrPlayer({
 
       {/* Set header */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-        <span className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
+        <span className="font-bold" style={{ fontSize: 15 }}>
           Set {set.set_number}
         </span>
         <LevelBadge level={set.level} />
       </div>
 
       {/* Mobile tabs */}
-      <div className="md:hidden" style={{ display: "flex", gap: 0, marginBottom: 16, borderRadius: 8, overflow: "hidden", border: "1.5px solid #E2E8F0" }}>
+      <div className="md:hidden" style={{ display: "flex", gap: 0, marginBottom: 16, overflow: "hidden", border: "1.5px solid var(--rule)" }}>
         {(["passage", "questions"] as const).map((tab) => (
           <button
             key={tab}
@@ -236,8 +232,8 @@ export default function DilrPlayer({
               flex: 1,
               padding: "10px 0",
               border: "none",
-              background: activeTab === tab ? "#0F766E" : "#fff",
-              color: activeTab === tab ? "#fff" : "#334155",
+              background: activeTab === tab ? "var(--accent-text)" : "var(--paper)",
+              color: activeTab === tab ? "var(--paper)" : "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
@@ -267,9 +263,8 @@ export default function DilrPlayer({
             href={`/cat-prep/practice/dilr/${chapterSlug}/${set.set_number - 1}`}
             style={{
               padding: "9px 20px",
-              borderRadius: 8,
-              border: "1.5px solid #E2E8F0",
-              color: "#334155",
+              border: "1.5px solid var(--rule)",
+              color: "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               textDecoration: "none",
@@ -285,9 +280,8 @@ export default function DilrPlayer({
             href={`/cat-prep/practice/dilr/${chapterSlug}/${set.set_number + 1}`}
             style={{
               padding: "9px 20px",
-              borderRadius: 8,
-              border: "1.5px solid #E2E8F0",
-              color: "#334155",
+              border: "1.5px solid var(--rule)",
+              color: "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               textDecoration: "none",
