@@ -1,14 +1,12 @@
-// treeLayout — how a topic renders its subtopics; a switch so alternatives can be compared
+// treeLayout — how the syllabus renders; a switch so alternatives can be compared as pixels
 //
-// The syllabus is ordered, and "the syllabus in order" is the product's actual claim. A
-// wrapped grid of equal chips reads as an unordered SET: nothing tells a reader that
-// Linear Equations comes before Quadratic Equations, or where in the path they are.
+// "tree" — topics and subtopics nested on drawn connectors. Shows CONTAINMENT: what sits
+//          inside what. Compact, scannable, reads as a syllabus outline.
 //
-//  "chips" — the original wrap of equal pills. Compact, no sequence, ragged rows.
-//  "list"  — one numbered row per subtopic on a connecting spine. Sequence explicit,
-//            status aligned in a column, scans like a contents page.
-//  "split" — the same ordered rows in two columns on desktop, one on mobile. Half the
-//            height of "list" while keeping the numbering.
-export type TreeLayout = "chips" | "list" | "split";
+// "path" — the same data as a route. Topics become numbered stations on a line that fills
+//          with your progress, so the page answers "how far am I and what is next" at a
+//          glance rather than "what exists". Taller, and more motivating when a reader has
+//          actually started. Closer to the product's own name — naksha means map.
+export type TreeLayout = "tree" | "path";
 
-export const TREE_LAYOUT: TreeLayout = "list";
+export const TREE_LAYOUT: TreeLayout = "path";

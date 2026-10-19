@@ -29,6 +29,7 @@ import { useTopicExpandState } from "../lib/useTopicExpandState";
 import { usePracticeMasterySummary } from "../lib/usePracticeMasterySummary";
 import { usePyqSolvedSummary } from "../lib/usePyqSolvedSummary";
 import { getPracticeSubject } from "@/constants/practiceChapters";
+import { TREE_LAYOUT } from "../lib/treeLayout";
 import type { PyqPaperSummary } from "../models/pyq";
 import type { Mode } from "../models/mode";
 import RoadmapHero from "./RoadmapHero";
@@ -376,15 +377,17 @@ export default function RoadmapContent({
           ) : mode === "learn" ? (
             // Keyed on the subject so switching tabs remounts the list and the crossfade
             // replays — otherwise the rows swap contents in place with no transition.
-            <div className="topic-list" key={activeSubjectId}>
+            <div className="topic-list" data-layout={TREE_LAYOUT} key={activeSubjectId}>
               {activeSubject?.children
                 ?.slice()
                 .sort((a, b) => a.order_index - b.order_index)
-                .map((topic) => (
+                .map((topic, ti, arr) => (
                   <TopicRow
                     key={topic.id}
                     topic={topic}
                     lessonCounts={lessonCounts}
+                    station={ti + 1}
+                    isLastTopic={ti === arr.length - 1}
                     isOpen={isOpen(topic.id)}
                     onToggle={() => {
                       const willClose = isOpen(topic.id);
@@ -411,7 +414,7 @@ export default function RoadmapContent({
                 ))}
             </div>
           ) : (
-            <div className="topic-list" key={activeSubjectId}>
+            <div className="topic-list" data-layout={TREE_LAYOUT} key={activeSubjectId}>
               {getPracticeSubject(activeSubjectId)?.topics.map((topic) => (
                 <PracticeTopicRow
                   key={topic.slug}

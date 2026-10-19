@@ -2019,13 +2019,13 @@ mjx-container[display="true"] {
 /* is most of why it did not read as a tree.    */
 /* =========================================== */
 
-.topic-list {
+.topic-list[data-layout="tree"] {
   position: relative;
   padding-left: 22px;
 }
 
 /* Level 1 trunk: runs the height of the subject's topics. */
-.topic-list::before {
+.topic-list[data-layout="tree"]::before {
   content: "";
   position: absolute;
   left: 5px;
@@ -2035,7 +2035,7 @@ mjx-container[display="true"] {
   background: var(--rule-hard);
 }
 /* Stops at the last topic's node so the subject visibly ends. */
-.topic-list > .topic-row:last-child::after {
+.topic-list[data-layout="tree"] > .topic-row:last-child::after {
   content: "";
   position: absolute;
   left: -17px;
@@ -2046,16 +2046,16 @@ mjx-container[display="true"] {
 }
 
 /* Rows inside the tree lose their separators — the connectors carry the structure now. */
-.topic-list > .topic-row {
+.topic-list[data-layout="tree"] > .topic-row {
   position: relative;
   border-top: none;
 }
-.topic-list > .topic-row:last-child {
+.topic-list[data-layout="tree"] > .topic-row:last-child {
   border-bottom: none;
 }
 
 /* Level 1 branch: the tick from the trunk out to a topic. */
-.topic-list > .topic-row::before {
+.topic-list[data-layout="tree"] > .topic-row::before {
   content: "";
   position: absolute;
   left: -17px;
@@ -2066,7 +2066,7 @@ mjx-container[display="true"] {
 }
 
 /* The topic's own marker becomes the node sitting on that branch. */
-.topic-list .topic-row__dot {
+.topic-list[data-layout="tree"] .topic-row__dot {
   width: 10px;
   height: 10px;
   border-width: 2px;
@@ -2179,14 +2179,14 @@ mjx-container[display="true"] {
 }
 
 @media (max-width: 599px) {
-  .topic-list {
+  .topic-list[data-layout="tree"] {
     padding-left: 16px;
   }
-  .topic-list > .topic-row::before {
+  .topic-list[data-layout="tree"] > .topic-row::before {
     left: -12px;
     width: 10px;
   }
-  .topic-list::before {
+  .topic-list[data-layout="tree"]::before {
     left: 3px;
   }
   .tree-branch {
@@ -2208,5 +2208,144 @@ mjx-container[display="true"] {
   }
   .tree-branch:hover {
     padding-left: 30px;
+  }
+}
+
+/* =========================================== */
+/* U002 — the syllabus as a route               */
+/*                                              */
+/* Same data as the tree, different question.   */
+/* A tree answers "what sits inside what"; a    */
+/* path answers "how far am I and what is       */
+/* next", which is what someone with an exam    */
+/* date actually wants to know.                 */
+/*                                              */
+/* Duolingo's structure, this product's         */
+/* register: stations on a line rather than     */
+/* cartoon bubbles, because the reader is       */
+/* 23 and under exam pressure.                  */
+/* =========================================== */
+
+.topic-list[data-layout="path"] {
+  position: relative;
+  padding-left: 0;
+}
+.topic-list[data-layout="path"]::before {
+  content: none;
+}
+
+.topic-list[data-layout="path"] > .topic-row {
+  position: relative;
+  border: none;
+  padding-left: 62px;
+}
+
+/* The route itself, running station to station. */
+.topic-list[data-layout="path"] > .topic-row::before {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--rule-firm);
+}
+/* The line stops at the last station: the route ends, it does not trail off. */
+.topic-list[data-layout="path"] > .topic-row[data-last-topic="true"]::before {
+  bottom: auto;
+  height: 32px;
+}
+/* A finished leg fills in, so progress is readable down the line itself. */
+.topic-list[data-layout="path"] > .topic-row[data-state="correct"]::before {
+  background: var(--correct-text);
+}
+.topic-list[data-layout="path"] > .topic-row[data-state="caution"]::before {
+  background: linear-gradient(var(--caution-text) 32px, var(--rule-firm) 32px);
+}
+
+/* The station marker. */
+.topic-list[data-layout="path"] .topic-row__dot {
+  position: absolute;
+  left: 8px;
+  top: 16px;
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--rule-hard);
+  border-radius: 50%;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.topic-list[data-layout="path"] .topic-row__dot[data-state="caution"] {
+  border-color: var(--caution-text);
+}
+.topic-list[data-layout="path"] .topic-row__dot[data-state="correct"] {
+  border-color: var(--correct-text);
+  background: var(--correct-text);
+}
+
+.topic-row__station {
+  display: none;
+}
+.topic-list[data-layout="path"] .topic-row__station {
+  display: block;
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.topic-list[data-layout="path"]
+  .topic-row__dot[data-state="correct"]
+  .topic-row__station {
+  color: var(--paper);
+}
+
+/* The station a reader is on gets a halo — "you are here", the whole point of a map. */
+.topic-list[data-layout="path"] > .topic-row[data-state="caution"] .topic-row__dot {
+  box-shadow: 0 0 0 5px var(--caution-wash);
+}
+
+.topic-list[data-layout="path"] .topic-row__header {
+  padding: 18px 4px;
+}
+.topic-list[data-layout="path"] .topic-row__title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Subtopics keep their own small trunk, indented inside the station. */
+.topic-list[data-layout="path"] .topic-row__chips {
+  margin-left: 0;
+  padding-bottom: 20px;
+}
+
+/* In the path layout the route carries containment, so the nested trunk is lighter. */
+.topic-list[data-layout="path"] .tree-branch::before,
+.topic-list[data-layout="path"] .tree-branch::after {
+  background: var(--rule-firm);
+}
+.topic-list[data-layout="path"] .tree-branch[data-state="correct"]::after {
+  background: var(--correct-text);
+}
+.topic-list[data-layout="path"] .tree-branch[data-state="caution"]::after {
+  background: var(--caution-text);
+}
+
+@media (max-width: 599px) {
+  .topic-list[data-layout="path"] > .topic-row {
+    padding-left: 50px;
+  }
+  .topic-list[data-layout="path"] > .topic-row::before {
+    left: 17px;
+  }
+  .topic-list[data-layout="path"] .topic-row__dot {
+    left: 5px;
+    width: 26px;
+    height: 26px;
+  }
+  .topic-list[data-layout="path"] .topic-row__title {
+    font-size: 16px;
   }
 }

@@ -19,12 +19,18 @@ export default function TopicRow({
   selectedId,
   progress,
   lessonCounts,
+  station,
+  isLastTopic = false,
   isOpen,
   onToggle,
 }: {
   topic: Node;
   /** Openable lesson links per subtopic id, for the branch's right-hand column. */
   lessonCounts?: Record<number, number>;
+  /** 1-based position, shown as the station number in the path layout. */
+  station?: number;
+  /** Last topic of the subject — the path terminates rather than continuing. */
+  isLastTopic?: boolean;
   onSelectNode: (node: Node) => void;
   selectedId: number | null;
   progress: Record<number, ProgressStatus>;
@@ -40,7 +46,12 @@ export default function TopicRow({
   const state = progressState(pct);
 
   return (
-    <div className="topic-row" data-open={isOpen}>
+    <div
+      className="topic-row"
+      data-open={isOpen}
+      data-state={state}
+      data-last-topic={isLastTopic}
+    >
       <button
         type="button"
         onClick={() => {
@@ -53,7 +64,9 @@ export default function TopicRow({
         className="topic-row__header"
       >
         <span className="topic-row__lead">
-          <span className="topic-row__dot" data-state={state} aria-hidden="true" />
+          <span className="topic-row__dot" data-state={state} aria-hidden="true">
+            <span className="topic-row__station">{station}</span>
+          </span>
           <span className="topic-row__title">{topic.title}</span>
           <span className="topic-row__count">{subtopics.length} subtopics</span>
         </span>
