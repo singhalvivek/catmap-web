@@ -51,7 +51,12 @@ export default function SubtopicChip({
       aria-label={`${node.title}, ${STATUS_WORD[status]}`}
     >
       <span className="subtopic-chip__dot" aria-hidden="true" />
-      {node.title}
+      {/* Hidden in the chip layout; the ordered layouts show it. */}
+      <span className="subtopic-chip__num" aria-hidden="true">{index + 1}</span>
+      <span className="subtopic-chip__label">{node.title}</span>
+      <span className="subtopic-chip__status" aria-hidden="true">
+        {STATUS_WORD[status]}
+      </span>
     </button>
   );
 }

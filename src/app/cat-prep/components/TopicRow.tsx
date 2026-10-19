@@ -5,6 +5,7 @@ import { Node } from "../models/node";
 import { ProgressStatus } from "../models/progress";
 import SubtopicChip from "./SubtopicChip";
 import { trackEvent } from "@/app/components/analytics";
+import { TREE_LAYOUT } from "../lib/treeLayout";
 
 function progressState(pct: number): string {
   if (pct === 100) return "correct";
@@ -97,7 +98,7 @@ export default function TopicRow({
       */}
       <div className="ed-collapse" data-open={isOpen}>
         <div>
-          <div className="topic-row__chips">
+          <div className="topic-row__chips" data-layout={TREE_LAYOUT}>
             {subtopics.map((s, i) => (
               <SubtopicChip
                 key={s.id}

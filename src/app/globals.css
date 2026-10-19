@@ -2000,3 +2000,133 @@ mjx-container[display="true"] {
     font-size: 14px;
   }
 }
+
+/* =========================================== */
+/* U002 — syllabus tree layouts                 */
+/* =========================================== */
+
+/* Parts the chip layout does not use. */
+.subtopic-chip__num,
+.subtopic-chip__status {
+  display: none;
+}
+.subtopic-chip__label {
+  display: inline;
+}
+
+/* ---- "list" and "split": ordered rows on a spine ---- */
+/*
+ * The spine is the point. A wrapped grid of pills says "these exist"; a numbered column on
+ * a continuous rule says "these are in this order, and you are here".
+ */
+.topic-row__chips[data-layout="list"],
+.topic-row__chips[data-layout="split"] {
+  display: grid;
+  gap: 0;
+  padding: 2px 4px 18px 0;
+  position: relative;
+}
+@media (min-width: 760px) {
+  .topic-row__chips[data-layout="split"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 28px;
+  }
+}
+
+.topic-row__chips[data-layout="list"] .ed-chip,
+.topic-row__chips[data-layout="split"] .ed-chip {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px 10px 0;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+}
+@media (hover: hover) {
+  .topic-row__chips[data-layout="list"] .ed-chip:hover,
+  .topic-row__chips[data-layout="split"] .ed-chip:hover {
+    background: var(--paper-sunk);
+    border-color: var(--rule);
+  }
+}
+
+/* Selected is a left bar, not a filled pill — the row stays readable. */
+.topic-row__chips[data-layout="list"] .ed-chip[data-selected="true"],
+.topic-row__chips[data-layout="split"] .ed-chip[data-selected="true"] {
+  background: var(--paper-sunk);
+  color: var(--ink);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* The index, set in the display face so the column reads as a contents list. */
+.topic-row__chips[data-layout="list"] .subtopic-chip__num,
+.topic-row__chips[data-layout="split"] .subtopic-chip__num {
+  display: block;
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 15px;
+  color: var(--ink-faint);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.topic-row__chips[data-layout="list"] .ed-chip[data-state="correct"] .subtopic-chip__num,
+.topic-row__chips[data-layout="split"] .ed-chip[data-state="correct"] .subtopic-chip__num {
+  color: var(--correct-text);
+}
+
+/* Status as a word in its own column, so progress is readable and not only a dot. */
+.topic-row__chips[data-layout="list"] .subtopic-chip__status,
+.topic-row__chips[data-layout="split"] .subtopic-chip__status {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.topic-row__chips[data-layout="list"] .ed-chip[data-state="correct"] .subtopic-chip__status,
+.topic-row__chips[data-layout="split"] .ed-chip[data-state="correct"] .subtopic-chip__status {
+  color: var(--correct-text);
+}
+.topic-row__chips[data-layout="list"] .ed-chip[data-state="caution"] .subtopic-chip__status,
+.topic-row__chips[data-layout="split"] .ed-chip[data-state="caution"] .subtopic-chip__status {
+  color: var(--caution-text);
+}
+/* "not started" is the default and says nothing worth a column of its own. */
+.topic-row__chips[data-layout="list"] .ed-chip[data-state="inert"] .subtopic-chip__status,
+.topic-row__chips[data-layout="split"] .ed-chip[data-state="inert"] .subtopic-chip__status {
+  visibility: hidden;
+}
+
+/*
+ * The dot is redundant here: the index column already anchors the row, and the status
+ * column spells the state out in words. Two markers for one fact is clutter.
+ */
+.topic-row__chips[data-layout="list"] .subtopic-chip__dot,
+.topic-row__chips[data-layout="split"] .subtopic-chip__dot {
+  display: none;
+}
+
+/* The spine: one continuous rule behind the index column, so the rows read as a sequence
+   rather than as a stack of unrelated lines. */
+.topic-row__chips[data-layout="list"]::before {
+  content: "";
+  position: absolute;
+  left: 0.78rem;
+  top: 6px;
+  bottom: 22px;
+  width: 1px;
+  background: var(--rule-firm);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .topic-row__chips[data-layout="list"] .ed-chip,
+  .topic-row__chips[data-layout="split"] .ed-chip {
+    transition: background-color 0.14s ease, box-shadow 0.14s ease;
+  }
+}
