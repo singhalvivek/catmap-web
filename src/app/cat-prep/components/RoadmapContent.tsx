@@ -36,6 +36,7 @@ import {
 } from "@/constants/practiceChapters";
 import { TREE_LAYOUT, type TreeLayout } from "../lib/treeLayout";
 import { useScrollReveal } from "@/app/lib/useScrollReveal";
+import { PYQ_YEARS_COVERED } from "@/constants/pyqPapers";
 import type { PyqPaperSummary } from "../models/pyq";
 import type { Mode } from "../models/mode";
 import RoadmapHero from "./RoadmapHero";
@@ -378,7 +379,10 @@ export default function RoadmapContent({
                 >
                   {[
                     { value: pyqPapers.length, label: "past papers" },
-                    { value: "1990–2025", label: "years covered" },
+                    // Was the literal "1990–2025" labelled "years covered", which claimed 36
+                    // years for a set holding 24 — 1992–1995 and 2009–2016 have no paper. Derived
+                    // now, so it also cannot go stale the day a 2026 paper lands.
+                    { value: PYQ_YEARS_COVERED.length, label: "exam years" },
                     { value: "VARC · DILR · QA", label: "sections per paper" },
                   ].map((s) => (
                     <div key={s.label}>
