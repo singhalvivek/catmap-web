@@ -5,7 +5,19 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RoadmapNav from "../components/RoadmapNav";
 import { JsonLd } from "@/app/components/JsonLd";
+import ScrollReveal from "@/app/components/ScrollReveal";
 import { ENV } from "@/config/env";
+import { PYQ_PAPERS, PYQ_EARLIEST_YEAR, PYQ_LATEST_YEAR } from "@/constants/pyqPapers";
+import {
+  COACHING_HONEST,
+  GUIDE_FAQS,
+  GUIDE_FAQ_SCHEMA,
+  GUIDE_SECTIONS,
+  MISTAKES,
+  PHASES,
+  SCORE_TARGETS,
+  SECTION_TIPS,
+} from "@/constants/catPrepGuide";
 
 export const metadata: Metadata = {
   title: "How to Prepare for CAT",
@@ -14,235 +26,35 @@ export const metadata: Metadata = {
   alternates: { canonical: `${ENV.SITE_URL}/cat-prep/how-to-prepare` },
 };
 
-const SCORE_TARGETS = [
-  {
-    percentile: "99%+",
-    label: "IIM A, B, C",
-    color: "var(--ink)",
-    bg: "var(--paper-sunk)",
-    detail:
-      "Top 1% of ~3 lakh test-takers. You need near-perfection across all three sections with no sectional weak spots. Expect 3–5 years of high-performance B-school competition post-selection too.",
-  },
-  {
-    percentile: "97–99%",
-    label: "IIM L, K, I + XLRI, FMS",
-    color: "var(--accent-text)",
-    bg: "var(--paper-sunk)",
-    detail:
-      "Excellent outcome. These institutes have strong placements. Most serious candidates with 12 months of focused prep land here. Worth targeting even if IIM A is the dream.",
-  },
-  {
-    percentile: "90–97%",
-    label: "Newer IIMs + MDI, SPJIMR, IIFT",
-    color: "var(--caution-text)",
-    bg: "var(--caution-wash)",
-    detail:
-      "Solid MBA destinations with good ROI. At 90%+, you have real options. Many working professionals comfortably reach this band with 6 focused months.",
-  },
-  {
-    percentile: "80–90%",
-    label: "Good non-IIM B-schools",
-    color: "var(--ink-faint)",
-    bg: "var(--paper-sunk)",
-    detail:
-      "Respectable, especially if other profile factors are strong. Sectional cutoffs matter here — an 85 overall with a weak VARC can still eliminate you from certain colleges.",
-  },
-];
+/** Section headings all render from one array, so they cannot drift from the contents. */
+function section(id: string) {
+  const found = GUIDE_SECTIONS.find((s) => s.id === id);
+  if (!found) throw new Error(`Unknown guide section: ${id}`);
+  return found;
+}
 
-const COACHING_HONEST = [
-  {
-    title: "Coaching is worth it if…",
-    kicker: "Argument for",
-    weight: 4,
-    points: [
-      "You've never prepared for a competitive exam and need a structured baseline",
-      "You're a working professional who needs imposed deadlines to study",
-      "You're severely weak in one section (QA especially) and need expert doubt resolution",
-      "Peer competition and a cohort keeps you motivated",
-    ],
-  },
-  {
-    title: "Coaching is not necessary if…",
-    kicker: "Argument against",
-    weight: 1,
-    points: [
-      "You're self-disciplined and can build a study schedule you'll actually follow",
-      "You have access to good books, free YouTube resources, and a test series",
-      "Your baseline is already decent (scored well in 10th/12th Math, strong English reader)",
-      "Budget is a real constraint — top coaching runs ₹60,000–₹1.5L, and ROI is not guaranteed",
-    ],
-  },
-];
-
-const PHASES = [
-  {
-    phase: "Phase 1",
-    months: "Months 1–3",
-    title: "Build the foundation",
-    tasks: [
-      "Take one diagnostic mock test to find your real starting point — not your imagined one",
-      "Cover VARC: read one editorial per day (Hindu, Mint, Aeon), tackle RC question types",
-      "Cover QA: Arithmetic → Algebra → Geometry. Use standard books (Arun Sharma or Sarvesh Verma)",
-      "Cover DILR: practice 1 set daily, focus on LR puzzles and DI caselets",
-      "Take a sectional mock at the end of each month",
-    ],
-  },
-  {
-    phase: "Phase 2",
-    months: "Months 4–6",
-    title: "Go deeper and test often",
-    tasks: [
-      "Move to advanced topics within each section; plug the weak spots from Phase 1",
-      "Solve 2 sectional mocks per week per section",
-      "Start attempting PYQ papers — they show what the exam actually tests vs. what textbooks cover",
-      "Take 1 full mock per week from Month 5 onwards",
-      "Maintain an error log: track the same mistakes recurring across mocks",
-    ],
-  },
-  {
-    phase: "Phase 3",
-    months: "Months 7–9",
-    title: "Mock-heavy, analysis-first",
-    tasks: [
-      "Target 2 full-length mocks per week — one on weekend, one mid-week",
-      "Spend as much time analyzing each mock as you spent taking it",
-      "Solve CAT PYQs from the last 5 years in mock-test mode for calibration",
-      "Identify your attempt strategy per section: which question types to skip, which to lock in on",
-      "Don't start new topics. Double down on your strengths; manage your weaknesses",
-    ],
-  },
-  {
-    phase: "Phase 4",
-    months: "Final 4–6 weeks",
-    title: "Sharpen, don't scramble",
-    tasks: [
-      "3 full mocks per week — timed, no interruptions, phone away",
-      "Review your best and worst mock performances to understand what worked",
-      "Revise formulas and shortcuts; don't attempt to learn anything new",
-      "Simulate actual exam conditions: same time slot (afternoon), no shortcuts",
-      "Solve PYQs from earlier years you haven't touched yet",
-    ],
-  },
-];
-
-const SECTION_TIPS = [
-  {
-    section: "VARC",
-    full: "Verbal Ability & Reading Comprehension",
-    icon: "📖",
-    tip: "RC is ~75% of VARC. The only reliable way to improve is to read widely and often — not to practice 200 RC passages with tricks. Read good prose daily for 3–6 months and comprehension becomes intuitive. VA (para jumbles, odd one out) can be cracked with pattern recognition — practice past papers.",
-    weight: "24 questions (~40% of total score)",
-  },
-  {
-    section: "DILR",
-    full: "Data Interpretation & Logical Reasoning",
-    icon: "🧩",
-    tip: "The most variable section — difficulty swings wildly year to year. CAT 2021 DILR was notoriously brutal; 2023 was relatively gentler. Train your set-selection instinct: spend 90 seconds reading a set, decide if it's worth attempting. Don't brute-force every set. Speed comes from practice, not from reading theory.",
-    weight: "20 questions (~33% of total score)",
-  },
-  {
-    section: "QA",
-    full: "Quantitative Ability",
-    icon: "📐",
-    tip: "The most learnable section if you're willing to put in the arithmetic. Arithmetic alone (percentages, ratios, TSD, PnC) covers 50%+ of questions. Don't panic if Geometry or Number Theory feels hard early — they can be learned. Target accuracy over speed in early prep, speed follows naturally.",
-    weight: "22 questions (~37% of total score)",
-  },
-];
-
-const SN_VALUE = [
-  {
-    title: "PYQ papers from 1990 to 2025",
-    body: "Every official CAT paper, fully digitised. The only free resource with this depth and coverage.",
-  },
-  {
-    title: "Practice mode for concept reinforcement",
-    body: "Work through any paper question by question with instant answers and detailed explanations — ideal for focused revision.",
-  },
-  {
-    title: "Mock test mode for real simulation",
-    body: "Sit the full paper under timed exam conditions: three sections, per-section timers, no answer peeking. Same format as the actual CAT.",
-  },
-  {
-    title: "Progress tracking across papers",
-    body: "See how your PYQ solve rate changes over time. Know where you stand, not just where you hope to be.",
-  },
-];
-
-const MISTAKES = [
-  {
-    mistake: "Starting with mocks before covering basics",
-    fix: "A mock score before concepts are solid is meaningless noise. Build foundation first, then add mocks.",
-  },
-  {
-    mistake: "Collecting resources instead of using them",
-    fix: "Three good books and one test series beat 12 books you never finish. More material ≠ more prep.",
-  },
-  {
-    mistake: "Taking mocks without analyzing them",
-    fix: "Analysis is where the learning happens. A mock you review for 2 hours is worth more than three you just score.",
-  },
-  {
-    mistake: "Ignoring sectional cutoffs",
-    fix: "A 97 overall with a 60 percentile VARC gets you nowhere in most top colleges. All three sections matter.",
-  },
-  {
-    mistake: "Burning out in Month 3 and disappearing",
-    fix: "Consistency over intensity. 2 focused hours daily beats 8-hour Sunday sessions. CAT rewards the long game.",
-  },
-];
-
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What CAT percentile is needed to get into IIM A, B, C?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "99%+ percentile is required for IIM A, B, C — top 1% of ~3 lakh test-takers. IIM L, K, I, XLRI, and FMS require 97–99%. Newer IIMs and MDI, SPJIMR, IIFT require 90–97%. These are General category cutoffs; OBC/EWS cutoffs are ~10–15 percentile points lower.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How long does it take to prepare for CAT?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Most serious aspirants start 9–12 months before the exam (CAT is held in November). Preparation spans four phases: foundation-building (Months 1–3), deeper practice and mocks (Months 4–6), mock-heavy analysis (Months 7–9), and a sharpening phase in the final 4–6 weeks.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Do I need coaching to crack CAT?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Coaching is a tool, not a requirement. Every year, multiple 99%ilers crack CAT through self-study. Coaching helps if you need structured deadlines or expert doubt resolution. The hybrid path — coaching only for your weakest section — often offers the best ROI.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What are the three sections of the CAT exam?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "CAT has three sections with 40 minutes each: VARC (Verbal Ability & Reading Comprehension, 24 questions — ~40% of total score), DILR (Data Interpretation & Logical Reasoning, 20 questions — ~33%), and QA (Quantitative Ability, 22 questions — ~37%). Sections are taken sequentially; you cannot move between them mid-exam.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How many mock tests should I take for CAT?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Target 1 full mock per week from Month 5, ramping to 2 per week in Months 7–9 and 3 per week in the final 4–6 weeks. Spend as much time analyzing each mock as you spent taking it — that is where the actual learning happens.",
-      },
-    },
-  ],
-};
+function SectionHead({ id, step }: { id: string; step?: number }) {
+  const { title } = section(id);
+  return (
+    <>
+      {step !== undefined && (
+        <p className="ed-kicker" style={{ margin: "0 0 10px" }}>
+          Step {step}
+        </p>
+      )}
+      <h2 id={id} className="display guide-heading">
+        {title}
+      </h2>
+    </>
+  );
+}
 
 export default function HowToPreparePage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--paper)" }}>
       <Header />
-      <JsonLd data={faqSchema} />
+      <JsonLd data={GUIDE_FAQ_SCHEMA} />
+      <ScrollReveal />
 
       {/* Hero */}
       <div className="roadmap-hero">
@@ -260,352 +72,261 @@ export default function HowToPreparePage() {
         </div>
       </div>
 
-      <div className="flex-1" style={{ maxWidth: 900, margin: "0 auto", width: "100%", padding: "40px 24px 64px" }}>
+      <div className="guide">
+        {/*
+          Contents. Three thousand words with six headings, none of them addressable, and
+          no way in except the top — while the page's own search traffic arrives looking for
+          one answer in particular.
+        */}
+        <nav className="guide-contents reveal" aria-label="On this page">
+          <p className="ed-kicker" style={{ margin: "0 0 12px" }}>
+            On this page
+          </p>
+          <ol className="guide-contents__list">
+            {GUIDE_SECTIONS.map((s, i) => (
+              <li key={s.id}>
+                <a href={`#${s.id}`} className="guide-contents__link">
+                  <span className="guide-contents__num">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{s.short}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
 
-        {/* Section 1 — Know what you're aiming for */}
-        <section style={{ marginBottom: 56 }}>
-          <h2
-            className="display"
-            style={{ fontSize: "clamp(24px, 2.8vw, 30px)", color: "var(--ink)", margin: "0 0 10px" }}
-          >
-            Step 1: Know what score you&rsquo;re actually aiming for
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--ink-soft)", margin: "0 0 26px", lineHeight: 1.65, maxWidth: "68ch" }}>
-            CAT aspirants often say &ldquo;I want IIM A&rdquo; without understanding what percentile that requires — or
-            what a more realistic target looks like. Set a concrete goal first. Everything else (timeline,
-            effort level, coaching decision) follows from that.
+        {/* 1 — the target */}
+        <section className="guide-section reveal">
+          <SectionHead id="target" step={1} />
+          <p className="guide-lede">
+            CAT aspirants often say &ldquo;I want IIM A&rdquo; without understanding what
+            percentile that requires — or what a more realistic target looks like. Set a
+            concrete goal first. Everything else (timeline, effort level, coaching decision)
+            follows from that.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/*
+            A ladder, not four tinted blocks. The bands are ordered and the order is the
+            point; one of them used to carry --caution-wash, which painted a good outcome
+            as a warning.
+          */}
+          <ol className="guide-ladder">
             {SCORE_TARGETS.map((t) => (
-              <div
-                key={t.percentile}
-                style={{
-                  background: t.bg,
-                  padding: "16px 18px",
-                  display: "flex",
-                  gap: 16,
-                  alignItems: "flex-start",
-                }}
-              >
-                <div style={{ flexShrink: 0, textAlign: "center" }}>
-                  <div
-                    className="font-extrabold"
-                    style={{ fontSize: 17, color: t.color, lineHeight: 1 }}
-                  >
-                    {t.percentile}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--ink-faint)", marginTop: 2 }}>percentile</div>
+              <li key={t.percentile} className="guide-ladder__row">
+                <p className="guide-ladder__figure display">{t.percentile}</p>
+                <div>
+                  <p className="guide-ladder__label">{t.label}</p>
+                  <p className="guide-prose">{t.detail}</p>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div className="font-bold" style={{ fontSize: 13, color: t.color, marginBottom: 4 }}>
-                    {t.label}
-                  </div>
-                  <p style={{ fontSize: 15, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55 }}>{t.detail}</p>
-                </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
 
-          <p style={{ fontSize: 13, color: "var(--ink-faint)", margin: "16px 0 0", lineHeight: 1.6 }}>
-            Note: These are General category cutoffs. OBC/EWS cutoffs are ~10–15 percentile points lower;
-            SC/ST cutoffs are considerably lower still. Category matters — factor yours in.
+          <p className="guide-footnote">
+            These are General category cutoffs. OBC/EWS cutoffs are ~10–15 percentile points
+            lower; SC/ST cutoffs are considerably lower still. Category matters — factor
+            yours in.
           </p>
         </section>
 
-        {/* Divider */}
-        <div style={{ borderTop: "1px solid var(--rule)", marginBottom: 56 }} />
-
-        {/* Section 2 — Coaching vs self-study */}
-        <section style={{ marginBottom: 56 }}>
-          <h2
-            className="display"
-            style={{ fontSize: "clamp(24px, 2.8vw, 30px)", color: "var(--ink)", margin: "0 0 10px" }}
-          >
-            Step 2: Coaching or self-study?
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--ink-soft)", margin: "0 0 26px", lineHeight: 1.65, maxWidth: "68ch" }}>
-            The honest answer: <strong>coaching is a tool, not a requirement.</strong> Every year, multiple
-            99%ilers crack CAT through self-study. And every year, thousands of coaching students underperform
-            because structure without effort is worthless. The real question is: which environment helps
-            you stay consistent?
+        {/* 2 — coaching */}
+        <section className="guide-section reveal">
+          <SectionHead id="coaching" step={2} />
+          <p className="guide-lede">
+            The honest answer: <strong>coaching is a tool, not a requirement.</strong> Every
+            year, multiple 99%ilers crack CAT through self-study. And every year, thousands of
+            coaching students underperform because structure without effort is worthless. The
+            real question is: which environment helps you stay consistent?
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+          {/*
+            A rule between the two columns, which is the whole of the typographic argument
+            the spec asked for here. It used to be a 4px border on one block and a 1px
+            border on the other — the page arguing, in the only way it argued anything, for
+            the side its own lede argues against.
+          */}
+          <div className="guide-debate">
             {COACHING_HONEST.map((block) => (
-              <div
-                key={block.title}
-                style={{
-                  padding: "18px 20px",
-                  borderTop: `${block.weight}px solid var(--ink)`,
-                }}
-              >
+              <div key={block.title} className="guide-debate__side">
                 <p className="ed-kicker" style={{ margin: "0 0 10px" }}>
                   {block.kicker}
                 </p>
-                <p
-                  className="display"
-                  style={{ fontSize: 20, color: "var(--ink)", margin: "0 0 14px" }}
-                >
-                  {block.title}
-                </p>
-                <ul style={{ margin: 0, padding: "0 0 0 18px" }}>
+                <p className="display guide-debate__title">{block.title}</p>
+                <ul className="guide-list">
                   {block.points.map((p) => (
-                    <li
-                      key={p}
-                      style={{
-                        fontSize: 15,
-                        color: "var(--ink-soft)",
-                        marginBottom: 9,
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      {p}
-                    </li>
+                    <li key={p}>{p}</li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
 
-          <div
-            style={{
-              marginTop: 20,
-              background: "var(--paper-sunk)",
-              padding: "16px 18px",
-              borderLeft: "3px solid var(--accent)",
-            }}
-          >
-            <p style={{ fontSize: 15, color: "var(--ink-soft)", margin: 0, lineHeight: 1.6 }}>
-              <strong style={{ color: "var(--ink)" }}>The hybrid path</strong> is often the smartest: take
-              coaching only for your weakest section (usually QA for engineers, DILR for commerce students),
-              and self-prepare the rest. This cuts cost, keeps flexibility, and still gives you doubt
-              resolution where you most need it.
-            </p>
-          </div>
+          <p className="ed-notice">
+            <strong>The hybrid path</strong> is often the smartest: take coaching only for your
+            weakest section (usually QA for engineers, DILR for commerce students), and
+            self-prepare the rest. This cuts cost, keeps flexibility, and still gives you doubt
+            resolution where you most need it.
+          </p>
         </section>
 
-        {/* Divider */}
-        <div style={{ borderTop: "1px solid var(--rule)", marginBottom: 56 }} />
-
-        {/* Section 3 — Preparation phases */}
-        <section style={{ marginBottom: 56 }}>
-          <h2
-            className="display"
-            style={{ fontSize: "clamp(24px, 2.8vw, 30px)", color: "var(--ink)", margin: "0 0 10px" }}
-          >
-            Step 3: Plan your preparation in phases
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--ink-soft)", margin: "0 0 26px", lineHeight: 1.65, maxWidth: "68ch" }}>
-            Most serious aspirants start 9–12 months before the exam (CAT is held in November). If you have
-            less time, compress — but don&rsquo;t skip phases. The sequence matters more than the duration.
+        {/* 3 — phases */}
+        <section className="guide-section reveal">
+          <SectionHead id="phases" step={3} />
+          <p className="guide-lede">
+            Most serious aspirants start 9–12 months before the exam (CAT is held in November).
+            If you have less time, compress — but don&rsquo;t skip phases. The sequence matters
+            more than the duration.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* A sequence, so it is numbered and the months are the figure you scan for. */}
+          <ol className="guide-phases">
             {PHASES.map((p, i) => (
-              <div
-                key={p.phase}
-                style={{
-                  background: "var(--paper-sunk)",
-                  padding: "18px 20px",
-                  borderLeft: "3px solid var(--accent)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
-                  <div
-                    className="font-extrabold"
-                    style={{
-                      fontSize: 11,
-                      color: "var(--accent)",
-                      background: "var(--paper-sunk)",
-                      padding: "2px 8px",
-                      letterSpacing: "0.5px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {p.phase} · {p.months}
-                  </div>
-                  <div className="font-bold" style={{ fontSize: 14 }}>
-                    {p.title}
-                  </div>
+              <li key={p.months} className="guide-phase">
+                <div className="guide-phase__mark">
+                  <span className="guide-phase__num display">{i + 1}</span>
+                  <span className="guide-phase__months">{p.months}</span>
                 </div>
-                <ul style={{ margin: 0, padding: "0 0 0 16px" }}>
-                  {p.tasks.map((task) => (
-                    <li key={task} style={{ fontSize: 15, color: "var(--ink-soft)", marginBottom: 6, lineHeight: 1.55 }}>
-                      {task}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <div>
+                  <p className="guide-phase__title">{p.title}</p>
+                  <ul className="guide-list">
+                    {p.tasks.map((task) => (
+                      <li key={task}>{task}</li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </section>
 
-        {/* Divider */}
-        <div style={{ borderTop: "1px solid var(--rule)", marginBottom: 56 }} />
-
-        {/* Section 4 — Section-wise tips */}
-        <section style={{ marginBottom: 56 }}>
-          <h2
-            className="display"
-            style={{ fontSize: "clamp(24px, 2.8vw, 30px)", color: "var(--ink)", margin: "0 0 10px" }}
-          >
-            Step 4: What each section actually requires
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--ink-soft)", margin: "0 0 26px", lineHeight: 1.65, maxWidth: "68ch" }}>
-            CAT has three sections with separate time limits — 40 minutes each. You cannot skip between
-            sections mid-exam. Each section rewards a different type of preparation.
+        {/* 4 — the three sections */}
+        <section className="guide-section reveal">
+          <SectionHead id="sections" step={4} />
+          <p className="guide-lede">
+            CAT has three sections with separate time limits — 40 minutes each. You cannot skip
+            between sections mid-exam. Each section rewards a different type of preparation.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="guide-sections">
             {SECTION_TIPS.map((s) => (
-              <div
-                key={s.section}
-                style={{
-                  background: "var(--paper-sunk)",
-                  padding: "18px 20px",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                  <span style={{ fontSize: 24, lineHeight: 1, flexShrink: 0 }}>{s.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                      <span className="font-extrabold" style={{ fontSize: 14 }}>
-                        {s.section}
-                      </span>
-                      <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>— {s.full}</span>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          color: "var(--accent)",
-                          background: "var(--paper-sunk)",
-                          padding: "1px 7px",
-                          fontWeight: 600,
-                        }}
-                      >
-                        {s.weight}
-                      </span>
-                    </div>
-                    <p style={{ fontSize: 15, color: "var(--ink-soft)", margin: 0, lineHeight: 1.6 }}>{s.tip}</p>
-                  </div>
+              <article key={s.section} className="guide-paper">
+                <p className="guide-paper__abbr display">{s.section}</p>
+                <div>
+                  <p className="guide-paper__full">{s.full}</p>
+                  <p className="guide-paper__share">{s.share}</p>
+                  <p className="guide-prose">{s.tip}</p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </section>
 
-        {/* Divider */}
-        <div style={{ borderTop: "1px solid var(--rule)", marginBottom: 56 }} />
-
-        {/* Section 5 — Where StudyNaksha fits */}
-        <section style={{ marginBottom: 56 }}>
-          <h2
-            className="display"
-            style={{ fontSize: "clamp(24px, 2.8vw, 30px)", color: "var(--ink)", margin: "0 0 10px" }}
-          >
-            Where StudyNaksha fits in your prep
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--ink-soft)", margin: "0 0 26px", lineHeight: 1.65, maxWidth: "68ch" }}>
+        {/* 5 — where this site fits */}
+        <section className="guide-section reveal">
+          <SectionHead id="studynaksha" />
+          <p className="guide-lede">
             StudyNaksha is built specifically for the Phase 2–4 work: PYQ practice and mock-test
-            simulation. It doesn&rsquo;t replace a textbook for concepts, and it doesn&rsquo;t compete with coaching.
-            It fills the gap that most aspirants neglect — actually solving official past papers, not just
-            knowing they exist.
+            simulation. It doesn&rsquo;t replace a textbook for concepts, and it doesn&rsquo;t
+            compete with coaching. It fills the gap that most aspirants neglect — actually
+            solving official past papers, not just knowing they exist.
           </p>
 
-          <div
-            style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}
-          >
-            {SN_VALUE.map((item) => (
-              <div
-                key={item.title}
-                style={{
-                  background: "var(--paper-sunk)",
-                  padding: "16px 16px",
-                  borderLeft: "3px solid var(--accent)",
-                }}
-              >
-                <div className="font-bold" style={{ fontSize: 13, marginBottom: 6 }}>
-                  {item.title}
-                </div>
-                <p style={{ fontSize: 15, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop: 28 }}>
-            <Link
-              href="/cat-prep/pyq"
-              style={{
-                display: "inline-block",
-                background: "var(--ink)",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: 14,
-                padding: "12px 24px",
-                textDecoration: "none",
-                letterSpacing: "-0.2px",
-              }}
-            >
-              Browse PYQ Papers →
-            </Link>
-          </div>
+          <dl className="guide-value">
+            {/* The count and the range are derived. The copy here used to claim every
+                official CAT paper, for a collection with twelve years missing. */}
+            <div>
+              <dt>
+                {PYQ_PAPERS.length} past papers, {PYQ_EARLIEST_YEAR} to {PYQ_LATEST_YEAR}
+              </dt>
+              <dd>
+                Every official paper we have been able to digitise, free and complete. Some
+                years in that range have no paper available.
+              </dd>
+            </div>
+            <div>
+              <dt>Practice mode for concept reinforcement</dt>
+              <dd>
+                Work through any paper question by question with instant answers and detailed
+                explanations — ideal for focused revision.
+              </dd>
+            </div>
+            <div>
+              <dt>Mock test mode for real simulation</dt>
+              <dd>
+                Sit the full paper under timed exam conditions: three sections, per-section
+                timers, no answer peeking. Same format as the actual CAT.
+              </dd>
+            </div>
+            <div>
+              <dt>Progress tracking across papers</dt>
+              <dd>
+                See how your PYQ solve rate changes over time. Know where you stand, not just
+                where you hope to be.
+              </dd>
+            </div>
+          </dl>
         </section>
 
-        {/* Divider */}
-        <div style={{ borderTop: "1px solid var(--rule)", marginBottom: 56 }} />
-
-        {/* Section 6 — Common mistakes */}
-        <section style={{ marginBottom: 56 }}>
-          <h2
-            className="display"
-            style={{ fontSize: "clamp(24px, 2.8vw, 30px)", color: "var(--ink)", margin: "0 0 10px" }}
-          >
-            Mistakes most aspirants make (and how to avoid them)
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--ink-soft)", margin: "0 0 26px", lineHeight: 1.65, maxWidth: "68ch" }}>
+        {/* 6 — mistakes */}
+        <section className="guide-section reveal">
+          <SectionHead id="mistakes" />
+          <p className="guide-lede">
             These patterns repeat every year. Recognise them early.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {/*
+            Two columns from 600px, one below it. This was gridTemplateColumns: "1fr 1fr"
+            set inline, with flex-col sm:flex-row beside it that could never override an
+            inline grid — so at 390px each column measured 147px, about twenty characters
+            a line, five times over.
+          */}
+          <ul className="guide-mistakes">
             {MISTAKES.map((m) => (
-              <div
-                key={m.mistake}
-                style={{
-                  padding: "14px 16px",
-                  background: "var(--paper-sunk)",
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: 16,
-                }}
-                className="flex-col sm:flex-row"
-              >
+              <li key={m.mistake} className="guide-mistake">
                 <div>
-                  <div style={{ fontSize: 11, color: "var(--wrong-text)", fontWeight: 700, marginBottom: 3, letterSpacing: "0.3px" }}>
-                    MISTAKE
-                  </div>
-                  <p style={{ fontSize: 15, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55, fontWeight: 500 }}>
-                    {m.mistake}
+                  <p className="guide-mistake__tag" data-kind="mistake">
+                    Mistake
                   </p>
+                  <p className="guide-mistake__text">{m.mistake}</p>
                 </div>
                 <div>
-                  <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginBottom: 3, letterSpacing: "0.3px" }}>
-                    INSTEAD
-                  </div>
-                  <p style={{ fontSize: 15, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55 }}>{m.fix}</p>
+                  <p className="guide-mistake__tag" data-kind="fix">
+                    Instead
+                  </p>
+                  <p className="guide-prose">{m.fix}</p>
                 </div>
-              </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* 7 — the FAQ the schema has always declared */}
+        <section className="guide-section reveal">
+          <SectionHead id="questions" />
+          <p className="guide-lede">
+            The five questions this page is most often found by.
+          </p>
+
+          <div className="guide-faqs">
+            {GUIDE_FAQS.map((f) => (
+              <details key={f.q} className="guide-faq">
+                <summary className="guide-faq__q">
+                  <span>{f.q}</span>
+                  <span className="guide-faq__mark" aria-hidden="true" />
+                </summary>
+                <p className="guide-faq__a">{f.a}</p>
+              </details>
             ))}
           </div>
         </section>
 
         {/* Final CTA */}
-        <div className="ed-invert" style={{ padding: "36px 28px" }}>
+        <div className="ed-invert reveal" style={{ padding: "36px 28px" }}>
           <p className="ed-kicker" style={{ margin: "0 0 12px" }}>
             Next step
           </p>
-          <h3 className="display" style={{ fontSize: 26, color: "#fff", margin: "0 0 10px" }}>
+          <h2 className="display" style={{ fontSize: 26, color: "#fff", margin: "0 0 10px" }}>
             Ready to put this into practice?
-          </h3>
+          </h2>
           <p
             style={{
               fontSize: 16,

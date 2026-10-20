@@ -2758,3 +2758,415 @@ mjx-container[display="true"] {
     translate: none !important;
   }
 }
+
+/* =========================================== */
+/* U002 — the written guide                     */
+/*                                              */
+/* Twenty of the page's twenty-three boxes were */
+/* the same beige block, so a nine-month plan,  */
+/* a sales pitch and a parenthetical aside all  */
+/* carried identical weight. Each kind of thing */
+/* takes its own form here: the bands are a     */
+/* ladder, the plan is a numbered sequence, the */
+/* coaching question is two columns with a rule */
+/* between them, the aside is one notice.       */
+/* =========================================== */
+
+.guide {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.guide-section {
+  padding-top: 44px;
+  margin-top: 44px;
+  border-top: 1px solid var(--rule);
+}
+.guide-section:first-of-type {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
+}
+
+.guide-heading {
+  font-size: clamp(24px, 2.8vw, 30px);
+  color: var(--ink);
+  margin: 0 0 12px;
+  /* So an anchor does not land the heading underneath the sticky masthead. */
+  scroll-margin-top: calc(var(--header-h) + 20px);
+}
+
+/* Measure lives on the prose, not on the intros alone: every 20-word lede was capped at
+   68ch while the long passages beneath them ran the full 852px container. */
+.guide-lede {
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin: 0 0 28px;
+  max-width: 64ch;
+}
+.guide-prose {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 68ch;
+}
+.guide-footnote {
+  font-size: 14px;
+  color: var(--ink-faint);
+  line-height: 1.6;
+  margin: 20px 0 0;
+  max-width: 68ch;
+}
+.guide-list {
+  /* Tailwind preflight strips markers from every list, so a real bulleted list has to
+     ask for them back. Without this the points read as orphaned lines. */
+  list-style: disc;
+  margin: 0;
+  padding-left: 20px;
+}
+.guide-list li::marker {
+  color: var(--rule-hard);
+}
+.guide-list li {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 9px;
+  max-width: 62ch;
+}
+
+/* ---- contents ---- */
+
+.guide-contents {
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--rule-firm);
+  padding: 20px 0 8px;
+  margin-bottom: 44px;
+}
+.guide-contents__list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 680px) {
+  .guide-contents__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+}
+.guide-contents__link {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .guide-contents__link:hover {
+    background: var(--paper-sunk);
+    color: var(--accent-text);
+  }
+}
+.guide-contents__num {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 15px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- the score ladder ---- */
+
+.guide-ladder {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-firm);
+}
+.guide-ladder__row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 20px;
+  align-items: baseline;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--rule);
+}
+.guide-ladder__figure {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.guide-ladder__label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+/* ---- the coaching question ---- */
+
+.guide-debate {
+  display: grid;
+  gap: 28px;
+  margin-bottom: 24px;
+}
+@media (min-width: 680px) {
+  .guide-debate {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px;
+  }
+  /* The rule the spec asked for: between the two sides, carrying no preference. */
+  .guide-debate__side:last-child {
+    border-left: 1px solid var(--rule-firm);
+    padding-left: 36px;
+  }
+}
+.guide-debate__side {
+  border-top: 2px solid var(--ink);
+  padding-top: 16px;
+}
+.guide-debate__title {
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0 0 14px;
+}
+
+/* ---- the plan ---- */
+
+.guide-phases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.guide-phase {
+  display: grid;
+  gap: 8px 22px;
+  padding: 20px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-phase:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+@media (min-width: 680px) {
+  .guide-phase {
+    grid-template-columns: 8.5rem 1fr;
+  }
+}
+.guide-phase__mark {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.guide-phase__num {
+  font-size: 30px;
+  line-height: 1;
+  color: var(--accent-text);
+}
+.guide-phase__months {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.guide-phase__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+/* ---- the three sections ---- */
+
+.guide-sections {
+  display: grid;
+  gap: 0;
+}
+.guide-paper {
+  display: grid;
+  gap: 6px 20px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-paper:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+@media (min-width: 680px) {
+  .guide-paper {
+    grid-template-columns: 6rem 1fr;
+  }
+}
+/* The abbreviation set as a letterform, where an emoji used to sit. */
+.guide-paper__abbr {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0;
+}
+.guide-paper__full {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.guide-paper__share {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- what this site is for ---- */
+
+.guide-value {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.guide-value > div {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-value > div:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.guide-value dt {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+.guide-value dd {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 68ch;
+}
+
+/* ---- mistakes ---- */
+
+.guide-mistakes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.guide-mistake {
+  display: grid;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-mistake:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+/*
+ * One column until there is room for two. The previous rule set the two-column grid
+ * INLINE, with flex-col sm:flex-row beside it that could not override it, so at 390px each
+ * column measured 147px.
+ */
+@media (min-width: 600px) {
+  .guide-mistake {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+}
+.guide-mistake__tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 5px;
+}
+.guide-mistake__tag[data-kind="mistake"] {
+  color: var(--wrong-text);
+}
+.guide-mistake__tag[data-kind="fix"] {
+  color: var(--correct-text);
+}
+.guide-mistake__text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ---- questions ---- */
+
+.guide-faqs {
+  border-top: 1px solid var(--rule-firm);
+}
+.guide-faq {
+  border-bottom: 1px solid var(--rule);
+}
+.guide-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.guide-faq__q::-webkit-details-marker {
+  display: none;
+}
+@media (hover: hover) {
+  .guide-faq__q:hover {
+    color: var(--accent-text);
+  }
+}
+/* A plus that becomes a minus, drawn rather than typed so it cannot pick up a font. */
+.guide-faq__mark {
+  position: relative;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+.guide-faq__mark::before,
+.guide-faq__mark::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1.5px;
+  background: var(--ink-soft);
+}
+.guide-faq__mark::after {
+  rotate: 90deg;
+}
+.guide-faq[open] .guide-faq__mark::after {
+  rotate: 0deg;
+}
+.guide-faq__a {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin: 0;
+  padding: 0 4px 20px;
+  max-width: 68ch;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .guide-faq__mark::after {
+    transition: rotate 0.22s var(--ease-out-expo);
+  }
+}
