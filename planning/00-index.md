@@ -42,7 +42,7 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 |----|--------|------|-------|
 | H101 | ✅ | [H101-resource-viewer.md](./H101-resource-viewer.md) | In-panel resource viewer with thumbnails |
 | H102 | ⬜ | — | Roadmap page quiz cards; real quiz on separate page |
-| L101 | ⬜ | — | Waitlist: text-box instead of dropdown |
+| L101 | ❌ | — | Waitlist: text-box instead of dropdown — closed as moot, U001 removes the waitlist entirely |
 | P001 | 🔄 | [P001-practice-questions.md](./P001-practice-questions.md) | Practice questions — Quant MCQ, DILR sets, VARC RC; Learn/Practice toggle on roadmap |
 | P002 | 🔄 | [P002-practice-player-fixes.md](./P002-practice-player-fixes.md) | Bug fixes + code reuse: RC solution cache bug, inline component remounts, mobile layout, shared PracticeOptionButton + PracticePalette |
 | P003 | 🔄 | [P003-continue-practice-strip.md](./P003-continue-practice-strip.md) | Continue Practice strip — chips for in-progress practice sessions |
@@ -57,10 +57,18 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 |----|--------|------|-------|
 | G001 | 🔄 | [G001-pyq-open-access.md](./G001-pyq-open-access.md) | Remove the PYQ sign-in walls; paper links become crawlable `<a href>` |
 | G002 | 🔄 | [G002-pyq-ssr-full-paper.md](./G002-pyq-ssr-full-paper.md) | Server-render every question, option and explanation below the player |
-| G003 | 🔄 | [G003-waitlist-capture.md](./G003-waitlist-capture.md) | Waitlist writes to a MongoDB `waitlist` collection instead of discarding the address |
+| G003 | ❌ | [G003-waitlist-capture.md](./G003-waitlist-capture.md) | Superseded by U001 — the waitlist only ever collected interest in *other* exams, which the CAT-only repositioning removes. Route, libs, model and tests deleted |
 | G004 | 🔄 | [G004-pricing-copy-cleanup.md](./G004-pricing-copy-cleanup.md) | Remove "later ₹200/mo" from the comparison table and the FAQ |
 | G005 | 🔄 | [G005-practice-chip-link.md](./G005-practice-chip-link.md) | Practice chapter chips become real links, same defect as G001 |
 | G006 | 🔄 | [G006-pyq-single-reader.md](./G006-pyq-single-reader.md) | One reader per paper — answer inline, no login, no duplicated questions; supersedes G002's two-copy layout |
+
+---
+
+## UI Phase — October 2026
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| U001 | ✅ | [U001-home-page-redesign.md](./U001-home-page-redesign.md) | Home page rebuilt CAT-only and surface-first in an editorial visual language; comparison table, waitlist and other-exam framing removed; `LandingPageClient` split into server components. Phase A previewed at `/home-preview`; Phase B swapped it into `/` and deleted `LandingPageClient`, `data.ts`, the preview route and the whole waitlist (`/api/waitlist` + libs + model + tests). Branch `feat/u001-home-page-redesign` |
+| U002 | ⬜ | [U002-site-wide-editorial-pass.md](./U002-site-wide-editorial-pass.md) | Site-wide editorial pass across Learn/Practice/PYQ/Daily Dose/How to Prepare. 18 phases in 5 stages, all decisions settled, mock engine last. Adds the semantic status scale and a site-wide focus system; fixes three U001 defects (`--ink-faint` fails AA, the `.ed-page > *` z-index trap, dead `--measure`) |
 
 ---
 

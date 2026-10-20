@@ -1,4 +1,4 @@
-// RoadmapNav — hero button row for switching the roadmap view mode (Learn / Practice / PYQ / How to Prepare)
+// RoadmapNav — surface switcher shown on every roadmap page (Learn / Practice / Daily Dose / PYQ / How to Prepare)
 "use client";
 
 import Link from "next/link";
@@ -8,22 +8,11 @@ const ITEMS = [
   { key: "learn", label: "Learn", href: "/cat-prep" },
   { key: "practice", label: "Practice", href: "/cat-prep/practice" },
   { key: "daily-dose", label: "Daily Dose", href: "/cat-prep/daily-dose" },
-  { key: "pyq", label: "PYQ", href: "/cat-prep/pyq" },
-  { key: "how-to-prepare", label: "How to Prepare", href: "/cat-prep/how-to-prepare" },
+  { key: "pyq", label: "Past papers", href: "/cat-prep/pyq" },
+  { key: "how-to-prepare", label: "How to prepare", href: "/cat-prep/how-to-prepare" },
 ] as const;
 
 type NavKey = (typeof ITEMS)[number]["key"];
-
-const PILL_STYLE = {
-  padding: "9px 20px",
-  borderRadius: 999,
-  fontSize: 14,
-  fontFamily: "inherit",
-  transition: "all 0.18s",
-  cursor: "pointer",
-  display: "inline-block",
-  textDecoration: "none",
-} as const;
 
 function getActiveKey(pathname: string): NavKey {
   if (pathname === "/cat-prep/pyq" || pathname.startsWith("/cat-prep/pyq/")) return "pyq";
@@ -38,27 +27,27 @@ export default function RoadmapNav() {
   const active = getActiveKey(pathname);
 
   return (
-    <div className="flex gap-2 flex-wrap" style={{ marginBottom: 20 }}>
+    // Spacing belongs to the caller, not the nav — it used to carry marginBottom: 20 of its
+    // own, which meant every surface inherited a gap it could not adjust.
+    <nav aria-label="CAT surfaces" className="roadmap-nav">
       {ITEMS.map((item) => {
         const isActive = active === item.key;
-        // Teal-accented sections: How to Prepare and Daily Dose
-        const isTeal = item.key === "how-to-prepare" || item.key === "daily-dose";
         return (
           <Link
             key={item.key}
             href={item.href}
-            className="font-bold"
-            style={{
-              ...PILL_STYLE,
-              border: `1.5px solid ${isTeal ? "#14B8A6" : isActive ? "#1E3A5F" : "rgba(30,58,95,0.18)"}`,
-              background: isActive ? (isTeal ? "#14B8A6" : "#1E3A5F") : "#fff",
-              color: isActive ? "#fff" : isTeal ? "#0F766E" : "#1E3A5F",
-            }}
+            className="roadmap-nav__item"
+            /*
+             * aria-current is the whole point of this attribute and the repo had zero uses
+             * of it anywhere: the active surface was conveyed by colour alone, so a screen
+             * reader announced five identical links.
+             */
+            aria-current={isActive ? "page" : undefined}
           >
             {item.label}
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }

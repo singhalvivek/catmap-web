@@ -1,3 +1,4 @@
+// page — /cat-prep/[topic]: one syllabus topic, prerendered per topic slug
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import data from "../data.json";

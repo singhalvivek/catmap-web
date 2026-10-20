@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
 import { PracticePalette, type PillState } from "@/app/cat-prep/components/practice/PracticePalette";
+import DifficultyBadge from "@/app/cat-prep/components/practice/DifficultyBadge";
 
 type OptionKey = keyof OptionsMap;
 const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
@@ -21,31 +22,6 @@ const JUMBLE_SEQUENCE = /^[1-4]{4}$/;
 
 function isCompleteSequence(value: string): boolean {
   return JUMBLE_SEQUENCE.test(value) && new Set(value).size === 4;
-}
-
-function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  const color =
-    difficulty === "Easy"
-      ? { bg: "#D1FAE5", text: "#065F46" }
-      : difficulty === "Medium"
-        ? { bg: "#FEF3C7", text: "#92400E" }
-        : { bg: "#FEE2E2", text: "#991B1B" };
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "2px 8px",
-        borderRadius: 6,
-        background: color.bg,
-        color: color.text,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: "0.2px",
-      }}
-    >
-      {difficulty}
-    </span>
-  );
 }
 
 function MathContent({ html, containerRef }: { html: string; containerRef: React.RefObject<HTMLDivElement | null> }) {
@@ -206,7 +182,7 @@ export default function QuestionPlayer({
                 alignItems: "center",
                 gap: 6,
                 fontSize: 13,
-                color: "#64748B",
+                color: "var(--ink-soft)",
                 textDecoration: "none",
                 marginBottom: 20,
                 fontWeight: 500,
@@ -217,10 +193,10 @@ export default function QuestionPlayer({
 
             {/* Question header */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <span className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
+              <span className="font-bold" style={{ fontSize: 15 }}>
                 Q{question.question_number}
               </span>
-              <DifficultyBadge difficulty={question.difficulty} />
+              <DifficultyBadge level={question.difficulty} />
             </div>
 
             {/* Question text */}
@@ -242,15 +218,14 @@ export default function QuestionPlayer({
                         display: "flex",
                         gap: 10,
                         padding: "10px 14px",
-                        borderRadius: 10,
-                        border: "1.5px solid #E2E8F0",
+                        border: "1.5px solid var(--rule)",
                         marginBottom: 8,
                         fontSize: 14,
-                        color: "#334155",
+                        color: "var(--ink-soft)",
                         lineHeight: 1.7,
                       }}
                     >
-                      <span className="font-bold" style={{ color: "#0F766E", flexShrink: 0 }}>{i + 1}.</span>
+                      <span className="font-bold" style={{ color: "var(--accent-text)", flexShrink: 0 }}>{i + 1}.</span>
                       <span style={{ minWidth: 0 }}>
                         <MathContent html={question.options[key]} containerRef={containerRef} />
                       </span>
@@ -260,7 +235,7 @@ export default function QuestionPlayer({
 
                 <label
                   htmlFor="jumble-sequence"
-                  style={{ display: "block", fontSize: 13, color: "#64748B", marginBottom: 6, fontWeight: 600 }}
+                  style={{ display: "block", fontSize: 13, color: "var(--ink-soft)", marginBottom: 6, fontWeight: 600 }}
                 >
                   Enter the correct order (e.g. 2413)
                 </label>
@@ -282,16 +257,14 @@ export default function QuestionPlayer({
                   style={{
                     width: 140,
                     padding: "10px 14px",
-                    borderRadius: 10,
-                    border: `1.5px solid ${isChecked ? "#E2E8F0" : "#CBD5E1"}`,
-                    background: isChecked ? "#F8FAFC" : "#fff",
-                    color: "#1E3A5F",
+                    border: `1.5px solid ${isChecked ? "var(--rule)" : "var(--ink-faint)"}`,
+                    background: isChecked ? "var(--paper-sunk)" : "var(--paper)",
+                    color: "var(--ink)",
                     fontSize: 18,
                     fontWeight: 700,
                     letterSpacing: "6px",
                     fontFamily: "inherit",
-                    outline: "none",
-                  }}
+                                      }}
                 />
 
                 {isChecked && (
@@ -300,7 +273,7 @@ export default function QuestionPlayer({
                     style={{
                       marginTop: 10,
                       fontSize: 13,
-                      color: answerUnavailable ? "#92400E" : given === recordedAnswer ? "#065F46" : "#991B1B",
+                      color: answerUnavailable ? "var(--caution-text)" : given === recordedAnswer ? "var(--correct-text)" : "var(--wrong-text)",
                     }}
                   >
                     {answerUnavailable
@@ -325,56 +298,57 @@ export default function QuestionPlayer({
                   </PracticeOptionButton>
                 ))}
                 {isChecked && answerUnavailable && (
-                  <p className="font-bold" style={{ marginTop: 10, fontSize: 13, color: "#92400E" }}>
+                  <p className="font-bold" style={{ marginTop: 10, fontSize: 13, color: "var(--caution-text)" }}>
                     The answer key is missing for this question.
                   </p>
                 )}
               </div>
             )}
 
-            {/* Check Solution button — hidden once checked in any session */}
-            {!isChecked && (
+            {/*
+              Conditioned on whether a solution is ON SCREEN, not on whether one was ever
+              fetched. isChecked comes from persisted storage and sessionSolution from a
+              useState that a reload clears, so the two disagreed the moment you came back:
+              a tinted grid, no explanation, and no control left to get one. Re-fetching is
+              safe — setCorrectAnswer early-returns when an answer is already recorded.
+            */}
+            {!sessionSolution && !answerUnavailable && (
               <button
                 onClick={checkSolution}
                 disabled={!canCheck || loading}
-                style={{
-                  marginTop: 8,
-                  padding: "11px 24px",
-                  borderRadius: 10,
-                  border: "none",
-                  background: canCheck ? "#1E3A5F" : "#E2E8F0",
-                  color: canCheck ? "#fff" : "#94A3B8",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  cursor: canCheck ? "pointer" : "not-allowed",
-                  fontFamily: "inherit",
-                  transition: "all 0.18s",
-                }}
+                className="ed-btn"
+                data-weight="primary"
+                style={{ marginTop: 8 }}
               >
-                {loading ? "Loading…" : "Check Solution"}
+                {loading ? "Loading…" : isChecked ? "Show the explanation" : "Check solution"}
               </button>
             )}
 
-            {/* Explanation — only shown when fetched this session */}
+            <p aria-live="polite" className="ed-sr-only">
+              {sessionSolution
+                ? `Answer checked. The correct answer is ${correctLetter ?? recordedAnswer ?? "shown below"}.`
+                : ""}
+            </p>
+
+            {/* Explanation — shown whenever one has been fetched */}
             {sessionSolution && (
               <div
                 style={{
                   marginTop: 20,
                   padding: "16px 20px",
-                  borderRadius: 12,
-                  background: "#F8FAFC",
-                  border: "1.5px solid #E2E8F0",
+                  background: "var(--paper-sunk)",
+                  border: "1.5px solid var(--rule)",
                 }}
               >
-                <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 8 }}>
+                <div className="font-bold" style={{ fontSize: 13, marginBottom: 8 }}>
                   Explanation
                 </div>
                 {sessionSolution.explanation ? (
-                  <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>
+                  <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>
                     <MathContent html={sessionSolution.explanation} containerRef={containerRef} />
                   </p>
                 ) : (
-                  <p style={{ fontSize: 14, color: "#94A3B8", margin: 0 }}>No explanation available.</p>
+                  <p style={{ fontSize: 14, color: "var(--ink-faint)", margin: 0 }}>No explanation available.</p>
                 )}
                 {sessionSolution.solution_svg && (
                   <div
@@ -393,10 +367,9 @@ export default function QuestionPlayer({
                 disabled={currentNum <= 1}
                 style={{
                   padding: "9px 20px",
-                  borderRadius: 8,
-                  border: "1.5px solid #E2E8F0",
-                  background: "#fff",
-                  color: currentNum <= 1 ? "#CBD5E1" : "#334155",
+                  border: "1.5px solid var(--rule)",
+                  background: "var(--paper)",
+                  color: currentNum <= 1 ? "var(--ink-faint)" : "var(--ink-soft)",
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: currentNum <= 1 ? "not-allowed" : "pointer",
@@ -410,10 +383,9 @@ export default function QuestionPlayer({
                 disabled={currentNum >= questions.length}
                 style={{
                   padding: "9px 20px",
-                  borderRadius: 8,
-                  border: "1.5px solid #E2E8F0",
-                  background: "#fff",
-                  color: currentNum >= questions.length ? "#CBD5E1" : "#334155",
+                  border: "1.5px solid var(--rule)",
+                  background: "var(--paper)",
+                  color: currentNum >= questions.length ? "var(--ink-faint)" : "var(--ink-soft)",
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: currentNum >= questions.length ? "not-allowed" : "pointer",
@@ -431,12 +403,11 @@ export default function QuestionPlayer({
             style={{
               width: 196,
               flexShrink: 0,
-              background: "#fff",
-              borderRadius: 12,
-              border: "1.5px solid #E8EAF0",
+              background: "var(--paper)",
+              border: "1.5px solid var(--rule)",
               padding: "16px 14px",
               position: "sticky",
-              top: 72,
+              top: "var(--header-h)",
             }}
           >
             <PracticePalette

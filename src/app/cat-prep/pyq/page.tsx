@@ -1,3 +1,4 @@
+// page — /cat-prep/pyq: the past-papers index
 import type { Metadata } from "next";
 import { ENV } from "@/config/env";
 import data from "../data.json";

@@ -29,15 +29,15 @@ export default function SectionHeader({
   const questionWarning = questionTimeLeft !== null && questionTimeLeft <= 10;
 
   const timerChip = sectionCritical
-    ? { bg: "rgba(239,68,68,0.18)", border: "rgba(248,113,113,0.55)", text: "#FCA5A5" }
+    ? { bg: "rgba(239,68,68,0.18)", border: "rgba(248,113,113,0.55)", text: "var(--wrong-bright)" }
     : sectionWarning
-    ? { bg: "rgba(251,191,36,0.18)", border: "rgba(251,191,36,0.5)", text: "#FCD34D" }
-    : { bg: "rgba(255,255,255,0.12)", border: "rgba(255,255,255,0.22)", text: "#fff" };
+    ? { bg: "rgba(251,191,36,0.18)", border: "rgba(251,191,36,0.5)", text: "var(--caution-bright)" }
+    : { bg: "rgba(255,255,255,0.12)", border: "var(--invert-rule)", text: "var(--invert-ink)" };
 
   return (
     <div
       style={{
-        background: "#1E3A5F",
+        background: "var(--invert-bg)",
         padding: "0 24px",
         height: 56,
         display: "flex",
@@ -58,15 +58,15 @@ export default function SectionHeader({
             className="font-semibold"
             style={{
               fontSize: 12,
-              color: "rgba(255,255,255,0.55)",
+              color: "var(--invert-ink-soft)",
               textDecoration: "none",
               letterSpacing: "0.2px",
             }}
           >
             ← Back
           </Link>
-          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14 }}>|</span>
-          <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
+          <span style={{ color: "var(--invert-rule)", fontSize: 14 }}>|</span>
+          <span className="font-extrabold" style={{ fontSize: 15, color: "var(--invert-ink)" }}>
             {sectionName}
           </span>
         </div>
@@ -78,7 +78,7 @@ export default function SectionHeader({
               className="font-semibold"
               style={{
                 fontSize: 12,
-                color: questionWarning ? "#FCA5A5" : "rgba(255,255,255,0.6)",
+                color: questionWarning ? "var(--wrong-bright)" : "var(--invert-ink-soft)",
               }}
             >
               Q: {formatTime(questionTimeLeft)}
@@ -95,7 +95,6 @@ export default function SectionHeader({
               color: timerChip.text,
               background: timerChip.bg,
               border: `1.5px solid ${timerChip.border}`,
-              borderRadius: 8,
               padding: "5px 10px",
               fontVariantNumeric: "tabular-nums",
               letterSpacing: "0.5px",
@@ -116,10 +115,9 @@ export default function SectionHeader({
             className="font-bold"
             style={{
               padding: "5px 14px",
-              borderRadius: 7,
               background: "rgba(255,255,255,0.12)",
-              color: "#fff",
-              border: "1.5px solid rgba(255,255,255,0.22)",
+              color: "var(--invert-ink)",
+              border: "1.5px solid var(--invert-rule)",
               fontSize: 12,
               cursor: "pointer",
               fontFamily: "inherit",

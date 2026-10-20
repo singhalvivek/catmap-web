@@ -23,14 +23,14 @@ export default function OGImage() {
           padding: 80,
         }}
       >
-        <div style={{ width: 72, height: 8, borderRadius: 4, background: OG_BRAND.teal, marginBottom: 40 }} />
+        <div style={{ width: 72, height: 8, background: OG_BRAND.teal, marginBottom: 40 }} />
 
         <div style={{ fontSize: 64, fontWeight: 800, color: OG_BRAND.navy, textAlign: "center", lineHeight: 1.15, marginBottom: 24 }}>
-          CAT Roadmap
+          Free CAT Preparation
         </div>
 
         <div style={{ fontSize: 28, fontWeight: 500, color: OG_BRAND.slate, textAlign: "center", maxWidth: 800, lineHeight: 1.4 }}>
-          Structured · Trackable · Distraction-free
+          The whole syllabus, past papers and practice. No sign-up.
         </div>
 
         <div style={{ position: "absolute", bottom: 48, fontSize: 20, color: OG_BRAND.teal, fontWeight: 600 }}>

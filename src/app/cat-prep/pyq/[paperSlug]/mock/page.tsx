@@ -1,3 +1,4 @@
+// page — one PYQ paper as a timed three-section mock test
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchPyqMockTest } from "@/lib/pyqQueries";

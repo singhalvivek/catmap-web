@@ -1,12 +1,6 @@
 // SectionSummaryRow — static per-section score/stats row on the results screen
 import type { TestSection, SectionResult } from "../../../models/dailyChallenge";
-
-function formatTime(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return s === 0 ? `${m}m` : `${m}m ${s}s`;
-}
+import { formatDuration } from "@/lib/dateIST";
 
 type Props = {
   testSection: TestSection;
@@ -23,34 +17,40 @@ export default function SectionSummaryRow({ testSection, sectionResult }: Props)
     (r) => !r.correct && r.given !== null
   ).length;
   const unattempted = testSection.questions.length - correct - wrong;
-  const scorePositive = sectionResult.score >= 0;
+  // A section scored exactly 0 is neither right nor wrong; only a real gain or loss
+  // earns the correct/wrong scale.
+  const scoreColor =
+    sectionResult.score > 0
+      ? "var(--correct-text)"
+      : sectionResult.score < 0
+      ? "var(--wrong-text)"
+      : "var(--inert-text)";
 
   return (
     <div
       style={{
         padding: "14px 16px",
-        borderRadius: 12,
-        border: "1.5px solid #E8EAF0",
-        background: "#fff",
+        border: "1.5px solid var(--rule)",
+        background: "var(--paper)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
       }}
     >
       <div>
-        <p className="font-extrabold text-trust-navy" style={{ fontSize: 14, margin: 0 }}>
+        <p className="font-extrabold" style={{ fontSize: 14, margin: 0, color: "var(--ink)" }}>
           {sectionResult.name}
         </p>
-        <p className="text-slate-400" style={{ fontSize: 11, marginTop: 2 }}>
-          {correct} correct · {wrong} wrong · {unattempted} unattempted · {formatTime(sectionTimeSpent)}
+        <p className="ed-muted" style={{ fontSize: 11, marginTop: 2 }}>
+          {correct} correct · {wrong} wrong · {unattempted} unattempted · {formatDuration(sectionTimeSpent)}
         </p>
       </div>
       <span
         className="font-bold"
-        style={{ fontSize: 16, color: scorePositive ? "#166534" : "#991B1B" }}
+        style={{ fontSize: 16, color: scoreColor }}
       >
         {sectionResult.score > 0 ? `+${sectionResult.score}` : sectionResult.score}
-        <span className="font-normal text-slate-400" style={{ fontSize: 13 }}>
+        <span className="font-normal ed-muted" style={{ fontSize: 13 }}>
           {" "}/ {sectionResult.totalMarks}
         </span>
       </span>

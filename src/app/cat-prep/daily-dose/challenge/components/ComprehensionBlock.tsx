@@ -11,15 +11,14 @@ export default function ComprehensionBlock({
   return (
     <div
       style={{
-        background: "#F8FAFC",
-        borderRadius: 10,
-        border: "1.5px solid #E2E8F0",
+        background: "var(--paper-sunk)",
+        border: "1.5px solid var(--rule-firm)",
         padding: "16px 18px",
         marginBottom: 20,
       }}
     >
       <span
-        className="font-bold text-slate-400"
+        className="font-bold ed-muted"
         style={{
           fontSize: 10,
           letterSpacing: "0.5px",
@@ -41,7 +40,7 @@ export default function ComprehensionBlock({
             key={key}
             style={{
               fontSize: 14,
-              color: "#475569",
+              color: "var(--ink-soft)",
               lineHeight: 1.85,
               margin: 0,
               marginBottom: 12,

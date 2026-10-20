@@ -6,33 +6,11 @@ import type { DilrSet, DilrSolution, OptionsMap } from "@/app/cat-prep/models/pr
 import Link from "next/link";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
+import DifficultyBadge from "@/app/cat-prep/components/practice/DifficultyBadge";
+import { PRACTICE_INDEX } from "@/constants/routes";
 
 type OptionKey = keyof OptionsMap;
 const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
-
-function LevelBadge({ level }: { level: string }) {
-  const color =
-    level === "Medium"
-      ? { bg: "#FEF3C7", text: "#92400E" }
-      : level === "Medium-Hard"
-        ? { bg: "#FFEDD5", text: "#9A3412" }
-        : { bg: "#FEE2E2", text: "#991B1B" };
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "2px 8px",
-        borderRadius: 6,
-        background: color.bg,
-        color: color.text,
-        fontSize: 11,
-        fontWeight: 700,
-      }}
-    >
-      {level}
-    </span>
-  );
-}
 
 export default function DilrPlayer({
   set,
@@ -90,7 +68,7 @@ export default function DilrPlayer({
       <p
         style={{
           fontSize: 14,
-          color: "#334155",
+          color: "var(--ink-soft)",
           lineHeight: 1.8,
           whiteSpace: "pre-line",
           margin: "0 0 16px",
@@ -119,10 +97,9 @@ export default function DilrPlayer({
             style={{
               width: 34,
               height: 34,
-              borderRadius: 8,
-              border: `1.5px solid ${q.number === currentQ ? "#0F766E" : "#E2E8F0"}`,
-              background: q.number === currentQ ? "#0F766E" : "#fff",
-              color: q.number === currentQ ? "#fff" : "#334155",
+              border: `1.5px solid ${q.number === currentQ ? "var(--accent-text)" : "var(--rule)"}`,
+              background: q.number === currentQ ? "var(--accent-text)" : "var(--paper)",
+              color: q.number === currentQ ? "var(--paper)" : "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
@@ -135,7 +112,7 @@ export default function DilrPlayer({
       </div>
 
       {/* Question text */}
-      <p style={{ fontSize: 15, color: "#1E3A5F", fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+      <p style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
         {question?.question}
       </p>
 
@@ -152,27 +129,34 @@ export default function DilrPlayer({
         </PracticeOptionButton>
       ))}
 
-      {/* Check Answer — hidden once this question is checked */}
-      {!isChecked && (
+      {/*
+        Conditioned on whether a solution is ON SCREEN, not on whether one was ever
+        fetched. isChecked is persisted and sessionSolution is not, so after a reload a
+        checked question showed a tinted grid, no explanation and no control to get one.
+        Re-fetching is safe: setCorrectAnswer early-returns when an answer is recorded.
+
+        Both halves, unlike the sibling players: one DilrSolution covers the whole SET, so
+        "a solution is on screen" is the set being fetched AND this question being recorded.
+        Testing sessionSolution alone made checking Q1 remove the control from Q2, Q3 and
+        Q4, leaving them permanently ungradable.
+      */}
+      {!(sessionSolution && isChecked) && (
         <button
           onClick={checkAnswer}
           disabled={!question || !answers[question.number] || loading}
-          style={{
-            marginTop: 12,
-            padding: "10px 22px",
-            borderRadius: 10,
-            border: "none",
-            background: question && answers[question.number] ? "#0F766E" : "#E2E8F0",
-            color: question && answers[question.number] ? "#fff" : "#94A3B8",
-            fontSize: 14,
-            fontWeight: 700,
-            cursor: question && answers[question.number] ? "pointer" : "not-allowed",
-            fontFamily: "inherit",
-          }}
+          className="ed-btn"
+          data-weight="primary"
+          style={{ marginTop: 12 }}
         >
-          {loading ? "Loading…" : "Check Answer"}
+          {loading ? "Loading…" : isChecked ? "Show the explanation" : "Check answer"}
         </button>
       )}
+
+      <p aria-live="polite" className="ed-sr-only">
+        {sessionSolution && isChecked && question
+          ? `Answer checked. The correct answer is ${correctAnswers[question.number] ?? "shown below"}.`
+          : ""}
+      </p>
 
       {/* Full solution — shown once fetched in this session */}
       {sessionSolution && isChecked && (
@@ -180,15 +164,14 @@ export default function DilrPlayer({
           style={{
             marginTop: 16,
             padding: "16px 20px",
-            borderRadius: 12,
-            background: "#F0FDFA",
-            border: "1.5px solid #14B8A6",
+            background: "var(--paper-sunk)",
+            border: "1.5px solid var(--accent)",
           }}
         >
-          <div className="font-bold" style={{ fontSize: 13, color: "#0F766E", marginBottom: 8 }}>
+          <div className="font-bold" style={{ fontSize: 13, color: "var(--accent-text)", marginBottom: 8 }}>
             Full Solution
           </div>
-          <p style={{ fontSize: 14, color: "#334155", whiteSpace: "pre-line", lineHeight: 1.7, margin: "0 0 12px" }}>
+          <p style={{ fontSize: 14, color: "var(--ink-soft)", whiteSpace: "pre-line", lineHeight: 1.7, margin: "0 0 12px" }}>
             {sessionSolution.solution_text}
           </p>
           {sessionSolution.solution_svg && (
@@ -203,59 +186,67 @@ export default function DilrPlayer({
     <div>
       {/* Back link */}
       <Link
-        href="/cat-prep"
+        href={PRACTICE_INDEX}
         style={{
           display: "inline-flex",
           alignItems: "center",
           gap: 6,
           fontSize: 13,
-          color: "#64748B",
+          color: "var(--ink-soft)",
           textDecoration: "none",
           marginBottom: 20,
           fontWeight: 500,
         }}
       >
-        ← Back to Roadmap
+        ← All practice chapters
       </Link>
 
       {/* Set header */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-        <span className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
+        <span className="font-bold" style={{ fontSize: 15 }}>
           Set {set.set_number}
         </span>
-        <LevelBadge level={set.level} />
+        <DifficultyBadge level={set.level} />
       </div>
 
-      {/* Mobile tabs */}
-      <div className="md:hidden" style={{ display: "flex", gap: 0, marginBottom: 16, borderRadius: 8, overflow: "hidden", border: "1.5px solid #E2E8F0" }}>
+      {/*
+        Pinned under the masthead. This was an ordinary block at the top of the page, so on
+        a phone the loop was: read down a six-paragraph passage, scroll all the way back up
+        to reach the switch, change panel, answer, scroll up again.
+      */}
+      <div className="solve-tabs md:hidden" role="tablist" aria-label="Passage or questions">
         {(["passage", "questions"] as const).map((tab) => (
           <button
             key={tab}
+            type="button"
+            role="tab"
+            id={`solve-tab-${tab}`}
+            aria-selected={activeTab === tab}
+            aria-controls={`solve-panel-${tab}`}
+            className="solve-tabs__tab"
             onClick={() => setActiveTab(tab)}
-            style={{
-              flex: 1,
-              padding: "10px 0",
-              border: "none",
-              background: activeTab === tab ? "#0F766E" : "#fff",
-              color: activeTab === tab ? "#fff" : "#334155",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              fontFamily: "inherit",
-              textTransform: "capitalize",
-            }}
           >
-            {tab}
+            {tab === "passage" ? "The set" : "Questions"}
           </button>
         ))}
       </div>
 
       {/* Single responsive grid — B4: one DOM tree; CSS hides inactive panel on mobile */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className={`${activeTab === "questions" ? "hidden md:block" : ""} md:max-h-[70vh] md:overflow-y-auto md:pr-2`}>
+        <div
+          id="solve-panel-passage"
+          role="tabpanel"
+          aria-labelledby="solve-tab-passage"
+          className={`${activeTab === "questions" ? "hidden md:block" : ""} solve-panel`}
+        >
           {passageContent}
         </div>
-        <div className={activeTab === "passage" ? "hidden md:block" : ""}>
+        <div
+          id="solve-panel-questions"
+          role="tabpanel"
+          aria-labelledby="solve-tab-questions"
+          className={activeTab === "passage" ? "hidden md:block" : ""}
+        >
           {questionsContent}
         </div>
       </div>
@@ -267,9 +258,8 @@ export default function DilrPlayer({
             href={`/cat-prep/practice/dilr/${chapterSlug}/${set.set_number - 1}`}
             style={{
               padding: "9px 20px",
-              borderRadius: 8,
-              border: "1.5px solid #E2E8F0",
-              color: "#334155",
+              border: "1.5px solid var(--rule)",
+              color: "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               textDecoration: "none",
@@ -285,9 +275,8 @@ export default function DilrPlayer({
             href={`/cat-prep/practice/dilr/${chapterSlug}/${set.set_number + 1}`}
             style={{
               padding: "9px 20px",
-              borderRadius: 8,
-              border: "1.5px solid #E2E8F0",
-              color: "#334155",
+              border: "1.5px solid var(--rule)",
+              color: "var(--ink-soft)",
               fontSize: 13,
               fontWeight: 600,
               textDecoration: "none",

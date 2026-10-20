@@ -65,3 +65,15 @@ export function pyqPaperSearchName(paper: { examYear: number; examSlot: number |
 export function getPyqPaper(slug: string): PyqPaperMeta | undefined {
   return PYQ_PAPERS.find((p) => p.slug === slug);
 }
+
+/**
+ * Derived rather than written down. The page copy used to carry "1990–2025" beside the
+ * label "years covered", which claimed 36 years for a set that holds 24: 1992–1995 and
+ * 2009–2016 have no paper. Anything describing the collection reads these.
+ */
+export const PYQ_YEARS_COVERED = [...new Set(PYQ_PAPERS.map((p) => p.examYear))].sort(
+  (a, b) => a - b
+);
+
+export const PYQ_EARLIEST_YEAR = PYQ_YEARS_COVERED[0];
+export const PYQ_LATEST_YEAR = PYQ_YEARS_COVERED[PYQ_YEARS_COVERED.length - 1];

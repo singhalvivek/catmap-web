@@ -40,13 +40,12 @@ function ResourceThumbnail({ resource }: { resource: Resource }) {
             style={{
               width: 32,
               height: 32,
-              borderRadius: "50%",
               background: "rgba(220,38,38,0.9)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: 12,
-              color: "#fff",
+              color: "var(--paper)",
               paddingLeft: 2,
             }}
           >
@@ -62,9 +61,13 @@ function ResourceThumbnail({ resource }: { resource: Resource }) {
     <div
       aria-hidden
       className={`${containerClass} flex items-center justify-center text-2xl`}
-      style={{ background: isVideo ? "#FEF2F2" : "#EEF2FF" }}
+      style={{
+        background: "var(--paper-sunk)",
+        color: "var(--ink-soft)",
+        border: "1px solid var(--rule)",
+      }}
     >
-      {isVideo ? "▶" : "📄"}
+      {isVideo ? "▶" : "☰"}
     </div>
   );
 }
@@ -80,7 +83,7 @@ export default function ResourceList({
     <section style={{ marginBottom: 20 }}>
       <div
         className="font-bold uppercase mb-2.5"
-        style={{ fontSize: 12, color: "#1E3A5F", letterSpacing: "0.5px" }}
+        style={{ fontSize: 12, color: "var(--ink)", letterSpacing: "0.5px" }}
       >
         Resources
       </div>
@@ -89,11 +92,10 @@ export default function ResourceList({
         <div
           style={{
             padding: 16,
-            borderRadius: 10,
-            background: "#F8FAFC",
-            border: "1.5px dashed #CBD5E1",
+            background: "var(--paper-sunk)",
+            border: "1.5px dashed var(--ink-faint)",
             textAlign: "center",
-            color: "#94A3B8",
+            color: "var(--ink-faint)",
             fontSize: 13,
           }}
         >
@@ -108,21 +110,20 @@ export default function ResourceList({
               className="flex flex-col md:flex-row text-left w-full"
               style={{
                 padding: 0,
-                borderRadius: 10,
-                border: "1.5px solid #E8EAF0",
-                background: "#fff",
+                border: "1.5px solid var(--rule)",
+                background: "var(--paper)",
                 cursor: "pointer",
                 overflow: "hidden",
                 transition: "all 0.15s",
                 fontFamily: "inherit",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.border = "1.5px solid #14B8A6";
-                e.currentTarget.style.background = "#F0FDFA";
+                e.currentTarget.style.border = "1.5px solid var(--accent)";
+                e.currentTarget.style.background = "var(--paper-sunk)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.border = "1.5px solid #E8EAF0";
-                e.currentTarget.style.background = "#fff";
+                e.currentTarget.style.border = "1.5px solid var(--rule)";
+                e.currentTarget.style.background = "var(--paper)";
               }}
             >
               <ResourceThumbnail resource={r} />
@@ -132,7 +133,7 @@ export default function ResourceList({
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
-                    className="font-semibold text-trust-navy"
+                    className="font-semibold"
                     style={{
                       fontSize: 13,
                       marginBottom: 1,
@@ -143,7 +144,7 @@ export default function ResourceList({
                   >
                     {r.type === "SERIES" ? r.instructor ?? "Video series" : r.title}
                   </div>
-                  <div style={{ fontSize: 11, color: "#94A3B8" }}>
+                  <div style={{ fontSize: 11, color: "var(--ink-faint)" }}>
                     {r.type === "SERIES"
                       ? `Series · ${r.items?.length ?? 0} videos`
                       : r.type}
@@ -152,7 +153,7 @@ export default function ResourceList({
                 <span
                   aria-hidden
                   className="font-bold"
-                  style={{ color: "#14B8A6", fontSize: 13, flexShrink: 0 }}
+                  style={{ color: "var(--accent)", fontSize: 13, flexShrink: 0 }}
                 >
                   ▶
                 </span>

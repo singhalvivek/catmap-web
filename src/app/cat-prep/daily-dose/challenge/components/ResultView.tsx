@@ -6,15 +6,7 @@ import Link from "next/link";
 import type { DailyChallengeResult, DailyTest } from "../../../models/dailyChallenge";
 import SectionSummaryRow from "./SectionSummaryRow";
 import { trackEvent } from "@/app/components/analytics";
-
-function formatTime(totalSeconds: number): string {
-  const h = Math.floor(totalSeconds / 3600);
-  const m = Math.floor((totalSeconds % 3600) / 60);
-  const s = totalSeconds % 60;
-  if (h > 0) return `${h}h ${m}m ${s}s`;
-  if (m > 0) return s === 0 ? `${m}m` : `${m}m ${s}s`;
-  return `${s}s`;
-}
+import { formatDuration } from "@/lib/dateIST";
 
 type Props = {
   result: DailyChallengeResult;
@@ -54,11 +46,11 @@ export default function ResultView({
   }, [analyticsEvent]);
 
   return (
-    <div className="min-h-screen" style={{ background: "#FFFDF8" }}>
+    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
       {/* Sticky top bar */}
       <div
         style={{
-          background: "#1E3A5F",
+          background: "var(--invert-bg)",
           height: 52,
           display: "flex",
           alignItems: "center",
@@ -68,7 +60,7 @@ export default function ResultView({
           zIndex: 40,
         }}
       >
-        <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
+        <span className="font-extrabold" style={{ fontSize: 15, color: "var(--invert-ink)" }}>
           {title}
         </span>
       </div>
@@ -77,28 +69,27 @@ export default function ResultView({
         {/* Score hero */}
         <div
           style={{
-            background: "#fff",
-            borderRadius: 16,
-            border: "1.5px solid #E8EAF0",
+            background: "var(--paper)",
+            border: "1.5px solid var(--rule)",
             padding: "28px 24px",
             textAlign: "center",
             marginBottom: 20,
           }}
         >
-          <p className="text-slate-400" style={{ fontSize: 12, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 8 }}>
+          <p className="ed-muted" style={{ fontSize: 12, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 8 }}>
             Total Score
           </p>
           <p
-            className="font-extrabold text-trust-navy"
-            style={{ fontSize: 44, lineHeight: 1, marginBottom: 4 }}
+            className="font-extrabold"
+            style={{ fontSize: 44, lineHeight: 1, marginBottom: 4, color: "var(--ink)" }}
           >
             {result.score}
-            <span className="font-medium text-slate-300" style={{ fontSize: 24 }}>
+            <span className="font-medium ed-muted" style={{ fontSize: 24 }}>
               {" "}/ {result.totalMarks}
             </span>
           </p>
-          <p className="text-slate-400" style={{ fontSize: 13, marginBottom: 16 }}>
-            {pct}% · {formatTime(result.totalTimeSeconds)} total time
+          <p className="ed-muted" style={{ fontSize: 13, marginBottom: 16 }}>
+            {pct}% · {formatDuration(result.totalTimeSeconds)} total time
           </p>
 
           {/* Quick stat pills */}
@@ -109,10 +100,10 @@ export default function ResultView({
                 style={{
                   padding: "5px 14px",
                   borderRadius: 100,
-                  background: "#F1F5F9",
+                  background: "var(--paper-sunk)",
                   fontSize: 12,
                   fontWeight: 600,
-                  color: "#1E3A5F",
+                  color: "var(--ink)",
                 }}
               >
                 {sec.name}: {sec.score > 0 ? `+${sec.score}` : sec.score}
@@ -122,15 +113,15 @@ export default function ResultView({
         </div>
 
         {saveError && (
-          <p className="text-red-500 text-xs mb-4 text-center">
+          <p className="text-xs mb-4 text-center" style={{ color: "var(--wrong-text)" }}>
             Could not save your result. Please note your score.
           </p>
         )}
 
         {/* Per-section breakdown */}
         <p
-          className="font-extrabold text-trust-navy"
-          style={{ fontSize: 13, letterSpacing: "0.4px", textTransform: "uppercase", marginBottom: 10 }}
+          className="font-extrabold"
+          style={{ fontSize: 13, letterSpacing: "0.4px", textTransform: "uppercase", marginBottom: 10, color: "var(--ink)" }}
         >
           Section Breakdown
         </p>
@@ -153,12 +144,12 @@ export default function ResultView({
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <Link
               href={reviewHref}
-              className="font-bold text-white w-full"
+              className="font-bold w-full"
               style={{
                 display: "block",
                 padding: "13px 32px",
-                borderRadius: 10,
-                background: "#1E3A5F",
+                background: "var(--ink)",
+                color: "var(--paper)",
                 fontSize: 14,
                 textDecoration: "none",
               }}
@@ -175,9 +166,8 @@ export default function ResultView({
             style={{
               display: "inline-block",
               padding: "12px 32px",
-              borderRadius: 10,
-              background: reviewHref ? "#F1F5F9" : "#1E3A5F",
-              color: reviewHref ? "#1E3A5F" : "#fff",
+              background: reviewHref ? "var(--paper-sunk)" : "var(--ink)",
+              color: reviewHref ? "var(--ink)" : "var(--paper)",
               fontSize: 14,
               textDecoration: "none",
             }}

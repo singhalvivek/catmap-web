@@ -1,8 +1,7 @@
-// Header — sticky nav for the roadmap page; auth via Firebase Google sign-in
+// Header — sticky nav for the roadmap pages; auth via Firebase Google sign-in
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import {
   User,
   onAuthStateChanged,
@@ -10,8 +9,9 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
-import SNLogo from "./SNLogo";
+import Wordmark from "@/app/components/Wordmark";
 import { trackEvent } from "@/app/components/analytics";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -52,67 +52,21 @@ export default function Header() {
   };
 
   return (
-    <header
-      className="sticky top-0 z-50 border-b border-calm-border"
-      style={{
-        background: "#FFFDF8",
-        boxShadow: "0 1px 12px rgba(30,58,95,0.06)",
-        height: 64,
-      }}
-    >
-      <div
-        className="flex items-center justify-between"
-        style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64 }}
-      >
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-          <SNLogo size={34} />
-          <div>
-            <div
-              className="font-extrabold text-trust-navy leading-tight"
-              style={{ fontSize: 17, letterSpacing: "-0.4px" }}
-            >
-              StudyNaksha
-            </div>
-            <div className="text-slate-400" style={{ fontSize: 10, letterSpacing: "0.4px" }}>
-              CAT Roadmap
-            </div>
-          </div>
-        </Link>
+    <header className="site-header">
+      <div className="ed-shell site-header__bar">
+        <Wordmark size="sm" />
 
-        {/* Right nav */}
         <div className="flex items-center gap-3">
-          <span
-            className="font-semibold text-slate-400"
-            style={{
-              fontSize: 13,
-              padding: "4px 10px",
-              background: "#F1F5F9",
-              borderRadius: 6,
-            }}
-          >
-            CAT
-          </span>
-
+          <ThemeToggle />
           {user ? (
             <>
-              <span className="hidden sm:block text-sm text-slate-500 max-w-[140px] truncate">
+              <span
+                className="hidden sm:block truncate"
+                style={{ fontSize: 13, color: "var(--ink-soft)", maxWidth: 160 }}
+              >
                 {user.displayName ?? user.email ?? "Signed in"}
               </span>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="font-medium text-slate-400 hover:text-slate-600 transition-colors"
-                style={{
-                  fontSize: 13,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  textDecoration: "underline",
-                  textUnderlineOffset: 2,
-                }}
-              >
+              <button type="button" onClick={handleSignOut} className="site-header__auth">
                 Sign out
               </button>
             </>
@@ -121,26 +75,19 @@ export default function Header() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="font-medium text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-40"
-              style={{
-                fontSize: 13,
-                background: "none",
-                border: "none",
-                cursor: loading ? "not-allowed" : "pointer",
-                fontFamily: "inherit",
-                textDecoration: "underline",
-                textUnderlineOffset: 2,
-              }}
+              className="site-header__auth"
             >
-              {loading ? "Checking..." : "Sign in"}
+              {loading ? "Checking…" : "Sign in"}
             </button>
           )}
-
         </div>
       </div>
 
       {authError && (
-        <p className="px-6 pb-2 text-xs text-red-600 text-right" style={{ maxWidth: 1120, margin: "0 auto" }}>
+        <p
+          className="ed-shell"
+          style={{ fontSize: 12, color: "#b91c1c", textAlign: "right", paddingBottom: 8 }}
+        >
           {authError}
         </p>
       )}

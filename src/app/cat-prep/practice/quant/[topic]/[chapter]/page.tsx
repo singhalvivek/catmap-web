@@ -1,4 +1,7 @@
+// page — one Quant practice chapter, prerendered per topic/chapter slug
 import { Suspense } from "react";
+import Header from "@/app/cat-prep/components/Header";
+import Footer from "@/app/cat-prep/components/Footer";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchPracticeQuestions } from "@/lib/practiceQueries";
@@ -8,6 +11,7 @@ import { ENV } from "@/config/env";
 import { buildLearningResourceSchema } from "@/app/cat-prep/lib/nodeMetadata";
 import QuestionPlayer from "./QuestionPlayer";
 import Link from "next/link";
+import { PRACTICE_INDEX } from "@/constants/routes";
 
 type Props = { params: Promise<{ topic: string; chapter: string }> };
 
@@ -82,33 +86,35 @@ export default async function QuantChapterPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", flexDirection: "column" }}>
+      <Header />
       {/* Header breadcrumb */}
       <div
         style={{
-          background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
+          background: "var(--paper)",
+          borderBottom: "1px solid var(--rule)",
           padding: "24px 24px 28px",
         }}
       >
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
-            <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
+          <div style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 6 }}>
+            <Link href="/cat-prep" style={{ color: "var(--ink-faint)", textDecoration: "none" }}>
               CAT Prep
             </Link>
             {" / "}
-            <span style={{ color: "#64748B" }}>Practice</span>
+            <span style={{ color: "var(--ink-soft)" }}>Practice</span>
             {" / "}
-            <span style={{ color: "#64748B" }}>{topic.name}</span>
+            <span style={{ color: "var(--ink-soft)" }}>{topic.name}</span>
             {" / "}
-            <span style={{ color: "#1E3A5F", fontWeight: 600 }}>{chapter.name}</span>
+            <span style={{ color: "var(--ink)", fontWeight: 600 }}>{chapter.name}</span>
           </div>
           <h1
-            className="font-extrabold text-trust-navy"
-            style={{ fontSize: "clamp(20px,3vw,28px)", margin: 0, letterSpacing: "-0.3px" }}
+            className="display"
+            style={{ fontSize: "clamp(26px,3.4vw,34px)", color: "var(--ink)", margin: 0 }}
           >
             {chapter.name}
           </h1>
-          <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 4, marginBottom: 0 }}>
             {topic.name} · {questions.length} questions
           </p>
         </div>
@@ -118,12 +124,13 @@ export default async function QuantChapterPage({ params }: Props) {
       <Suspense>
         <QuestionPlayer
           questions={questions}
-          backHref="/cat-prep"
-          backLabel="Back to Roadmap"
+          backHref={PRACTICE_INDEX}
+          backLabel="All practice chapters"
           storageKey={`quant-${topicSlug}-${chapterSlug}`}
         />
       </Suspense>
     </div>
+      <Footer />
     </>
   );
 }

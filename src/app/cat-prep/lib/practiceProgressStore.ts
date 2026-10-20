@@ -9,6 +9,37 @@ export type PracticeProgress = {
 
 export const PROGRESS_PREFIX = "sn_practice__";
 
+/*
+ * Anything summarising attempts has to know when one is written. Without this the rollup
+ * was computed once per mount and never again, so answering a chapter and navigating back
+ * to the index showed the figures from before you started.
+ */
+const listeners = new Set<() => void>();
+
+/*
+ * Bumped on every write. Readers cache a rollup, and the cache used to be cleared only by a
+ * live listener — but no summariser is mounted on a player route, so answering questions
+ * notified an empty set and the index came back showing the figures from before. A version
+ * the reader can compare against does not depend on anyone being subscribed at the time.
+ */
+let version = 0;
+
+export function practiceProgressVersion(): number {
+  return version;
+}
+
+export function subscribePracticeProgress(onChange: () => void): () => void {
+  listeners.add(onChange);
+  return () => {
+    listeners.delete(onChange);
+  };
+}
+
+function notifyPracticeProgress(): void {
+  version += 1;
+  for (const listener of listeners) listener();
+}
+
 // ---- localStorage ----
 
 export function loadLocalProgress(storageKey: string): PracticeProgress | null {
@@ -31,6 +62,7 @@ export function saveLocalProgress(storageKey: string, data: PracticeProgress): v
   } catch {
     // storage quota exceeded — ignore
   }
+  notifyPracticeProgress();
 }
 
 // ---- Firestore ----

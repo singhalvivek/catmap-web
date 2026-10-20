@@ -1,4 +1,7 @@
+// page — one DILR practice set, prerendered per chapter/set number
 import { notFound } from "next/navigation";
+import Header from "@/app/cat-prep/components/Header";
+import Footer from "@/app/cat-prep/components/Footer";
 import type { Metadata } from "next";
 import { fetchDilrSet, fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 import { PRACTICE_SUBJECTS } from "@/constants/practiceChapters";
@@ -88,32 +91,34 @@ export default async function DilrSetPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", flexDirection: "column" }}>
+      <Header />
       <div
         style={{
-          background: "linear-gradient(160deg, #F0FDFA 0%, #EEF2FF 100%)",
+          background: "var(--paper)",
+          borderBottom: "1px solid var(--rule)",
           padding: "24px 24px 28px",
         }}
       >
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
-            <Link href="/cat-prep" style={{ color: "#94A3B8", textDecoration: "none" }}>
+          <div style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 6 }}>
+            <Link href="/cat-prep" style={{ color: "var(--ink-faint)", textDecoration: "none" }}>
               CAT Prep
             </Link>
             {" / "}
-            <span style={{ color: "#64748B" }}>Practice</span>
+            <span style={{ color: "var(--ink-soft)" }}>Practice</span>
             {" / "}
-            <span style={{ color: "#64748B" }}>DILR</span>
+            <span style={{ color: "var(--ink-soft)" }}>DILR</span>
             {" / "}
-            <span style={{ color: "#0F766E", fontWeight: 600 }}>{chapterName}</span>
+            <span style={{ color: "var(--accent-text)", fontWeight: 600 }}>{chapterName}</span>
           </div>
           <h1
-            className="font-extrabold"
-            style={{ fontSize: "clamp(18px,3vw,26px)", margin: 0, color: "#0F766E", letterSpacing: "-0.3px" }}
+            className="display"
+            style={{ fontSize: "clamp(26px,3.4vw,34px)", margin: 0, color: "var(--ink)" }}
           >
             {chapterName}
           </h1>
-          <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 4, marginBottom: 0 }}>
             Set {num} of {totalSets}
           </p>
         </div>
@@ -128,6 +133,7 @@ export default async function DilrSetPage({ params }: Props) {
         />
       </div>
     </div>
+      <Footer />
     </>
   );
 }

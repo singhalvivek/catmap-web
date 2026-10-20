@@ -23,7 +23,7 @@ export default function TITAInput({ value, onChange, disabled }: Props) {
   return (
     <div style={{ paddingTop: 4 }}>
       <label
-        className="font-semibold text-slate-500"
+        className="font-semibold ed-muted"
         style={{ fontSize: 13, display: "block", marginBottom: 8 }}
       >
         Enter your answer:
@@ -38,16 +38,14 @@ export default function TITAInput({ value, onChange, disabled }: Props) {
         style={{
           width: 200,
           padding: "10px 14px",
-          borderRadius: 9,
-          border: "1.5px solid #CBD5E1",
+          border: "1.5px solid var(--rule-firm)",
           fontSize: 16,
           fontFamily: "inherit",
-          background: disabled ? "#F8FAFC" : "#fff",
-          color: "#1E3A5F",
-          outline: "none",
-        }}
+          background: disabled ? "var(--paper-sunk)" : "var(--paper)",
+          color: "var(--ink)",
+                  }}
       />
-      <p className="text-slate-400" style={{ fontSize: 12, marginTop: 6 }}>
+      <p className="ed-muted" style={{ fontSize: 12, marginTop: 6 }}>
         Up to 2 decimal places. No negative marking for TITA.
       </p>
     </div>
