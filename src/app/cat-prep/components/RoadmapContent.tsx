@@ -116,23 +116,18 @@ export default function RoadmapContent({
   // Never setState-d: this is a per-route constant, not state.
   const mode = initialMode;
   const [openPracticeTopics, setOpenPracticeTopics] = useState<Record<string, boolean>>({});
-  const [pyqPapers, setPyqPapers] = useState<PyqPaperSummary[] | null>(initialPapers ?? null);
-  // ref-based guard prevents duplicate fetches without a synchronous setState in the effect body
-  const pyqFetchStarted = useRef(initialPapers != null);
+  /*
+   * Papers are server-rendered. There used to be a client fetch of /api/pyq/papers behind a
+   * ref guard, but the only route that renders this mode awaits the papers and passes them,
+   * so the guard was always true and the fetch never ran. The "Loading papers" branch and
+   * its catch were unreachable with it.
+   */
+  const pyqPapers = initialPapers ?? [];
 
   const { progress, isLoggedIn } = useProgressContext();
   const { isOpen, toggle } = useTopicExpandState(subjects, initialExpandedTopicId);
   const practiceMastery = usePracticeMasterySummary();
   const pyqSolved = usePyqSolvedSummary(mode === "pyq");
-
-  useEffect(() => {
-    if (mode !== "pyq" || pyqFetchStarted.current) return;
-    pyqFetchStarted.current = true;
-    fetch("/api/pyq/papers")
-      .then((r) => r.json())
-      .then((data: PyqPaperSummary[]) => setPyqPapers(data))
-      .catch(() => setPyqPapers([]));
-  }, [mode]);
 
   const handleSelectNode = useCallback(
     (node: Node) => {
@@ -364,9 +359,7 @@ export default function RoadmapContent({
           {mode === "daily-dose" ? (
             <DailyDoseSection />
           ) : mode === "pyq" ? (
-            pyqPapers === null ? (
-              <p style={{ color: "var(--ink-faint)", fontSize: 14 }}>Loading papers…</p>
-            ) : (
+            (
               <>
                 {/* Stat strip */}
                 <div
@@ -383,7 +376,6 @@ export default function RoadmapContent({
                     // years for a set holding 24 — 1992–1995 and 2009–2016 have no paper. Derived
                     // now, so it also cannot go stale the day a 2026 paper lands.
                     { value: PYQ_YEARS_COVERED.length, label: "exam years" },
-                    { value: "VARC · DILR · QA", label: "sections per paper" },
                   ].map((s) => (
                     <div key={s.label}>
                       <div className="font-extrabold" style={{ fontSize: 22, lineHeight: 1 }}>
@@ -394,34 +386,18 @@ export default function RoadmapContent({
                   ))}
                 </div>
 
-                {/* Mode explanation cards */}
-                <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
-                  <div
-                    style={{ flex: 1, minWidth: 200, background: "var(--paper-sunk)", padding: "14px 16px" }}
-                  >
-                    <div className="font-bold" style={{ fontSize: 13, marginBottom: 4 }}>
-                      Practice mode
-                    </div>
-                    <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.5 }}>
-                      Work through a paper at your own pace. Each question reveals the answer and explanation after
-                      you respond — good for targeted revision.
-                    </p>
-                  </div>
-                  <div
-                    style={{ flex: 1, minWidth: 200, background: "var(--paper-sunk)", padding: "14px 16px" }}
-                  >
-                    <div className="font-bold" style={{ fontSize: 13, marginBottom: 4 }}>
-                      Mock test mode
-                    </div>
-                    <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.5 }}>
-                      Sit the full paper under timed exam conditions — three sections (VARC → DILR → QA), no
-                      peeking at answers until the end. One attempt per paper.
-                    </p>
-                  </div>
-                </div>
+                {/*
+                  Two cards used to sit here explaining, in two four-line paragraphs, exactly
+                  what the two controls on every row already say. One line does it, and the
+                  list starts higher up the page for it.
+                */}
+                <p className="pyq-modes">
+                  Open a paper to work through it at your own pace with answers and
+                  explanations, or sit it as a timed mock under exam conditions.
+                </p>
 
                 {/* Paper list */}
-                <PyqPapersList papers={pyqPapers} />
+                <PyqPapersList papers={pyqPapers} solvedByPaper={pyqSolved.byPaper} />
 
                 {/* Why solve section */}
                 <div style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid var(--rule)" }}>

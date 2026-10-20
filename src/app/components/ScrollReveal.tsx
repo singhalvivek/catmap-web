@@ -4,7 +4,7 @@
 import { useScrollReveal } from "@/app/lib/useScrollReveal";
 
 const REVEAL_SELECTOR =
-  ".reveal, .reveal-rule, .reveal-bar, .reveal-left, .reveal-pop, .reveal-mask";
+  ".reveal, .reveal-fade, .reveal-rule, .reveal-bar, .reveal-left, .reveal-pop, .reveal-mask";
 
 /**
  * Renders nothing. The reveal classes are inert without the [data-anim="on"] flag this

@@ -11,7 +11,7 @@ const SCROLL_THRESHOLDS = [25, 50, 75, 100] as const;
 const REVEAL_MARGIN = "0px 0px -12% 0px";
 
 const REVEAL_SELECTOR =
-  ".reveal, .reveal-rule, .reveal-bar, .reveal-left, .reveal-pop, .reveal-mask";
+  ".reveal, .reveal-fade, .reveal-rule, .reveal-bar, .reveal-left, .reveal-pop, .reveal-mask";
 
 /** Visible fraction at which an element reveals. It only resets at a ratio of 0. */
 const REVEAL_RATIO = 0.12;

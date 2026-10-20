@@ -416,6 +416,21 @@ body {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+/*
+ * 1b. Fade only — for a block that contains an anchor target. .reveal translates 28px, and
+ * a browser scrolling to an id inside it computes the position while that translate is
+ * still applied; the reveal then fires and the heading jumps 28px up, landing it under the
+ * sticky chrome. Nothing moves here, so the anchor lands where scroll-margin-top says.
+ */
+[data-anim="on"] .reveal-fade {
+  opacity: 0;
+}
+[data-anim="on"] .reveal-fade.is-visible {
+  opacity: 1;
+  transition: opacity 0.7s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
 /* 2. Rule wipe — a rule draws itself across rather than fading in. */
 [data-anim="on"] .reveal-rule {
   transform: scaleX(0);
@@ -495,6 +510,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   [data-anim="on"] .reveal,
+  [data-anim="on"] .reveal-fade,
   [data-anim="on"] .reveal-rule,
   [data-anim="on"] .reveal-bar,
   [data-anim="on"] .reveal-left,
@@ -510,6 +526,7 @@ body {
    page would print blank from the second section down. */
 @media print {
   [data-anim="on"] .reveal,
+  [data-anim="on"] .reveal-fade,
   [data-anim="on"] .reveal-rule,
   [data-anim="on"] .reveal-bar,
   [data-anim="on"] .reveal-left,
@@ -693,6 +710,14 @@ body {
   --header-bar: 70px;
   --header-rule: 3px;
   --header-h: calc(var(--header-bar) + var(--header-rule));
+  /*
+   * The surface switcher pins below the masthead, so anything scrolled to by an anchor has
+   * to clear BOTH. The first attempt at this cleared only the header and landed every year
+   * heading on the past-papers page behind the switcher. Locked to the bar via min-height
+   * below, so the token and the element cannot drift the way --header-h did.
+   */
+  --navbar-h: 46px;
+  --chrome-h: calc(var(--header-h) + var(--navbar-h));
 }
 
 .site-header {
@@ -1808,6 +1833,7 @@ mjx-container[display="true"] {
  * It now pins directly under the masthead and stays reachable the whole way down.
  */
 .roadmap-navbar {
+  min-height: var(--navbar-h);
   border-bottom: 1px solid var(--rule-firm);
 }
 
@@ -2796,7 +2822,7 @@ mjx-container[display="true"] {
   color: var(--ink);
   margin: 0 0 12px;
   /* So an anchor does not land the heading underneath the sticky masthead. */
-  scroll-margin-top: calc(var(--header-h) + 20px);
+  scroll-margin-top: calc(var(--chrome-h) + 20px);
 }
 
 /* Measure lives on the prose, not on the intros alone: every 20-word lede was capped at
@@ -3168,5 +3194,168 @@ mjx-container[display="true"] {
 @media (prefers-reduced-motion: no-preference) {
   .guide-faq__mark::after {
     transition: rotate 0.22s var(--ease-out-expo);
+  }
+}
+
+/* =========================================== */
+/* U002 — past papers                           */
+/*                                              */
+/* Thirty-nine rounded white cards on a cream   */
+/* square-cornered page, each with two equal    */
+/* buttons, none of them responding to a        */
+/* pointer. Rows on rules now, with the title   */
+/* as the click target and the mock demoted to  */
+/* the secondary action it is.                  */
+/* =========================================== */
+
+.pyq-modes {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 28px;
+  max-width: 62ch;
+}
+
+/* ---- the year jump bar ---- */
+
+.pyq-years {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 10px;
+  padding: 14px 0 16px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule-firm);
+  margin-bottom: 8px;
+}
+.pyq-years__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.pyq-years__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pyq-years__link {
+  display: block;
+  padding: 3px 9px;
+  border: 1px solid var(--rule-firm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+@media (hover: hover) {
+  .pyq-years__link:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* ---- year groups ---- */
+
+.pyq-group {
+  margin-top: 34px;
+}
+.pyq-group__year {
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0 0 10px;
+  font-variant-numeric: tabular-nums;
+  scroll-margin-top: calc(var(--chrome-h) + 20px);
+}
+
+/* ---- one paper ---- */
+
+.pyq-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 14px 16px 4px;
+  flex-wrap: wrap;
+}
+.pyq-row__main {
+  min-width: 0;
+  flex: 1;
+}
+.pyq-row__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.pyq-row__link {
+  color: inherit;
+  text-decoration: none;
+}
+/* Stretches the title's hit area over the whole row, so the obvious target works. */
+.pyq-row__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.pyq-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.pyq-row__total {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.pyq-row__progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 0;
+}
+.pyq-row__meter {
+  width: 110px;
+}
+.pyq-row__solved {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--caution-text);
+  font-variant-numeric: tabular-nums;
+}
+.pyq-row[data-state="correct"] .pyq-row__solved {
+  color: var(--correct-text);
+}
+
+/* Raised above the title's overlay, which is the only reason it can be a link at all. */
+.pyq-row__mock {
+  position: relative;
+  flex-shrink: 0;
+  font-size: 14px;
+  padding: 9px 16px;
+}
+
+@media (max-width: 599px) {
+  .pyq-row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .pyq-row__split {
+    display: none;
+  }
+  .pyq-row__mock {
+    font-size: 13px;
   }
 }

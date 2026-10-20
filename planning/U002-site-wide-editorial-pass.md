@@ -581,3 +581,62 @@ The practice players (`QuestionPlayer`, `RcPlayer`, `DilrPlayer`) are a separate
 worst defect on them is recorded for that pass: the "check solution" control is conditioned
 on persisted state while the explanation is held in session state, so after a reload a
 checked question shows a tinted grid, no explanation, and no control to get one.
+
+---
+
+## Addendum — How to Prepare and Past papers (Phases 13d, 13e)
+
+### Facts that were wrong
+
+- **"1990–2025 / years covered"** on the past-papers index claimed 36 years. The collection
+  holds 24: 1990, 1991, 1996–2008, 2017–2025. Derived from `PYQ_PAPERS` now.
+- **"PYQ papers from 1990 to 2025 — every official CAT paper, fully digitised"** in the
+  guide made the same claim in prose. Both the count and the range are derived, and the copy
+  says some years in the range have no paper.
+
+### Structural defects, each measured before and after
+
+- **The mistakes grid was two columns at every width.** `gridTemplateColumns` was set inline
+  with `flex-col sm:flex-row` beside it, which cannot override an inline grid and does not
+  set `display: flex` either way. At 390px: two 147px columns, about twenty characters a
+  line. Now 342px, one column below 600px.
+- **The FAQPage schema declared five questions the page did not render.** Google requires
+  FAQPage content to be visible. One array feeds the schema and the section.
+- **No heading was addressable.** Seven sections render from `GUIDE_SECTIONS`, which also
+  renders the contents list.
+- **The surface switcher did not stick on How to Prepare.** It sat inside the hero on this
+  page alone, and a sticky element only sticks within its parent's box — so on the longest
+  page on the site the way back to Learn or Practice scrolled away after one screen. Same
+  fix as `RoadmapHero`: the bar is a sibling.
+- **Anchors landed behind the sticky chrome.** Two separate causes, both found by measuring:
+  `scroll-margin-top` cleared `--header-h` but not the switcher pinned under it, and the
+  guide's sections carried `.reveal`, which translates 28px — the browser computed the
+  anchor position with that translate applied, then the reveal fired and pulled the heading
+  up by exactly 28px. `--chrome-h` covers the first; `.reveal-fade`, which changes opacity
+  only, covers the second. Verified: all four anchors land at 139px against a 119px chrome.
+
+### Past papers
+
+- **The row was a `<div>` whose title was inert text**, on a 39-item navigational list. The
+  title is the link and its `::after` stretches over the row; the mock sits above that
+  overlay, which is why it cannot simply be nested.
+- **"Practice" labelled a button pointing at a paper** while the sticky nav on the same
+  screen pins "Practice" to a different surface. It is "Timed mock" now, named for where it
+  goes.
+- **Per-paper progress was computed and discarded.** `usePyqSolvedSummary` built
+  `browseCounts` for all 39 papers and collapsed them into one hero total. It returns
+  `byPaper` now, and each row carries a meter, silent at zero.
+- **The section breakdown was summed away.** VARC/DILR/QA counts are the one thing that
+  distinguishes a 1998 paper (184 questions) from a 2025 one (68).
+- **Thirty-nine rows, 6,300px, no way to reach a year.** A jump bar lists all 24.
+- **Dead code removed.** `pyqFetchStarted` guarded an effect that could never run: the only
+  route rendering this mode awaits the papers and passes them, so the ref was always true.
+  The effect, the state setter, the `Loading papers` branch and the `.catch` went with it.
+  The `/api/pyq/papers` route itself is left alone — deleting a public endpoint is a
+  deployment-visible decision, not a UI one, and is raised separately.
+- **Two explanation cards** restating what the row controls already say are one line now.
+
+### Still open on these surfaces
+
+The paper reader (`/cat-prep/pyq/[paperSlug]`) renders no surface switcher and states a
+verdict in three colour systems at once. Both are in the next pass.

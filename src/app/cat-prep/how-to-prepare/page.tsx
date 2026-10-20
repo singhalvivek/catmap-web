@@ -67,8 +67,18 @@ export default function HowToPreparePage() {
             A straight guide, with no hype and no coaching ads: what score to aim for, whether
             you need coaching, how to plan your months, and what actually moves the needle.
           </p>
+        </div>
+      </div>
+
+      {/*
+        The switcher pins here as it does on every other surface. It used to sit inside the
+        hero on this page alone — and a sticky element only sticks within its parent's box,
+        so on the longest page on the site, six and a half thousand pixels, the way back to
+        Learn or Practice scrolled away after the first screen.
+      */}
+      <div className="roadmap-navbar sticky-under-header">
+        <div className="roadmap-navbar__inner">
           <RoadmapNav />
-          <div style={{ height: 18 }} />
         </div>
       </div>
 
@@ -95,7 +105,7 @@ export default function HowToPreparePage() {
         </nav>
 
         {/* 1 — the target */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="target" step={1} />
           <p className="guide-lede">
             CAT aspirants often say &ldquo;I want IIM A&rdquo; without understanding what
@@ -129,7 +139,7 @@ export default function HowToPreparePage() {
         </section>
 
         {/* 2 — coaching */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="coaching" step={2} />
           <p className="guide-lede">
             The honest answer: <strong>coaching is a tool, not a requirement.</strong> Every
@@ -169,7 +179,7 @@ export default function HowToPreparePage() {
         </section>
 
         {/* 3 — phases */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="phases" step={3} />
           <p className="guide-lede">
             Most serious aspirants start 9–12 months before the exam (CAT is held in November).
@@ -199,7 +209,7 @@ export default function HowToPreparePage() {
         </section>
 
         {/* 4 — the three sections */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="sections" step={4} />
           <p className="guide-lede">
             CAT has three sections with separate time limits — 40 minutes each. You cannot skip
@@ -221,7 +231,7 @@ export default function HowToPreparePage() {
         </section>
 
         {/* 5 — where this site fits */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="studynaksha" />
           <p className="guide-lede">
             StudyNaksha is built specifically for the Phase 2–4 work: PYQ practice and mock-test
@@ -267,7 +277,7 @@ export default function HowToPreparePage() {
         </section>
 
         {/* 6 — mistakes */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="mistakes" />
           <p className="guide-lede">
             These patterns repeat every year. Recognise them early.
@@ -300,7 +310,7 @@ export default function HowToPreparePage() {
         </section>
 
         {/* 7 — the FAQ the schema has always declared */}
-        <section className="guide-section reveal">
+        <section className="guide-section reveal-fade">
           <SectionHead id="questions" />
           <p className="guide-lede">
             The five questions this page is most often found by.
