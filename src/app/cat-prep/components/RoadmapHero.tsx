@@ -93,7 +93,7 @@ export default function RoadmapHero({ mode, showNav, learn, practice, pyq }: Roa
         papers from deep in a surface was scrolling to the top.
       */}
       {showNav && (
-        <div className="roadmap-navbar">
+        <div className="roadmap-navbar sticky-under-header">
           <div className="roadmap-navbar__inner">
             <RoadmapNav />
           </div>

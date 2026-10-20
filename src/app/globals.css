@@ -683,14 +683,44 @@ body {
 }
 
 /* ---- Shared site header ---- */
+/*
+ * The bar and its rule are tokens because --header-h has to equal the masthead's real
+ * layout box, and it did not: the token said 70px while the element measured 73px, so
+ * everything pinned under the masthead sat 3px behind its own ink rule. Derived now, so
+ * changing the bar changes the offset with it.
+ */
+:root {
+  --header-bar: 70px;
+  --header-rule: 3px;
+  --header-h: calc(var(--header-bar) + var(--header-rule));
+}
+
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
   background: var(--paper);
   /* Ink rule over a teal rule: the newspaper double-rule, matched by the footer's top. */
-  border-bottom: 3px solid var(--ink);
+  border-bottom: var(--header-rule) solid var(--ink);
   box-shadow: 0 3px 0 var(--accent);
+}
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--header-bar);
+}
+
+/*
+ * Anything that pins below the masthead uses this rather than its own number. Five places
+ * had five different hardcoded offsets — 64, 70, 72 — and none of them was 73.
+ */
+.sticky-under-header {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 40;
+  background: var(--paper);
 }
 
 .site-header__auth {
@@ -1758,17 +1788,10 @@ mjx-container[display="true"] {
  * surface the only way to reach Practice or Past papers was to scroll back to the top.
  * It now pins directly under the masthead and stays reachable the whole way down.
  */
-:root {
-  --header-h: 70px;
-}
-
 .roadmap-navbar {
-  position: sticky;
-  top: var(--header-h);
-  z-index: 40;
-  background: var(--paper);
   border-bottom: 1px solid var(--rule-firm);
 }
+
 .roadmap-navbar__inner {
   max-width: 900px;
   margin: 0 auto;

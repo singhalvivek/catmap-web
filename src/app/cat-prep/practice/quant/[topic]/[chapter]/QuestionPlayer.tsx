@@ -427,7 +427,7 @@ export default function QuestionPlayer({
               border: "1.5px solid var(--rule)",
               padding: "16px 14px",
               position: "sticky",
-              top: 72,
+              top: "var(--header-h)",
             }}
           >
             <PracticePalette

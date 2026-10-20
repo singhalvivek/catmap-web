@@ -52,16 +52,7 @@ export default function Header() {
 
   return (
     <header className="site-header">
-      <div
-        className="ed-shell"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 16,
-          height: 70,
-        }}
-      >
+      <div className="ed-shell site-header__bar">
         <Wordmark size="sm" />
 
         <div className="flex items-center gap-4">

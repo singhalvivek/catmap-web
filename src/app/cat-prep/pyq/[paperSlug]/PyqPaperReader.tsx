@@ -232,7 +232,7 @@ export default function PyqPaperReader({ paper }: { paper: PyqSolvedPaper }) {
 
   return (
     <div ref={containerRef}>
-      <nav className="sticky top-16 z-40 -mx-6 mb-6 flex gap-2 border-b border-slate-200 bg-[#FFFDF8] px-6 py-3">
+      <nav className="sticky-under-header -mx-6 mb-6 flex gap-2 border-b border-slate-200 px-6 py-3">
         <Link
           href="/cat-prep/pyq"
           className="rounded-full border-[1.5px] border-slate-200 bg-white px-4 py-2 text-[13px] font-semibold text-slate-500 no-underline"
