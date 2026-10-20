@@ -11,6 +11,7 @@ import { ENV } from "@/config/env";
 import { buildLearningResourceSchema } from "@/app/cat-prep/lib/nodeMetadata";
 import QuestionPlayer from "./QuestionPlayer";
 import Link from "next/link";
+import { PRACTICE_INDEX } from "@/constants/routes";
 
 type Props = { params: Promise<{ topic: string; chapter: string }> };
 
@@ -123,8 +124,8 @@ export default async function QuantChapterPage({ params }: Props) {
       <Suspense>
         <QuestionPlayer
           questions={questions}
-          backHref="/cat-prep"
-          backLabel="Back to Roadmap"
+          backHref={PRACTICE_INDEX}
+          backLabel="All practice chapters"
           storageKey={`quant-${topicSlug}-${chapterSlug}`}
         />
       </Suspense>

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
 import { PracticePalette, type PillState } from "@/app/cat-prep/components/practice/PracticePalette";
+import DifficultyBadge from "@/app/cat-prep/components/practice/DifficultyBadge";
 
 type OptionKey = keyof OptionsMap;
 const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
@@ -21,30 +22,6 @@ const JUMBLE_SEQUENCE = /^[1-4]{4}$/;
 
 function isCompleteSequence(value: string): boolean {
   return JUMBLE_SEQUENCE.test(value) && new Set(value).size === 4;
-}
-
-function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  const color =
-    difficulty === "Easy"
-      ? { bg: "var(--correct-wash)", text: "var(--correct-text)" }
-      : difficulty === "Medium"
-        ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
-        : { bg: "var(--wrong-wash)", text: "var(--wrong-text)" };
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "2px 8px",
-        background: color.bg,
-        color: color.text,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: "0.2px",
-      }}
-    >
-      {difficulty}
-    </span>
-  );
 }
 
 function MathContent({ html, containerRef }: { html: string; containerRef: React.RefObject<HTMLDivElement | null> }) {
@@ -219,7 +196,7 @@ export default function QuestionPlayer({
               <span className="font-bold" style={{ fontSize: 15 }}>
                 Q{question.question_number}
               </span>
-              <DifficultyBadge difficulty={question.difficulty} />
+              <DifficultyBadge level={question.difficulty} />
             </div>
 
             {/* Question text */}
@@ -328,29 +305,32 @@ export default function QuestionPlayer({
               </div>
             )}
 
-            {/* Check Solution button — hidden once checked in any session */}
-            {!isChecked && (
+            {/*
+              Conditioned on whether a solution is ON SCREEN, not on whether one was ever
+              fetched. isChecked comes from persisted storage and sessionSolution from a
+              useState that a reload clears, so the two disagreed the moment you came back:
+              a tinted grid, no explanation, and no control left to get one. Re-fetching is
+              safe — setCorrectAnswer early-returns when an answer is already recorded.
+            */}
+            {!sessionSolution && !answerUnavailable && (
               <button
                 onClick={checkSolution}
                 disabled={!canCheck || loading}
-                style={{
-                  marginTop: 8,
-                  padding: "11px 24px",
-                  border: "none",
-                  background: canCheck ? "var(--ink)" : "var(--rule)",
-                  color: canCheck ? "var(--paper)" : "var(--ink-faint)",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  cursor: canCheck ? "pointer" : "not-allowed",
-                  fontFamily: "inherit",
-                  transition: "all 0.18s",
-                }}
+                className="ed-btn"
+                data-weight="primary"
+                style={{ marginTop: 8 }}
               >
-                {loading ? "Loading…" : "Check Solution"}
+                {loading ? "Loading…" : isChecked ? "Show the explanation" : "Check solution"}
               </button>
             )}
 
-            {/* Explanation — only shown when fetched this session */}
+            <p aria-live="polite" className="ed-sr-only">
+              {sessionSolution
+                ? `Answer checked. The correct answer is ${correctLetter ?? recordedAnswer ?? "shown below"}.`
+                : ""}
+            </p>
+
+            {/* Explanation — shown whenever one has been fetched */}
             {sessionSolution && (
               <div
                 style={{

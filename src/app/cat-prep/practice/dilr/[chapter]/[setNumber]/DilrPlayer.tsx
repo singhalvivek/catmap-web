@@ -6,32 +6,11 @@ import type { DilrSet, DilrSolution, OptionsMap } from "@/app/cat-prep/models/pr
 import Link from "next/link";
 import { usePracticeProgress } from "@/app/cat-prep/lib/usePracticeProgress";
 import { PracticeOptionButton, type OptionState } from "@/app/cat-prep/components/practice/PracticeOptionButton";
+import DifficultyBadge from "@/app/cat-prep/components/practice/DifficultyBadge";
+import { PRACTICE_INDEX } from "@/constants/routes";
 
 type OptionKey = keyof OptionsMap;
 const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D"];
-
-function LevelBadge({ level }: { level: string }) {
-  const color =
-    level === "Medium"
-      ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
-      : level === "Medium-Hard"
-        ? { bg: "var(--caution-wash)", text: "var(--caution-text)" }
-        : { bg: "var(--wrong-wash)", text: "var(--wrong-text)" };
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "2px 8px",
-        background: color.bg,
-        color: color.text,
-        fontSize: 11,
-        fontWeight: 700,
-      }}
-    >
-      {level}
-    </span>
-  );
-}
 
 export default function DilrPlayer({
   set,
@@ -150,26 +129,29 @@ export default function DilrPlayer({
         </PracticeOptionButton>
       ))}
 
-      {/* Check Answer — hidden once this question is checked */}
-      {!isChecked && (
+      {/*
+        Conditioned on whether a solution is ON SCREEN, not on whether one was ever
+        fetched. isChecked is persisted and sessionSolution is not, so after a reload a
+        checked question showed a tinted grid, no explanation and no control to get one.
+        Re-fetching is safe: setCorrectAnswer early-returns when an answer is recorded.
+      */}
+      {!sessionSolution && (
         <button
           onClick={checkAnswer}
           disabled={!question || !answers[question.number] || loading}
-          style={{
-            marginTop: 12,
-            padding: "10px 22px",
-            border: "none",
-            background: question && answers[question.number] ? "var(--accent-text)" : "var(--rule)",
-            color: question && answers[question.number] ? "var(--paper)" : "var(--ink-faint)",
-            fontSize: 14,
-            fontWeight: 700,
-            cursor: question && answers[question.number] ? "pointer" : "not-allowed",
-            fontFamily: "inherit",
-          }}
+          className="ed-btn"
+          data-weight="primary"
+          style={{ marginTop: 12 }}
         >
-          {loading ? "Loading…" : "Check Answer"}
+          {loading ? "Loading…" : isChecked ? "Show the explanation" : "Check answer"}
         </button>
       )}
+
+      <p aria-live="polite" className="ed-sr-only">
+        {sessionSolution && question
+          ? `Answer checked. The correct answer is ${correctAnswers[question.number] ?? "shown below"}.`
+          : ""}
+      </p>
 
       {/* Full solution — shown once fetched in this session */}
       {sessionSolution && isChecked && (
@@ -199,7 +181,7 @@ export default function DilrPlayer({
     <div>
       {/* Back link */}
       <Link
-        href="/cat-prep"
+        href={PRACTICE_INDEX}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -211,7 +193,7 @@ export default function DilrPlayer({
           fontWeight: 500,
         }}
       >
-        ← Back to Roadmap
+        ← All practice chapters
       </Link>
 
       {/* Set header */}
@@ -219,7 +201,7 @@ export default function DilrPlayer({
         <span className="font-bold" style={{ fontSize: 15 }}>
           Set {set.set_number}
         </span>
-        <LevelBadge level={set.level} />
+        <DifficultyBadge level={set.level} />
       </div>
 
       {/* Mobile tabs */}

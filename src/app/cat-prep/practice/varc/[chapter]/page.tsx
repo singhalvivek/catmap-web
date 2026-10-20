@@ -11,6 +11,7 @@ import { JsonLd } from "@/app/components/JsonLd";
 import { ENV } from "@/config/env";
 import { buildLearningResourceSchema } from "@/app/cat-prep/lib/nodeMetadata";
 import QuestionPlayer from "@/app/cat-prep/practice/quant/[topic]/[chapter]/QuestionPlayer";
+import { PRACTICE_INDEX } from "@/constants/routes";
 
 type Props = { params: Promise<{ chapter: string }> };
 
@@ -123,8 +124,8 @@ export default async function VarcChapterPage({ params }: Props) {
         <Suspense>
           <QuestionPlayer
             questions={questions}
-            backHref="/cat-prep"
-            backLabel="Back to Roadmap"
+            backHref={PRACTICE_INDEX}
+            backLabel="All practice chapters"
             storageKey={`varc-${slug}`}
           />
         </Suspense>
