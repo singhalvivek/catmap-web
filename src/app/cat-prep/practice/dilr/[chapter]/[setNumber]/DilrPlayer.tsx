@@ -204,36 +204,44 @@ export default function DilrPlayer({
         <DifficultyBadge level={set.level} />
       </div>
 
-      {/* Mobile tabs */}
-      <div className="md:hidden" style={{ display: "flex", gap: 0, marginBottom: 16, overflow: "hidden", border: "1.5px solid var(--rule)" }}>
+      {/*
+        Pinned under the masthead. This was an ordinary block at the top of the page, so on
+        a phone the loop was: read down a six-paragraph passage, scroll all the way back up
+        to reach the switch, change panel, answer, scroll up again.
+      */}
+      <div className="solve-tabs md:hidden" role="tablist" aria-label="Passage or questions">
         {(["passage", "questions"] as const).map((tab) => (
           <button
             key={tab}
+            type="button"
+            role="tab"
+            id={`solve-tab-${tab}`}
+            aria-selected={activeTab === tab}
+            aria-controls={`solve-panel-${tab}`}
+            className="solve-tabs__tab"
             onClick={() => setActiveTab(tab)}
-            style={{
-              flex: 1,
-              padding: "10px 0",
-              border: "none",
-              background: activeTab === tab ? "var(--accent-text)" : "var(--paper)",
-              color: activeTab === tab ? "var(--paper)" : "var(--ink-soft)",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              fontFamily: "inherit",
-              textTransform: "capitalize",
-            }}
           >
-            {tab}
+            {tab === "passage" ? "The set" : "Questions"}
           </button>
         ))}
       </div>
 
       {/* Single responsive grid — B4: one DOM tree; CSS hides inactive panel on mobile */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className={`${activeTab === "questions" ? "hidden md:block" : ""} md:max-h-[70vh] md:overflow-y-auto md:pr-2`}>
+        <div
+          id="solve-panel-passage"
+          role="tabpanel"
+          aria-labelledby="solve-tab-passage"
+          className={`${activeTab === "questions" ? "hidden md:block" : ""} solve-panel`}
+        >
           {passageContent}
         </div>
-        <div className={activeTab === "passage" ? "hidden md:block" : ""}>
+        <div
+          id="solve-panel-questions"
+          role="tabpanel"
+          aria-labelledby="solve-tab-questions"
+          className={activeTab === "passage" ? "hidden md:block" : ""}
+        >
           {questionsContent}
         </div>
       </div>

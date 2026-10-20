@@ -3558,3 +3558,121 @@ mjx-container[display="true"] {
     align-items: flex-start;
   }
 }
+
+/* =========================================== */
+/* U002 — solving a passage on a phone          */
+/*                                              */
+/* The switch between passage and questions was */
+/* an ordinary block at the top of the page, so */
+/* changing panel meant scrolling back up the   */
+/* whole passage to reach it. It pins now.      */
+/* =========================================== */
+
+.solve-tabs {
+  display: flex;
+  position: sticky;
+  top: var(--header-h);
+  z-index: 30;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+}
+
+.solve-tabs__tab {
+  flex: 1;
+  padding: 11px 0;
+  border: none;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+.solve-tabs__tab[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/*
+ * auto, never hidden: a DILR set can carry question_svg and a passage can carry MathJax,
+ * and an mjx-container inside overflow:hidden is clipped rather than scrolled.
+ */
+.solve-panel {
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .solve-panel {
+    max-height: 70vh;
+    padding-right: 8px;
+  }
+}
+
+/* ---- paragraph summaries ---- */
+
+.rc-para__marker {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--rule-hard);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+@media (hover: hover) {
+  .rc-para__marker:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+}
+.rc-para__marker[aria-expanded="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+/* A paragraph with no summary is not a control, so it is not focusable and does not invite
+   a press. It used to be a dead button either way. */
+.rc-para__marker[data-inert="true"] {
+  cursor: default;
+  border-color: var(--rule);
+  color: var(--ink-faint);
+}
+
+.rc-para__text {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin: 0;
+}
+
+.rc-para__summary {
+  margin: 10px 0 0 34px;
+  padding: 10px 14px;
+  background: var(--paper-sunk);
+  border-left: 3px solid var(--ink);
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solve-tabs__tab,
+  .rc-para__marker {
+    transition: none;
+  }
+}

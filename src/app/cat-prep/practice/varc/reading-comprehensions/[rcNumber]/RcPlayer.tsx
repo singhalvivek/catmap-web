@@ -26,7 +26,7 @@ export default function RcPlayer({
   const { answers, correctAnswers, setAnswer, setCorrectAnswer } = usePracticeProgress(storageKey);
   const [sessionSolutions, setSessionSolutions] = useState<Record<number, RcQuestionSolution>>({});
   const [loading, setLoading] = useState(false);
-  const [tooltip, setTooltip] = useState<{ paraIdx: number } | null>(null);
+  const [openSummary, setOpenSummary] = useState<number | null>(null);
 
   const question = passage.questions.find((q) => q.number === currentQ) ?? passage.questions[0];
   const isChecked = question ? !!correctAnswers[question.number] : false;
@@ -67,54 +67,49 @@ export default function RcPlayer({
         <span className="font-bold" style={{ fontSize: 14, color: "var(--caution-text)" }}>Passage</span>
         <DifficultyBadge level={passage.level} />
       </div>
-      {passage.passage_paragraphs.map((para, idx) => (
-        <div key={idx} style={{ marginBottom: 16, position: "relative" }}>
-          <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <button
-              onMouseEnter={() => passage.para_summaries[idx] ? setTooltip({ paraIdx: idx }) : undefined}
-              onMouseLeave={() => setTooltip(null)}
-              style={{
-                flexShrink: 0,
-                width: 22,
-                height: 22,
-                border: "1.5px solid var(--rule)",
-                background: "var(--caution-wash)",
-                color: "var(--caution-text)",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: passage.para_summaries[idx] ? "help" : "default",
-                fontFamily: "inherit",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 3,
-              }}
-            >
-              {idx + 1}
-            </button>
-            <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.8, margin: 0 }}>{para}</p>
-          </div>
-          {tooltip?.paraIdx === idx && passage.para_summaries[idx] && (
-            <div
-              style={{
-                position: "absolute",
-                left: 32,
-                top: 0,
-                zIndex: 10,
-                maxWidth: 280,
-                padding: "10px 14px",
-                background: "var(--ink)",
-                color: "var(--paper)",
-                fontSize: 12,
-                lineHeight: 1.6,
-                boxShadow: "0 4px 20px rgba(0,0,0,0.18)",
-              }}
-            >
-              {passage.para_summaries[idx]}
+      {passage.passage_paragraphs.map((para, idx) => {
+        const summary = passage.para_summaries[idx];
+        const open = openSummary === idx;
+        return (
+          <div key={idx} style={{ marginBottom: 16 }}>
+            <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+              {/*
+                A real disclosure. This was onMouseEnter/onMouseLeave with no onClick, no
+                onFocus and no name beyond the paragraph number — so on a phone, which is
+                where RC actually gets read, the summaries could not be opened at all, and a
+                keyboard user tabbed onto a focusable control that did nothing. A paragraph
+                with no summary is a plain span now rather than a dead button.
+              */}
+              {summary ? (
+                <button
+                  type="button"
+                  className="rc-para__marker"
+                  aria-expanded={open}
+                  aria-controls={`rc-summary-${idx}`}
+                  onClick={() => setOpenSummary(open ? null : idx)}
+                >
+                  {idx + 1}
+                  <span className="ed-sr-only">
+                    {open ? "Hide" : "Show"} the summary of paragraph {idx + 1}
+                  </span>
+                </button>
+              ) : (
+                <span className="rc-para__marker" data-inert="true" aria-hidden="true">
+                  {idx + 1}
+                </span>
+              )}
+              <p className="rc-para__text">{para}</p>
             </div>
-          )}
-        </div>
-      ))}
+            {/* In flow, below its paragraph. The old tooltip was absolutely positioned
+                inside a panel that scrolls, so where hover worked it was clipped. */}
+            {summary && open && (
+              <p id={`rc-summary-${idx}`} className="rc-para__summary">
+                {summary}
+              </p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 
@@ -235,39 +230,44 @@ export default function RcPlayer({
         <DifficultyBadge level={passage.level} />
       </div>
 
-      {/* Mobile tabs */}
-      <div
-        style={{ display: "flex", gap: 0, marginBottom: 16, overflow: "hidden", border: "1.5px solid var(--rule)" }}
-        className="md:hidden"
-      >
+      {/*
+        Pinned under the masthead. This was an ordinary block at the top of the page, so on
+        a phone the loop was: read down a six-paragraph passage, scroll all the way back up
+        to reach the switch, change panel, answer, scroll up again.
+      */}
+      <div className="solve-tabs md:hidden" role="tablist" aria-label="Passage or questions">
         {(["passage", "questions"] as const).map((tab) => (
           <button
             key={tab}
+            type="button"
+            role="tab"
+            id={`solve-tab-${tab}`}
+            aria-selected={activeTab === tab}
+            aria-controls={`solve-panel-${tab}`}
+            className="solve-tabs__tab"
             onClick={() => setActiveTab(tab)}
-            style={{
-              flex: 1,
-              padding: "10px 0",
-              border: "none",
-              background: activeTab === tab ? "var(--caution-text)" : "var(--paper)",
-              color: activeTab === tab ? "var(--paper)" : "var(--ink-soft)",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              fontFamily: "inherit",
-              textTransform: "capitalize",
-            }}
           >
-            {tab}
+            {tab === "passage" ? "Passage" : "Questions"}
           </button>
         ))}
       </div>
 
       {/* Single responsive grid — B4: one DOM tree; CSS hides inactive panel on mobile */}
       <div className="grid md:grid-cols-2 gap-7">
-        <div className={`${activeTab === "questions" ? "hidden md:block" : ""} md:max-h-[70vh] md:overflow-y-auto md:pr-2`}>
+        <div
+          id="solve-panel-passage"
+          role="tabpanel"
+          aria-labelledby="solve-tab-passage"
+          className={`${activeTab === "questions" ? "hidden md:block" : ""} solve-panel`}
+        >
           {passageContent}
         </div>
-        <div className={activeTab === "passage" ? "hidden md:block" : ""}>
+        <div
+          id="solve-panel-questions"
+          role="tabpanel"
+          aria-labelledby="solve-tab-questions"
+          className={activeTab === "passage" ? "hidden md:block" : ""}
+        >
           {questionsContent}
         </div>
       </div>

@@ -701,3 +701,48 @@ The audit proposed moving the `!test` emptiness check above the auth branch in
 only then told there is nothing. That changes which view a signed-out visitor gets on an
 empty day, and U002 requires every empty state to appear on the same condition. The order is
 unchanged here and needs explicit sign-off.
+
+---
+
+## Addendum — practice players (Phase 13g)
+
+### The trap
+
+The control was `{!isChecked && <button>}` while `isChecked` reads persisted storage, and
+the explanation beneath it was gated on `sessionSolutions`, a `useState` a reload clears.
+The two disagree the moment a reader comes back: a question already checked shows a tinted
+grid, no explanation, and no control left to fetch one. The file's own comments state both
+halves — "hidden once checked in any session" and "only shown when fetched this session" —
+and the gap between them is the defect.
+
+The control now depends on whether a solution is on screen, and names what it will do:
+"Check solution" first, "Show the explanation" when an answer is already recorded.
+Re-fetching is safe because `setCorrectAnswer` early-returns when an answer exists.
+Reproduced the trap state in a browser (answer + recorded correct answer in storage, no
+session solution) and confirmed the way out is present.
+
+### Layout
+
+- **The mobile passage/questions switch was an ordinary block at the top of the page.** On a
+  phone the loop was: read down a six-paragraph passage, scroll all the way back up to the
+  switch, change panel, answer, scroll up again. It pins under the masthead now, with
+  `role="tablist"`, `aria-selected` and real `tabpanel` identities. Verified at 390px: the
+  strip holds at 73px, flush under the header, while scrolled 1,600px into an RC passage.
+  It releases when its panel ends, which is correct — there is nothing left to switch for.
+- **The passage panel keeps `overflow-y: auto`, never `hidden`.** A DILR set can carry
+  `question_svg` and a passage can carry MathJax, and an `mjx-container` inside
+  `overflow: hidden` is clipped rather than scrolled.
+- **RC paragraph summaries were mouse-only** — `onMouseEnter`/`onMouseLeave`, no `onClick`,
+  no `onFocus`, and no accessible name beyond the paragraph number. On a phone, which is
+  where RC actually gets read, they could not be opened at all, and a keyboard user tabbed
+  onto a focusable control that did nothing. They are disclosures now, with `aria-expanded`,
+  rendered in flow below their paragraph rather than absolutely positioned inside a panel
+  that scrolls, which is where the old tooltip was being clipped. A paragraph with no
+  summary is a plain span rather than a dead button.
+
+### Still open on these players
+
+The mobile question palette is a strip of bare numbers with no count and no legend, while
+the desktop sidebar has both — contrary to the audit, which reported the legend missing
+everywhere. And `disabled={isChecked}` means one click on a guess locks the question for
+good without saying so; changing that is behaviour, not presentation, so it needs the user.
