@@ -7,10 +7,10 @@ type Status = "correct" | "wrong" | "unattempted";
 type StatusStyle = { bg: string; color: string; border: string };
 
 const STATUS_STYLES: Record<Status | "current", StatusStyle> = {
-  correct:     { bg: "#DCFCE7", color: "#166534", border: "#86EFAC" },
-  wrong:       { bg: "#FEE2E2", color: "#991B1B", border: "#FCA5A5" },
-  unattempted: { bg: "#F1F5F9", color: "var(--ink-faint)", border: "#E2E8F0" },
-  current:     { bg: "#1E3A5F", color: "#fff",    border: "#1E3A5F" },
+  correct:     { bg: "var(--correct-wash)", color: "var(--correct-text)", border: "var(--correct-text)" },
+  wrong:       { bg: "var(--wrong-wash)", color: "var(--wrong-text)", border: "var(--wrong-text)" },
+  unattempted: { bg: "var(--paper-sunk)", color: "var(--inert-text)", border: "var(--rule)" },
+  current:     { bg: "var(--ink)", color: "var(--paper)", border: "var(--ink)" },
 };
 
 const LEGEND: Array<{ key: Status; label: string }> = [
@@ -56,9 +56,8 @@ export default function ReviewQuestionPalette({
               style={{
                 flex: 1,
                 padding: "6px 0",
-                borderRadius: 100,
-                background: isActive ? "#1E3A5F" : "#F1F5F9",
-                color: isActive ? "#fff" : "#64748B",
+                background: isActive ? "var(--ink)" : "var(--paper-sunk)",
+                color: isActive ? "var(--paper)" : "var(--ink-faint)",
                 border: "none",
                 fontSize: 11,
                 cursor: "pointer",
@@ -89,7 +88,6 @@ export default function ReviewQuestionPalette({
               style={{
                 width: 32,
                 height: 32,
-                borderRadius: 6,
                 background: s.bg,
                 color: s.color,
                 border: `1.5px solid ${s.border}`,
@@ -114,13 +112,12 @@ export default function ReviewQuestionPalette({
                 style={{
                   width: 12,
                   height: 12,
-                  borderRadius: 3,
                   background: s.bg,
                   border: `1.5px solid ${s.border}`,
                   flexShrink: 0,
                 }}
               />
-              <span style={{ fontSize: 11, color: "#64748B" }}>{label}</span>
+              <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>{label}</span>
             </div>
           );
         })}

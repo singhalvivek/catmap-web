@@ -1,10 +1,11 @@
 // layout — root layout: fonts, site-wide metadata, analytics and MathJax
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
 import { ENV } from "@/config/env";
 import { GoogleAnalytics } from "@/app/components/GoogleAnalytics";
 import { JsonLd } from "@/app/components/JsonLd";
+import ThemeScript from "@/app/components/ThemeScript";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -33,6 +34,13 @@ const websiteSchema = {
   url: ENV.SITE_URL,
   description:
     "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fcf9f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#111823" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -71,8 +79,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${jakartaSans.variable} ${instrumentSerif.variable} antialiased`}>
+    // suppressHydrationWarning: ThemeScript sets data-theme on this element before React
+    // hydrates, so the server markup and the live DOM differ by design on this one node.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body
+        className={`${jakartaSans.variable} ${instrumentSerif.variable} antialiased`}
+      >
         {children}
         <JsonLd data={websiteSchema} />
         <GoogleAnalytics />

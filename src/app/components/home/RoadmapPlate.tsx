@@ -71,7 +71,7 @@ export default function RoadmapPlate({ subjects }: Props) {
         onFocusCapture={stopCycling}
         style={{
           border: "2px solid var(--ink)",
-          background: "#fff",
+          background: "var(--paper)",
           boxShadow: "7px 7px 0 var(--accent)",
         }}
       >
@@ -83,10 +83,10 @@ export default function RoadmapPlate({ subjects }: Props) {
             justifyContent: "space-between",
             gap: 12,
             padding: "11px 14px 11px 18px",
-            background: "var(--ink)",
+            background: "var(--invert-bg)",
           }}
         >
-          <span className="display" style={{ fontSize: 21, color: "#fff" }}>
+          <span className="display" style={{ fontSize: 21, color: "var(--invert-ink)" }}>
             {subject.title}
           </span>
 

@@ -27,7 +27,12 @@ const DEFAULT_ROUTES = [
   "/cat-prep/practice/dilr/arrangements/1",
 ];
 
-const routes = process.argv.slice(2);
+const args = process.argv.slice(2);
+// --theme=dark|light measures one; by default both are measured, because a token that is
+// fine on cream can fail on ink and the whole point is to catch that.
+const themeArg = args.find((a) => a.startsWith("--theme="))?.split("=")[1];
+const THEMES = themeArg ? [themeArg] : ["light", "dark"];
+const routes = args.filter((a) => !a.startsWith("--"));
 const ROUTES = routes.length > 0 ? routes : DEFAULT_ROUTES;
 
 function luminance([r, g, b]) {
@@ -92,36 +97,50 @@ const browser = await chromium.launch();
 let failures = 0;
 let measured = 0;
 
-for (const route of ROUTES) {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  try {
-    await page.goto(BASE + route, { waitUntil: "networkidle" });
-    // Let client-rendered states settle; several surfaces fetch before they paint.
-    await page.waitForTimeout(900);
+for (const theme of THEMES) {
+  console.log(`
+--- ${theme} theme ---`);
+  for (const route of ROUTES) {
+    const page = await browser.newPage({
+      viewport: { width: 1440, height: 900 },
+      colorScheme: theme === "dark" ? "dark" : "light",
+    });
+    try {
+      // Pin it explicitly as well, so the run does not depend on the host's own setting.
+      await page.addInitScript((t) => {
+        try {
+          localStorage.setItem("sn_theme", t);
+        } catch {}
+        document.documentElement.setAttribute("data-theme", t);
+      }, theme);
+      await page.goto(BASE + route, { waitUntil: "networkidle" });
+      // Let client-rendered states settle; several surfaces fetch before they paint.
+      await page.waitForTimeout(900);
 
-    const nodes = await collect(page);
-    const bad = nodes
-      .map((n) => ({ ...n, r: ratio(n.fg, n.bg) }))
-      .filter((n) => n.r < threshold(n.size, n.weight))
-      .sort((a, b) => a.r - b.r);
+      const nodes = await collect(page);
+      const bad = nodes
+        .map((n) => ({ ...n, r: ratio(n.fg, n.bg) }))
+        .filter((n) => n.r < threshold(n.size, n.weight))
+        .sort((a, b) => a.r - b.r);
 
-    measured += nodes.length;
-    failures += bad.length;
+      measured += nodes.length;
+      failures += bad.length;
 
-    console.log(
-      `${route} — ${bad.length === 0 ? "clean" : `${bad.length} below AA`} of ${nodes.length} text nodes`
-    );
-    for (const n of bad.slice(0, 10)) {
       console.log(
-        `   ${n.r.toFixed(2)}:1  ${n.size}px/${n.weight}  needs ${threshold(n.size, n.weight)}:1  "${n.text}"`
+        `${route} — ${bad.length === 0 ? "clean" : `${bad.length} below AA`} of ${nodes.length} text nodes`,
       );
+      for (const n of bad.slice(0, 10)) {
+        console.log(
+          `   ${n.r.toFixed(2)}:1  ${n.size}px/${n.weight}  needs ${threshold(n.size, n.weight)}:1  "${n.text}"`,
+        );
+      }
+      if (bad.length > 10) console.log(`   …and ${bad.length - 10} more`);
+    } catch (err) {
+      console.log(`${route} — could not measure: ${err.message}`);
+      failures++;
     }
-    if (bad.length > 10) console.log(`   …and ${bad.length - 10} more`);
-  } catch (err) {
-    console.log(`${route} — could not measure: ${err.message}`);
-    failures++;
+    await page.close();
   }
-  await page.close();
 }
 
 await browser.close();

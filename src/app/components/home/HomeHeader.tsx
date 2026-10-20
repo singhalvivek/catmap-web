@@ -1,6 +1,7 @@
 // HomeHeader — slim home page masthead; links into the surfaces rather than a single CTA
 import Link from "next/link";
 import Wordmark from "@/app/components/Wordmark";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 const NAV = [
   { label: "Past papers", href: "/cat-prep/pyq" },
@@ -13,19 +14,10 @@ export default function HomeHeader() {
     // Double rule under the masthead: the newspaper device, and the thing that makes the
     // top of the page read as deliberate rather than as an empty bar.
     <header className="site-header">
-      <div
-        className="ed-shell"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 16,
-          height: 70,
-        }}
-      >
+      <div className="ed-shell site-header__bar">
         <Wordmark />
 
-        <nav style={{ display: "flex", alignItems: "center", gap: 26 }}>
+        <nav style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -41,6 +33,7 @@ export default function HomeHeader() {
               {item.label}
             </Link>
           ))}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

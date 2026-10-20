@@ -11,6 +11,7 @@ import {
 import { auth, googleProvider } from "@/lib/firebase";
 import Wordmark from "@/app/components/Wordmark";
 import { trackEvent } from "@/app/components/analytics";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -55,7 +56,8 @@ export default function Header() {
       <div className="ed-shell site-header__bar">
         <Wordmark size="sm" />
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
           {user ? (
             <>
               <span

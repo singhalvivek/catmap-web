@@ -45,7 +45,7 @@ export default function Figures() {
           className="display reveal-mask"
           style={{
             fontSize: "clamp(28px, 3.6vw, 40px)",
-            color: "#fff",
+            color: "var(--invert-ink)",
             margin: "0 0 40px",
             "--reveal-delay": "110ms",
           } as CSSProperties}
@@ -81,7 +81,7 @@ export default function Figures() {
                 style={{
                   fontSize: 15,
                   fontWeight: 700,
-                  color: "#fff",
+                  color: "var(--invert-ink)",
                   marginBottom: 5,
                   "--reveal-delay": `${i * 120 + 170}ms`,
                 } as CSSProperties}
@@ -93,7 +93,7 @@ export default function Figures() {
                 style={{
                   fontSize: 13,
                   lineHeight: 1.55,
-                  color: "rgba(255,255,255,0.62)",
+                  color: "var(--invert-ink-soft)",
                   "--reveal-delay": `${i * 120 + 230}ms`,
                 } as CSSProperties}
               >

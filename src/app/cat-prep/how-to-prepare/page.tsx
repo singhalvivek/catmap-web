@@ -334,13 +334,13 @@ export default function HowToPreparePage() {
           <p className="ed-kicker" style={{ margin: "0 0 12px" }}>
             Next step
           </p>
-          <h2 className="display" style={{ fontSize: 26, color: "#fff", margin: "0 0 10px" }}>
+          <h2 className="display" style={{ fontSize: 26, color: "var(--invert-ink)", margin: "0 0 10px" }}>
             Ready to put this into practice?
           </h2>
           <p
             style={{
               fontSize: 16,
-              color: "rgba(255,255,255,0.72)",
+              color: "var(--invert-ink-soft)",
               margin: "0 0 26px",
               lineHeight: 1.6,
               maxWidth: "60ch",
@@ -358,7 +358,7 @@ export default function HowToPreparePage() {
             <Link
               href="/cat-prep/pyq"
               className="ed-btn"
-              style={{ background: "var(--accent-bright)", color: "var(--ink)" }}
+              style={{ background: "var(--accent-bright)", color: "var(--on-accent)" }}
             >
               Browse past papers
             </Link>

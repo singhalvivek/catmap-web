@@ -12,7 +12,7 @@ export default function ReviewTITAAnswer({ given, correctAnswer, isCorrect }: Pr
     <div className="flex gap-3" style={{ paddingTop: 4 }}>
       <div>
         <label
-          className="font-semibold text-slate-500"
+          className="font-semibold ed-muted"
           style={{ fontSize: 12, display: "block", marginBottom: 6 }}
         >
           Your answer
@@ -21,10 +21,9 @@ export default function ReviewTITAAnswer({ given, correctAnswer, isCorrect }: Pr
           style={{
             minWidth: 120,
             padding: "9px 14px",
-            borderRadius: 9,
-            border: `1.5px solid ${isUnattempted ? "#CBD5E1" : isCorrect ? "#16A34A" : "#DC2626"}`,
-            background: isUnattempted ? "#F8FAFC" : isCorrect ? "#F0FDF4" : "#FEF2F2",
-            color: isUnattempted ? "var(--ink-faint)" : isCorrect ? "#166534" : "#991B1B",
+            border: `1.5px solid ${isUnattempted ? "var(--rule-firm)" : isCorrect ? "var(--correct-text)" : "var(--wrong-text)"}`,
+            background: isUnattempted ? "var(--paper-sunk)" : isCorrect ? "var(--correct-wash)" : "var(--wrong-wash)",
+            color: isUnattempted ? "var(--inert-text)" : isCorrect ? "var(--correct-text)" : "var(--wrong-text)",
             fontSize: 15,
             fontWeight: 600,
           }}
@@ -36,7 +35,7 @@ export default function ReviewTITAAnswer({ given, correctAnswer, isCorrect }: Pr
       {!isCorrect && (
         <div>
           <label
-            className="font-semibold text-slate-500"
+            className="font-semibold ed-muted"
             style={{ fontSize: 12, display: "block", marginBottom: 6 }}
           >
             Correct answer
@@ -45,10 +44,9 @@ export default function ReviewTITAAnswer({ given, correctAnswer, isCorrect }: Pr
             style={{
               minWidth: 120,
               padding: "9px 14px",
-              borderRadius: 9,
-              border: "1.5px solid #16A34A",
-              background: "#F0FDF4",
-              color: "#166534",
+              border: "1.5px solid var(--correct-text)",
+              background: "var(--correct-wash)",
+              color: "var(--correct-text)",
               fontSize: 15,
               fontWeight: 600,
             }}

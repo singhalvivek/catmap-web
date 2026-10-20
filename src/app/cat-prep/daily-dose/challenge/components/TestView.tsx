@@ -24,12 +24,14 @@ type Props = {
   initialState?: DailyChallengeDraft;
 };
 
+/* "answered" is not "correct" — nothing is graded until submit, so it takes the ink scale
+   rather than the correct-answer green. Only the review palette may use --correct-*. */
 const PALETTE_STYLES: Record<VisitStatus | "current", { bg: string; color: string; border: string }> = {
-  not_visited:       { bg: "#F1F5F9", color: "var(--ink-faint)", border: "#E2E8F0" },
-  visited:           { bg: "#FEF9C3", color: "#854D0E", border: "#FDE047" },
-  answered:          { bg: "#DCFCE7", color: "#166534", border: "#86EFAC" },
-  marked_for_review: { bg: "#EDE9FE", color: "#5B21B6", border: "#A78BFA" },
-  current:           { bg: "#1E3A5F", color: "#fff",    border: "#1E3A5F" },
+  not_visited:       { bg: "var(--paper-sunk)", color: "var(--inert-text)", border: "var(--rule)" },
+  visited:           { bg: "var(--caution-wash)", color: "var(--caution-text)", border: "var(--caution-text)" },
+  answered:          { bg: "var(--paper-sunk)", color: "var(--ink)", border: "var(--ink)" },
+  marked_for_review: { bg: "var(--review-wash)", color: "var(--review-text)", border: "var(--review-text)" },
+  current:           { bg: "var(--ink)", color: "var(--paper)", border: "var(--ink)" },
 };
 
 export default function TestView({ test, date, uid, initialState }: Props) {
@@ -167,9 +169,9 @@ export default function TestView({ test, date, uid, initialState }: Props) {
       return (
         <div
           className="min-h-screen flex items-center justify-center"
-          style={{ background: "#FFFDF8" }}
+          style={{ background: "var(--paper)" }}
         >
-          <p className="text-slate-500 text-sm">Evaluating your answers…</p>
+          <p className="ed-muted text-sm">Evaluating your answers…</p>
         </div>
       );
     }
@@ -213,7 +215,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
   const unansweredCount = section.questions.length - answeredCount;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--paper)" }}>
       <SectionHeader
         sectionName={section.name}
         sectionTimeLeft={sectionTimeLeft}
@@ -256,10 +258,9 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                 className="font-semibold disabled:opacity-40"
                 style={{
                   padding: "9px 20px",
-                  borderRadius: 8,
-                  background: "#F1F5F9",
-                  color: "#1E3A5F",
-                  border: "1px solid #E2E8F0",
+                  background: "var(--paper-sunk)",
+                  color: "var(--ink)",
+                  border: "1px solid var(--rule-firm)",
                   fontSize: 13,
                   cursor: hasPrev ? "pointer" : "not-allowed",
                   fontFamily: "inherit",
@@ -276,19 +277,18 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                   onClick={() => toggleMarkForReview(question.questionId)}
                   style={{
                     padding: "7px 14px",
-                    borderRadius: 7,
                     background:
                       visitStatus[question.questionId] === "marked_for_review"
-                        ? "#EDE9FE"
-                        : "#F1F5F9",
+                        ? "var(--review-wash)"
+                        : "var(--paper-sunk)",
                     color:
                       visitStatus[question.questionId] === "marked_for_review"
-                        ? "#5B21B6"
+                        ? "var(--review-text)"
                         : "var(--ink-faint)",
                     border: `1.5px solid ${
                       visitStatus[question.questionId] === "marked_for_review"
-                        ? "#A78BFA"
-                        : "#E2E8F0"
+                        ? "var(--review-text)"
+                        : "var(--rule-firm)"
                     }`,
                     fontSize: 12,
                     fontWeight: 600,
@@ -309,10 +309,9 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                 className="font-semibold disabled:opacity-40"
                 style={{
                   padding: "9px 20px",
-                  borderRadius: 8,
-                  background: rightBtnDisabled ? "#F1F5F9" : "#1E3A5F",
-                  color: rightBtnDisabled ? "var(--ink-faint)" : "#fff",
-                  border: "1px solid #E2E8F0",
+                  background: rightBtnDisabled ? "var(--paper-sunk)" : "var(--ink)",
+                  color: rightBtnDisabled ? "var(--ink-faint)" : "var(--paper)",
+                  border: "1px solid var(--rule-firm)",
                   fontSize: 13,
                   cursor: rightBtnDisabled ? "not-allowed" : "pointer",
                   fontFamily: "inherit",
@@ -328,15 +327,14 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                 style={{
                   marginTop: 18,
                   padding: "14px 16px",
-                  borderRadius: 10,
-                  border: "1.5px solid #E8EAF0",
-                  background: "#F8FAFC",
+                  border: "1.5px solid var(--rule)",
+                  background: "var(--paper-sunk)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                 }}
               >
-                <span className="text-slate-500" style={{ fontSize: 13 }}>
+                <span className="ed-muted" style={{ fontSize: 13 }}>
                   Done with this section? Move to the next — you cannot come back.
                 </span>
                 <button
@@ -344,9 +342,8 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                   className="font-bold"
                   style={{
                     padding: "8px 18px",
-                    borderRadius: 8,
-                    background: "#1E3A5F",
-                    color: "#fff",
+                    background: "var(--ink)",
+                    color: "var(--paper)",
                     border: "none",
                     fontSize: 13,
                     cursor: "pointer",
@@ -368,9 +365,8 @@ export default function TestView({ test, date, uid, initialState }: Props) {
             style={{
               width: 196,
               flexShrink: 0,
-              background: "#fff",
-              borderRadius: 12,
-              border: "1.5px solid #E8EAF0",
+              background: "var(--paper)",
+              border: "1.5px solid var(--rule)",
               padding: "16px 14px",
               position: "sticky",
               top: 72,
@@ -395,8 +391,8 @@ export default function TestView({ test, date, uid, initialState }: Props) {
           bottom: 0,
           left: 0,
           right: 0,
-          background: "#fff",
-          borderTop: "1.5px solid #E8EAF0",
+          background: "var(--paper)",
+          borderTop: "1.5px solid var(--rule)",
           boxShadow: "0 -4px 20px rgba(30,58,95,0.08)",
           zIndex: 50,
           padding: "10px 16px",
@@ -423,7 +419,6 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                 style={{
                   width: 36,
                   height: 36,
-                  borderRadius: 8,
                   background: s.bg,
                   color: s.color,
                   border: `1.5px solid ${s.border}`,
@@ -458,8 +453,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
         >
           <div
             style={{
-              background: "#fff",
-              borderRadius: 18,
+              background: "var(--paper)",
               padding: "28px 24px 24px",
               maxWidth: 360,
               width: "100%",
@@ -467,7 +461,7 @@ export default function TestView({ test, date, uid, initialState }: Props) {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-extrabold text-trust-navy" style={{ fontSize: 18, marginBottom: 16 }}>
+            <p className="font-extrabold" style={{ fontSize: 18, marginBottom: 16, color: "var(--ink)" }}>
               Submit Challenge?
             </p>
 
@@ -481,16 +475,17 @@ export default function TestView({ test, date, uid, initialState }: Props) {
               }}
             >
               {[
-                { label: "Answered", value: answeredCount, color: "#166534", bg: "#DCFCE7", border: "#86EFAC" },
-                { label: "Unanswered", value: unansweredCount, color: "#991B1B", bg: "#FEE2E2", border: "#FCA5A5" },
-                { label: "For Review", value: markedCount, color: "#5B21B6", bg: "#EDE9FE", border: "#A78BFA" },
+                /* Answered is not "correct" and unanswered is not "wrong" — on a +3/-1 paper a
+                   skipped question costs nothing, so it reads as caution, not as a loss. */
+                { label: "Answered", value: answeredCount, color: "var(--ink)", bg: "var(--paper-sunk)", border: "var(--ink)" },
+                { label: "Unanswered", value: unansweredCount, color: "var(--caution-text)", bg: "var(--caution-wash)", border: "var(--caution-text)" },
+                { label: "For Review", value: markedCount, color: "var(--review-text)", bg: "var(--review-wash)", border: "var(--review-text)" },
               ].map(({ label, value, color, bg, border }) => (
                 <div
                   key={label}
                   style={{
                     textAlign: "center",
                     padding: "10px 8px",
-                    borderRadius: 10,
                     background: bg,
                     border: `1.5px solid ${border}`,
                   }}
@@ -516,10 +511,9 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                 style={{
                   flex: 1,
                   padding: "11px 0",
-                  borderRadius: 9,
-                  background: "#F1F5F9",
-                  color: "#1E3A5F",
-                  border: "1px solid #E2E8F0",
+                  background: "var(--paper-sunk)",
+                  color: "var(--ink)",
+                  border: "1px solid var(--rule-firm)",
                   fontSize: 14,
                   cursor: "pointer",
                   fontFamily: "inherit",
@@ -533,9 +527,8 @@ export default function TestView({ test, date, uid, initialState }: Props) {
                 style={{
                   flex: 1,
                   padding: "11px 0",
-                  borderRadius: 9,
-                  background: "#1E3A5F",
-                  color: "#fff",
+                  background: "var(--ink)",
+                  color: "var(--paper)",
                   border: "none",
                   fontSize: 14,
                   cursor: "pointer",

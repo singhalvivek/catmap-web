@@ -537,7 +537,7 @@ export default function RoadmapContent({
           }}
         >
           <div>
-            <p className="display" style={{ fontSize: 22, color: "var(--paper)", margin: "0 0 6px" }}>
+            <p className="display" style={{ fontSize: 22, color: "var(--invert-ink)", margin: "0 0 6px" }}>
               Got feedback or found an issue?
             </p>
             <p
@@ -556,7 +556,7 @@ export default function RoadmapContent({
             target="_blank"
             rel="noopener noreferrer"
             className="ed-btn"
-            style={{ background: "var(--accent-bright)", color: "var(--ink)", flexShrink: 0 }}
+            style={{ background: "var(--accent-bright)", color: "var(--on-accent)", flexShrink: 0 }}
           >
             Join on Telegram →
           </a>

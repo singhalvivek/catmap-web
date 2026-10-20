@@ -5,12 +5,14 @@ import type { Question, VisitStatus } from "../../../models/dailyChallenge";
 
 type StatusStyle = { bg: string; color: string; border: string };
 
+/* "answered" is not "correct" — nothing is graded until submit, so it takes the ink scale
+   rather than the correct-answer green. Only the review palette may use --correct-*. */
 const STATUS_STYLES: Record<VisitStatus | "current", StatusStyle> = {
-  not_visited: { bg: "#F1F5F9", color: "var(--ink-faint)", border: "#E2E8F0" },
-  visited:     { bg: "#FEF9C3", color: "#854D0E", border: "#FDE047" },
-  answered:    { bg: "#DCFCE7", color: "#166534", border: "#86EFAC" },
-  marked_for_review: { bg: "#EDE9FE", color: "#5B21B6", border: "#A78BFA" },
-  current:     { bg: "#1E3A5F", color: "#fff",    border: "#1E3A5F" },
+  not_visited: { bg: "var(--paper-sunk)", color: "var(--inert-text)", border: "var(--rule)" },
+  visited:     { bg: "var(--caution-wash)", color: "var(--caution-text)", border: "var(--caution-text)" },
+  answered:    { bg: "var(--paper-sunk)", color: "var(--ink)", border: "var(--ink)" },
+  marked_for_review: { bg: "var(--review-wash)", color: "var(--review-text)", border: "var(--review-text)" },
+  current:     { bg: "var(--ink)", color: "var(--paper)", border: "var(--ink)" },
 };
 
 const LEGEND: Array<{ key: VisitStatus; label: string }> = [
@@ -38,8 +40,8 @@ export default function QuestionPalette({
   return (
     <div>
       <p
-        className="font-extrabold text-trust-navy"
-        style={{ fontSize: 13, marginBottom: 2 }}
+        className="font-extrabold"
+        style={{ fontSize: 13, marginBottom: 2, color: "var(--ink)" }}
       >
         {sectionName}
       </p>
@@ -62,7 +64,6 @@ export default function QuestionPalette({
               style={{
                 width: 32,
                 height: 32,
-                borderRadius: 6,
                 background: s.bg,
                 color: s.color,
                 border: `1.5px solid ${s.border}`,
@@ -87,13 +88,12 @@ export default function QuestionPalette({
                 style={{
                   width: 12,
                   height: 12,
-                  borderRadius: 3,
                   background: s.bg,
                   border: `1.5px solid ${s.border}`,
                   flexShrink: 0,
                 }}
               />
-              <span style={{ fontSize: 11, color: "#64748B" }}>{label}</span>
+              <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>{label}</span>
             </div>
           );
         })}

@@ -15,17 +15,17 @@ export default function ReviewMCQOptions({ options, selectedIndex, correctIndex 
         const isCorrect = opt.index === correctIndex;
         const isSelected = opt.index === selectedIndex;
 
-        let border = "1.5px solid #E2E8F0";
-        let background = "#fff";
-        let color = "#334155";
+        let border = "1.5px solid var(--rule-firm)";
+        let background = "var(--paper)";
+        let color = "var(--ink-soft)";
         if (isCorrect) {
-          border = "1.5px solid #16A34A";
-          background = "#F0FDF4";
-          color = "#166534";
+          border = "1.5px solid var(--correct-text)";
+          background = "var(--correct-wash)";
+          color = "var(--correct-text)";
         } else if (isSelected) {
-          border = "1.5px solid #DC2626";
-          background = "#FEF2F2";
-          color = "#991B1B";
+          border = "1.5px solid var(--wrong-text)";
+          background = "var(--wrong-wash)";
+          color = "var(--wrong-text)";
         }
 
         return (
@@ -36,7 +36,6 @@ export default function ReviewMCQOptions({ options, selectedIndex, correctIndex 
               alignItems: "center",
               gap: 12,
               padding: "11px 14px",
-              borderRadius: 10,
               border,
               background,
               color,

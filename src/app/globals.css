@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /*
+   * The starter's defaults, which body still reads. They were a fixed white and near-black,
+   * so every element that sets no colour of its own inherited near-black — fine on cream,
+   * invisible on the dark theme. Pointed at the real tokens, which follow the theme.
+   */
+  --background: var(--paper);
+  --foreground: var(--ink);
 
   /* Legacy brand fill. 82 usages across the /cat-prep surfaces; retired in U002 Phase 16,
      which is a visible darkening to --ink rather than a rename. The other nine legacy
@@ -164,7 +169,7 @@ body {
   align-items: center;
   gap: 10px;
   background: var(--ink);
-  color: #fff;
+  color: var(--on-fill);
   font-size: 16px;
   font-weight: 600;
   padding: 16px 30px;
@@ -202,8 +207,8 @@ body {
 
 /* ---- Inverted band, for rhythm. Solid colour, never a gradient. ---- */
 .ed-invert {
-  background: var(--ink);
-  color: #fff;
+  background: var(--invert-bg);
+  color: var(--invert-ink);
 }
 .ed-invert .ed-kicker {
   color: var(--accent-bright);
@@ -545,9 +550,9 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 5px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--invert-rule);
   background: none;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--invert-ink-soft);
   cursor: pointer;
   transition:
     color 0.15s ease,
@@ -555,7 +560,7 @@ body {
     background-color 0.15s ease;
 }
 .plate-tab[data-active="true"] {
-  color: var(--ink);
+  color: var(--on-accent);
   background: var(--accent-bright);
   border-color: var(--accent-bright);
 }
@@ -1019,7 +1024,7 @@ body {
 
 .ed-btn[data-weight="primary"] {
   background: var(--ink);
-  color: #fff;
+  color: var(--on-fill);
   box-shadow: 3px 3px 0 var(--accent);
 }
 @media (hover: hover) {
@@ -1056,8 +1061,8 @@ body {
 
 /* For the navy test bars, where the ground is ink rather than paper. */
 .ed-btn[data-weight="on-dark"] {
-  border-color: rgba(255, 255, 255, 0.42);
-  color: #fff;
+  border-color: var(--invert-rule);
+  color: var(--invert-ink);
 }
 @media (hover: hover) {
   .ed-btn[data-weight="on-dark"]:hover:not(:disabled) {
@@ -1110,7 +1115,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: var(--ink);
-  background: #fff;
+  background: var(--paper);
   border: 1.5px solid var(--rule-firm);
   padding: 11px 14px;
   width: 100%;
@@ -1418,12 +1423,12 @@ textarea.ed-field {
 .ed-option[data-state="correct"] .ed-option__key {
   background: var(--correct-text);
   border-color: var(--correct-text);
-  color: #fff;
+  color: var(--on-fill);
 }
 .ed-option[data-state="wrong"] .ed-option__key {
   background: var(--wrong-text);
   border-color: var(--wrong-text);
-  color: #fff;
+  color: var(--on-fill);
 }
 
 /* ---- Empty states, skeletons, notices ---- */
@@ -3784,4 +3789,237 @@ mjx-container[display="true"] {
     flex-direction: column;
     gap: 2px;
   }
+}
+
+/* =========================================== */
+/* U004 — the dark theme                        */
+/*                                              */
+/* Not an inversion. The light system is cream  */
+/* over navy ink, so this is navy ground under  */
+/* warm off-white: the newspaper character      */
+/* survives, and a night reader does not get a  */
+/* slab of white. Every pairing below was       */
+/* measured, not picked — see the spec.         */
+/*                                              */
+/* The values appear twice on purpose. CSS has  */
+/* no way to apply one block both to a media    */
+/* query and to an attribute, and the two cases */
+/* are genuinely different: follow the system   */
+/* unless the reader has overridden it.         */
+/* =========================================== */
+
+:root {
+  /*
+   * The band that inverts against the page — the footer, the closing call to action.
+   * These cannot be `var(--ink)` and `#fff` directly, which is what they were: --ink
+   * becomes near-white in the dark theme, so the band would have been white on white.
+   */
+  /*
+   * Text sitting ON a solid fill — an ink button, a correct/wrong option key. It cannot be
+   * a raw #fff: in the dark theme --ink becomes near-white, so every primary button was
+   * white on white, and --correct-text becomes a bright green that white reads about 2:1
+   * against. Flipping to --paper in dark keeps both ends legible.
+   */
+  --on-fill: var(--paper);
+
+  /*
+   * Text on an --accent-bright fill. That teal is the same value in both themes, so this
+   * one does NOT flip: it was --ink, which becomes near-white in dark and landed at
+   * 1.60:1 on the accent. Fixed at the ink value, 9.36:1 either way.
+   */
+  --on-accent: #101a2b;
+
+  /* Modal scrims. Alpha, so it cannot be a plain token swap in the components. */
+  --scrim: rgba(15, 23, 42, 0.5);
+
+  --invert-bg: var(--ink);
+  --invert-ink: #ffffff;
+  --invert-ink-soft: rgba(255, 255, 255, 0.72);
+  --invert-rule: rgba(255, 255, 255, 0.22);
+
+  /* Lets the browser theme form controls, scrollbars and the caret to match. */
+  color-scheme: light;
+}
+
+/* Follow the system, unless the reader has explicitly chosen light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ink: #f3ede1;
+    --ink-soft: #c2bcae;
+    --ink-faint: #968f82;
+
+    --paper: #111823;
+    --paper-sunk: #1a2230;
+
+    --rule: #242d3c;
+    --rule-firm: #333f52;
+    --rule-hard: #5d6a7e;
+
+    --accent: #2dd4bf;
+    --accent-text: #5eead4;
+    --accent-bright: #2dd4bf;
+    --focus-ring: var(--accent-bright);
+
+    --correct-text: #5fd3a0;
+    --correct-bright: #5fd3a0;
+    --correct-wash: #152a22;
+
+    --wrong-text: #ff9b8f;
+    --wrong-bright: #ff9b8f;
+    --wrong-wash: #2e1a19;
+
+    --caution-text: #e3b35f;
+    --caution-bright: #e3b35f;
+    --caution-wash: #2b2316;
+
+    --review-text: #bda3ff;
+    --review-bright: #bda3ff;
+    --review-wash: #231f33;
+
+    --inert-bright: var(--ink-faint);
+
+    --scrim: rgba(0, 0, 0, 0.66);
+
+    --invert-bg: #232c3b;
+    --invert-ink: var(--ink);
+    --invert-ink-soft: var(--ink-soft);
+    --invert-rule: var(--rule-hard);
+
+    /*
+     * A bridge, not an endorsement. --trust-navy is still read by ~24 files as a text
+     * colour, and #1e3a5f on a dark ground is close to invisible. Pointing it at --ink
+     * keeps those readable until Phase 16 retires the token. New code must not use it.
+     */
+    --trust-navy: var(--ink);
+  }
+}
+
+/* The explicit override. Same values; see the note above on why they repeat. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #f3ede1;
+  --ink-soft: #c2bcae;
+  --ink-faint: #968f82;
+
+  --paper: #111823;
+  --paper-sunk: #1a2230;
+
+  --rule: #242d3c;
+  --rule-firm: #333f52;
+  --rule-hard: #5d6a7e;
+
+  --accent: #2dd4bf;
+  --accent-text: #5eead4;
+  --accent-bright: #2dd4bf;
+  --focus-ring: var(--accent-bright);
+
+  --correct-text: #5fd3a0;
+  --correct-bright: #5fd3a0;
+  --correct-wash: #152a22;
+
+  --wrong-text: #ff9b8f;
+  --wrong-bright: #ff9b8f;
+  --wrong-wash: #2e1a19;
+
+  --caution-text: #e3b35f;
+  --caution-bright: #e3b35f;
+  --caution-wash: #2b2316;
+
+  --review-text: #bda3ff;
+  --review-bright: #bda3ff;
+  --review-wash: #231f33;
+
+  --inert-bright: var(--ink-faint);
+
+  --scrim: rgba(0, 0, 0, 0.66);
+
+  --invert-bg: #232c3b;
+  --invert-ink: var(--ink);
+  --invert-ink-soft: var(--ink-soft);
+  --invert-rule: var(--rule-hard);
+
+  --trust-navy: var(--ink);
+}
+
+/* ---- the pieces that cannot simply follow a token ---- */
+
+.ed-invert .ed-kicker::after {
+  background: var(--invert-rule);
+}
+
+.site-footer {
+  background: var(--invert-bg);
+  color: var(--invert-ink-soft);
+}
+
+/*
+ * The grain is a dark turbulence tile multiplied over cream. Over a dark ground it reads as
+ * dirt rather than paper, so it is lightened and dialled back instead of removed — the
+ * texture is half of why the page does not look like a template.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ed-page::before {
+    opacity: 0.5;
+    filter: invert(1);
+  }
+}
+:root[data-theme="dark"] .ed-page::before {
+  opacity: 0.5;
+  filter: invert(1);
+}
+
+/* ---- the toggle ---- */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 0;
+}
+@media (hover: hover) {
+  .theme-toggle:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+}
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+/* One icon is shown at a time, chosen by the theme actually in force. */
+.theme-toggle__moon {
+  display: block;
+}
+.theme-toggle__sun {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle__moon {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .theme-toggle__sun {
+    display: block;
+  }
+}
+:root[data-theme="dark"] .theme-toggle__moon {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle__sun {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle__moon {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle__sun {
+  display: none;
 }

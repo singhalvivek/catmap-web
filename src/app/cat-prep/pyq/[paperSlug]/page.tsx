@@ -82,7 +82,7 @@ export default async function PyqPaperPage({ params }: Props) {
               padding: "9px 18px",
               border: "1.5px solid var(--ink)",
               background: "var(--ink)",
-              color: "#fff",
+              color: "var(--paper)",
               fontSize: 13,
               textDecoration: "none",
             }}

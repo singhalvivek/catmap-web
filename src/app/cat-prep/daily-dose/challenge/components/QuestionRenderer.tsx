@@ -26,9 +26,8 @@ export default function QuestionRenderer({
   return (
     <div
       style={{
-        background: "#fff",
-        borderRadius: 14,
-        border: "1.5px solid #E8EAF0",
+        background: "var(--paper)",
+        border: "1.5px solid var(--rule)",
         padding: "22px 24px",
       }}
     >
@@ -59,8 +58,8 @@ export default function QuestionRenderer({
           renderParagraph={(segment, key) => (
             <p
               key={key}
-              className="font-semibold text-trust-navy"
-              style={{ fontSize: 15, lineHeight: 1.75, margin: 0, marginBottom: 8 }}
+              className="font-semibold"
+              style={{ fontSize: 15, lineHeight: 1.75, margin: 0, marginBottom: 8, color: "var(--ink)" }}
             >
               <MathText text={segment} />
             </p>

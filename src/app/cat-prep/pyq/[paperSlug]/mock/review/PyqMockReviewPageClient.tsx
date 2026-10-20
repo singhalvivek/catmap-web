@@ -56,27 +56,26 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
 
   if (status === "loading" || status === "checking") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
-        <p className="text-slate-500 text-sm">Loading…</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
+        <p className="text-ink-faint text-sm">Loading…</p>
       </div>
     );
   }
 
   if (status === "unauthenticated") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
         <div style={{ maxWidth: 360, textAlign: "center", padding: "32px 24px" }}>
-          <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 22, marginBottom: 8 }}>
+          <h2 className="font-extrabold text-ink" style={{ fontSize: 22, marginBottom: 8 }}>
             Sign in to view your review
           </h2>
           <button
             type="button"
             onClick={handleLogin}
-            className="font-bold text-white w-full"
+            className="font-bold text-paper w-full"
             style={{
               padding: "12px 24px",
-              borderRadius: 10,
-              background: "#1E3A5F",
+              background: "var(--ink)",
               border: "none",
               fontSize: 15,
               cursor: "pointer",
@@ -86,7 +85,7 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
           >
             Login with Google
           </button>
-          {authError && <p className="text-red-600 text-xs mt-3">{authError}</p>}
+          {authError && <p className="text-wrong-text text-xs mt-3">{authError}</p>}
         </div>
       </div>
     );
@@ -94,22 +93,21 @@ export default function PyqMockReviewPageClient({ test, paperSlug, paperLabel }:
 
   if (status === "no_result") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
         <div style={{ maxWidth: 360, textAlign: "center", padding: "32px 24px" }}>
-          <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 22, marginBottom: 8 }}>
+          <h2 className="font-extrabold text-ink" style={{ fontSize: 22, marginBottom: 8 }}>
             No attempt found
           </h2>
-          <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+          <p className="text-ink-faint" style={{ fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
             You need to complete this mock test before you can review it.
           </p>
           <Link
             href={`/cat-prep/pyq/${paperSlug}/mock`}
-            className="font-bold text-white"
+            className="font-bold text-paper"
             style={{
               display: "inline-block",
               padding: "12px 24px",
-              borderRadius: 10,
-              background: "#1E3A5F",
+              background: "var(--ink)",
               fontSize: 14,
               textDecoration: "none",
             }}

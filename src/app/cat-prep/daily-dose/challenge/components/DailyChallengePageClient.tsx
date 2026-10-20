@@ -158,12 +158,12 @@ export default function DailyChallengePageClient({ test, date }: Props) {
         <div style={{ maxWidth: 400, width: "100%", padding: "32px 24px", textAlign: "center" }}>
           <div style={{ fontSize: 44, marginBottom: 16 }}>📋</div>
           <h2
-            className="font-extrabold text-trust-navy"
-            style={{ fontSize: 22, marginBottom: 8 }}
+            className="font-extrabold"
+            style={{ fontSize: 22, marginBottom: 8, color: "var(--ink)" }}
           >
             Resume your attempt?
           </h2>
-          <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
+          <p className="ed-muted" style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
             You have an unfinished attempt from earlier today. Pick up where you left off, or start
             fresh from the beginning.
           </p>
@@ -171,11 +171,11 @@ export default function DailyChallengePageClient({ test, date }: Props) {
             <button
               type="button"
               onClick={handleResume}
-              className="font-bold text-white w-full"
+              className="font-bold w-full"
               style={{
                 padding: "12px 24px",
-                borderRadius: 10,
-                background: "#1E3A5F",
+                background: "var(--ink)",
+                color: "var(--paper)",
                 border: "none",
                 fontSize: 15,
                 cursor: "pointer",
@@ -190,10 +190,9 @@ export default function DailyChallengePageClient({ test, date }: Props) {
               className="font-semibold w-full"
               style={{
                 padding: "12px 24px",
-                borderRadius: 10,
-                background: "#F1F5F9",
-                color: "#64748B",
-                border: "1.5px solid #E2E8F0",
+                background: "var(--paper-sunk)",
+                color: "var(--ink-faint)",
+                border: "1.5px solid var(--rule-firm)",
                 fontSize: 14,
                 cursor: "pointer",
                 fontFamily: "inherit",

@@ -24,17 +24,17 @@ export default async function EssayArchivePage() {
   const entries = await getEssayArchive(today).catch(() => []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+    <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
       {/* Header */}
-      <div style={{ background: "#1E3A5F", padding: "14px 24px" }}>
+      <div data-ground="dark" style={{ background: "var(--invert-bg)", padding: "14px 24px" }}>
         <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link
             href="/cat-prep/daily-dose/essay"
-            style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, textDecoration: "none", fontWeight: 500 }}
+            style={{ color: "var(--invert-ink-soft)", fontSize: 13, textDecoration: "none", fontWeight: 500 }}
           >
             ← Today&apos;s Essay
           </Link>
-          <span className="font-bold text-white" style={{ fontSize: 13 }}>
+          <span className="font-bold" style={{ fontSize: 13, color: "var(--invert-ink)" }}>
             Essay Archive
           </span>
           <span style={{ width: 80 }} />
@@ -42,10 +42,10 @@ export default async function EssayArchivePage() {
       </div>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
-        <h1 className="font-extrabold text-trust-navy" style={{ fontSize: 24, marginBottom: 6 }}>
+        <h1 className="font-extrabold" style={{ fontSize: 24, marginBottom: 6, color: "var(--ink)" }}>
           Past Essays
         </h1>
-        <p style={{ fontSize: 14, color: "#64748B", marginBottom: 28 }}>
+        <p style={{ fontSize: 14, color: "var(--ink-faint)", marginBottom: 28 }}>
           Browse previous daily essays and read the community&apos;s responses.
         </p>
 
@@ -60,28 +60,27 @@ export default async function EssayArchivePage() {
                 style={{ textDecoration: "none" }}
               >
                 <div
-                  className="hover:shadow-[0_4px_16px_rgba(30,58,95,0.1)]"
+                  className="hover:bg-paper-sunk"
                   style={{
-                    border: "1px solid #E2E8F0",
-                    borderRadius: 12,
+                    border: "1px solid var(--rule-firm)",
                     padding: "16px 20px",
-                    background: "#fff",
+                    background: "var(--paper)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
                     gap: 16,
-                    transition: "box-shadow 0.15s",
+                    transition: "background-color 0.15s",
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 11, color: "var(--ink-faint)", fontWeight: 600, marginBottom: 4 }}>
                       {formatDate(entry.date)}
                     </p>
-                    <p className="font-semibold text-trust-navy" style={{ fontSize: 15, lineHeight: 1.4, marginBottom: 3 }}>
+                    <p className="font-semibold" style={{ fontSize: 15, lineHeight: 1.4, marginBottom: 3, color: "var(--ink)" }}>
                       {entry.title}
                     </p>
                     {entry.author && (
-                      <p style={{ fontSize: 12, color: "#64748B" }}>by {entry.author}</p>
+                      <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>by {entry.author}</p>
                     )}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
@@ -90,10 +89,9 @@ export default async function EssayArchivePage() {
                         style={{
                           fontSize: 12,
                           fontWeight: 600,
-                          color: "#1E3A5F",
-                          background: "#EEF2FF",
-                          border: "1px solid #C7D2FE",
-                          borderRadius: 100,
+                          color: "var(--ink)",
+                          background: "var(--paper-sunk)",
+                          border: "1px solid var(--rule-firm)",
                           padding: "3px 10px",
                         }}
                       >

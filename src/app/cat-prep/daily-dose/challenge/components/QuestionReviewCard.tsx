@@ -18,19 +18,19 @@ export default function QuestionReviewCard({ question, response, questionNumber 
   const isUnattempted = response === undefined || response.given === null;
   const isCorrect = response?.correct === true;
 
-  let statusColor = "#64748B";
+  let statusColor = "var(--inert-text)";
   let statusLabel = "Unattempted";
-  let cardBorder = "#E8EAF0";
+  let cardBorder = "var(--rule)";
 
   if (!isUnattempted) {
     if (isCorrect) {
-      statusColor = "#166534";
+      statusColor = "var(--correct-text)";
       statusLabel = "Correct";
-      cardBorder = "#BBF7D0";
+      cardBorder = "var(--correct-text)";
     } else {
-      statusColor = "#991B1B";
+      statusColor = "var(--wrong-text)";
       statusLabel = "Wrong";
-      cardBorder = "#FECACA";
+      cardBorder = "var(--wrong-text)";
     }
   }
 
@@ -42,8 +42,7 @@ export default function QuestionReviewCard({ question, response, questionNumber 
   return (
     <div
       style={{
-        background: "#fff",
-        borderRadius: 14,
+        background: "var(--paper)",
         border: `1.5px solid ${cardBorder}`,
         padding: "20px 22px",
         marginBottom: 14,
@@ -81,8 +80,8 @@ export default function QuestionReviewCard({ question, response, questionNumber 
         renderParagraph={(segment, key) => (
           <p
             key={key}
-            className="font-semibold text-trust-navy"
-            style={{ fontSize: 15, lineHeight: 1.75, margin: "0 0 10px" }}
+            className="font-semibold"
+            style={{ fontSize: 15, lineHeight: 1.75, margin: "0 0 10px", color: "var(--ink)" }}
           >
             <MathText text={segment} />
           </p>
@@ -100,9 +99,8 @@ export default function QuestionReviewCard({ question, response, questionNumber 
           style={{
             marginTop: 16,
             padding: "14px 16px",
-            borderRadius: 10,
-            border: "1.5px solid #E2E8F0",
-            background: "#F8FAFC",
+            border: "1.5px solid var(--rule-firm)",
+            background: "var(--paper-sunk)",
           }}
         >
           <span
@@ -124,7 +122,7 @@ export default function QuestionReviewCard({ question, response, questionNumber 
             imgAlt="Explanation diagram"
             imgStyle={{ maxWidth: "100%", borderRadius: 8, marginTop: 10, marginBottom: 6 }}
             renderParagraph={(segment, key) => (
-              <p key={key} style={{ fontSize: 13.5, color: "#334155", lineHeight: 1.75, margin: "0 0 8px", whiteSpace: "pre-line" }}>
+              <p key={key} style={{ fontSize: 13.5, color: "var(--ink-soft)", lineHeight: 1.75, margin: "0 0 8px", whiteSpace: "pre-line" }}>
                 <MathText text={segment} />
               </p>
             )}
