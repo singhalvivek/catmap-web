@@ -3691,3 +3691,97 @@ mjx-container[display="true"] {
     transition: none;
   }
 }
+
+/* =========================================== */
+/* U002 — the sign-in gate before a timed test  */
+/*                                              */
+/* It asked for an account without saying what  */
+/* was behind it, on a bare page with no way    */
+/* anywhere else. The test was already in scope */
+/* the whole time.                              */
+/* =========================================== */
+
+.gate {
+  flex: 1;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 56px 24px 72px;
+}
+
+.gate__title {
+  font-size: clamp(26px, 4vw, 34px);
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.gate__reason {
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 28px;
+}
+
+.gate__summary {
+  border-top: 2px solid var(--ink);
+  padding-top: 16px;
+  margin-bottom: 28px;
+}
+
+.gate__summary-head {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.gate__sections {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.gate__sections li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.gate__section-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gate__section-meta {
+  font-size: 14px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.gate__note {
+  font-size: 14px;
+  color: var(--ink-faint);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.gate__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+@media (max-width: 599px) {
+  .gate {
+    padding: 36px 20px 56px;
+  }
+  .gate__sections li {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
