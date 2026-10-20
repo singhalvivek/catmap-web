@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
@@ -28,7 +29,11 @@ import { useProgressContext } from "../lib/ProgressContext";
 import { useTopicExpandState } from "../lib/useTopicExpandState";
 import { usePracticeMasterySummary } from "../lib/usePracticeMasterySummary";
 import { usePyqSolvedSummary } from "../lib/usePyqSolvedSummary";
-import { getPracticeSubject } from "@/constants/practiceChapters";
+import {
+  getPracticeSubject,
+  RC_CHAPTER_SLUG,
+  type PracticeSubject,
+} from "@/constants/practiceChapters";
 import { TREE_LAYOUT, type TreeLayout } from "../lib/treeLayout";
 import { useScrollReveal } from "@/app/lib/useScrollReveal";
 import type { PyqPaperSummary } from "../models/pyq";
@@ -37,8 +42,8 @@ import RoadmapHero from "./RoadmapHero";
 
 export type { Mode };
 
-/** Only the route layout animates its rows in; the tree has no arrival of its own. */
-const STATION_SELECTOR = '.topic-list[data-layout="path"] > .topic-row';
+/** Both layouts arrive as they are scrolled to; each has its own motion in globals.css. */
+const ROW_SELECTOR = ".topic-list > .topic-row";
 
 /**
  * Practice is a catalogue — a topic holds chapters you can drill in any order — so it reads
@@ -47,6 +52,25 @@ const STATION_SELECTOR = '.topic-list[data-layout="path"] > .topic-row';
  * disc that these rows never fill.
  */
 const PRACTICE_LAYOUT: TreeLayout = "tree";
+
+/** The first chapter of a practice subject, with the route that opens it. */
+function firstChapterOf(subject: PracticeSubject | undefined) {
+  if (!subject) return null;
+  for (const topic of subject.topics) {
+    const chapter = topic.chapters[0];
+    if (!chapter) continue;
+    const href =
+      subject.section === "Quant"
+        ? `/cat-prep/practice/quant/${topic.slug}/${chapter.slug}`
+        : subject.section === "DILR"
+          ? `/cat-prep/practice/dilr/${chapter.slug}/1`
+          : chapter.slug === RC_CHAPTER_SLUG
+            ? `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/1`
+            : `/cat-prep/practice/varc/${chapter.slug}`;
+    return { name: chapter.name, questionCount: chapter.questionCount, href };
+  }
+  return null;
+}
 
 export default function RoadmapContent({
   subjects,
@@ -158,9 +182,37 @@ export default function RoadmapContent({
    * never animate.
    */
   useScrollReveal({
-    selector: STATION_SELECTOR,
+    selector: ROW_SELECTOR,
     resetKey: mode + ":" + activeSubjectId,
   });
+
+  /*
+   * The tabs sit above both Learn and Practice and have to measure whichever surface they
+   * are on. Learn counts syllabus subtopics marked complete; Practice counts units — a
+   * Quant chapter, a DILR set, an RC passage — fully attempted.
+   */
+  const subjectPercent = useCallback(
+    (subject: Node): number => {
+      if (mode === "practice") {
+        const section = getPracticeSubject(subject.id)?.section;
+        const tally = section ? practiceMastery.bySection[section] : undefined;
+        if (!tally || tally.total === 0) return 0;
+        return Math.round((tally.done / tally.total) * 100);
+      }
+      const subs = (subject.children ?? []).flatMap((t) => t.children ?? []);
+      if (subs.length === 0) return 0;
+      const read = subs.filter(
+        (n) => (progress[n.id] ?? ProgressStatus.NOT_STARTED) === ProgressStatus.COMPLETED
+      ).length;
+      return Math.round((read / subs.length) * 100);
+    },
+    [mode, practiceMastery, progress]
+  );
+
+  const practiceSubject = getPracticeSubject(activeSubjectId);
+
+  /** The first chapter of the active practice subject, for the first-run prompt. */
+  const firstPracticeChapter = firstChapterOf(practiceSubject);
 
   const activeSubject = subjects.find((s) => s.id === activeSubjectId);
   const meta = SUBJECT_META[activeSubjectId];
@@ -249,6 +301,32 @@ export default function RoadmapContent({
           </div>
         )}
 
+        {/*
+          The same first-run guidance Learn gets, on the same condition. Practice had none:
+          a visitor arriving with nothing attempted met collapsed rows and a 0/95 bar, and
+          on DILR and VARC the whole surface is a single collapsed row whose label repeats
+          the tab they just pressed.
+        */}
+        {mode === "practice" && practiceMastery.done === 0 && firstPracticeChapter && (
+          <div className="start-here">
+            <div>
+              <p className="ed-kicker" style={{ margin: "0 0 8px" }}>
+                New here
+              </p>
+              <p className="display start-here__title">
+                Start with {firstPracticeChapter.name}
+              </p>
+              <p className="start-here__sub">
+                {firstPracticeChapter.questionCount} questions, with the answer and a worked
+                explanation after each one. Nothing here needs an account.
+              </p>
+            </div>
+            <Link className="ed-btn" data-weight="primary" href={firstPracticeChapter.href}>
+              Open it
+            </Link>
+          </div>
+        )}
+
         {/* Daily Dose promo — surfaces the section from the Learn home */}
         {mode === "learn" && <DailyDoseCard />}
 
@@ -264,7 +342,6 @@ export default function RoadmapContent({
               return (
                 <SubjectTab
                   key={subject.id}
-                  subject={subject}
                   isActive={activeSubjectId === subject.id}
                   onClick={() => {
                     setActiveSubjectId(subject.id);
@@ -272,7 +349,8 @@ export default function RoadmapContent({
                     setActiveTopicId(null);
                     trackEvent("subject_tab_changed", { subject: subMeta.abbr });
                   }}
-                  progress={progress}
+                  percent={subjectPercent(subject)}
+                  measure={mode === "practice" ? "practised" : "read"}
                   meta={subMeta}
                 />
               );
@@ -436,13 +514,17 @@ export default function RoadmapContent({
                   />
                 ))}
             </div>
+          ) : !practiceSubject ? (
+            <p className="ed-empty">No practice sets for this subject yet.</p>
           ) : (
             <div className="topic-list" data-layout={PRACTICE_LAYOUT} key={activeSubjectId}>
-              {getPracticeSubject(activeSubjectId)?.topics.map((topic) => (
+              {practiceSubject.topics.map((topic, ti) => (
                 <PracticeTopicRow
                   key={topic.slug}
+                  index={ti}
                   topic={topic}
-                  section={meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"}
+                  summary={practiceMastery}
+                  section={practiceSubject.section}
                   isOpen={openPracticeTopics[topic.slug] ?? false}
                   onToggle={() =>
                     setOpenPracticeTopics((prev) => ({

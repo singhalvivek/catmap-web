@@ -1,10 +1,14 @@
-// ContinuePractice — blue strip of in-progress practice chips; reads localStorage; hidden when none are started
+// ContinuePractice — resume strip for part-finished practice; hidden when nothing is started
 "use client";
 
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
-import { loadLocalProgress, PROGRESS_PREFIX } from "@/app/cat-prep/lib/practiceProgressStore";
+import {
+  loadLocalProgress,
+  PROGRESS_PREFIX,
+  subscribePracticeProgress,
+} from "@/app/cat-prep/lib/practiceProgressStore";
 
 const VARC_CHAPTERS =
   PRACTICE_SUBJECTS.find((s) => s.section === "VARC")
@@ -17,9 +21,6 @@ type EntryConfig = {
   subtitle: string;
   href: string;
   total?: number;
-  color: string;
-  bgColor: string;
-  borderColor: string;
 };
 
 type InProgressEntry = EntryConfig & { answered: number };
@@ -34,9 +35,6 @@ function buildQuantEntries(): EntryConfig[] {
       subtitle: `${topic.name} · QA`,
       href: `/cat-prep/practice/quant/${topic.slug}/${chapter.slug}`,
       total: chapter.questionCount,
-      color: "var(--ink)",
-      bgColor: "var(--paper-sunk)",
-      borderColor: "var(--rule-firm)",
     }))
   );
 }
@@ -91,9 +89,6 @@ function buildEntries(): InProgressEntry[] {
         title: `${chapterName} — Set ${dilr.setNum}`,
         subtitle: "DILR",
         href: `/cat-prep/practice/dilr/${dilr.chapterSlug}/${dilr.setNum}`,
-        color: "var(--accent-text)",
-        bgColor: "var(--paper-sunk)",
-        borderColor: "var(--rule-firm)",
         answered,
       });
       continue;
@@ -110,9 +105,6 @@ function buildEntries(): InProgressEntry[] {
         title: `RC ${rcNum}`,
         subtitle: "Reading Comprehension · VARC",
         href: `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/${rcNum}`,
-        color: "var(--caution-text)",
-        bgColor: "var(--caution-wash)",
-        borderColor: "var(--rule-firm)",
         answered,
       });
       continue;
@@ -132,9 +124,6 @@ function buildEntries(): InProgressEntry[] {
         title: chapter.name,
         subtitle: "VARC",
         href: `/cat-prep/practice/varc/${chapter.slug}`,
-        color: "var(--caution-text)",
-        bgColor: "var(--caution-wash)",
-        borderColor: "var(--rule-firm)",
         answered,
       });
     }
@@ -143,68 +132,65 @@ function buildEntries(): InProgressEntry[] {
   return result;
 }
 
+/*
+ * Same store, same reason as usePracticeMasterySummary: a useState initializer runs during
+ * the hydration render, so the server rendered nothing here and the first client render
+ * rendered the strip — and it never recomputed, so answering a question and coming back
+ * showed the counts from before.
+ */
+const NO_ENTRIES: InProgressEntry[] = [];
+let snapshot: InProgressEntry[] | null = null;
+
+function getSnapshot(): InProgressEntry[] {
+  if (snapshot === null) snapshot = buildEntries();
+  return snapshot;
+}
+
+function getServerSnapshot(): InProgressEntry[] {
+  return NO_ENTRIES;
+}
+
+function subscribe(onChange: () => void): () => void {
+  const invalidate = () => {
+    snapshot = null;
+    onChange();
+  };
+  const unsubscribe = subscribePracticeProgress(invalidate);
+  window.addEventListener("storage", invalidate);
+  return () => {
+    unsubscribe();
+    window.removeEventListener("storage", invalidate);
+  };
+}
+
 export default function ContinuePractice() {
-  const [entries] = useState<InProgressEntry[]>(() => buildEntries());
+  const entries = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   if (entries.length === 0) return null;
 
   return (
-    <div
-      style={{
-        background: "var(--paper)",
-        border: "1.5px solid var(--rule-firm)",
-        padding: "16px 20px",
-        marginBottom: 28,
-        boxShadow: "0 2px 12px rgba(37,99,235,0.07)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-        <span style={{ fontSize: 16 }}>📝</span>
-        <span className="font-extrabold" style={{ fontSize: 14, color: "var(--accent-text)" }}>
-          Continue Practice
-        </span>
-        <span className="font-medium" style={{ fontSize: 11, color: "var(--ink-faint)", marginLeft: "auto" }}>
-          {entries.length} in progress
-        </span>
+    // The .continue primitive, which ContinueLearning already uses. This was the last strip
+    // carrying the pre-U002 treatment: a blue-tinted box shadow, an emoji, and two inline
+    // handlers that mutated e.currentTarget.style on every pointer event, for every item.
+    <section className="continue" aria-label="Continue practice">
+      <div className="continue__head">
+        <p className="ed-kicker" style={{ margin: 0 }}>
+          Continue practice
+        </p>
+        <span className="continue__count">{entries.length} in progress</span>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="continue__items">
         {entries.map((entry) => (
-          <Link
-            key={entry.key}
-            href={entry.href}
-            style={{
-              display: "inline-flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              padding: "8px 12px",
-              border: `1.5px solid ${entry.borderColor}`,
-              background: entry.bgColor,
-              textDecoration: "none",
-              transition: "all 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.filter = "brightness(0.96)";
-              (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.filter = "";
-              (e.currentTarget as HTMLAnchorElement).style.transform = "";
-            }}
-          >
-            <div className="font-bold" style={{ fontSize: 13, color: entry.color }}>
-              {entry.title}
-            </div>
-            <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 2 }}>
-              <span className="font-bold" style={{ color: entry.color }}>
-                {entry.answered}{entry.total ? `/${entry.total}` : ""}
-              </span>
-              {" done · "}
-              {entry.subtitle}
-            </div>
+          <Link key={entry.key} href={entry.href} className="continue__item">
+            <span className="continue__item-title">{entry.title}</span>
+            <span className="continue__item-meta">
+              {entry.answered}
+              {entry.total ? `/${entry.total}` : ""} done &middot; {entry.subtitle}
+            </span>
           </Link>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

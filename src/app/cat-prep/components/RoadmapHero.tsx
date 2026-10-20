@@ -70,8 +70,8 @@ export default function RoadmapHero({ mode, showNav, learn, practice, pyq }: Roa
           <ModeProgressBar
             current={practice.done}
             total={practice.total}
-            label="subtopics practiced"
-            infoText="A subtopic counts once you've attempted every question in it — 20 for a Quant chapter, 4 for a DILR set or RC passage."
+            label="sets practised"
+            infoText="A set counts once you've attempted every question in it — a Quant chapter, a DILR set, or an RC passage."
           />
         ) : (
           <ModeProgressBar

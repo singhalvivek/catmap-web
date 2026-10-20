@@ -506,3 +506,78 @@ replays on the way back up.
 **The caveat that survives.** The route is taller than the tree, and at 0% progress every
 station is an empty circle — it is most motivating to a reader who has already started. The
 tree remains fully styled under `[data-layout="tree"]`; neither is dead code.
+
+---
+
+## Addendum — Practice index (Phase 13c)
+
+### Displayed values that changed
+
+U002 requires these to be reported rather than silently fixed. Three did.
+
+1. **The subject tabs showed a Learn figure on the Practice surface.** `SubjectTab`
+   computed its percentage from the syllabus progress map and was rendered above both
+   lists, so a reader who had read half of Quant and practised none of it saw "QA 50%
+   done" over a practice list they had never opened. The percentage is now a prop: Learn
+   passes subtopics marked complete, Practice passes units attempted. The accessible name
+   says which — "Quantitative Aptitude, 0% practised".
+2. **The hero meter said "subtopics practiced"** on a page that shows chapters and sets and
+   never uses the word subtopic. It reads "sets practised" now, and the tooltip beside it
+   defines a set as a Quant chapter, a DILR set or an RC passage. Count unchanged.
+3. **Practice figures no longer go stale.** They were read once per mount from a `useState`
+   initializer, so answering questions and returning to the index showed the counts from
+   before. Attempts are an external store now and the rollup is subscribed to it.
+
+### The hydration bug underneath
+
+Both `usePracticeMasterySummary` and `ContinuePractice` read localStorage in a `useState`
+initializer. An initializer runs during the hydration render, so the server HTML said zero
+and the first client render said something else — the mismatch `usePracticeProgress` already
+gates against, and which U002 forbids. Both now use `useSyncExternalStore` with a server
+snapshot, which is the supported shape for exactly this: external store, unknowable on the
+server, must be able to change.
+
+`saveLocalProgress` notifies subscribers, so a write anywhere invalidates the cached rollup.
+That is what makes point 3 above work, and it is also why the two call sites can share one
+read instead of each walking localStorage with its own idea of what a unit is.
+
+### Structure
+
+`practiceProgressSummary.ts` is the single rollup: attempts per chapter, per section, and
+site-wide, keyed by one `chapterKey()` so a row and a chip cannot disagree. The unit shapes
+live in one place — a Quant chapter is one unit, a DILR chapter is one unit per set, Reading
+Comprehension is one per passage.
+
+### Surface changes
+
+- **First-run guidance**, on the same condition Learn uses. Practice had none: a visitor with
+  nothing attempted met collapsed rows and a 0/95 bar, and on DILR and VARC the entire
+  surface is one collapsed row whose label repeats the tab just pressed.
+- **The status channels carry data.** `data-state` on the row was hardwired to `"inert"` —
+  a status pinned to one value, which is what reads as decoration. Row and chapter states
+  now come from real attempt counts, and the meter is silent at zero like Learn's.
+- **Chapters are branch rows, not a wrapped pill grid.** Ten pills say "these exist"; ten
+  rows with a question count and a state column say which are worth opening, which is the
+  only question this surface answers. Same `.tree-branch` CSS as Learn.
+- **The narrow-screen rule stopped deleting information.** `.topic-row__count` and
+  `.topic-row__pct` were both hidden below 600px. That rule exists to drop a percentage
+  redundant beside a meter — but Practice has no meter until something is attempted, so on
+  every phone it deleted "10 chapters" and "200Q" and left a bare title and a chevron.
+- **`ContinuePractice` is on the `.continue` primitive**, which `ContinueLearning` already
+  used. It was the last strip carrying the pre-U002 treatment: a blue-tinted box shadow, an
+  emoji, and two inline handlers mutating `e.currentTarget.style` on every pointer event.
+  Three dead presentation fields on `EntryConfig` went with it.
+- **Arrival motion for the nested layout.** The route builds downward because it is a road;
+  a catalogue is not travelled, so its rows slide in along the reading direction and each
+  tick draws out of the trunk to meet its row.
+- **`section` is the union, not `string`.** It was derived with
+  `meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"` while `getPracticeSubject()` on the
+  line above already carried the exact type. The fallback would have emitted
+  `/practice/quant/...` hrefs for a non-Quant subject.
+
+### Not done here
+
+The practice players (`QuestionPlayer`, `RcPlayer`, `DilrPlayer`) are a separate pass. The
+worst defect on them is recorded for that pass: the "check solution" control is conditioned
+on persisted state while the explanation is held in session state, so after a reload a
+checked question shows a tinted grid, no explanation, and no control to get one.

@@ -1,22 +1,53 @@
 // PracticeTopicRow — accordion row for a practice topic; expands to show chapter chips
 "use client";
 
-import { RC_CHAPTER_SLUG, type PracticeTopic } from "@/constants/practiceChapters";
-import PracticeChapterChip from "./PracticeChapterChip";
+import {
+  RC_CHAPTER_SLUG,
+  type PracticeSubject,
+  type PracticeTopic,
+} from "@/constants/practiceChapters";
+import PracticeChapterRow from "./PracticeChapterRow";
+import { chapterKey, type PracticeSummary } from "../lib/practiceProgressSummary";
+
+function progressState(pct: number): string {
+  if (pct === 100) return "correct";
+  if (pct > 0) return "caution";
+  return "inert";
+}
 
 export default function PracticeTopicRow({
   topic,
   section,
+  summary,
+  index = 0,
   isOpen,
   onToggle,
 }: {
   topic: PracticeTopic;
-  /** "Quant" | "DILR" | "VARC" — determines URL prefix */
-  section: string;
+  /** Position in the list, used only to stagger the arrival animation. */
+  index?: number;
+  /** Determines the URL prefix. The union, not a bare string — the caller has it. */
+  section: PracticeSubject["section"];
+  summary: PracticeSummary;
   isOpen: boolean;
   onToggle: () => void;
 }) {
   const totalQuestions = topic.chapters.reduce((s, c) => s + c.questionCount, 0);
+
+  /*
+   * The row used to carry data-state="inert" hardwired, which is a status channel pinned to
+   * one value — exactly what reads as decoration. The counts it needed were already being
+   * computed for the hero meter and thrown away.
+   */
+  const chapters = topic.chapters.map((chapter) => ({
+    chapter,
+    progress: summary.byChapter[chapterKey(section, topic.slug, chapter.slug)],
+  }));
+
+  const doneUnits = chapters.reduce((n, c) => n + (c.progress?.doneUnits ?? 0), 0);
+  const totalUnits = chapters.reduce((n, c) => n + (c.progress?.totalUnits ?? 0), 0);
+  const pct = totalUnits > 0 ? Math.round((doneUnits / totalUnits) * 100) : 0;
+  const state = progressState(pct);
 
   function chapterHref(chapterSlug: string, topicSlug: string): string {
     if (section === "Quant") {
@@ -35,17 +66,51 @@ export default function PracticeTopicRow({
   }
 
   return (
-    <div className="topic-row" data-open={isOpen}>
+    <div
+      className="topic-row"
+      data-open={isOpen}
+      data-state={state}
+      style={{ "--si": index } as React.CSSProperties}
+    >
       <button type="button" onClick={onToggle} aria-expanded={isOpen} className="topic-row__header">
         <span className="topic-row__lead">
-          <span className="topic-row__dot" data-state="inert" aria-hidden="true" />
+          <span className="topic-row__dot" data-state={state} aria-hidden="true" />
           <span className="topic-row__title">{topic.name}</span>
-          <span className="topic-row__count">{topic.chapters.length} chapters</span>
+          <span className="topic-row__count">
+            {topic.chapters.length} {topic.chapters.length === 1 ? "chapter" : "chapters"}
+          </span>
         </span>
         <span className="topic-row__meta">
-          <span className="topic-row__pct">{totalQuestions}Q</span>
+          {/* Silent at zero, like the Learn rows: eleven "0%"s beside empty bars told a new
+              reader nothing and made the page look like a broken dashboard. */}
+          {pct > 0 && (
+            <>
+              <span
+                className="ed-meter topic-row__meter"
+                data-state={state}
+                role="progressbar"
+                aria-valuenow={doneUnits}
+                aria-valuemin={0}
+                aria-valuemax={totalUnits}
+                aria-valuetext={`${doneUnits} of ${totalUnits} practised`}
+                style={{ "--meter-value": pct } as React.CSSProperties}
+              >
+                <span className="ed-meter__fill" />
+              </span>
+              <span className="topic-row__pct">{pct}%</span>
+            </>
+          )}
+          <span className="topic-row__questions">{totalQuestions}Q</span>
           <span className="topic-row__toggle" aria-hidden="true">
-            {isOpen ? "−" : "+"}
+            <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
+              <path
+                d="M3 1.5 L7 5 L3 8.5"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </span>
         </span>
       </button>
@@ -53,11 +118,14 @@ export default function PracticeTopicRow({
       {/* Grid-rows collapse: the old 400px cap would clip a topic whose chips wrapped. */}
       <div className="ed-collapse" data-open={isOpen}>
         <div>
-          <div className="topic-row__chips">
-            {topic.chapters.map((chapter) => (
-              <PracticeChapterChip
+          <div className="topic-row__chips" data-layout="list">
+            {chapters.map(({ chapter, progress }, i) => (
+              <PracticeChapterRow
                 key={chapter.slug}
+                index={i}
+                isLast={i === chapters.length - 1}
                 chapter={chapter}
+                progress={progress}
                 href={chapterHref(chapter.slug, topic.slug)}
               />
             ))}

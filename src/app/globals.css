@@ -1681,6 +1681,15 @@ textarea.ed-field {
   min-width: 2.4em;
   text-align: right;
 }
+/* The question total. Not a percentage, so it survives the narrow-screen rule below. */
+.topic-row__questions {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .topic-row__toggle {
   width: 22px;
   height: 22px;
@@ -1706,9 +1715,19 @@ textarea.ed-field {
 }
 
 @media (max-width: 599px) {
-  .topic-row__count,
+  /*
+   * The percentage goes because the meter beside it says the same thing. The chapter count
+   * stays: on Practice there is no meter until something has been attempted, so dropping
+   * both left a bare title and a chevron on every phone.
+   */
   .topic-row__pct {
     display: none;
+  }
+  .topic-row__count {
+    display: none;
+  }
+  .topic-list[data-layout="tree"] .topic-row__count {
+    display: inline;
   }
   .topic-row__meter {
     width: 44px;
@@ -2674,5 +2693,68 @@ mjx-container[display="true"] {
     translate: none !important;
     clip-path: none !important;
     animation: none !important;
+  }
+}
+
+/* =========================================== */
+/* U002 — arrival for the nested layout         */
+/*                                              */
+/* The route builds itself downward because it  */
+/* is a road. A catalogue is not travelled, so  */
+/* its rows arrive along the reading direction  */
+/* instead: each one slides in from the left as */
+/* it is reached, and its tick draws out of the */
+/* trunk to meet it.                            */
+/* =========================================== */
+
+.topic-list[data-layout="tree"] > .topic-row {
+  --sd: calc(min(var(--si, 0), 6) * 60ms);
+}
+
+[data-anim="on"] .topic-list[data-layout="tree"] > .topic-row {
+  opacity: 1;
+  translate: 0;
+  transition:
+    opacity 0.5s ease var(--sd),
+    translate 0.6s var(--ease-out-expo) var(--sd);
+}
+[data-anim="on"] .topic-list[data-layout="tree"] > .topic-row:not(.is-visible) {
+  opacity: 0;
+  translate: -18px 0;
+  transition: none;
+}
+
+/* The branch tick grows out of the trunk rather than appearing with the row. */
+[data-anim="on"] .topic-list[data-layout="tree"] > .topic-row::before {
+  transform-origin: left center;
+  scale: 1 1;
+  transition: scale 0.45s var(--ease-out-expo) calc(var(--sd) + 90ms);
+}
+[data-anim="on"]
+  .topic-list[data-layout="tree"]
+  > .topic-row:not(.is-visible)::before {
+  scale: 0 1;
+  transition: none;
+}
+
+/* And the trunk itself draws down once, behind the first row. */
+[data-anim="on"] .topic-list[data-layout="tree"]::before {
+  transform-origin: top center;
+  scale: 1 1;
+  transition: scale 0.8s var(--ease-out-expo);
+}
+[data-anim="on"]
+  .topic-list[data-layout="tree"]:not(:has(> .topic-row.is-visible))::before {
+  scale: 1 0;
+  transition: none;
+}
+
+@media print {
+  [data-anim="on"] .topic-list[data-layout="tree"] > .topic-row,
+  [data-anim="on"] .topic-list[data-layout="tree"] > .topic-row::before,
+  [data-anim="on"] .topic-list[data-layout="tree"]::before {
+    opacity: 1 !important;
+    scale: none !important;
+    translate: none !important;
   }
 }

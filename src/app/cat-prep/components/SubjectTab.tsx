@@ -1,30 +1,27 @@
-// SubjectTab — tab button for a CAT subject; shows ProgressRing and completion %
-import { Node } from "../models/node";
-import { ProgressStatus } from "../models/progress";
+// SubjectTab — tab button for a CAT subject; shows a ProgressRing for the surface it is on
 import { SubjectMeta } from "../lib/subjectMeta";
 import ProgressRing from "./ProgressRing";
 
 export default function SubjectTab({
-  subject,
   isActive,
   onClick,
-  progress,
+  percent,
+  /** What the percentage counts, for the accessible name: "read", "practised". */
+  measure,
   meta,
 }: {
-  subject: Node;
   isActive: boolean;
   onClick: () => void;
-  progress: Record<number, ProgressStatus>;
+  percent: number;
+  measure: string;
   meta: SubjectMeta;
 }) {
-  const topics = subject.children ?? [];
-  const allSubs = topics.flatMap((t) => t.children ?? []);
-  const done = allSubs.filter(
-    (s) => (progress[s.id] ?? ProgressStatus.NOT_STARTED) === ProgressStatus.COMPLETED
-  ).length;
-  const pct = allSubs.length > 0 ? Math.round((done / allSubs.length) * 100) : 0;
-
   return (
+    // The percentage arrives as a prop rather than being computed here. This component used
+    // to derive it from the Learn progress map and was rendered on Practice too, so a reader
+    // who had read half the syllabus and practised none of it saw "QA 50% done" above a
+    // practice list they had never opened.
+    //
     // aria-pressed rather than colour alone: this is a toggle between three subjects, and
     // nothing in the accessible name said which one was showing.
     <button
@@ -32,15 +29,15 @@ export default function SubjectTab({
       onClick={onClick}
       className="subject-tab"
       aria-pressed={isActive}
-      aria-label={`${meta.label}, ${pct}% complete`}
+      aria-label={`${meta.label}, ${percent}% ${measure}`}
     >
-      <ProgressRing percent={pct} size={38} stroke={3} color={meta.ring} />
+      <ProgressRing percent={percent} size={38} stroke={3} color={meta.ring} />
       <span style={{ flex: 1, minWidth: 0 }}>
         <span className="subject-tab__abbr" style={{ display: "block" }}>
           {meta.abbr}
         </span>
         <span className="subject-tab__pct" style={{ display: "block" }}>
-          {pct}%<span className="subject-tab__done"> done</span>
+          {percent}%<span className="subject-tab__done"> {measure}</span>
         </span>
       </span>
     </button>
