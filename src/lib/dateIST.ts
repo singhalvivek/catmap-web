@@ -19,3 +19,22 @@ export function formatISTDateLong(date: string): string {
     timeZone: "Asia/Kolkata",
   });
 }
+
+/**
+ * A span of time as words: "45s", "3m", "3m 20s", "1h 2m 5s".
+ *
+ * There were three copies of this, in DailyChallengeCard, ResultView,
+ * QuestionReviewCard and SectionSummaryRow, two of them identical and one
+ * handling hours. This is the one that handles hours. SectionHeader has a
+ * fourth function of the same name that is not this one at all - it renders a
+ * running countdown as m:ss, which is a clock rather than a duration, and it
+ * stays where it is.
+ */
+export function formatDuration(totalSeconds: number): string {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  if (h > 0) return `${h}h ${m}m ${s}s`;
+  if (m > 0) return s === 0 ? `${m}m` : `${m}m ${s}s`;
+  return `${s}s`;
+}

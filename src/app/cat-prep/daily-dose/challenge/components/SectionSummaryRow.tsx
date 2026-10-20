@@ -1,12 +1,6 @@
 // SectionSummaryRow — static per-section score/stats row on the results screen
 import type { TestSection, SectionResult } from "../../../models/dailyChallenge";
-
-function formatTime(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return s === 0 ? `${m}m` : `${m}m ${s}s`;
-}
+import { formatDuration } from "@/lib/dateIST";
 
 type Props = {
   testSection: TestSection;
@@ -42,7 +36,7 @@ export default function SectionSummaryRow({ testSection, sectionResult }: Props)
           {sectionResult.name}
         </p>
         <p className="text-slate-400" style={{ fontSize: 11, marginTop: 2 }}>
-          {correct} correct · {wrong} wrong · {unattempted} unattempted · {formatTime(sectionTimeSpent)}
+          {correct} correct · {wrong} wrong · {unattempted} unattempted · {formatDuration(sectionTimeSpent)}
         </p>
       </div>
       <span

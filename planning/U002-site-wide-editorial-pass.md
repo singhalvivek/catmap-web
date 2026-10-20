@@ -640,3 +640,64 @@ checked question shows a tinted grid, no explanation, and no control to get one.
 
 The paper reader (`/cat-prep/pyq/[paperSlug]`) renders no surface switcher and states a
 verdict in three colour systems at once. Both are in the next pass.
+
+---
+
+## Addendum — Daily Dose index (Phase 13f)
+
+### The worst defect found in the audit
+
+`DailyEssayCard` began at `"loading"` and the only transition out of it ran
+`if (!essay) return;` — while the fetch set `essay` on success only, and its `.catch`
+returned `null` without touching state. So on any day with no essay, and on any failed
+request, the first card on the hub pulsed a skeleton forever.
+
+It has a three-way outcome now: pending, absent, loaded. Verified by intercepting
+`/api/daily-essay` three ways — 404, network abort, and a 200 with a null body. All three
+land on "No essay for today" with a link to the archive. Before: all three left the
+skeleton up, which follows from the code without needing to run it.
+
+### Other things that were broken
+
+- **`border: "1.5px solid var(--ink)25"`** on both cards: the hex-alpha idiom written
+  against a custom property. It does not parse, so it was dropped, and the only edge either
+  card had was an 8% shadow. The two cards were near-twins with the wrapper copy-pasted,
+  which is how one typo became two. `DailyDoseCardShell` is the one frame.
+- **Two date formats on one screen.** The essay card printed the raw `YYYY-MM-DD`; the
+  challenge card used `formatISTDateLong`. Same day, side by side. Both use the long form.
+- **The signed-out streak slot was an instruction with no control** — a flame emoji and
+  "Sign in to build and track your daily streak", and nothing to press. It has the sign-in
+  button now, the same `signInWithPopup` the challenge card already used.
+- **Dead state.** `DailyEssayCard` declared a `"login"` branch that `setCardState` was never
+  called with, so the branch, `loginError`, and the `signInWithPopup`/`googleProvider`
+  imports were unreachable. `DailyChallengeCard`'s login state IS reachable, so the two
+  cards really did differ; the dead half is gone and the live half stays.
+- **Inverted hierarchy.** Neither card's name was a heading, so the only `<h2>` on the
+  surface was "Why a daily habit beats cramming" — a reader navigating by heading went from
+  the page title to the marketing copy and never met today's essay. Both names are headings,
+  and the items carry the weight: 17px titles against the section's 20px, not 14px.
+- **Emoji.** The flame, the book and the bolt are gone. Swept all five `/cat-prep` index
+  surfaces afterwards: zero emoji remain on any of them.
+- **A section scored 0 printed in the correct-answer green**, because the test was
+  `score >= 0`. A three-way `signState()` gives zero `--inert-text`.
+- **The streak checklist carried state in fill alone**, with the same label either way, so
+  "Essay today" was announced identically whether done or not. The word is in the accessible
+  name now, and the not-done mark is `--rule-hard` rather than `--rule`, which at 1.47:1 was
+  below the 3:1 WCAG 1.4.11 requires of a non-text indicator.
+- **Day zero read as a failure.** "0 days streak" beside a flame. It reads "0 days so far —
+  today starts it", which is the state every new reader sees first.
+
+### `formatTime` was two functions wearing one name
+
+Four copies, not five as the audit had it, and they are not all the same function. Three are
+duration formatters (two identical, one handling hours); one, in `SectionHeader`, is a
+running `m:ss` countdown, which is a clock and not a duration. The three are now
+`formatDuration` in `lib/dateIST`. The countdown stays where it is.
+
+### Deliberately not done
+
+The audit proposed moving the `!test` emptiness check above the auth branch in
+`DailyChallengePageClient`, so a signed-out visitor is not asked to create an account and
+only then told there is nothing. That changes which view a signed-out visitor gets on an
+empty day, and U002 requires every empty state to appear on the same condition. The order is
+unchanged here and needs explicit sign-off.

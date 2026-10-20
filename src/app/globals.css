@@ -3359,3 +3359,202 @@ mjx-container[display="true"] {
     font-size: 13px;
   }
 }
+
+/* =========================================== */
+/* U002 — Daily Dose                            */
+/*                                              */
+/* Two cards that were dark bars over white     */
+/* boxes, led by emoji, with an invalid border  */
+/* that left them edgeless. One frame now, in   */
+/* the same paper and rules as everything else. */
+/* =========================================== */
+
+.dd-card {
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+  margin-bottom: 20px;
+}
+
+.dd-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 18px;
+  background: var(--paper-sunk);
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+/*
+ * A real heading. Both card names were spans, so the only h2 on the surface was the
+ * marketing section beneath them — a reader navigating by heading went from the page title
+ * straight to "Why a daily habit beats cramming" and never met today's essay.
+ */
+.dd-card__name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+}
+
+.dd-card__date {
+  font-size: 13px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dd-card__body {
+  padding: 16px 18px;
+}
+
+.dd-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.dd-card__text {
+  min-width: 0;
+  flex: 1;
+}
+
+/*
+ * The item is the point of the card, so it carries the weight. Both titles used to be 14px
+ * with 12px subs, under a 20px marketing heading.
+ */
+.dd-card__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  margin: 0 0 4px;
+}
+.dd-card__title[data-muted="true"] {
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.dd-card__sub {
+  font-size: 14px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---- the completed score ---- */
+
+.dd-score {
+  margin: 0 0 6px;
+  line-height: 1;
+}
+.dd-score__value {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 30px;
+  color: var(--ink);
+}
+.dd-score__total {
+  font-size: 16px;
+  color: var(--ink-faint);
+}
+.dd-score__section {
+  margin-right: 14px;
+  white-space: nowrap;
+}
+.dd-score__section strong {
+  font-variant-numeric: tabular-nums;
+}
+.dd-score__section strong[data-state="correct"] {
+  color: var(--correct-text);
+}
+.dd-score__section strong[data-state="wrong"] {
+  color: var(--wrong-text);
+}
+.dd-score__section strong[data-state="inert"] {
+  color: var(--inert-text);
+}
+.dd-score__time {
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- the streak ---- */
+
+.dd-streak {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--paper);
+  /* Was rgba(20,184,166,0.35) — the retired brand teal, on #fff rather than --paper. */
+  border: 1.5px solid var(--rule-firm);
+  border-left: 4px solid var(--accent);
+}
+
+.dd-streak__prompt {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.dd-streak__count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+.dd-streak__figure {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.dd-streak__unit {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.dd-streak__items {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.dd-streak__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+/* --rule-hard, because a non-text indicator has to reach 3:1 and --rule is 1.47:1. */
+.dd-streak__mark {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 2px solid var(--rule-hard);
+  background: var(--paper);
+}
+.dd-streak__item[data-done="true"] {
+  color: var(--ink);
+}
+.dd-streak__item[data-done="true"] .dd-streak__mark {
+  border-color: var(--correct-text);
+  background: var(--correct-text);
+}
+
+@media (max-width: 599px) {
+  .dd-card__row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dd-card__title {
+    font-size: 16px;
+  }
+  .dd-streak {
+    align-items: flex-start;
+  }
+}

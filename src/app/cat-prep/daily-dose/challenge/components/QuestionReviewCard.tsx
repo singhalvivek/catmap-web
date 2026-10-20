@@ -6,13 +6,7 @@ import InlineImageText from "./InlineImageText";
 import MathText from "./MathText";
 import ReviewMCQOptions from "./ReviewMCQOptions";
 import ReviewTITAAnswer from "./ReviewTITAAnswer";
-
-function formatTime(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return s === 0 ? `${m}m` : `${m}m ${s}s`;
-}
+import { formatDuration } from "@/lib/dateIST";
 
 type Props = {
   question: Question;
@@ -65,7 +59,7 @@ export default function QuestionReviewCard({ question, response, questionNumber 
             Q{questionNumber} · {question.type === "mcq" ? "MCQ" : "TITA"}
           </span>
           <span className="text-slate-400" style={{ fontSize: 11 }}>
-            {formatTime(timeSpent)}
+            {formatDuration(timeSpent)}
           </span>
         </div>
         <div className="flex items-center gap-2">

@@ -1,54 +1,53 @@
-// DailyEssayCard — roadmap widget: loading / cta / completed states for daily essay
+// DailyEssayCard — roadmap widget for today's essay: pending / absent / ready / responded
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
-import type { DailyEssay } from "@/app/cat-prep/models/essay";
-import type { EssaySubmissionView } from "@/app/cat-prep/models/essay";
-import { getTodayIST } from "@/lib/dateIST";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import type { DailyEssay, EssaySubmissionView } from "@/app/cat-prep/models/essay";
+import { getTodayIST, formatISTDateLong } from "@/lib/dateIST";
 import { useIsHydrated } from "../lib/useIsHydrated";
+import DailyDoseCardShell, {
+  DailyDoseCardRow,
+  DailyDoseCardSkeleton,
+} from "./DailyDoseCardShell";
 
-type CardState = "loading" | "cta" | "completed" | "login";
-
-const HEADER = (badge: React.ReactNode) => (
-  <div
-    style={{
-      background: "var(--ink)",
-      padding: "11px 20px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    }}
-  >
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <span style={{ fontSize: 16 }}>📖</span>
-      <span className="font-extrabold text-white" style={{ fontSize: 14 }}>
-        Daily Essay
-      </span>
-    </div>
-    {badge}
-  </div>
-);
+/**
+ * "absent" is the state this card did not have. It began at "pending", and the only
+ * transition out of it ran `if (!essay) return;` — while the fetch set `essay` on success
+ * only and its catch did nothing at all. So on a day with no essay, or any failed request,
+ * the first card on the Daily Dose hub sat pulsing a skeleton forever.
+ */
+type CardState = "pending" | "absent" | "ready" | "done";
 
 export default function DailyEssayCard() {
-  const [cardState, setCardState] = useState<CardState>("loading");
+  const [cardState, setCardState] = useState<CardState>("pending");
   const [essay, setEssay] = useState<DailyEssay | null>(null);
-  const [loginError, setLoginError] = useState(false);
 
   const date = getTodayIST();
-  // Client-only: this card is statically prerendered, so rendering the date
-  // during SSR bakes the build day into the HTML and mismatches on hydration.
+  // Client-only: this card is statically prerendered, so rendering the date during SSR
+  // bakes the build day into the HTML and mismatches on hydration.
   const hydrated = useIsHydrated();
-  const dateLabel = hydrated ? date : "";
+  const dateLabel = hydrated ? formatISTDateLong(date) : "";
 
   useEffect(() => {
-    // Fetch today's essay regardless of auth state
+    let cancelled = false;
+
     fetch(`/api/daily-essay?date=${date}`)
       .then((r) => (r.ok ? (r.json() as Promise<DailyEssay>) : null))
-      .then((data) => { if (data) setEssay(data); })
-      .catch(() => null);
+      .then((data) => {
+        if (cancelled) return;
+        if (data) setEssay(data);
+        else setCardState("absent");
+      })
+      .catch(() => {
+        if (!cancelled) setCardState("absent");
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [date]);
 
   useEffect(() => {
@@ -56,163 +55,94 @@ export default function DailyEssayCard() {
 
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        setCardState("cta");
+        setCardState("ready");
         return;
       }
-
       try {
         const res = await fetch(
           `/api/daily-essay/submissions?date=${date}&userId=${encodeURIComponent(user.uid)}`
         );
-        const data = await res.json() as { submitted: boolean; submissions?: EssaySubmissionView[] };
-        setCardState(data.submitted ? "completed" : "cta");
+        const data = (await res.json()) as {
+          submitted: boolean;
+          submissions?: EssaySubmissionView[];
+        };
+        setCardState(data.submitted ? "done" : "ready");
       } catch {
-        setCardState("cta");
+        setCardState("ready");
       }
     });
     return () => unsub();
   }, [essay, date]);
 
-  const handleSignIn = async () => {
-    setLoginError(false);
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch {
-      setLoginError(true);
-    }
-  };
-
-  const cardWrap = (children: React.ReactNode) => (
-    <div
-      style={{
-        border: "1.5px solid var(--ink)25",
-        boxShadow: "0 4px 20px rgba(30,58,95,0.08)",
-        overflow: "hidden",
-        marginBottom: 28,
-      }}
-    >
-      {children}
-    </div>
-  );
-
-  if (cardState === "loading") {
-    return cardWrap(
-      <>
-        {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{dateLabel}</span>)}
-        <div
-          className="animate-pulse"
-          style={{
-            background: "#fff",
-            padding: "14px 20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ flex: 1 }}>
-            <div style={{ height: 14, background: "var(--rule)", width: "60%", marginBottom: 9 }} />
-            <div style={{ height: 11, background: "var(--paper-sunk)", width: "35%" }} />
-          </div>
-          <div style={{ height: 34, width: 110, background: "var(--rule)", marginLeft: 16, flexShrink: 0 }} />
-        </div>
-      </>
+  if (cardState === "pending") {
+    return (
+      <DailyDoseCardShell name="Daily Essay" date={dateLabel}>
+        <DailyDoseCardSkeleton />
+      </DailyDoseCardShell>
     );
   }
 
-  if (cardState === "completed") {
-    return cardWrap(
-      <>
-        {HEADER(
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              padding: "2px 10px",
-              background: "rgba(34,197,94,0.15)",
-              color: "var(--correct-bright)",
-              border: "1px solid rgba(134,239,172,0.3)",
-            }}
-          >
-            ✓ Responded
-          </span>
-        )}
-        <div style={{ background: "#fff", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <p className="font-semibold" style={{ fontSize: 14, marginBottom: 3 }}>
-              {essay?.title ?? "Today's essay"}
-            </p>
-            <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>
-              {essay?.author ? `by ${essay.author}` : "Aeon"}
-            </p>
-          </div>
-          <Link
-            href="/cat-prep/daily-dose/essay"
-            className="font-bold text-white"
-            style={{
-              padding: "8px 16px",
-              background: "var(--ink)",
-              fontSize: 13,
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-              marginLeft: 16,
-            }}
-          >
-            View Discussion →
-          </Link>
-        </div>
-      </>
-    );
-  }
-
-  // cta state — essay available, not yet submitted
-  return cardWrap(
-    <>
-      {HEADER(<span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{dateLabel}</span>)}
-      <div style={{ background: "#fff", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div>
-          <p className="font-semibold" style={{ fontSize: 14, marginBottom: 3 }}>
-            {essay?.title ?? "Today's essay is ready"}
-          </p>
-          <p style={{ fontSize: 12, color: "var(--ink-faint)" }}>
-            {essay?.author ? `by ${essay.author} · ` : ""}Read &amp; respond · VARC practice
-          </p>
-          {loginError && (
-            <p style={{ fontSize: 11, color: "var(--wrong-text)", marginTop: 4 }}>Could not sign in. Try again.</p>
-          )}
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", marginLeft: 16, flexShrink: 0 }}>
-          <Link
-            href="/cat-prep/daily-dose/essay"
-            className="font-bold text-white"
-            style={{
-              padding: "8px 16px",
-              background: "var(--ink)",
-              fontSize: 13,
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Read &amp; Respond →
-          </Link>
-          {cardState === "login" && (
-            <button
-              onClick={handleSignIn}
-              style={{
-                fontSize: 11,
-                color: "var(--ink-soft)",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "inherit",
-                padding: 0,
-              }}
+  if (cardState === "absent") {
+    return (
+      <DailyDoseCardShell name="Daily Essay" date={dateLabel}>
+        <DailyDoseCardRow
+          muted
+          title="No essay for today"
+          sub="Every past essay is still open, and responding to an old one practises the same reading."
+          action={
+            <Link
+              href="/cat-prep/daily-dose/essay/archive"
+              className="ed-btn"
+              data-weight="secondary"
             >
-              Sign in to track progress
-            </button>
-          )}
-        </div>
-      </div>
-    </>
+              Browse the archive
+            </Link>
+          }
+        />
+      </DailyDoseCardShell>
+    );
+  }
+
+  if (cardState === "done") {
+    return (
+      <DailyDoseCardShell
+        name="Daily Essay"
+        date={dateLabel}
+        badge={<span className="ed-pill" data-state="correct">Responded</span>}
+      >
+        <DailyDoseCardRow
+          title={essay?.title ?? "Today's essay"}
+          sub={essay?.author ? `by ${essay.author}` : "Aeon"}
+          action={
+            <Link
+              href="/cat-prep/daily-dose/essay"
+              className="ed-btn"
+              data-weight="secondary"
+            >
+              See the discussion
+            </Link>
+          }
+        />
+      </DailyDoseCardShell>
+    );
+  }
+
+  return (
+    <DailyDoseCardShell name="Daily Essay" date={dateLabel}>
+      <DailyDoseCardRow
+        title={essay?.title ?? "Today's essay is ready"}
+        sub={
+          <>
+            {essay?.author ? `by ${essay.author} · ` : ""}Read and respond &middot; VARC
+            practice
+          </>
+        }
+        action={
+          <Link href="/cat-prep/daily-dose/essay" className="ed-btn" data-weight="primary">
+            Read and respond
+          </Link>
+        }
+      />
+    </DailyDoseCardShell>
   );
 }

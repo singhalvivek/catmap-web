@@ -6,15 +6,7 @@ import Link from "next/link";
 import type { DailyChallengeResult, DailyTest } from "../../../models/dailyChallenge";
 import SectionSummaryRow from "./SectionSummaryRow";
 import { trackEvent } from "@/app/components/analytics";
-
-function formatTime(totalSeconds: number): string {
-  const h = Math.floor(totalSeconds / 3600);
-  const m = Math.floor((totalSeconds % 3600) / 60);
-  const s = totalSeconds % 60;
-  if (h > 0) return `${h}h ${m}m ${s}s`;
-  if (m > 0) return s === 0 ? `${m}m` : `${m}m ${s}s`;
-  return `${s}s`;
-}
+import { formatDuration } from "@/lib/dateIST";
 
 type Props = {
   result: DailyChallengeResult;
@@ -98,7 +90,7 @@ export default function ResultView({
             </span>
           </p>
           <p className="text-slate-400" style={{ fontSize: 13, marginBottom: 16 }}>
-            {pct}% · {formatTime(result.totalTimeSeconds)} total time
+            {pct}% · {formatDuration(result.totalTimeSeconds)} total time
           </p>
 
           {/* Quick stat pills */}
