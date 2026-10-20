@@ -18,6 +18,18 @@ export function useDialog(onClose: () => void) {
   const ref = useRef<HTMLDivElement>(null);
   const restoreTo = useRef<HTMLElement | null>(null);
 
+  /*
+   * onClose is held in a ref so the effect below can run on mount and unmount only. Both
+   * call sites pass a freshly created arrow, so depending on it directly tore the effect
+   * down on EVERY parent render while the dialog was open — and the teardown restores
+   * focus to whatever opened the dialog, so focus jumped out of the panel and back in on
+   * each one. Typing in the feedback form was enough to trigger it.
+   */
+  const closeRef = useRef(onClose);
+  useEffect(() => {
+    closeRef.current = onClose;
+  });
+
   useEffect(() => {
     restoreTo.current = document.activeElement as HTMLElement | null;
 
@@ -30,7 +42,7 @@ export function useDialog(onClose: () => void) {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.stopPropagation();
-        onClose();
+        closeRef.current();
         return;
       }
       if (e.key !== "Tab" || !ref.current) return;
@@ -57,7 +69,7 @@ export function useDialog(onClose: () => void) {
       document.removeEventListener("keydown", onKeyDown, true);
       restoreTo.current?.focus?.();
     };
-  }, [onClose]);
+  }, []);
 
   return ref;
 }

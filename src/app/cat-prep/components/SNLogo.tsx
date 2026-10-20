@@ -1,8 +1,18 @@
 // SNLogo — inline SVG brand mark: a book opened flat, in ink and accent
-import { BRAND_ACCENT, BRAND_INK, BRAND_MARK, BRAND_PAPER } from "@/constants/brand";
+import { BRAND_MARK } from "@/constants/brand";
 
-export default function SNLogo({ size = 32 }: { size?: number }) {
+/**
+ * This copy of the mark is inline SVG in the document, so unlike icon.tsx and the
+ * OpenGraph routes it CAN resolve custom properties — and it has to. It was drawn with the
+ * literal BRAND_INK, which is #101a2b against a dark page ground of #111823: 1.02:1, so
+ * the left block of a two-block mark simply was not there. On the footer band the same
+ * problem runs the other way, which is what onDark is for.
+ */
+export default function SNLogo({ size = 32, onDark = false }: { size?: number; onDark?: boolean }) {
   const m = BRAND_MARK;
+  const ink = onDark ? "var(--invert-ink)" : "var(--ink)";
+  const paper = onDark ? "var(--invert-bg)" : "var(--paper)";
+  const accent = onDark ? "var(--accent-bright)" : "var(--accent)";
 
   return (
     <svg
@@ -14,13 +24,13 @@ export default function SNLogo({ size = 32 }: { size?: number }) {
       aria-hidden="true"
       focusable="false"
     >
-      <rect x={m.leftX} y={m.blockY} width={m.blockWidth} height={m.blockHeight} fill={BRAND_INK} />
+      <rect x={m.leftX} y={m.blockY} width={m.blockWidth} height={m.blockHeight} fill={ink} />
       <rect
         x={m.rightX}
         y={m.blockY}
         width={m.blockWidth}
         height={m.blockHeight}
-        fill={BRAND_ACCENT}
+        fill={accent}
       />
       {m.rules.map((rule) => (
         <rect
@@ -29,7 +39,7 @@ export default function SNLogo({ size = 32 }: { size?: number }) {
           y={rule.y}
           width={rule.width}
           height={1.5}
-          fill={BRAND_PAPER}
+          fill={paper}
           opacity={0.85}
         />
       ))}

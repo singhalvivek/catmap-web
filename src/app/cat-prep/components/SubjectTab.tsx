@@ -29,7 +29,7 @@ export default function SubjectTab({
       onClick={onClick}
       className="subject-tab"
       aria-pressed={isActive}
-      aria-label={`${meta.label}, ${percent}% ${measure}`}
+      aria-label={`${meta.abbr}, ${meta.label}, ${percent}% ${measure}`}
     >
       <ProgressRing percent={percent} size={38} stroke={3} color={meta.ring} />
       <span style={{ flex: 1, minWidth: 0 }}>

@@ -88,11 +88,14 @@ export default function PracticeTopicRow({
               <span
                 className="ed-meter topic-row__meter"
                 data-state={state}
-                role="progressbar"
-                aria-valuenow={doneUnits}
-                aria-valuemin={0}
-                aria-valuemax={totalUnits}
-                aria-valuetext={`${doneUnits} of ${totalUnits} practised`}
+                /*
+                  No role="progressbar" here. role="button" takes presentational children,
+                  so every descendant of this header button is mapped to presentation and
+                  the aria-value* were discarded before a screen reader ever saw them. The
+                  percentage beside it is real text, and the row's own name carries the
+                  topic, so the meter is decoration and says so.
+                */
+                aria-hidden="true"
                 style={{ "--meter-value": pct } as React.CSSProperties}
               >
                 <span className="ed-meter__fill" />

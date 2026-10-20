@@ -101,7 +101,7 @@ export default function RoadmapPlate({ subjects }: Props) {
                 type="button"
                 role="tab"
                 aria-selected={i === active}
-                aria-label={s.title}
+                aria-label={`${s.abbr}, ${s.title}`}
                 className="plate-tab"
                 data-active={i === active}
                 onClick={() => {

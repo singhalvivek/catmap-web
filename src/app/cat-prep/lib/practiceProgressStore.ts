@@ -16,6 +16,18 @@ export const PROGRESS_PREFIX = "sn_practice__";
  */
 const listeners = new Set<() => void>();
 
+/*
+ * Bumped on every write. Readers cache a rollup, and the cache used to be cleared only by a
+ * live listener — but no summariser is mounted on a player route, so answering questions
+ * notified an empty set and the index came back showing the figures from before. A version
+ * the reader can compare against does not depend on anyone being subscribed at the time.
+ */
+let version = 0;
+
+export function practiceProgressVersion(): number {
+  return version;
+}
+
 export function subscribePracticeProgress(onChange: () => void): () => void {
   listeners.add(onChange);
   return () => {
@@ -24,6 +36,7 @@ export function subscribePracticeProgress(onChange: () => void): () => void {
 }
 
 function notifyPracticeProgress(): void {
+  version += 1;
   for (const listener of listeners) listener();
 }
 

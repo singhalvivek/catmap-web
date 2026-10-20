@@ -31,7 +31,7 @@ export default function Wordmark({
         textDecoration: "none",
       }}
     >
-      <SNLogo size={logoSize} />
+      <SNLogo size={logoSize} onDark={onDark} />
       <span>
         <span
           className="display"
@@ -39,7 +39,7 @@ export default function Wordmark({
             display: "block",
             fontSize: nameSize,
             lineHeight: 1,
-            color: onDark ? "#fff" : "var(--ink)",
+            color: onDark ? "var(--invert-ink)" : "var(--ink)",
           }}
         >
           StudyNaksha

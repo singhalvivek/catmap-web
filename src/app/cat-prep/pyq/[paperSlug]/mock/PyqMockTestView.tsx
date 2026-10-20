@@ -447,7 +447,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(15,23,42,0.5)",
+            background: "var(--scrim)",
             zIndex: 100,
             display: "flex",
             alignItems: "center",

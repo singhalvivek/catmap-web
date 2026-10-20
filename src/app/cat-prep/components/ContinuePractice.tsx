@@ -6,6 +6,7 @@ import Link from "next/link";
 import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import {
   loadLocalProgress,
+  practiceProgressVersion,
   PROGRESS_PREFIX,
   subscribePracticeProgress,
 } from "@/app/cat-prep/lib/practiceProgressStore";
@@ -140,9 +141,14 @@ function buildEntries(): InProgressEntry[] {
  */
 const NO_ENTRIES: InProgressEntry[] = [];
 let snapshot: InProgressEntry[] | null = null;
+let snapshotVersion = -1;
 
 function getSnapshot(): InProgressEntry[] {
-  if (snapshot === null) snapshot = buildEntries();
+  const version = practiceProgressVersion();
+  if (snapshot === null || snapshotVersion !== version) {
+    snapshot = buildEntries();
+    snapshotVersion = version;
+  }
   return snapshot;
 }
 

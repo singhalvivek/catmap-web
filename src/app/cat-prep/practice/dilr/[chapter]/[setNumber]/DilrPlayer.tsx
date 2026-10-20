@@ -134,8 +134,13 @@ export default function DilrPlayer({
         fetched. isChecked is persisted and sessionSolution is not, so after a reload a
         checked question showed a tinted grid, no explanation and no control to get one.
         Re-fetching is safe: setCorrectAnswer early-returns when an answer is recorded.
+
+        Both halves, unlike the sibling players: one DilrSolution covers the whole SET, so
+        "a solution is on screen" is the set being fetched AND this question being recorded.
+        Testing sessionSolution alone made checking Q1 remove the control from Q2, Q3 and
+        Q4, leaving them permanently ungradable.
       */}
-      {!sessionSolution && (
+      {!(sessionSolution && isChecked) && (
         <button
           onClick={checkAnswer}
           disabled={!question || !answers[question.number] || loading}
@@ -148,7 +153,7 @@ export default function DilrPlayer({
       )}
 
       <p aria-live="polite" className="ed-sr-only">
-        {sessionSolution && question
+        {sessionSolution && isChecked && question
           ? `Answer checked. The correct answer is ${correctAnswers[question.number] ?? "shown below"}.`
           : ""}
       </p>

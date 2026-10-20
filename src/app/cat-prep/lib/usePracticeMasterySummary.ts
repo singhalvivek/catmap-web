@@ -2,7 +2,10 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { subscribePracticeProgress } from "./practiceProgressStore";
+import {
+  practiceProgressVersion,
+  subscribePracticeProgress,
+} from "./practiceProgressStore";
 import {
   buildPracticeSummary,
   EMPTY_PRACTICE_SUMMARY,
@@ -16,13 +19,21 @@ import {
  * else, which is the mismatch usePracticeProgress already gates against — and it never ran
  * again, so the figures went stale the moment anything was answered.
  *
- * The snapshot is cached because getSnapshot must return a stable reference; writing an
- * attempt clears it.
+ * The snapshot is cached because getSnapshot must return a stable reference, and it is
+ * compared against the store's version rather than cleared by the subscriber. Clearing it
+ * in the subscriber only worked while something was mounted to subscribe — and nothing
+ * here is mounted on a player route, so answering a chapter and coming back returned the
+ * figures from before the attempt.
  */
 let snapshot: PracticeSummary | null = null;
+let snapshotVersion = -1;
 
 function getSnapshot(): PracticeSummary {
-  if (snapshot === null) snapshot = buildPracticeSummary();
+  const version = practiceProgressVersion();
+  if (snapshot === null || snapshotVersion !== version) {
+    snapshot = buildPracticeSummary();
+    snapshotVersion = version;
+  }
   return snapshot;
 }
 
@@ -32,6 +43,7 @@ function getServerSnapshot(): PracticeSummary {
 
 function subscribe(onChange: () => void): () => void {
   const invalidate = () => {
+    // Another tab's write does not bump this tab's version, so clear explicitly too.
     snapshot = null;
     onChange();
   };
