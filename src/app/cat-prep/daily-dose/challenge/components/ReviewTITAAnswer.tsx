@@ -24,7 +24,7 @@ export default function ReviewTITAAnswer({ given, correctAnswer, isCorrect }: Pr
             borderRadius: 9,
             border: `1.5px solid ${isUnattempted ? "#CBD5E1" : isCorrect ? "#16A34A" : "#DC2626"}`,
             background: isUnattempted ? "#F8FAFC" : isCorrect ? "#F0FDF4" : "#FEF2F2",
-            color: isUnattempted ? "#94A3B8" : isCorrect ? "#166534" : "#991B1B",
+            color: isUnattempted ? "var(--ink-faint)" : isCorrect ? "#166534" : "#991B1B",
             fontSize: 15,
             fontWeight: 600,
           }}

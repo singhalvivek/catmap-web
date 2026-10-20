@@ -68,7 +68,7 @@ function VoteButton({
       style={{
         background: active ? (direction === "up" ? "#DCFCE7" : "#FEE2E2") : "#F8FAFC",
         border: `1px solid ${active ? (direction === "up" ? "#86EFAC" : "#FCA5A5") : "#E2E8F0"}`,
-        color: active ? (direction === "up" ? "#166534" : "#991B1B") : "#94A3B8",
+        color: active ? (direction === "up" ? "#166534" : "#991B1B") : "var(--ink-faint)",
         borderRadius: 6,
         padding: "3px 9px",
         fontSize: 11,
@@ -146,7 +146,7 @@ function AnswerCard({
             className="font-bold"
             style={{
               fontSize: 12,
-              color: score > 0 ? "#166534" : score < 0 ? "#991B1B" : "#94A3B8",
+              color: score > 0 ? "#166534" : score < 0 ? "#991B1B" : "var(--ink-faint)",
               minWidth: 18,
               textAlign: "center",
             }}
@@ -312,7 +312,7 @@ export default function DailyEssayPageClient({
   if (!essay) {
     return (
       <div style={{ minHeight: "100vh", background: "#FFFDF8", padding: "48px 24px", textAlign: "center" }}>
-        <p className="font-semibold text-slate-400" style={{ fontSize: 16 }}>
+        <p className="font-semibold ed-muted" style={{ fontSize: 16 }}>
           Could not load today&apos;s essay. Please try again later.
         </p>
         <Link href="/cat-prep" style={{ color: "#1E3A5F", fontSize: 14, marginTop: 16, display: "inline-block" }}>
@@ -349,7 +349,7 @@ export default function DailyEssayPageClient({
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
         {/* Date */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", letterSpacing: "0.5px", marginBottom: 6, textTransform: "uppercase" }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: "var(--ink-faint)", letterSpacing: "0.5px", marginBottom: 6, textTransform: "uppercase" }}>
           {formatDate(date)}
         </p>
 
@@ -364,7 +364,7 @@ export default function DailyEssayPageClient({
             boxShadow: "0 2px 12px rgba(30,58,95,0.06)",
           }}
         >
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
             Today&apos;s Essay · Aeon
           </p>
           <h1 className="font-extrabold text-trust-navy" style={{ fontSize: "clamp(18px, 3vw, 24px)", lineHeight: 1.3, marginBottom: 6 }}>
@@ -509,7 +509,7 @@ export default function DailyEssayPageClient({
           <div>
             <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 18, marginBottom: 4 }}>
               Community Responses
-              <span className="font-medium text-slate-400" style={{ fontSize: 14, marginLeft: 8 }}>
+              <span className="font-medium ed-muted" style={{ fontSize: 14, marginLeft: 8 }}>
                 ({submissions.length})
               </span>
             </h2>
@@ -520,7 +520,7 @@ export default function DailyEssayPageClient({
             </p>
 
             {submissions.length === 0 ? (
-              <p style={{ fontSize: 14, color: "#94A3B8" }}>No responses yet — you&apos;re the first!</p>
+              <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>No responses yet — you&apos;re the first!</p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
                 {ESSAY_QUESTIONS.map((q, i) => {
@@ -540,7 +540,7 @@ export default function DailyEssayPageClient({
                           marginBottom: 14,
                         }}
                       >
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                           Q{i + 1}
                         </span>
                         <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginTop: 2 }}>

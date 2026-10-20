@@ -746,3 +746,53 @@ The mobile question palette is a strip of bare numbers with no count and no lege
 the desktop sidebar has both — contrary to the audit, which reported the legend missing
 everywhere. And `disabled={isChecked}` means one click on a guess locks the question for
 good without saying so; changing that is behaviour, not presentation, so it needs the user.
+
+---
+
+## Addendum — the contrast sweep (Phase 13h)
+
+### What the audit got wrong, and it mattered
+
+It grouped `--trust-navy` with the sub-AA colours as a readability problem. Measured:
+**#1e3a5f on --paper is 10.94:1** — it passes AA comfortably. The token's own comment calls
+it "a brand fill, not a reading colour", which is a design-system consistency point, not an
+accessibility one. Retiring it stays Phase 16 and did not belong in this sweep.
+
+### What actually failed, measured
+
+| colour | ground | ratio |
+| --- | --- | --- |
+| `text-slate-300` | white | **1.48:1** |
+| `text-slate-400` / `#94A3B8` | white | **2.56:1** |
+| `#94A3B8` | `--paper` | **2.44:1** |
+| `#94A3B8` | `#F1F5F9` (palette cell) | **2.34:1** |
+
+The worst, `text-slate-300` at 1.48:1, carried the denominator of the score on the daily
+challenge result screen — the one number that screen exists to show. The palette figure at
+2.34:1 is the state readout a reader scans under a timer.
+
+All of them are `--ink-faint` now: **5.66:1** on `--paper`, 5.19:1 on `--paper-sunk`,
+5.43:1 on the palette cell. 17 files, via a new `.ed-muted` for the utility-class cases.
+
+### Two more found by measuring rather than reading
+
+Neither was in the audit, and neither is reachable by grepping for a bad literal — both are
+a correct token used on the wrong ground.
+
+- **The footer column headings were 2.59:1.** `.ed-kicker` carries `--accent-text`, the
+  accent tuned for paper; the footer is ink. `--accent-bright` is the one for dark ground,
+  and measures 9.36:1 there — which is what the token comment already said it was for.
+- **The home page row arrows were 3.98:1** at 20px, needing 4.5:1. `--accent` rather than
+  `--accent-text`, which is 6.40:1.
+
+### The check is repeatable now
+
+`npm run contrast` walks the running server, reads the computed colour of every leaf text
+node and the first non-transparent background above it, and applies the 1.4.3 thresholds
+(3:1 for large, 4.5:1 otherwise). It exits non-zero on any failure. No new dependency —
+Playwright was already here for `npm run shot`.
+
+Current state: **1,389 text nodes measured across ten surfaces, 0 below AA.**
+
+Grepping for literals could never have caught the last two, because the literal was right
+and the ground was wrong. That is the argument for measuring the rendered page.

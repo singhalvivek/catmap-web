@@ -96,7 +96,7 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                 ← Prev
               </button>
 
-              <span style={{ fontSize: 12, color: "#94A3B8", fontVariantNumeric: "tabular-nums" }}>
+              <span style={{ fontSize: 12, color: "var(--ink-faint)", fontVariantNumeric: "tabular-nums" }}>
                 {questionIndex + 1} / {section.questions.length}
               </span>
 
@@ -108,7 +108,7 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                   padding: "9px 20px",
                   borderRadius: 8,
                   background: hasNext ? "#1E3A5F" : "#F1F5F9",
-                  color: hasNext ? "#fff" : "#94A3B8",
+                  color: hasNext ? "#fff" : "var(--ink-faint)",
                   border: "1px solid #E2E8F0",
                   fontSize: 13,
                   cursor: hasNext ? "pointer" : "not-allowed",
@@ -202,7 +202,7 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
             const resp = responses[q.questionId];
             const isUnattempted = !resp || resp.given === null;
             const bg = isCurrent ? "#1E3A5F" : isUnattempted ? "#F1F5F9" : resp.correct ? "#DCFCE7" : "#FEE2E2";
-            const color = isCurrent ? "#fff" : isUnattempted ? "#94A3B8" : resp.correct ? "#166534" : "#991B1B";
+            const color = isCurrent ? "#fff" : isUnattempted ? "var(--ink-faint)" : resp.correct ? "#166534" : "#991B1B";
             const border = isCurrent ? "#1E3A5F" : isUnattempted ? "#E2E8F0" : resp.correct ? "#86EFAC" : "#FCA5A5";
             return (
               <button

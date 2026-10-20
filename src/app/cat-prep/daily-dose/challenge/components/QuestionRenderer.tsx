@@ -39,7 +39,7 @@ export default function QuestionRenderer({
       {/* Question label + text */}
       <div className="mb-4">
         <span
-          className="font-bold text-slate-400"
+          className="font-bold ed-muted"
           style={{
             fontSize: 11,
             letterSpacing: "0.4px",

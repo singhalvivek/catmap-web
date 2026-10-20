@@ -99,7 +99,7 @@ export default function StartHere() {
                 style={{
                   display: "block",
                   fontSize: 20,
-                  color: "var(--accent)",
+                  color: "var(--accent-text)",
                   marginTop: 10,
                 }}
               >

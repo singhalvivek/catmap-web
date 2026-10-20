@@ -19,7 +19,7 @@ export default function ComprehensionBlock({
       }}
     >
       <span
-        className="font-bold text-slate-400"
+        className="font-bold ed-muted"
         style={{
           fontSize: 10,
           letterSpacing: "0.5px",

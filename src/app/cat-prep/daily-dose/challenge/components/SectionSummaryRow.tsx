@@ -35,7 +35,7 @@ export default function SectionSummaryRow({ testSection, sectionResult }: Props)
         <p className="font-extrabold text-trust-navy" style={{ fontSize: 14, margin: 0 }}>
           {sectionResult.name}
         </p>
-        <p className="text-slate-400" style={{ fontSize: 11, marginTop: 2 }}>
+        <p className="ed-muted" style={{ fontSize: 11, marginTop: 2 }}>
           {correct} correct · {wrong} wrong · {unattempted} unattempted · {formatDuration(sectionTimeSpent)}
         </p>
       </div>
@@ -44,7 +44,7 @@ export default function SectionSummaryRow({ testSection, sectionResult }: Props)
         style={{ fontSize: 16, color: scorePositive ? "#166534" : "#991B1B" }}
       >
         {sectionResult.score > 0 ? `+${sectionResult.score}` : sectionResult.score}
-        <span className="font-normal text-slate-400" style={{ fontSize: 13 }}>
+        <span className="font-normal ed-muted" style={{ fontSize: 13 }}>
           {" "}/ {sectionResult.totalMarks}
         </span>
       </span>

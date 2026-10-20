@@ -26,7 +26,7 @@ type Props = {
 };
 
 const PALETTE_STYLES: Record<VisitStatus | "current", { bg: string; color: string; border: string }> = {
-  not_visited:       { bg: "#F1F5F9", color: "#94A3B8", border: "#E2E8F0" },
+  not_visited:       { bg: "#F1F5F9", color: "var(--ink-faint)", border: "#E2E8F0" },
   visited:           { bg: "#FEF9C3", color: "#854D0E", border: "#FDE047" },
   answered:          { bg: "#DCFCE7", color: "#166534", border: "#86EFAC" },
   marked_for_review: { bg: "#EDE9FE", color: "#5B21B6", border: "#A78BFA" },
@@ -273,7 +273,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
               </button>
 
               <div className="flex items-center gap-2">
-                <span style={{ fontSize: 12, color: "#94A3B8", fontVariantNumeric: "tabular-nums" }}>
+                <span style={{ fontSize: 12, color: "var(--ink-faint)", fontVariantNumeric: "tabular-nums" }}>
                   {questionIndex + 1} / {section.questions.length}
                 </span>
                 <button
@@ -288,7 +288,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
                     color:
                       visitStatus[question.questionId] === "marked_for_review"
                         ? "#5B21B6"
-                        : "#94A3B8",
+                        : "var(--ink-faint)",
                     border: `1.5px solid ${
                       visitStatus[question.questionId] === "marked_for_review"
                         ? "#A78BFA"
@@ -315,7 +315,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
                   padding: "9px 20px",
                   borderRadius: 8,
                   background: rightBtnDisabled ? "#F1F5F9" : "#1E3A5F",
-                  color: rightBtnDisabled ? "#94A3B8" : "#fff",
+                  color: rightBtnDisabled ? "var(--ink-faint)" : "#fff",
                   border: "1px solid #E2E8F0",
                   fontSize: 13,
                   cursor: rightBtnDisabled ? "not-allowed" : "pointer",
@@ -509,7 +509,7 @@ export default function PyqMockTestView({ test, paperSlug, paperLabel, uid, init
               ))}
             </div>
 
-            <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 20, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 20, lineHeight: 1.5 }}>
               Once submitted, you cannot change your answers. This is a one-time attempt.
             </p>
 

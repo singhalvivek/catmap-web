@@ -6,7 +6,7 @@ import type { Question, VisitStatus } from "../../../models/dailyChallenge";
 type StatusStyle = { bg: string; color: string; border: string };
 
 const STATUS_STYLES: Record<VisitStatus | "current", StatusStyle> = {
-  not_visited: { bg: "#F1F5F9", color: "#94A3B8", border: "#E2E8F0" },
+  not_visited: { bg: "#F1F5F9", color: "var(--ink-faint)", border: "#E2E8F0" },
   visited:     { bg: "#FEF9C3", color: "#854D0E", border: "#FDE047" },
   answered:    { bg: "#DCFCE7", color: "#166534", border: "#86EFAC" },
   marked_for_review: { bg: "#EDE9FE", color: "#5B21B6", border: "#A78BFA" },
@@ -44,7 +44,7 @@ export default function QuestionPalette({
         {sectionName}
       </p>
       <p
-        className="font-semibold text-slate-400"
+        className="font-semibold ed-muted"
         style={{ fontSize: 10, letterSpacing: "0.4px", textTransform: "uppercase", marginBottom: 10 }}
       >
         Questions

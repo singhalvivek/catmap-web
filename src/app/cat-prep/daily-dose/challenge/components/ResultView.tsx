@@ -77,7 +77,7 @@ export default function ResultView({
             marginBottom: 20,
           }}
         >
-          <p className="text-slate-400" style={{ fontSize: 12, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 8 }}>
+          <p className="ed-muted" style={{ fontSize: 12, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 8 }}>
             Total Score
           </p>
           <p
@@ -85,11 +85,11 @@ export default function ResultView({
             style={{ fontSize: 44, lineHeight: 1, marginBottom: 4 }}
           >
             {result.score}
-            <span className="font-medium text-slate-300" style={{ fontSize: 24 }}>
+            <span className="font-medium ed-muted" style={{ fontSize: 24 }}>
               {" "}/ {result.totalMarks}
             </span>
           </p>
-          <p className="text-slate-400" style={{ fontSize: 13, marginBottom: 16 }}>
+          <p className="ed-muted" style={{ fontSize: 13, marginBottom: 16 }}>
             {pct}% · {formatDuration(result.totalTimeSeconds)} total time
           </p>
 

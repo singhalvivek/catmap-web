@@ -50,7 +50,7 @@ export default async function EssayArchivePage() {
         </p>
 
         {entries.length === 0 ? (
-          <p style={{ fontSize: 14, color: "#94A3B8" }}>No past essays yet — check back tomorrow.</p>
+          <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>No past essays yet — check back tomorrow.</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {entries.map((entry) => (
@@ -74,7 +74,7 @@ export default async function EssayArchivePage() {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 4 }}>
+                    <p style={{ fontSize: 11, color: "var(--ink-faint)", fontWeight: 600, marginBottom: 4 }}>
                       {formatDate(entry.date)}
                     </p>
                     <p className="font-semibold text-trust-navy" style={{ fontSize: 15, lineHeight: 1.4, marginBottom: 3 }}>
@@ -100,7 +100,7 @@ export default async function EssayArchivePage() {
                         {entry.responseCount} {entry.responseCount === 1 ? "response" : "responses"}
                       </span>
                     )}
-                    <span style={{ color: "#94A3B8", fontSize: 16 }}>→</span>
+                    <span style={{ color: "var(--ink-faint)", fontSize: 16 }}>→</span>
                   </div>
                 </div>
               </Link>

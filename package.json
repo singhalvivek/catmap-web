@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "check:content": "node scripts/check-content-links.mjs",
-    "shot": "node scripts/screenshot.mjs"
+    "shot": "node scripts/screenshot.mjs",
+    "contrast": "node scripts/contrast.mjs"
   },
   "dependencies": {
     "firebase": "^12.11.0",

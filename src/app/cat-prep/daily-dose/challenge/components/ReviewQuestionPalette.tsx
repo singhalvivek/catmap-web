@@ -9,7 +9,7 @@ type StatusStyle = { bg: string; color: string; border: string };
 const STATUS_STYLES: Record<Status | "current", StatusStyle> = {
   correct:     { bg: "#DCFCE7", color: "#166534", border: "#86EFAC" },
   wrong:       { bg: "#FEE2E2", color: "#991B1B", border: "#FCA5A5" },
-  unattempted: { bg: "#F1F5F9", color: "#94A3B8", border: "#E2E8F0" },
+  unattempted: { bg: "#F1F5F9", color: "var(--ink-faint)", border: "#E2E8F0" },
   current:     { bg: "#1E3A5F", color: "#fff",    border: "#1E3A5F" },
 };
 
@@ -71,7 +71,7 @@ export default function ReviewQuestionPalette({
         })}
       </div>
       <p
-        className="font-semibold text-slate-400"
+        className="font-semibold ed-muted"
         style={{ fontSize: 10, letterSpacing: "0.4px", textTransform: "uppercase", marginBottom: 10 }}
       >
         Questions

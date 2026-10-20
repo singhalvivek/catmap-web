@@ -47,7 +47,7 @@ export default function NodeContent({
       <h2 className="m-0 mb-1 text-xl font-extrabold tracking-tight text-trust-navy">
         {node.title} for CAT
       </h2>
-      <p className="m-0 mb-5 text-[13px] font-semibold uppercase tracking-wide text-slate-400">{context}</p>
+      <p className="m-0 mb-5 text-[13px] font-semibold uppercase tracking-wide ed-muted">{context}</p>
 
       {showDetails && description && (
         <p className="m-0 mb-8 max-w-[70ch] text-[15px] leading-[1.8] text-slate-700">{description}</p>
@@ -69,7 +69,7 @@ export default function NodeContent({
                 >
                   {r.title}
                 </a>
-                <span className="ml-2 text-[12px] text-slate-400">
+                <span className="ml-2 text-[12px] ed-muted">
                   {RESOURCE_LABEL[r.type]}
                   {r.instructor ? ` · ${r.instructor}` : ""}
                   {r.items?.length ? ` · ${r.items.length} videos` : ""}

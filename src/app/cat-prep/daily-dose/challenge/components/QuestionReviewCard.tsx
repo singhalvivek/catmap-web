@@ -53,12 +53,12 @@ export default function QuestionReviewCard({ question, response, questionNumber 
       <div className="flex items-center justify-between" style={{ marginBottom: 16 }}>
         <div className="flex items-center gap-2">
           <span
-            className="font-bold text-slate-400"
+            className="font-bold ed-muted"
             style={{ fontSize: 11, letterSpacing: "0.4px", textTransform: "uppercase" }}
           >
             Q{questionNumber} · {question.type === "mcq" ? "MCQ" : "TITA"}
           </span>
-          <span className="text-slate-400" style={{ fontSize: 11 }}>
+          <span className="ed-muted" style={{ fontSize: 11 }}>
             {formatDuration(timeSpent)}
           </span>
         </div>
@@ -106,7 +106,7 @@ export default function QuestionReviewCard({ question, response, questionNumber 
           }}
         >
           <span
-            className="font-bold text-slate-400"
+            className="font-bold ed-muted"
             style={{
               fontSize: 10,
               letterSpacing: "0.5px",

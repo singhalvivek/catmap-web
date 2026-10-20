@@ -18,7 +18,7 @@ export default function NoChallengeTodayView({ date }: { date: string }) {
         <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 6, lineHeight: 1.6 }}>
           There is no daily challenge for <strong>{date}</strong>.
         </p>
-        <p className="text-slate-400" style={{ fontSize: 13, marginBottom: 28 }}>
+        <p className="ed-muted" style={{ fontSize: 13, marginBottom: 28 }}>
           Challenges are published daily — check back tomorrow.
         </p>
         <Link
