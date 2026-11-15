@@ -1,66 +1,71 @@
-// SubtopicChip — chip button for a leaf subtopic; dot colour reflects progress status
+// SubtopicChip — one branch of the syllabus tree: a subtopic, its lessons and its status
 "use client";
 
-import { useState } from "react";
 import { Node } from "../models/node";
 import { ProgressStatus } from "../models/progress";
+
+/**
+ * Status drives a data attribute rather than three inline colours, so the whole thing is
+ * one CSS rule. This also removed the component's isHovered state: 61 of these render on
+ * the Learn surface at once, and every one of them re-rendered on pointer move to simulate
+ * a :hover that CSS can do for free.
+ */
+const STATUS_STATE: Record<ProgressStatus, string> = {
+  [ProgressStatus.COMPLETED]: "correct",
+  [ProgressStatus.IN_PROGRESS]: "caution",
+  [ProgressStatus.NOT_STARTED]: "inert",
+};
+
+const STATUS_WORD: Record<ProgressStatus, string> = {
+  [ProgressStatus.COMPLETED]: "Done",
+  [ProgressStatus.IN_PROGRESS]: "In progress",
+  [ProgressStatus.NOT_STARTED]: "Not started",
+};
 
 export default function SubtopicChip({
   node,
   isSelected,
   onClick,
   progress,
-  chipColor,
+  index = 0,
+  lessonCount = 0,
+  isLast = false,
 }: {
   node: Node;
   isSelected: boolean;
   onClick: (node: Node) => void;
   progress: Record<number, ProgressStatus>;
-  chipColor: string;
+  /** Position within its topic, used only to stagger the open animation. */
+  index?: number;
+  /** Openable lesson links for this subtopic. */
+  lessonCount?: number;
+  /** Last branch of its topic — draws an end connector instead of a tee. */
+  isLast?: boolean;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
   const status = progress[node.id] ?? ProgressStatus.NOT_STARTED;
-  const dotColor =
-    status === ProgressStatus.COMPLETED
-      ? "#10B981"
-      : status === ProgressStatus.IN_PROGRESS
-        ? "#F59E0B"
-        : "#CBD5E1";
-
-  const isActive = isSelected || isHovered;
 
   return (
     <button
+      type="button"
       onClick={() => onClick(node)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "6px 12px",
-        borderRadius: 8,
-        border: `1.5px solid ${isActive ? "#14B8A6" : chipColor}`,
-        background: isActive ? "#fff" : chipColor,
-        color: isActive ? "#0F766E" : "#fff",
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: "pointer",
-        fontFamily: "inherit",
-        transition: "all 0.15s",
-        textAlign: "left",
-      }}
+      className="ed-chip tree-branch"
+      data-state={STATUS_STATE[status]}
+      data-selected={isSelected}
+      data-last={isLast}
+      style={{ "--chip-index": index } as React.CSSProperties}
+      // Status and lesson count were conveyed by a dot and nothing respectively. Both now
+      // reach a screen reader as words.
+      aria-label={`${node.title}, ${STATUS_WORD[status]}, ${
+        lessonCount > 0 ? `${lessonCount} lessons` : "no lessons yet"
+      }`}
     >
-      <span
-        style={{
-          width: 7,
-          height: 7,
-          borderRadius: "50%",
-          background: dotColor,
-          flexShrink: 0,
-        }}
-      />
-      {node.title}
+      <span className="tree-branch__label">{node.title}</span>
+      <span className="tree-branch__lessons" aria-hidden="true">
+        {lessonCount > 0 ? `${lessonCount} lesson${lessonCount === 1 ? "" : "s"}` : "—"}
+      </span>
+      <span className="tree-branch__status" aria-hidden="true">
+        {status === ProgressStatus.NOT_STARTED ? "" : STATUS_WORD[status]}
+      </span>
     </button>
   );
 }

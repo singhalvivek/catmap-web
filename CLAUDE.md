@@ -46,4 +46,22 @@ Never skip steps. Never bundle unrelated changes into one commit.
 - Do not add `eslint-disable` comments to silence lint errors — fix the root cause.
 
 ## Branch
-All refactor work happens on the `text` branch.
+
+**Every change gets its own branch, cut fresh from the latest `staging`.** Never commit
+directly to `staging` or `master`.
+
+Before starting any work:
+
+```bash
+git checkout staging
+git pull origin staging
+git checkout -b <type>/<short-slug>
+```
+
+- `<type>` is one of `feat`, `fix`, `docs`, `chore` — matching the existing branch history.
+- `<short-slug>` is kebab-case and names the change, ideally carrying the planning spec ID
+  (e.g. `feat/u001-home-page-redesign`).
+- Always re-cut from `staging` for each new item. Do not branch off another feature branch,
+  and do not reuse a branch after its work has merged.
+- `staging` merges into `master`; feature branches merge into `staging`.
+- `git push` still requires user confirmation (see **What NOT to Do**).

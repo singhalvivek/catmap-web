@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { Node } from "../models/node";
 import { Description } from "../models/description";
 import { Resource } from "../models/resource";
@@ -18,22 +19,59 @@ import SubjectTab from "./SubjectTab";
 import TopicRow from "./TopicRow";
 import DailyDoseCard from "./DailyDoseCard";
 import DailyDoseSection from "./DailyDoseSection";
-import DailyDoseStreakBanner from "./DailyDoseStreakBanner";
 import ContinueLearning from "./ContinueLearning";
 import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
-import RoadmapNav from "./RoadmapNav";
 import PracticeTopicRow from "./PracticeTopicRow";
 
-export type Mode = "learn" | "practice" | "pyq" | "daily-dose";
 import PyqPapersList from "./PyqPapersList";
-import ModeProgressBar from "./ModeProgressBar";
 import { useProgressContext } from "../lib/ProgressContext";
 import { useTopicExpandState } from "../lib/useTopicExpandState";
 import { usePracticeMasterySummary } from "../lib/usePracticeMasterySummary";
 import { usePyqSolvedSummary } from "../lib/usePyqSolvedSummary";
-import { getPracticeSubject } from "@/constants/practiceChapters";
+import {
+  getPracticeSubject,
+  RC_CHAPTER_SLUG,
+  type PracticeSubject,
+} from "@/constants/practiceChapters";
+import { TREE_LAYOUT, type TreeLayout } from "../lib/treeLayout";
+import { useScrollReveal } from "@/app/lib/useScrollReveal";
+import { PYQ_YEARS_COVERED } from "@/constants/pyqPapers";
 import type { PyqPaperSummary } from "../models/pyq";
+import type { Mode } from "../models/mode";
+import RoadmapHero from "./RoadmapHero";
+
+export type { Mode };
+
+/** Both layouts arrive as they are scrolled to; each has its own motion in globals.css. */
+const ROW_SELECTOR = ".topic-list > .topic-row";
+
+/**
+ * Practice is a catalogue — a topic holds chapters you can drill in any order — so it reads
+ * as containment and is fixed to the nested layout, whatever Learn happens to be set to.
+ * A route would be a lie about it, and the route layout also reserves a gutter and a station
+ * disc that these rows never fill.
+ */
+const PRACTICE_LAYOUT: TreeLayout = "tree";
+
+/** The first chapter of a practice subject, with the route that opens it. */
+function firstChapterOf(subject: PracticeSubject | undefined) {
+  if (!subject) return null;
+  for (const topic of subject.topics) {
+    const chapter = topic.chapters[0];
+    if (!chapter) continue;
+    const href =
+      subject.section === "Quant"
+        ? `/cat-prep/practice/quant/${topic.slug}/${chapter.slug}`
+        : subject.section === "DILR"
+          ? `/cat-prep/practice/dilr/${chapter.slug}/1`
+          : chapter.slug === RC_CHAPTER_SLUG
+            ? `/cat-prep/practice/varc/${RC_CHAPTER_SLUG}/1`
+            : `/cat-prep/practice/varc/${chapter.slug}`;
+    return { name: chapter.name, questionCount: chapter.questionCount, href };
+  }
+  return null;
+}
 
 export default function RoadmapContent({
   subjects,
@@ -75,25 +113,21 @@ export default function RoadmapContent({
   // tracks the "URL-active" topic for replaceState when no subtopic panel is open
   const [activeTopicId, setActiveTopicId] = useState<number | null>(initialExpandedTopicId);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [mode] = useState<Mode>(initialMode);
+  // Never setState-d: this is a per-route constant, not state.
+  const mode = initialMode;
   const [openPracticeTopics, setOpenPracticeTopics] = useState<Record<string, boolean>>({});
-  const [pyqPapers, setPyqPapers] = useState<PyqPaperSummary[] | null>(initialPapers ?? null);
-  // ref-based guard prevents duplicate fetches without a synchronous setState in the effect body
-  const pyqFetchStarted = useRef(initialPapers != null);
+  /*
+   * Papers are server-rendered. There used to be a client fetch of /api/pyq/papers behind a
+   * ref guard, but the only route that renders this mode awaits the papers and passes them,
+   * so the guard was always true and the fetch never ran. The "Loading papers" branch and
+   * its catch were unreachable with it.
+   */
+  const pyqPapers = initialPapers ?? [];
 
   const { progress, isLoggedIn } = useProgressContext();
   const { isOpen, toggle } = useTopicExpandState(subjects, initialExpandedTopicId);
   const practiceMastery = usePracticeMasterySummary();
   const pyqSolved = usePyqSolvedSummary(mode === "pyq");
-
-  useEffect(() => {
-    if (mode !== "pyq" || pyqFetchStarted.current) return;
-    pyqFetchStarted.current = true;
-    fetch("/api/pyq/papers")
-      .then((r) => r.json())
-      .then((data: PyqPaperSummary[]) => setPyqPapers(data))
-      .catch(() => setPyqPapers([]));
-  }, [mode]);
 
   const handleSelectNode = useCallback(
     (node: Node) => {
@@ -137,6 +171,45 @@ export default function RoadmapContent({
     window.history.replaceState(null, "", url);
   }, [mode, selected, activeTopicId, allTopics]);
 
+  /*
+   * The route builds itself as it is scrolled into view. The reset key re-observes when
+   * the list remounts under a new subject, which it does on every tab switch — without
+   * it the new subject would inherit the previous one as a set of unobserved rows and
+   * never animate.
+   */
+  useScrollReveal({
+    selector: ROW_SELECTOR,
+    resetKey: mode + ":" + activeSubjectId,
+  });
+
+  /*
+   * The tabs sit above both Learn and Practice and have to measure whichever surface they
+   * are on. Learn counts syllabus subtopics marked complete; Practice counts units — a
+   * Quant chapter, a DILR set, an RC passage — fully attempted.
+   */
+  const subjectPercent = useCallback(
+    (subject: Node): number => {
+      if (mode === "practice") {
+        const section = getPracticeSubject(subject.id)?.section;
+        const tally = section ? practiceMastery.bySection[section] : undefined;
+        if (!tally || tally.total === 0) return 0;
+        return Math.round((tally.done / tally.total) * 100);
+      }
+      const subs = (subject.children ?? []).flatMap((t) => t.children ?? []);
+      if (subs.length === 0) return 0;
+      const read = subs.filter(
+        (n) => (progress[n.id] ?? ProgressStatus.NOT_STARTED) === ProgressStatus.COMPLETED
+      ).length;
+      return Math.round((read / subs.length) * 100);
+    },
+    [mode, practiceMastery, progress]
+  );
+
+  const practiceSubject = getPracticeSubject(activeSubjectId);
+
+  /** The first chapter of the active practice subject, for the first-run prompt. */
+  const firstPracticeChapter = firstChapterOf(practiceSubject);
+
   const activeSubject = subjects.find((s) => s.id === activeSubjectId);
   const meta = SUBJECT_META[activeSubjectId];
 
@@ -148,74 +221,40 @@ export default function RoadmapContent({
     return { totalSubs: allSubs.length, doneSubs: done };
   }, [subjects, progress]);
 
+  // First subtopic of the active subject, in order_index order — the roadmap's own idea of
+  // "the beginning", not merely the first element in the file.
+  const firstSubtopic = useMemo(() => {
+    const topics = [...(activeSubject?.children ?? [])].sort(
+      (a, b) => a.order_index - b.order_index
+    );
+    for (const topic of topics) {
+      const subs = [...(topic.children ?? [])].sort((a, b) => a.order_index - b.order_index);
+      if (subs.length > 0) return subs[0];
+    }
+    return null;
+  }, [activeSubject]);
+
+  const lessonCounts = useMemo(() => {
+    const counts: Record<number, number> = {};
+    for (const r of allResources) {
+      counts[r.parent_id] = (counts[r.parent_id] ?? 0) + (r.items?.length ?? 1);
+    }
+    return counts;
+  }, [allResources]);
+
   const faqSlice = allFaqs.slice(0, 3);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--paper)" }}>
       <Header />
 
-      {/* Page hero */}
-      <div
-        style={{
-          background: "linear-gradient(160deg, #EEF2FF 0%, #F0FDFA 100%)",
-          padding: "36px 24px 40px",
-        }}
-      >
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div className="font-semibold mb-1" style={{ fontSize: 12, color: "#94A3B8", letterSpacing: "0.5px" }}>
-            CAT
-          </div>
-          <h1
-            className="font-extrabold text-trust-navy"
-            style={{ fontSize: "clamp(24px,4vw,36px)", margin: "0 0 6px", letterSpacing: "-0.5px" }}
-          >
-            {mode === "learn"
-              ? "CAT Preparation Roadmap"
-              : mode === "practice"
-              ? "CAT Practice"
-              : mode === "daily-dose"
-              ? "Your Daily Dose"
-              : "CAT Previous Year Papers"}
-          </h1>
-          <p style={{ fontSize: 15, color: "#64748B", margin: "0 0 16px" }}>
-            {mode === "learn"
-              ? "Follow structured learning paths across all three sections"
-              : mode === "practice"
-              ? "Topic-wise practice questions across VARC, DILR and Quant"
-              : mode === "daily-dose"
-              ? "One essay, one challenge — a small daily habit that compounds."
-              : "Every official CAT paper from 1990 to 2025, in one place."}
-          </p>
-
-          {meta && activeSubject && <RoadmapNav />}
-
-          {/* Overall progress bar — contextual to the active mode */}
-          {mode === "daily-dose" ? (
-            <DailyDoseStreakBanner />
-          ) : mode === "learn" ? (
-            <ModeProgressBar
-              current={doneSubs}
-              total={totalSubs}
-              label="subtopics"
-              infoText="Counts subtopics you've marked complete in Learn mode."
-            />
-          ) : mode === "practice" ? (
-            <ModeProgressBar
-              current={practiceMastery.done}
-              total={practiceMastery.total}
-              label="subtopics practiced"
-              infoText="A subtopic counts once you've attempted every question in it — 20 for a Quant chapter, 4 for a DILR set or RC passage."
-            />
-          ) : (
-            <ModeProgressBar
-              current={pyqSolved.solved}
-              total={pyqSolved.target}
-              label="PYQ solved"
-              infoText="~20 official questions gives solid hands-on exposure to the real CAT format. Both Practice and Mock Test answers count."
-            />
-          )}
-        </div>
-      </div>
+      <RoadmapHero
+        mode={mode}
+        showNav={Boolean(meta && activeSubject)}
+        learn={{ done: doneSubs, total: totalSubs }}
+        practice={{ done: practiceMastery.done, total: practiceMastery.total }}
+        pyq={{ solved: pyqSolved.solved, target: pyqSolved.target }}
+      />
 
       {/* Main content */}
       <div
@@ -227,6 +266,63 @@ export default function RoadmapContent({
           <ContinueLearning subjects={subjects} progress={progress} onSelectNode={handleSelectNode} />
         )}
 
+        {/*
+          First-run guidance. A visitor with no progress previously landed on eleven
+          collapsed rows and a 0/61 bar, with nothing indicating where to begin — the most
+          common thing a new reader needs and the one thing the page did not say. It
+          disappears the moment they have ticked anything, so it never nags a returning user.
+        */}
+        {mode === "learn" && doneSubs === 0 && firstSubtopic && (
+          <div className="start-here">
+            <div>
+              <p className="ed-kicker" style={{ margin: "0 0 8px" }}>
+                New here
+              </p>
+              <p className="display start-here__title">
+                Start with {firstSubtopic.title}
+              </p>
+              <p className="start-here__sub">
+                The syllabus is ordered, so working top to bottom is a reasonable plan. You
+                do not need an account to read anything.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="ed-btn"
+              data-weight="primary"
+              onClick={() => handleSelectNode(firstSubtopic)}
+            >
+              Open it
+            </button>
+          </div>
+        )}
+
+        {/*
+          The same first-run guidance Learn gets, on the same condition. Practice had none:
+          a visitor arriving with nothing attempted met collapsed rows and a 0/95 bar, and
+          on DILR and VARC the whole surface is a single collapsed row whose label repeats
+          the tab they just pressed.
+        */}
+        {mode === "practice" && practiceMastery.done === 0 && firstPracticeChapter && (
+          <div className="start-here">
+            <div>
+              <p className="ed-kicker" style={{ margin: "0 0 8px" }}>
+                New here
+              </p>
+              <p className="display start-here__title">
+                Start with {firstPracticeChapter.name}
+              </p>
+              <p className="start-here__sub">
+                {firstPracticeChapter.questionCount} questions, with the answer and a worked
+                explanation after each one. Nothing here needs an account.
+              </p>
+            </div>
+            <Link className="ed-btn" data-weight="primary" href={firstPracticeChapter.href}>
+              Open it
+            </Link>
+          </div>
+        )}
+
         {/* Daily Dose promo — surfaces the section from the Learn home */}
         {mode === "learn" && <DailyDoseCard />}
 
@@ -235,14 +331,13 @@ export default function RoadmapContent({
 
         {/* Subject tabs — hidden in PYQ & Daily Dose (not organized by subject) */}
         {mode !== "pyq" && mode !== "daily-dose" && (
-          <div className="flex gap-2.5 mb-7 flex-wrap">
+          <div className="subject-tabs">
             {subjects.map((subject) => {
               const subMeta = SUBJECT_META[subject.id];
               if (!subMeta) return null;
               return (
                 <SubjectTab
                   key={subject.id}
-                  subject={subject}
                   isActive={activeSubjectId === subject.id}
                   onClick={() => {
                     setActiveSubjectId(subject.id);
@@ -250,7 +345,8 @@ export default function RoadmapContent({
                     setActiveTopicId(null);
                     trackEvent("subject_tab_changed", { subject: subMeta.abbr });
                   }}
-                  progress={progress}
+                  percent={subjectPercent(subject)}
+                  measure={mode === "practice" ? "practised" : "read"}
                   meta={subMeta}
                 />
               );
@@ -263,9 +359,7 @@ export default function RoadmapContent({
           {mode === "daily-dose" ? (
             <DailyDoseSection />
           ) : mode === "pyq" ? (
-            pyqPapers === null ? (
-              <p style={{ color: "#94A3B8", fontSize: 14 }}>Loading papers…</p>
-            ) : (
+            (
               <>
                 {/* Stat strip */}
                 <div
@@ -273,61 +367,47 @@ export default function RoadmapContent({
                   style={{
                     marginBottom: 24,
                     paddingBottom: 20,
-                    borderBottom: "1px solid #E2E8F0",
+                    borderBottom: "1px solid var(--rule)",
                   }}
                 >
                   {[
                     { value: pyqPapers.length, label: "past papers" },
-                    { value: "1990–2025", label: "years covered" },
-                    { value: "VARC · DILR · QA", label: "sections per paper" },
+                    // Was the literal "1990–2025" labelled "years covered", which claimed 36
+                    // years for a set holding 24 — 1992–1995 and 2009–2016 have no paper. Derived
+                    // now, so it also cannot go stale the day a 2026 paper lands.
+                    { value: PYQ_YEARS_COVERED.length, label: "exam years" },
                   ].map((s) => (
                     <div key={s.label}>
-                      <div className="font-extrabold text-trust-navy" style={{ fontSize: 22, lineHeight: 1 }}>
+                      <div className="font-extrabold" style={{ fontSize: 22, lineHeight: 1 }}>
                         {s.value}
                       </div>
-                      <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 3 }}>{s.label}</div>
+                      <div style={{ fontSize: 12, color: "var(--ink-faint)", marginTop: 3 }}>{s.label}</div>
                     </div>
                   ))}
                 </div>
 
-                {/* Mode explanation cards */}
-                <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
-                  <div
-                    style={{ flex: 1, minWidth: 200, background: "#EEF2FF", borderRadius: 12, padding: "14px 16px" }}
-                  >
-                    <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 4 }}>
-                      Practice mode
-                    </div>
-                    <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.5 }}>
-                      Work through a paper at your own pace. Each question reveals the answer and explanation after
-                      you respond — good for targeted revision.
-                    </p>
-                  </div>
-                  <div
-                    style={{ flex: 1, minWidth: 200, background: "#F0FDFA", borderRadius: 12, padding: "14px 16px" }}
-                  >
-                    <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 4 }}>
-                      Mock test mode
-                    </div>
-                    <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.5 }}>
-                      Sit the full paper under timed exam conditions — three sections (VARC → DILR → QA), no
-                      peeking at answers until the end. One attempt per paper.
-                    </p>
-                  </div>
-                </div>
+                {/*
+                  Two cards used to sit here explaining, in two four-line paragraphs, exactly
+                  what the two controls on every row already say. One line does it, and the
+                  list starts higher up the page for it.
+                */}
+                <p className="pyq-modes">
+                  Open a paper to work through it at your own pace with answers and
+                  explanations, or sit it as a timed mock under exam conditions.
+                </p>
 
                 {/* Paper list */}
-                <PyqPapersList papers={pyqPapers} />
+                <PyqPapersList papers={pyqPapers} solvedByPaper={pyqSolved.byPaper} />
 
                 {/* Why solve section */}
-                <div style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid #E2E8F0" }}>
+                <div style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid var(--rule)" }}>
                   <h2
-                    className="font-extrabold text-trust-navy"
+                    className="font-extrabold"
                     style={{ fontSize: 20, margin: "0 0 8px", letterSpacing: "-0.3px" }}
                   >
                     Why solve CAT previous year papers?
                   </h2>
-                  <p style={{ fontSize: 14, color: "#64748B", margin: "0 0 24px", lineHeight: 1.6 }}>
+                  <p style={{ fontSize: 14, color: "var(--ink-soft)", margin: "0 0 24px", lineHeight: 1.6 }}>
                     Coaching material prepares you for the syllabus. PYQs prepare you for the exam. There is a
                     difference — and most toppers credit solving past papers as the single highest-leverage activity
                     in their preparation.
@@ -360,16 +440,15 @@ export default function RoadmapContent({
                       <div
                         key={item.title}
                         style={{
-                          background: "#F8FAFC",
-                          borderRadius: 12,
+                          background: "var(--paper-sunk)",
                           padding: "16px 16px",
-                          borderLeft: "3px solid #14B8A6",
+                          borderLeft: "3px solid var(--accent)",
                         }}
                       >
-                        <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 6 }}>
+                        <div className="font-bold" style={{ fontSize: 13, marginBottom: 6 }}>
                           {item.title}
                         </div>
-                        <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
+                        <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
                       </div>
                     ))}
                   </div>
@@ -377,14 +456,19 @@ export default function RoadmapContent({
               </>
             )
           ) : mode === "learn" ? (
-            <div>
+            // Keyed on the subject so switching tabs remounts the list and the crossfade
+            // replays — otherwise the rows swap contents in place with no transition.
+            <div className="topic-list" data-layout={TREE_LAYOUT} key={activeSubjectId}>
               {activeSubject?.children
                 ?.slice()
                 .sort((a, b) => a.order_index - b.order_index)
-                .map((topic) => (
+                .map((topic, ti, arr) => (
                   <TopicRow
                     key={topic.id}
                     topic={topic}
+                    lessonCounts={lessonCounts}
+                    station={ti + 1}
+                    isLastTopic={ti === arr.length - 1}
                     isOpen={isOpen(topic.id)}
                     onToggle={() => {
                       const willClose = isOpen(topic.id);
@@ -407,20 +491,20 @@ export default function RoadmapContent({
                     }}
                     selectedId={selected?.id ?? null}
                     progress={progress}
-                    accentColor={meta?.color ?? "#1E3A5F"}
-                    chipColor={meta?.chip ?? "#566B87"}
                   />
                 ))}
             </div>
+          ) : !practiceSubject ? (
+            <p className="ed-empty">No practice sets for this subject yet.</p>
           ) : (
-            <div>
-              {getPracticeSubject(activeSubjectId)?.topics.map((topic) => (
+            <div className="topic-list" data-layout={PRACTICE_LAYOUT} key={activeSubjectId}>
+              {practiceSubject.topics.map((topic, ti) => (
                 <PracticeTopicRow
                   key={topic.slug}
+                  index={ti}
                   topic={topic}
-                  section={meta?.abbr === "QA" ? "Quant" : meta?.abbr ?? "Quant"}
-                  accentColor={meta?.color ?? "#1E3A5F"}
-                  chipColor={meta?.chip ?? "#566B87"}
+                  summary={practiceMastery}
+                  section={practiceSubject.section}
                   isOpen={openPracticeTopics[topic.slug] ?? false}
                   onToggle={() =>
                     setOpenPracticeTopics((prev) => ({
@@ -431,7 +515,7 @@ export default function RoadmapContent({
                 />
               ))}
               {!getPracticeSubject(activeSubjectId) && (
-                <p style={{ color: "#94A3B8", fontSize: 14, marginTop: 8 }}>
+                <p style={{ color: "var(--ink-faint)", fontSize: 14, marginTop: 8 }}>
                   Practice questions coming soon for this section.
                 </p>
               )}
@@ -441,11 +525,10 @@ export default function RoadmapContent({
 
         {/* Community feedback */}
         <div
+          className="ed-invert"
           style={{
             marginTop: 48,
-            borderRadius: 16,
-            background: "linear-gradient(135deg, #1E3A5F 0%, #0F766E 100%)",
-            padding: "28px 28px",
+            padding: "28px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -454,10 +537,17 @@ export default function RoadmapContent({
           }}
         >
           <div>
-            <p className="font-extrabold" style={{ fontSize: 18, color: "#fff", margin: "0 0 4px" }}>
+            <p className="display" style={{ fontSize: 22, color: "var(--invert-ink)", margin: "0 0 6px" }}>
               Got feedback or found an issue?
             </p>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", margin: 0, lineHeight: 1.6 }}>
+            <p
+              style={{
+                fontSize: 15,
+                color: "rgba(255,255,255,0.7)",
+                margin: 0,
+                lineHeight: 1.6,
+              }}
+            >
               Share what&apos;s working, what&apos;s broken, or what you wish existed.
             </p>
           </div>
@@ -465,73 +555,83 @@ export default function RoadmapContent({
             href="https://t.me/studynaksha"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold flex-shrink-0"
-            style={{
-              display: "inline-block",
-              padding: "11px 22px",
-              borderRadius: 8,
-              background: "#fff",
-              color: "#1E3A5F",
-              fontSize: 14,
-              textDecoration: "none",
-            }}
+            className="ed-btn"
+            style={{ background: "var(--accent-bright)", color: "var(--on-accent)", flexShrink: 0 }}
           >
             Join on Telegram →
           </a>
         </div>
 
         {/* FAQ */}
-        <div
-          style={{
-            marginTop: 24,
-            padding: "32px 28px",
-            background: "#fff",
-            borderRadius: 16,
-            border: "1.5px solid #E8EAF0",
-          }}
-        >
-          <h3 className="font-extrabold text-trust-navy" style={{ fontSize: 18, margin: "0 0 20px" }}>
-            FAQs about CAT Prep
+        <div style={{ marginTop: 44, borderTop: "3px solid var(--ink)", paddingTop: 18 }}>
+          <p className="ed-kicker" style={{ margin: "0 0 10px" }}>
+            Before you ask
+          </p>
+          <h3 className="display" style={{ fontSize: 28, color: "var(--ink)", margin: "0 0 20px" }}>
+            Questions about CAT preparation
           </h3>
-          <div className="flex flex-col gap-2">
-            {faqSlice.map((faq, i) => (
-              <div
-                key={faq.id}
-                style={{
-                  borderRadius: 10,
-                  border: `1.5px solid ${openFaq === i ? "#14B8A6" : "#E8EAF0"}`,
-                  overflow: "hidden",
-                  transition: "border-color 0.2s",
-                }}
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between text-left gap-3"
-                  style={{ padding: "13px 16px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}
-                >
-                  <span className="font-semibold text-trust-navy" style={{ fontSize: 14 }}>
-                    {faq.question}
-                  </span>
-                  <span
-                    style={{
-                      width: 22, height: 22, borderRadius: 6,
-                      background: openFaq === i ? "#14B8A6" : "#F1F5F9",
-                      color: openFaq === i ? "#fff" : "#94A3B8",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 14, flexShrink: 0, fontWeight: 700,
-                      transition: "all 0.2s",
-                    }}
-                  >
-                    {openFaq === i ? "−" : "+"}
-                  </span>
-                </button>
-                <div className="faq-answer" style={{ maxHeight: openFaq === i ? 200 : 0 }}>
-                  <p style={{ padding: "0 16px 13px", fontSize: 13, color: "#64748B", lineHeight: 1.7, margin: 0 }}>
-                    {faq.answer}
-                  </p>
+          <div>
+            {faqSlice.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div key={faq.id} className="ed-row">
+                  <h4 style={{ margin: 0 }}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "baseline",
+                        justifyContent: "space-between",
+                        gap: 14,
+                        padding: "16px 4px",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        textAlign: "left",
+                        fontSize: 16,
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                      }}
+                    >
+                      <span>{faq.question}</span>
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          flexShrink: 0,
+                          fontSize: 19,
+                          lineHeight: 1,
+                          fontWeight: 400,
+                          color: "var(--ink-faint)",
+                        }}
+                      >
+                        {isOpen ? "−" : "+"}
+                      </span>
+                    </button>
+                  </h4>
+                  {/* Grid collapse: the old max-height 200px cap clipped longer answers. */}
+                  <div className="ed-collapse" data-open={isOpen}>
+                    <div>
+                      <p
+                        style={{
+                          padding: "0 4px 18px",
+                          fontSize: 15,
+                          color: "var(--ink-soft)",
+                          lineHeight: 1.7,
+                          margin: 0,
+                          maxWidth: "68ch",
+                        }}
+                      >
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

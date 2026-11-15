@@ -10,17 +10,16 @@ export default function DailyDoseSection() {
       {/* Intro */}
       <div
         style={{
-          background: "#F0FDFA",
-          borderRadius: 12,
+          background: "var(--paper-sunk)",
           padding: "16px 18px",
           marginBottom: 24,
-          borderLeft: "3px solid #14B8A6",
+          borderLeft: "3px solid var(--accent)",
         }}
       >
-        <p className="font-bold text-trust-navy" style={{ fontSize: 14, margin: "0 0 4px" }}>
+        <p className="font-bold" style={{ fontSize: 14, margin: "0 0 4px" }}>
           Two things a day. That&apos;s it.
         </p>
-        <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.6 }}>
           Read today&apos;s Aeon essay and respond for sharper VARC, then take the timed Daily
           Challenge to keep your problem-solving warm. Do either to keep your streak alive — doing
           both is even better.
@@ -34,14 +33,14 @@ export default function DailyDoseSection() {
       <DailyChallengeCard />
 
       {/* Why a daily habit */}
-      <div style={{ marginTop: 32, paddingTop: 28, borderTop: "1px solid #E2E8F0" }}>
+      <div style={{ marginTop: 32, paddingTop: 28, borderTop: "1px solid var(--rule)" }}>
         <h2
-          className="font-extrabold text-trust-navy"
+          className="font-extrabold"
           style={{ fontSize: 20, margin: "0 0 8px", letterSpacing: "-0.3px" }}
         >
           Why a daily habit beats cramming
         </h2>
-        <p style={{ fontSize: 14, color: "#64748B", margin: "0 0 24px", lineHeight: 1.6 }}>
+        <p style={{ fontSize: 14, color: "var(--ink-soft)", margin: "0 0 24px", lineHeight: 1.6 }}>
           CAT rewards consistency, not bursts. A few focused minutes every day compounds into the
           reading speed, vocabulary, and calculation fluency that decide your percentile.
         </p>
@@ -69,16 +68,15 @@ export default function DailyDoseSection() {
             <div
               key={item.title}
               style={{
-                background: "#F8FAFC",
-                borderRadius: 12,
+                background: "var(--paper-sunk)",
                 padding: "16px 16px",
-                borderLeft: "3px solid #14B8A6",
+                borderLeft: "3px solid var(--accent)",
               }}
             >
-              <div className="font-bold text-trust-navy" style={{ fontSize: 13, marginBottom: 6 }}>
+              <div className="font-bold" style={{ fontSize: 13, marginBottom: 6 }}>
                 {item.title}
               </div>
-              <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
+              <p style={{ fontSize: 13, color: "var(--ink-soft)", margin: 0, lineHeight: 1.55 }}>{item.body}</p>
             </div>
           ))}
         </div>

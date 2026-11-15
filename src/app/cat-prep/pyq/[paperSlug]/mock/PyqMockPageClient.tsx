@@ -13,6 +13,7 @@ import {
 import PyqMockTestView from "./PyqMockTestView";
 import ResultView from "@/app/cat-prep/daily-dose/challenge/components/ResultView";
 import { trackEvent } from "@/app/components/analytics";
+import SignInGate from "@/app/cat-prep/components/SignInGate";
 
 type Props = {
   test: DailyTest;
@@ -105,51 +106,24 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: "#FFFDF8" }}
+        style={{ background: "var(--paper)" }}
       >
-        <p className="text-slate-500 text-sm">Loading…</p>
+        <p className="ed-muted" style={{ fontSize: 15 }}>Loading…</p>
       </div>
     );
   }
 
   if (status === "unauthenticated") {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: "#FFFDF8" }}
-      >
-        <div style={{ maxWidth: 360, textAlign: "center", padding: "32px 24px" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>📝</div>
-          <h2
-            className="font-extrabold text-trust-navy"
-            style={{ fontSize: 22, marginBottom: 8 }}
-          >
-            Sign in to take the mock test
-          </h2>
-          <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
-            Your result is saved to your account so you can review it later. You get one attempt per paper.
-          </p>
-          <button
-            type="button"
-            onClick={handleLogin}
-            className="font-bold text-white w-full"
-            style={{
-              padding: "12px 24px",
-              borderRadius: 10,
-              background: "#1E3A5F",
-              border: "none",
-              fontSize: 15,
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            Login with Google
-          </button>
-          {authError && (
-            <p className="text-red-600 text-xs mt-3">{authError}</p>
-          )}
-        </div>
-      </div>
+      <SignInGate
+        title="Sign in to take the mock test"
+        reason="Your result is saved to your account so you can review it later. You get one attempt per paper."
+        test={test}
+        error={authError}
+        onSignIn={handleLogin}
+        backHref="/cat-prep/pyq"
+        backLabel="Back to past papers"
+      />
     );
   }
 
@@ -173,17 +147,17 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: "#FFFDF8" }}
+        style={{ background: "var(--paper)" }}
       >
         <div style={{ maxWidth: 400, width: "100%", padding: "32px 24px", textAlign: "center" }}>
           <div style={{ fontSize: 44, marginBottom: 16 }}>📝</div>
           <h2
-            className="font-extrabold text-trust-navy"
+            className="font-extrabold text-ink"
             style={{ fontSize: 22, marginBottom: 8 }}
           >
             Resume your mock attempt?
           </h2>
-          <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
+          <p className="text-ink-faint" style={{ fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
             You have an unfinished attempt on this paper. Pick up where you left off, or start
             fresh from the beginning.
           </p>
@@ -191,11 +165,10 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
             <button
               type="button"
               onClick={handleResume}
-              className="font-bold text-white w-full"
+              className="font-bold text-paper w-full"
               style={{
                 padding: "12px 24px",
-                borderRadius: 10,
-                background: "#1E3A5F",
+                background: "var(--ink)",
                 border: "none",
                 fontSize: 15,
                 cursor: "pointer",
@@ -210,10 +183,9 @@ export default function PyqMockPageClient({ test, paperSlug, paperLabel }: Props
               className="font-semibold w-full"
               style={{
                 padding: "12px 24px",
-                borderRadius: 10,
-                background: "#F1F5F9",
-                color: "#64748B",
-                border: "1.5px solid #E2E8F0",
+                background: "var(--paper-sunk)",
+                color: "var(--ink-faint)",
+                border: "1.5px solid var(--rule-firm)",
                 fontSize: 14,
                 cursor: "pointer",
                 fontFamily: "inherit",

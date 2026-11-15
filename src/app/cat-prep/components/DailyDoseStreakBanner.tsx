@@ -1,9 +1,9 @@
-// DailyDoseStreakBanner — shows the signed-in user's current Daily Dose streak + today's status.
+// DailyDoseStreakBanner — the signed-in streak and today's two items, or a way to start one
 "use client";
 
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 
 type StreakData = {
   streak: number;
@@ -16,43 +16,25 @@ type BannerState =
   | { status: "signed-out" }
   | { status: "ready"; data: StreakData };
 
-const WRAP_STYLE = {
-  display: "flex",
-  alignItems: "center",
-  gap: 16,
-  flexWrap: "wrap" as const,
-  background: "#fff",
-  border: "1.5px solid rgba(20,184,166,0.35)",
-  borderRadius: 12,
-  padding: "12px 16px",
-};
-
-function Dot({ done, label }: { done: boolean; label: string }) {
+/**
+ * State reaches a screen reader as a word. This used to be a tick glyph in a filled box
+ * with the same label either way, so "Essay today" was announced identically whether it was
+ * done or not — and the not-done fill was --rule at 1.47:1, below the 3:1 WCAG 1.4.11 asks
+ * of a non-text indicator.
+ */
+function Item({ done, label }: { done: boolean; label: string }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "#64748B" }}>
-      <span
-        style={{
-          width: 16,
-          height: 16,
-          borderRadius: 999,
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 10,
-          fontWeight: 700,
-          background: done ? "#14B8A6" : "#E2E8F0",
-          color: done ? "#fff" : "#94A3B8",
-        }}
-      >
-        {done ? "✓" : ""}
-      </span>
+    <span className="dd-streak__item" data-done={done}>
+      <span className="dd-streak__mark" aria-hidden="true" />
       {label}
+      <span className="ed-sr-only">{done ? ", done" : ", not done yet"}</span>
     </span>
   );
 }
 
 export default function DailyDoseStreakBanner() {
   const [state, setState] = useState<BannerState>({ status: "loading" });
+  const [signInError, setSignInError] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -71,21 +53,41 @@ export default function DailyDoseStreakBanner() {
     return () => unsub();
   }, []);
 
+  const handleSignIn = async () => {
+    setSignInError(false);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch {
+      setSignInError(true);
+    }
+  };
+
   if (state.status === "loading") {
     return (
-      <div className="animate-pulse" style={{ ...WRAP_STYLE, height: 48 }}>
-        <div style={{ width: 140, height: 16, borderRadius: 6, background: "#E2E8F0" }} />
+      <div className="dd-streak" aria-hidden="true">
+        <span className="ed-skeleton" style={{ width: 160, height: 16 }} />
       </div>
     );
   }
 
   if (state.status === "signed-out") {
     return (
-      <div style={WRAP_STYLE}>
-        <span style={{ fontSize: 20 }}>🔥</span>
-        <span style={{ fontSize: 13, color: "#64748B" }}>
-          Sign in to build and track your daily streak.
-        </span>
+      <div className="dd-streak">
+        <p className="dd-streak__prompt">
+          {signInError
+            ? "Could not sign in. Please try again."
+            : "Sign in and today counts as day one."}
+        </p>
+        {/* The whole slot used to be this sentence and nothing else: a instruction to sign
+            in, with no control anywhere near it to do so. */}
+        <button
+          type="button"
+          onClick={handleSignIn}
+          className="ed-btn"
+          data-weight="secondary"
+        >
+          Sign in
+        </button>
       </div>
     );
   }
@@ -93,19 +95,18 @@ export default function DailyDoseStreakBanner() {
   const { streak, essayDoneToday, challengeDoneToday } = state.data;
 
   return (
-    <div style={WRAP_STYLE}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-        <span style={{ fontSize: 20 }}>🔥</span>
-        <span className="font-extrabold text-trust-navy" style={{ fontSize: 22, lineHeight: 1 }}>
-          {streak}
+    <div className="dd-streak">
+      <p className="dd-streak__count">
+        <span className="dd-streak__figure display">{streak}</span>
+        {/* Day zero is a beginning, not a failure, and it is the state every new reader
+            sees first. */}
+        <span className="dd-streak__unit">
+          {streak === 0 ? "days so far — today starts it" : `day${streak === 1 ? "" : "s"} in a row`}
         </span>
-        <span style={{ fontSize: 13, color: "#64748B" }}>
-          day{streak === 1 ? "" : "s"} streak
-        </span>
-      </div>
-      <div style={{ display: "flex", gap: 14, marginLeft: "auto", flexWrap: "wrap" }}>
-        <Dot done={essayDoneToday} label="Essay today" />
-        <Dot done={challengeDoneToday} label="Challenge today" />
+      </p>
+      <div className="dd-streak__items">
+        <Item done={essayDoneToday} label="Essay today" />
+        <Item done={challengeDoneToday} label="Challenge today" />
       </div>
     </div>
   );

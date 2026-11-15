@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+// layout — root layout: fonts, site-wide metadata, analytics and MathJax
+import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
 import { ENV } from "@/config/env";
 import { GoogleAnalytics } from "@/app/components/GoogleAnalytics";
 import { JsonLd } from "@/app/components/JsonLd";
+import ThemeScript from "@/app/components/ThemeScript";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -12,42 +14,62 @@ const jakartaSans = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
 });
 
+// Display face for editorial headings. Google serves this family at weight 400 only —
+// there is no bold cut, which suits large display setting and is why `.display` in
+// globals.css pins font-weight to 400.
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
+  // Preloaded: the home page paints display type above the fold, so the font is on the
+  // critical path for the site's most-linked route.
+  preload: true,
+});
+
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "StudyNaksha",
   url: ENV.SITE_URL,
   description:
-    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+    "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fcf9f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#111823" },
+  ],
 };
 
 export const metadata: Metadata = {
   title: {
-    default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+    default: "StudyNaksha — Free CAT Preparation",
     template: "%s | StudyNaksha",
   },
   description:
-    "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+    "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
   metadataBase: new URL(ENV.SITE_URL),
   openGraph: {
     type: "website",
     siteName: "StudyNaksha",
     locale: "en_IN",
     title: {
-      default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+      default: "StudyNaksha — Free CAT Preparation",
       template: "%s | StudyNaksha",
     },
     description:
-      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+      "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
   },
   twitter: {
     card: "summary_large_image",
     title: {
-      default: "StudyNaksha — Ace your Exams with Interactive Roadmaps",
+      default: "StudyNaksha — Free CAT Preparation",
       template: "%s | StudyNaksha",
     },
     description:
-      "Free structured learning paths, curated resources, and community-driven guidance for CAT and other competitive exam preparation.",
+      "A free, structured route through the CAT: the whole syllabus in order, official past papers with solutions, and practice questions for every chapter. No sign-up needed.",
   },
 };
 
@@ -57,8 +79,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${jakartaSans.variable} antialiased`}>
+    // suppressHydrationWarning: ThemeScript sets data-theme on this element before React
+    // hydrates, so the server markup and the live DOM differ by design on this one node.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body
+        className={`${jakartaSans.variable} ${instrumentSerif.variable} antialiased`}
+      >
         {children}
         <JsonLd data={websiteSchema} />
         <GoogleAnalytics />

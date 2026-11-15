@@ -1,25 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /*
+   * The starter's defaults, which body still reads. They were a fixed white and near-black,
+   * so every element that sets no colour of its own inherited near-black — fine on cream,
+   * invisible on the dark theme. Pointed at the real tokens, which follow the theme.
+   */
+  --background: var(--paper);
+  --foreground: var(--ink);
 
-  /* existing brand tokens */
+  /* Legacy brand fill. 82 usages across the /cat-prep surfaces; retired in U002 Phase 16,
+     which is a visible darkening to --ink rather than a rename. The other nine legacy
+     tokens were removed in Phase 1 — all had zero usages, because the surfaces carry raw
+     hex rather than the utilities the @theme block generated. */
   --trust-navy: #1e3a5f;
-  --trust-blue: #2563eb;
-  --hope-teal: #14b8a6;
-  --warm-gold: #f59e0b;
-  --calm-bg: #f8fafc;
-  --calm-border: #e2e8f0;
-
-  /* new tokens from design handoff */
-  --page-bg: #fffdf8;
-
-  /* shadows */
-  --shadow-card: 0 4px 20px rgba(30, 58, 95, 0.07);
-  --shadow-card-hover: 0 12px 32px rgba(30, 58, 95, 0.1);
-  --shadow-panel: -8px 0 32px rgba(30, 58, 95, 0.1);
-  --shadow-btn-teal: 0 2px 8px rgba(20, 184, 166, 0.35);
 }
 
 @theme inline {
@@ -27,17 +21,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-jakarta);
 
-  /* brand colours */
   --color-trust-navy: var(--trust-navy);
-  --color-trust-blue: var(--trust-blue);
-  --color-hope-teal: var(--hope-teal);
-  --color-warm-gold: var(--warm-gold);
-  --color-calm-bg: var(--calm-bg);
-  --color-calm-border: var(--calm-border);
-  --color-page-bg: var(--page-bg);
-
-  /* colour token aliases */
-  --color-page-bg: var(--page-bg);
 }
 
 body {
@@ -47,44 +31,921 @@ body {
 }
 
 /* =========================================== */
+/* U001 — editorial tokens (home page)          */
+/* Additive. Nothing above this block changes.  */
+/* =========================================== */
+
+:root {
+  /* Ink scale. Darker than --trust-navy, which is a brand fill, not a reading colour. */
+  --ink: #101a2b;
+  --ink-soft: #35425a;
+  /*
+   * Was #6b7589, which is 4.41:1 on --paper and 4.04:1 on --paper-sunk — under the 4.5:1
+   * AA floor for normal text, and it was shipped carrying 12-13px copy. U001's acceptance
+   * criteria claimed AA; --accent-text was checked and this was not. #5a6478 is 5.66:1 and
+   * 5.19:1, and doubles as --inert-text.
+   */
+  --ink-faint: #5a6478;
+
+  /* Rules carry the structure here, so they come in three weights, not one hairline. */
+  --rule: #d7cfbe;
+  --rule-firm: #ada38e;
+
+  /*
+   * Teal is the accent and it is used boldly — fills, numerals, rules — not as a tint.
+   * The old brand teal #14B8A6 is 1.9:1 on cream and fails AA at any size, so it is reserved
+   * for large fills and for type on dark ground; --accent-text is the one that carries
+   * words on paper.
+   */
+  --accent: #0d8b7f;
+  --accent-text: #0a675f;
+  --accent-bright: #2dd4bf;
+
+  /* Default focus ring; dark grounds flip it to --accent-bright by inheritance. */
+  --focus-ring: var(--accent-text);
+
+  /* Warmer than the old near-white, so the paper reads as paper. */
+  --paper: #fcf9f2;
+  --paper-sunk: #f4efe3;
+
+  /*
+   * Semantic status scale (U002).
+   *
+   * No single hex clears AA on both --paper and --ink: a colour readable on one is
+   * readable *because* it sits far from the other. So every semantic is a pair, the same
+   * shape --accent-text / --accent-bright already uses. `-text` carries words on cream,
+   * `-bright` carries words on ink, `-wash` is a tint to fill a field with.
+   *
+   * Every -text value was measured, not picked: each clears 4.5:1 on --paper, on
+   * --paper-sunk AND on its own -wash, so a label stays legible whether its row is plain,
+   * recessed or tinted — and each clears 4.5:1 on white, so it also works as a solid fill.
+   * Every -bright clears 9:1 on --ink.
+   *
+   * Three rules these impose:
+   *  1. White on --accent (#0d8b7f) is 4.19:1 and FAILS. An accent fill carries --ink.
+   *  2. Correctness is never colour-only — every state needs a mark and an accessible name.
+   *  3. --accent never means "correct". Teal on cream sits too close to a success green.
+   */
+  --correct-text: #0f6b3c;
+  --correct-bright: #4ade80;
+  --correct-wash: #e8f1e4;
+
+  --wrong-text: #b3261e;
+  --wrong-bright: #fca5a5;
+  --wrong-wash: #fbeae4;
+
+  --caution-text: #8a5200;
+  --caution-bright: #fbbf24;
+  --caution-wash: #faf0da;
+
+  --review-text: #5b2cc2;
+  --review-bright: #c4b5fd;
+  --review-wash: #ede8f9;
+
+  /* "No state yet" and "de-emphasised" are the same idea, so inert aliases the ink scale
+     rather than duplicating a literal that could drift away from it. */
+  --inert-text: var(--ink-faint);
+  --inert-bright: rgba(255, 255, 255, 0.62);
+  --inert-wash: var(--paper-sunk);
+
+  /*
+   * A third rule weight, for a boundary that CONVEYS state rather than decorating.
+   * --rule is 1.47:1 and --rule-firm 2.38:1 — both under the 3:1 WCAG 1.4.11 requires of a
+   * non-text indicator, which is fine for a row separator and not fine as the "unanswered"
+   * border on a palette cell where the border IS the state. This one is 3.60:1.
+   */
+  --rule-hard: #8c8270;
+}
+
+@theme inline {
+  --font-display: var(--font-instrument);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-rule-firm: var(--rule-firm);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-accent-bright: var(--accent-bright);
+  --color-paper: var(--paper);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-rule-hard: var(--rule-hard);
+  --color-correct-text: var(--correct-text);
+  --color-correct-bright: var(--correct-bright);
+  --color-correct-wash: var(--correct-wash);
+  --color-wrong-text: var(--wrong-text);
+  --color-wrong-bright: var(--wrong-bright);
+  --color-wrong-wash: var(--wrong-wash);
+  --color-caution-text: var(--caution-text);
+  --color-caution-bright: var(--caution-bright);
+  --color-caution-wash: var(--caution-wash);
+  --color-review-text: var(--review-text);
+  --color-review-bright: var(--review-bright);
+  --color-review-wash: var(--review-wash);
+  --color-inert-text: var(--inert-text);
+}
+
+/* ---- Kicker: small-caps label with a rule, the newspaper standfirst idiom ---- */
+.ed-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.ed-kicker::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--rule-firm);
+}
+
+/* ---- Primary action: solid accent with real presence ---- */
+.ed-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: var(--on-fill);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 30px;
+  text-decoration: none;
+  box-shadow: 4px 4px 0 var(--accent);
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
+}
+@media (hover: hover) {
+  .ed-cta:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--accent);
+  }
+}
+.ed-cta:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+
+.ed-link-strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent-bright);
+  padding-bottom: 2px;
+  transition: border-color 0.14s ease;
+}
+@media (hover: hover) {
+  .ed-link-strong:hover {
+    border-bottom-color: var(--accent-text);
+  }
+}
+
+/* ---- Inverted band, for rhythm. Solid colour, never a gradient. ---- */
+.ed-invert {
+  background: var(--invert-bg);
+  color: var(--invert-ink);
+}
+.ed-invert .ed-kicker {
+  color: var(--accent-bright);
+}
+.ed-invert .ed-kicker::after {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Display face: Instrument Serif ships weight 400 only, which is the editorial setting
+   anyway — large serif at regular weight. Never apply font-weight above 400 to it or the
+   browser synthesises a bold and the page looks like a word processor. */
+.display {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.04;
+}
+
+/*
+ * ---- Focus ring, site-wide (U002 phase 3) ----
+ *
+ * The U001 version of this was scoped to .ed-page and said in its own comment that doing it
+ * properly "deserves its own spec". This is that. `.ed-page` sits on exactly one element, so
+ * until now all 77 prerendered roadmap pages had no focus indicator on anything.
+ *
+ * `:where()` contributes ZERO specificity, so this reaches all 65 buttons under
+ * src/app/cat-prep/ without editing one of them — and any component that wants a different
+ * ring still wins by default, with no !important anywhere.
+ *
+ * The colour is a variable rather than a literal so a dark container can flip it by
+ * inheritance instead of every control on dark ground needing its own rule.
+ *
+ * Offset is 2px, not U001's 3px: `overflow: hidden` ancestors clip an outline
+ * (RoadmapContent.tsx:524, DailyChallengeCard.tsx:245 both set it), and 32px palette cells
+ * at 6px gaps collide at 3px. No border-radius here — an outline already follows the
+ * element's own corner radius, and forcing one would reshape square controls on focus.
+ */
+:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Dark ground: anything inside these inherits the bright ring instead. --accent-text is
+   6.40:1 on cream but only 1.6:1 on --ink, so the flip is legibility, not taste. */
+.ed-invert,
+.site-footer,
+[data-ground="dark"] {
+  --focus-ring: var(--accent-bright);
+}
+
+/* Editorial row: a rule-separated list, not a card grid. On hover the row warms and an
+   accent bar slides in on the left — movement without a card lifting off the page. */
+.ed-row {
+  border-top: 1px solid var(--rule-firm);
+  box-shadow: inset 0 0 0 0 var(--accent);
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.18s ease;
+}
+.ed-row:last-child {
+  border-bottom: 1px solid var(--rule-firm);
+}
+@media (hover: hover) {
+  .ed-row:hover {
+    background-color: var(--paper-sunk);
+    box-shadow: inset 4px 0 0 0 var(--accent);
+  }
+}
+
+.ed-arrow {
+  transition: transform 0.15s ease;
+}
+@media (hover: hover) {
+  .ed-row:hover .ed-arrow {
+    transform: translateX(3px);
+  }
+}
+
+/* Accordion that cannot clip its own content — the old max-height: 200px cap silently
+   truncated the longest answer at narrow widths. */
+.ed-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s ease;
+}
+.ed-collapse[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.ed-collapse > div {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-row,
+  .ed-arrow,
+  .ed-collapse {
+    transition: none;
+  }
+}
+
+/*
+ * Paper grain. A tiny SVG turbulence tile at very low opacity, so the cream reads as
+ * printed stock rather than a flat fill. Fixed attachment means it does not swim while
+ * scrolling, and pointer-events are off so it never intercepts a click.
+ */
+.ed-page {
+  /* Contains the grain's negative z-index so it cannot slip behind the page background,
+     without needing to touch a single child. */
+  isolation: isolate;
+}
+.ed-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /*
+   * Behind the content, not in front of it. This replaces a `.ed-page > *` rule that set
+   * `position: relative; z-index: 1` on every direct child — which, being unlayered, beat
+   * Tailwind v4's @layer utilities and would have clamped DetailsPanel (z-[199]) and
+   * SignInModal (z-[201]) to z-index 1, behind the sticky header, the moment `ed-page`
+   * was added to a /cat-prep root. Children now keep their own stacking entirely.
+   */
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Page measure. 16px gutters at phone width, per the spec's 360px requirement. */
+.ed-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+@media (min-width: 768px) {
+  .ed-shell {
+    padding: 0 32px;
+  }
+}
+
+/* The hero is asymmetric on desktop and a single column on a phone, where the roadmap
+   specimen reads better below the claim than squeezed beside it. */
+@media (max-width: 899px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/*
+ * Surface rows. Four children: number, body, meta, arrow.
+ * Phone: two columns, with meta and arrow placed explicitly into the body column so they
+ * stack under it rather than falling into the narrow number column.
+ * Desktop: four columns on one baseline, contents-page style.
+ */
+.ed-row-grid {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0 16px;
+  align-items: start;
+  padding: 20px 0;
+}
+.ed-row-grid > :nth-child(3),
+.ed-row-grid > :nth-child(4) {
+  grid-column: 2;
+}
+@media (min-width: 900px) {
+  .ed-row-grid {
+    grid-template-columns: 2.6rem minmax(0, 1fr) 15rem 1.5rem;
+    gap: 0 24px;
+    align-items: baseline;
+  }
+  .ed-row-grid > :nth-child(3) {
+    grid-column: 3;
+  }
+  .ed-row-grid > :nth-child(4) {
+    grid-column: 4;
+    text-align: right;
+  }
+}
+
+/* Masthead nav: on a narrow phone only the highest-intent link survives, rather than
+   three links wrapping under the logo. */
+@media (max-width: 519px) {
+  .home-nav-link:not(:first-child) {
+    display: none;
+  }
+}
+
+/*
+ * ---- Scroll reveal ----
+ * The hidden state is scoped to [data-anim="on"], a flag SectionTracker sets on mount.
+ * Without JavaScript, or before hydration, the attribute is absent and every element
+ * renders normally — so a failed script can never leave the page blank.
+ * --reveal-delay staggers rows within a section.
+ */
+/* One easing for everything, so the varied motions still feel like one hand. */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. Default — rise and fade. For blocks of prose. */
+[data-anim="on"] .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+[data-anim="on"] .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/*
+ * 1b. Fade only — for a block that contains an anchor target. .reveal translates 28px, and
+ * a browser scrolling to an id inside it computes the position while that translate is
+ * still applied; the reveal then fires and the heading jumps 28px up, landing it under the
+ * sticky chrome. Nothing moves here, so the anchor lands where scroll-margin-top says.
+ */
+[data-anim="on"] .reveal-fade {
+  opacity: 0;
+}
+[data-anim="on"] .reveal-fade.is-visible {
+  opacity: 1;
+  transition: opacity 0.7s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* 2. Rule wipe — a rule draws itself across rather than fading in. */
+[data-anim="on"] .reveal-rule {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+[data-anim="on"] .reveal-rule.is-visible {
+  transform: scaleX(1);
+  transition: transform 0.75s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* 3. Vertical bar — the accent bar beside a pull-quote grows downward. */
+[data-anim="on"] .reveal-bar {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+[data-anim="on"] .reveal-bar.is-visible {
+  transform: scaleY(1);
+  transition: transform 0.8s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* 4. Slide from the left — for list rows, so they enter along the reading direction. */
+[data-anim="on"] .reveal-left {
+  opacity: 0;
+  transform: translateX(-26px);
+}
+[data-anim="on"] .reveal-left.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.65s var(--ease-out-expo),
+    transform 0.65s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/*
+ * 5. Mask reveal — the line rises from behind its own edge, as type does in print titling.
+ * Needs the two-element structure: .reveal-mask wraps, .reveal-mask__line moves.
+ */
+.reveal-mask {
+  display: block;
+  overflow: hidden;
+  /* Descenders would otherwise be clipped by the overflow. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+[data-anim="on"] .reveal-mask .reveal-mask__line {
+  display: block;
+  transform: translateY(105%);
+}
+[data-anim="on"] .reveal-mask.is-visible .reveal-mask__line {
+  transform: none;
+  transition: transform 0.85s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* 6. Pop — for the single primary action. Scale plus its offset shadow arriving. */
+[data-anim="on"] .reveal-pop {
+  opacity: 0;
+  transform: scale(0.94) translateY(10px);
+}
+[data-anim="on"] .reveal-pop.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.5s var(--ease-out-expo),
+    transform 0.6s cubic-bezier(0.34, 1.4, 0.5, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* 7. Counting figures hold their width while the digits run, so nothing reflows. */
+.countup {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-anim="on"] .reveal,
+  [data-anim="on"] .reveal-fade,
+  [data-anim="on"] .reveal-rule,
+  [data-anim="on"] .reveal-bar,
+  [data-anim="on"] .reveal-left,
+  [data-anim="on"] .reveal-pop,
+  [data-anim="on"] .reveal-mask .reveal-mask__line {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Printing never scrolls, so the observer never fires for anything below the fold and the
+   page would print blank from the second section down. */
+@media print {
+  [data-anim="on"] .reveal,
+  [data-anim="on"] .reveal-fade,
+  [data-anim="on"] .reveal-rule,
+  [data-anim="on"] .reveal-bar,
+  [data-anim="on"] .reveal-left,
+  [data-anim="on"] .reveal-pop,
+  [data-anim="on"] .reveal-mask .reveal-mask__line {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---- Hero plate: an openable roadmap, not a picture of one ---- */
+.plate-tab {
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 5px 8px;
+  border: 1px solid var(--invert-rule);
+  background: none;
+  color: var(--invert-ink-soft);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+.plate-tab[data-active="true"] {
+  color: var(--on-accent);
+  background: var(--accent-bright);
+  border-color: var(--accent-bright);
+}
+@media (hover: hover) {
+  .plate-tab:not([data-active="true"]):hover {
+    color: var(--accent-bright);
+    border-color: var(--accent-bright);
+  }
+}
+/* Switching section cross-fades the panel rather than snapping it. */
+.plate-body {
+  animation: plateSwap 0.4s var(--ease-out-expo) both;
+}
+@keyframes plateSwap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plate-body {
+    animation: none;
+  }
+}
+
+.plate-topic {
+  border-top: 1px solid var(--rule);
+}
+.plate-topic:first-child {
+  border-top: none;
+}
+
+.plate-topic__summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+/* Safari paints its own disclosure triangle without this. */
+.plate-topic__summary::-webkit-details-marker {
+  display: none;
+}
+
+.plate-topic__chevron {
+  display: inline-flex;
+  color: var(--accent);
+  transition: transform 0.22s var(--ease-out-expo);
+}
+.plate-topic[open] .plate-topic__chevron {
+  transform: rotate(90deg);
+}
+
+.plate-topic__title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.plate-topic__count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+@media (hover: hover) {
+  .plate-topic__summary:hover .plate-topic__title {
+    color: var(--accent-text);
+  }
+}
+.plate-topic__list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 2px 0 0 13px;
+  border-left: 2px solid var(--accent-bright);
+}
+.plate-topic[open] .plate-topic__list {
+  animation: plateOpen 0.3s var(--ease-out-expo) both;
+}
+@keyframes plateOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.plate-topic__link,
+.plate-topic__more {
+  display: block;
+  padding: 3px 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition:
+    color 0.14s ease,
+    transform 0.14s ease;
+}
+.plate-topic__more {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+@media (hover: hover) {
+  .plate-topic__link:hover,
+  .plate-topic__more:hover {
+    color: var(--accent-text);
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plate-topic__chevron,
+  .plate-topic[open] .plate-topic__list,
+  .plate-topic__link,
+  .plate-topic__more {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ---- Reading progress: a hairline that fills as the page is read ---- */
+.read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform: scaleX(var(--read-progress, 0));
+  transform-origin: left;
+  background: var(--accent-bright);
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* ---- Shared site header ---- */
+/*
+ * The bar and its rule are tokens because --header-h has to equal the masthead's real
+ * layout box, and it did not: the token said 70px while the element measured 73px, so
+ * everything pinned under the masthead sat 3px behind its own ink rule. Derived now, so
+ * changing the bar changes the offset with it.
+ */
+:root {
+  --header-bar: 70px;
+  --header-rule: 3px;
+  --header-h: calc(var(--header-bar) + var(--header-rule));
+  /*
+   * The surface switcher pins below the masthead, so anything scrolled to by an anchor has
+   * to clear BOTH. The first attempt at this cleared only the header and landed every year
+   * heading on the past-papers page behind the switcher. Locked to the bar via min-height
+   * below, so the token and the element cannot drift the way --header-h did.
+   */
+  --navbar-h: 46px;
+  --chrome-h: calc(var(--header-h) + var(--navbar-h));
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--paper);
+  /* Ink rule over a teal rule: the newspaper double-rule, matched by the footer's top. */
+  border-bottom: var(--header-rule) solid var(--ink);
+  box-shadow: 0 3px 0 var(--accent);
+}
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--header-bar);
+}
+
+/*
+ * Anything that pins below the masthead uses this rather than its own number. Five places
+ * had five different hardcoded offsets — 64, 70, 72 — and none of them was 73.
+ */
+.sticky-under-header {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 40;
+  background: var(--paper);
+}
+
+.site-header__auth {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--ink);
+  background: none;
+  border: 1.5px solid var(--rule-firm);
+  border-radius: 0;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition:
+    border-color 0.14s ease,
+    color 0.14s ease;
+}
+.site-header__auth:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (hover: hover) {
+  .site-header__auth:not(:disabled):hover {
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+}
+/* ---- Shared site footer ---- */
+.site-footer {
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.72);
+  /* Inverted echo of the masthead's double rule. */
+  border-top: 3px solid var(--accent);
+}
+
+.site-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+  padding-bottom: 40px;
+}
+@media (min-width: 760px) {
+  .site-footer__top {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 3fr);
+    gap: 48px;
+  }
+}
+
+.site-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.site-footer__blurb {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 20px;
+  max-width: 42ch;
+}
+
+.site-footer__cta {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-bright);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 3px;
+  transition: border-color 0.14s ease;
+}
+@media (hover: hover) {
+  .site-footer__cta:hover {
+    border-bottom-color: var(--accent-bright);
+  }
+}
+
+.site-footer__kicker {
+  margin: 0 0 16px;
+  /*
+   * .ed-kicker carries --accent-text, which is the accent tuned for paper. On the ink
+   * footer it measures 2.59:1. --accent-bright is the one for dark ground, at 9.36:1 —
+   * which is what the token comment says it is for.
+   */
+  color: var(--accent-bright);
+}
+
+.site-footer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-footer__list li {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.site-footer__list li:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site-footer__link {
+  display: block;
+  padding: 11px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  transition:
+    color 0.14s ease,
+    padding-left 0.14s ease;
+}
+@media (hover: hover) {
+  .site-footer__link:hover {
+    color: var(--accent-bright);
+    padding-left: 6px;
+  }
+}
+
+.site-footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 22px;
+  border-top: 1px solid var(--invert-rule);
+  font-size: 12.5px;
+  /* Was rgba(255,255,255,0.42): 4.05:1 over the light footer, and tuned for a ground that
+     the dark theme replaces with a lighter one. The band's own token is 7.34:1. */
+  color: var(--invert-ink-soft);
+}
+
+/* Row without a numeral column — body and arrow only, so the text aligns with the
+   section heading instead of being indented past an empty column. */
+.ed-row-plain {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.5rem;
+  gap: 0 16px;
+  align-items: start;
+  padding: 20px 0;
+}
+@media (min-width: 900px) {
+  .ed-row-plain {
+    gap: 0 24px;
+  }
+  .ed-row-plain > :last-child {
+    text-align: right;
+  }
+}
+
+/* Split section: heading in a narrow left column, prose in a wide right one. The
+   documentation idiom, and it stops long-form sections leaving half the page empty. */
+.ed-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+@media (min-width: 900px) {
+  .ed-split {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 56px;
+  }
+}
+
+/* Figures: two up on a phone, four across once there is room. */
+.ed-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 20px;
+}
+@media (min-width: 820px) {
+  .ed-figures {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* =========================================== */
 /* Animations                                   */
 /* =========================================== */
 
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInPanel {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
-}
-
 @keyframes slideInFromRight {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideInFromBottom {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
-}
-
-.animate-pulse-dot {
-  animation: pulseDot 2s ease infinite;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 450ms ease both;
-}
-
-.animate-slide-in-panel {
-  animation: slideInPanel 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Details panel — mobile: bottom sheet; tablet/desktop: right drawer */
@@ -97,7 +958,7 @@ body {
   .details-panel {
     animation: slideInFromRight 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
     box-shadow: -8px 0 32px rgba(30, 58, 95, 0.1);
-    border-left: 1px solid #E2E8F0;
+    border-left: 1px solid #e2e8f0;
   }
 }
 
@@ -105,44 +966,10 @@ body {
 /* Shared utility classes                       */
 /* =========================================== */
 
-.btn-primary {
-  background-color: var(--trust-navy);
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-  box-shadow: var(--shadow-card);
-}
-.btn-primary:hover {
-  background-color: var(--trust-blue);
-  box-shadow: var(--shadow-card-hover);
-}
-
-.btn-secondary {
-  background: white;
-  color: var(--trust-navy);
-  border: 2px solid var(--trust-navy);
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-}
-.btn-secondary:hover {
-  background: var(--trust-navy);
-  color: white;
-}
-
-.card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
-}
-
 .faq-answer {
-  transition: max-height 0.3s ease, opacity 0.3s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
   overflow: hidden;
 }
 
@@ -153,4 +980,3048 @@ body {
 .svg-diagram svg {
   max-width: 100%;
   height: auto;
+}
+
+/* =========================================== */
+/* U002 — primitive layer                       */
+/*                                              */
+/* Written ahead of its consumers. Nothing in   */
+/* the app uses these yet; the surface phases   */
+/* adopt them one at a time.                    */
+/*                                              */
+/* Variants live on data-* attributes rather    */
+/* than in concatenated class names, so a       */
+/* component passes state straight through to   */
+/* CSS instead of computing a className. Square */
+/* corners by default: the editorial language   */
+/* has no rounded cards, and the 18 distinct    */
+/* borderRadius values in the old surfaces are  */
+/* exactly what this replaces.                  */
+/* =========================================== */
+
+/* ---- Buttons ---- */
+.ed-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 12px 22px;
+  border: 1.5px solid transparent;
+  background: none;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease,
+    box-shadow 0.14s ease,
+    transform 0.14s ease;
+}
+
+.ed-btn[data-weight="primary"] {
+  background: var(--ink);
+  color: var(--on-fill);
+  box-shadow: 3px 3px 0 var(--accent);
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="primary"]:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--accent);
+  }
+}
+.ed-btn[data-weight="primary"]:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+
+.ed-btn[data-weight="secondary"] {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="secondary"]:hover:not(:disabled) {
+    background: var(--paper-sunk);
+  }
+}
+
+.ed-btn[data-weight="quiet"] {
+  color: var(--ink-soft);
+  padding-inline: 10px;
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="quiet"]:hover:not(:disabled) {
+    color: var(--ink);
+    background: var(--paper-sunk);
+  }
+}
+
+/* For the navy test bars, where the ground is ink rather than paper. */
+.ed-btn[data-weight="on-dark"] {
+  border-color: var(--invert-rule);
+  color: var(--invert-ink);
+}
+@media (hover: hover) {
+  .ed-btn[data-weight="on-dark"]:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-bright);
+  }
+}
+
+/* A real disabled and pending state. Five sites today express "pending" only by swapping
+   the label to a loading word, with no spinner and nothing announced. */
+.ed-btn:disabled,
+.ed-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ed-btn[aria-busy="true"] {
+  cursor: progress;
+}
+.ed-btn[aria-busy="true"]::after {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: edSpin 0.7s linear infinite;
+}
+@keyframes edSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-btn {
+    transition: none;
+  }
+  .ed-btn[aria-busy="true"]::after {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.5;
+  }
+}
+
+/* ---- Text fields ---- */
+.ed-field {
+  font-family: inherit;
+  /* 16px is deliberate: iOS Safari zooms the viewport on focus for anything smaller. */
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--rule-firm);
+  padding: 11px 14px;
+  width: 100%;
+  transition: border-color 0.14s ease;
+}
+.ed-field::placeholder {
+  color: var(--ink-faint);
+}
+@media (hover: hover) {
+  .ed-field:hover:not(:disabled) {
+    border-color: var(--rule-hard);
+  }
+}
+.ed-field:disabled {
+  background: var(--paper-sunk);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+.ed-field[aria-invalid="true"] {
+  border-color: var(--wrong-text);
+}
+textarea.ed-field {
+  resize: vertical;
+  min-height: 104px;
+}
+
+/* ---- Question palette cell ---- */
+.ed-cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border: 1.5px solid var(--rule-hard);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/*
+ * Every state carries a MARK as well as a tint. Correctness and progress are colour-only
+ * across the whole site today, and this is the one screen where legibility is the product.
+ * The mark is decorative; the state itself belongs in the accessible name, which the
+ * component supplies — today it announces only the question number in all five states.
+ */
+.ed-cell::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.ed-cell[data-state="visited"] {
+  border-color: var(--caution-text);
+}
+.ed-cell[data-state="visited"]::after {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--caution-text);
+  bottom: 3px;
+}
+.ed-cell[data-state="answered"] {
+  border-color: var(--correct-text);
+  background: var(--correct-wash);
+  color: var(--correct-text);
+}
+.ed-cell[data-state="answered"]::after {
+  width: 7px;
+  height: 4px;
+  border-left: 2px solid var(--correct-text);
+  border-bottom: 2px solid var(--correct-text);
+  transform: rotate(-45deg);
+  bottom: 4px;
+  right: 3px;
+}
+.ed-cell[data-state="review"] {
+  border-color: var(--review-text);
+  background: var(--review-wash);
+  color: var(--review-text);
+}
+/* A corner wedge, so review reads differently from answered without relying on hue. */
+.ed-cell[data-state="review"]::after {
+  top: 0;
+  right: 0;
+  border-top: 8px solid var(--review-text);
+  border-left: 8px solid transparent;
+}
+.ed-cell[data-state="wrong"] {
+  border-color: var(--wrong-text);
+  background: var(--wrong-wash);
+  color: var(--wrong-text);
+}
+.ed-cell[aria-current="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/*
+ * The ring REPLACES the border rather than offsetting it: the global 2px ring at 2px offset
+ * collides with neighbouring cells at a 6px gap. Inset, so the geometry never shifts.
+ */
+.ed-cell:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--focus-ring);
+}
+
+/* ---- Progress meter ---- */
+.ed-meter {
+  display: block;
+  width: 100%;
+  height: 6px;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+/* The element carries role="progressbar" and aria-valuenow — no progress indicator on the
+   site has either today. --meter-value is a plain 0-100 number. */
+.ed-meter__fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--meter-value, 0) * 1%);
+  background: var(--accent);
+  transition: width 0.3s var(--ease-out-expo);
+}
+.ed-meter[data-state="inert"] .ed-meter__fill {
+  background: var(--inert-text);
+}
+.ed-meter[data-state="caution"] .ed-meter__fill {
+  background: var(--caution-text);
+}
+.ed-meter[data-state="correct"] .ed-meter__fill {
+  background: var(--correct-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-meter__fill {
+    transition: none;
+  }
+}
+
+/* ---- Chips, pills, badges ---- */
+/* Interactive tag — the subtopic and chapter chips. Converting these to CSS is what lets
+   the 8 onMouseEnter handlers and 12 isHovered state variables be deleted. */
+.ed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 9px 14px;
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .ed-chip:hover {
+    border-color: var(--accent);
+    background: var(--paper-sunk);
+  }
+}
+.ed-chip[aria-current="true"],
+.ed-chip[data-selected="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.ed-chip[data-state="inert"] {
+  color: var(--inert-text);
+}
+.ed-chip[data-state="caution"] {
+  border-color: var(--caution-text);
+}
+.ed-chip[data-state="correct"] {
+  border-color: var(--correct-text);
+}
+
+/* Non-interactive status label. */
+.ed-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 5px 9px;
+  border: 1px solid currentColor;
+  color: var(--inert-text);
+}
+.ed-pill[data-state="correct"] {
+  color: var(--correct-text);
+  background: var(--correct-wash);
+}
+.ed-pill[data-state="wrong"] {
+  color: var(--wrong-text);
+  background: var(--wrong-wash);
+}
+.ed-pill[data-state="caution"] {
+  color: var(--caution-text);
+  background: var(--caution-wash);
+}
+.ed-pill[data-state="review"] {
+  color: var(--review-text);
+  background: var(--review-wash);
+}
+
+/*
+ * Difficulty and similar scales. Deliberately NOT the correct/wrong palette: today
+ * DifficultyBadge reuses the exact same green and red, so one tint means "correct" on an
+ * option and "Easy" on a badge 200px away on the same screen. Rule weight carries the
+ * scale instead, which also survives greyscale and print.
+ */
+.ed-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 4px 8px;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--rule-hard);
+  background: var(--paper-sunk);
+}
+.ed-badge[data-level="2"] {
+  border-left-width: 4px;
+}
+.ed-badge[data-level="3"] {
+  border-left-width: 6px;
+  color: var(--ink);
+}
+
+/* ---- Answer option ---- */
+.ed-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.55;
+  text-align: left;
+  padding: 13px 16px;
+  border: 1.5px solid var(--rule-hard);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .ed-option:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--paper-sunk);
+  }
+}
+.ed-option[data-state="selected"] {
+  border-color: var(--ink);
+  background: var(--paper-sunk);
+}
+.ed-option[data-state="correct"] {
+  border-color: var(--correct-text);
+  background: var(--correct-wash);
+}
+.ed-option[data-state="wrong"] {
+  border-color: var(--wrong-text);
+  background: var(--wrong-wash);
+}
+.ed-option:disabled {
+  cursor: default;
+}
+/* The letter marker. Its fill changes with state so correctness is never hue alone, and
+   the component puts the state word in the accessible name. */
+.ed-option__key {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1.5px solid currentColor;
+  color: var(--ink-soft);
+}
+.ed-option[data-state="selected"] .ed-option__key {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.ed-option[data-state="correct"] .ed-option__key {
+  background: var(--correct-text);
+  border-color: var(--correct-text);
+  color: var(--on-fill);
+}
+.ed-option[data-state="wrong"] .ed-option__key {
+  background: var(--wrong-text);
+  border-color: var(--wrong-text);
+  color: var(--on-fill);
+}
+
+/* ---- Empty states, skeletons, notices ---- */
+.ed-empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--rule-firm);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* animate-pulse is a Tailwind built-in and survived U001's cleanup, so skeletons keep it. */
+.ed-skeleton {
+  display: block;
+  height: 1em;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+}
+
+.ed-notice {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-left: 3px solid var(--inert-text);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+}
+.ed-notice[data-state="wrong"] {
+  border-left-color: var(--wrong-text);
+  background: var(--wrong-wash);
+  color: var(--wrong-text);
+}
+.ed-notice[data-state="correct"] {
+  border-left-color: var(--correct-text);
+  background: var(--correct-wash);
+  color: var(--correct-text);
+}
+.ed-notice[data-state="caution"] {
+  border-left-color: var(--caution-text);
+  background: var(--caution-wash);
+  color: var(--caution-text);
+}
+
+/* Visually hidden but announced. For status text that must reach a screen reader without
+   occupying space — the palette's state words, and later the timer's threshold calls. */
+/*
+ * Quiet text that still has to be readable. Replaces text-slate-400 and text-slate-300,
+ * which were 2.56:1 and 1.48:1 on white — the second of those carrying the denominator of
+ * the one number the result screen exists to show. --ink-faint is 5.66:1 on --paper.
+ */
+.ed-muted {
+  color: var(--ink-faint);
+}
+
+.ed-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Roadmap surface switcher ---- */
+/*
+ * Replaces a pill row that ran two competing active-state languages at once: a solid-navy
+ * active pill, plus a hardcoded `isTeal` branch that left Daily Dose and How to Prepare
+ * permanently teal-outlined whether active or not. One rule now, and the active surface is
+ * marked with aria-current rather than by colour alone.
+ */
+.roadmap-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-top: 1px solid var(--rule-firm);
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+.roadmap-nav__item {
+  position: relative;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color 0.14s ease,
+    background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .roadmap-nav__item:hover {
+    color: var(--ink);
+    background: var(--paper-sunk);
+  }
+}
+
+/* The active surface gets ink type and a rule beneath it — a tab, not a filled lozenge. */
+.roadmap-nav__item[aria-current="page"] {
+  color: var(--ink);
+}
+.roadmap-nav__item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: var(--accent);
+}
+
+@media (max-width: 599px) {
+  .roadmap-nav__item {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+}
+
+/* ---- Roadmap page hero ---- */
+.roadmap-hero {
+  background: var(--paper);
+  padding: 28px 0 0;
+}
+.roadmap-hero__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.roadmap-hero__title {
+  font-size: clamp(28px, 4vw, 40px);
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.roadmap-hero__subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 20px;
+  max-width: 62ch;
+}
+.roadmap-hero__progress {
+  padding: 16px 0 18px;
+}
+
+/* ---- Subject tab ---- */
+.subject-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 15px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: var(--paper);
+  border: 1.5px solid var(--rule-firm);
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .subject-tab:hover {
+    border-color: var(--rule-hard);
+    background: var(--paper-sunk);
+  }
+}
+.subject-tab[aria-pressed="true"] {
+  border-color: var(--ink);
+  border-width: 2px;
+  background: var(--paper-sunk);
+}
+.subject-tab__abbr {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.subject-tab__pct {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Topic row (Learn) ---- */
+.topic-row {
+  border-top: 1px solid var(--rule-firm);
+}
+.topic-row:last-child {
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+.topic-row__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 4px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .topic-row__header:hover {
+    background: var(--paper-sunk);
+  }
+}
+.topic-row[data-open="true"] .topic-row__header {
+  background: var(--paper-sunk);
+}
+
+.topic-row__lead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Status dot. Shape changes with state too, so progress is never hue alone. */
+.topic-row__dot,
+.subtopic-chip__dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--inert-text);
+  background: transparent;
+}
+.topic-row__dot[data-state="caution"],
+.ed-chip[data-state="caution"] .subtopic-chip__dot {
+  border-color: var(--caution-text);
+  background: linear-gradient(
+    to right,
+    var(--caution-text) 50%,
+    transparent 50%
+  );
+}
+.topic-row__dot[data-state="correct"],
+.ed-chip[data-state="correct"] .subtopic-chip__dot {
+  border-color: var(--correct-text);
+  background: var(--correct-text);
+}
+/* On a selected chip the ground is ink, so the dot needs the bright values. */
+.ed-chip[data-selected="true"] .subtopic-chip__dot {
+  border-color: var(--paper);
+}
+.ed-chip[data-selected="true"][data-state="correct"] .subtopic-chip__dot {
+  background: var(--correct-bright);
+  border-color: var(--correct-bright);
+}
+.ed-chip[data-selected="true"][data-state="caution"] .subtopic-chip__dot {
+  border-color: var(--caution-bright);
+  background: linear-gradient(
+    to right,
+    var(--caution-bright) 50%,
+    transparent 50%
+  );
+}
+
+.topic-row__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.topic-row__count {
+  font-size: 13px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.topic-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.topic-row__meter {
+  width: 64px;
+  height: 4px;
+}
+.topic-row__pct {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.4em;
+  text-align: right;
+}
+/* The question total. Not a percentage, so it survives the narrow-screen rule below. */
+.topic-row__questions {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.topic-row__toggle {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--rule-firm);
+}
+.topic-row[data-open="true"] .topic-row__toggle {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.topic-row__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 4px 18px;
+}
+
+@media (max-width: 599px) {
+  /*
+   * The percentage goes because the meter beside it says the same thing. The chapter count
+   * stays: on Practice there is no meter until something has been attempted, so dropping
+   * both left a bare title and a chevron on every phone.
+   */
+  .topic-row__pct {
+    display: none;
+  }
+  .topic-row__count {
+    display: none;
+  }
+  .topic-list[data-layout="tree"] .topic-row__count {
+    display: inline;
+  }
+  .topic-row__meter {
+    width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-row__header {
+    transition: none;
+  }
+}
+
+/* ---- Daily Dose promo card on the Learn surface ---- */
+.dd-promo {
+  border: 1.5px solid var(--rule-firm);
+  border-left: 4px solid var(--accent);
+  background: var(--paper-sunk);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+.dd-promo__title {
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.dd-promo__sub {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ---- Sign-in dialog ---- */
+.sign-in-modal {
+  transform: translate(-50%, -50%);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--accent);
+  padding: 26px 24px;
+  width: min(340px, calc(100vw - 48px));
+}
+.sign-in-modal__title {
+  font-size: 22px;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.sign-in-modal__body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 22px;
+}
+
+/* ---- MathJax containment ---- */
+/*
+ * A long formula renders wider than a phone viewport and pushes the whole page sideways —
+ * 384 elements overflowed on a PYQ paper at 390px. Scroll the formula inside its own box
+ * instead. `auto`, never `hidden`: hidden would clip the generated mjx-container, which is
+ * the one thing the conversion notes say must never happen to question content.
+ */
+mjx-container {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+mjx-container[display="true"] {
+  padding-bottom: 2px;
+}
+
+/* ---- Sticky surface switcher ---- */
+/*
+ * The nav used to live inside the hero and scrolled away with the title, so on a long
+ * surface the only way to reach Practice or Past papers was to scroll back to the top.
+ * It now pins directly under the masthead and stays reachable the whole way down.
+ */
+.roadmap-navbar {
+  min-height: var(--navbar-h);
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+.roadmap-navbar__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/*
+ * Once it is pinned it is floating over content, so it needs an edge. A hairline alone
+ * reads as part of the page; this is the smallest shadow that says "this is above".
+ */
+@supports (animation-timeline: view()) {
+  .roadmap-navbar {
+    animation: roadmapNavPin linear both;
+    animation-timeline: view();
+    animation-range: exit-crossing 0% exit-crossing 1px;
+  }
+  @keyframes roadmapNavPin {
+    to {
+      box-shadow: 0 6px 16px -8px rgba(16, 26, 43, 0.45);
+    }
+  }
+}
+
+.roadmap-navbar .roadmap-nav {
+  border-top: none;
+  border-bottom: none;
+}
+
+/*
+ * On a phone five labels do not fit, and wrapping them to two lines costs a third of the
+ * viewport on a bar that is always on screen. Scroll them horizontally instead, with the
+ * active one brought into view.
+ */
+@media (max-width: 699px) {
+  .roadmap-navbar__inner {
+    padding: 0 16px;
+  }
+  .roadmap-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .roadmap-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .roadmap-nav__item {
+    scroll-snap-align: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-navbar {
+    animation: none;
+  }
+}
+
+/* ---- First-run guidance (Learn, zero progress) ---- */
+.start-here {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px 22px;
+  margin-bottom: 26px;
+  background: var(--paper-sunk);
+  border: 1.5px solid var(--ink);
+}
+.start-here__title {
+  font-size: 24px;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.start-here__sub {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 56ch;
+}
+
+/* ---- Continue learning / practice strips ---- */
+.continue {
+  border: 1.5px solid var(--rule-firm);
+  border-left: 4px solid var(--caution-text);
+  background: var(--paper-sunk);
+  padding: 16px 18px;
+  margin-bottom: 26px;
+}
+.continue__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.continue__count {
+  font-size: 13px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.continue__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.continue__item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 9px 13px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: var(--paper);
+  border: 1.5px solid var(--rule-firm);
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+@media (hover: hover) {
+  .continue__item:hover {
+    border-color: var(--caution-text);
+    background: var(--caution-wash);
+  }
+}
+.continue__item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.continue__item-meta {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* ---- Status picker (subtopic drawer) ---- */
+.status-picker {
+  display: flex;
+  gap: 0;
+}
+.status-picker__option {
+  flex: 1;
+  padding: 9px 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1.5px solid var(--rule-firm);
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease;
+}
+/* One shared edge between neighbours rather than two stacked borders. */
+.status-picker__option + .status-picker__option {
+  margin-left: -1.5px;
+}
+@media (hover: hover) {
+  .status-picker__option:not(:disabled):hover {
+    background: var(--paper-sunk);
+  }
+}
+.status-picker__option[aria-checked="true"] {
+  position: relative;
+  z-index: 1;
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.status-picker__option[aria-checked="true"][data-state="caution"] {
+  border-color: var(--caution-text);
+  background: var(--caution-wash);
+  color: var(--caution-text);
+}
+.status-picker__option[aria-checked="true"][data-state="correct"] {
+  border-color: var(--correct-text);
+  background: var(--correct-wash);
+  color: var(--correct-text);
+}
+.status-picker__option:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================== */
+/* U002 — Learn surface: layout and motion      */
+/*                                              */
+/* Motion here is interaction feedback, not     */
+/* entrance animation. These are tools being    */
+/* used, so nothing should delay content that   */
+/* is already on screen; things move only in    */
+/* response to something the reader just did.   */
+/* =========================================== */
+
+/* Three short labels belong three across, not wrapped 2 + 1. */
+.subject-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 26px;
+}
+@media (max-width: 439px) {
+  .subject-tabs {
+    gap: 6px;
+  }
+  .subject-tab {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+}
+
+/* The subject tab presses in rather than only changing colour. */
+.subject-tab {
+  transform: translateY(0);
+}
+.subject-tab:active {
+  transform: translateY(1px);
+}
+
+/* Chevron rotates on open. A "+" swapped for a "−" cannot animate at all. */
+.topic-row__toggle svg {
+  transition: transform 0.24s var(--ease-out-expo);
+}
+.topic-row[data-open="true"] .topic-row__toggle svg {
+  transform: rotate(90deg);
+}
+
+/*
+ * Chips fade up as their topic opens, staggered by position. Capped at 10 so a topic with
+ * many subtopics does not make the last one arrive noticeably late.
+ */
+.topic-row[data-open="true"] .ed-chip {
+  animation: chipIn 0.32s var(--ease-out-expo) both;
+  animation-delay: calc(min(var(--chip-index, 0), 10) * 22ms);
+}
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+/* A chip acknowledges the press before the drawer has opened. */
+.ed-chip:active {
+  transform: translateY(1px);
+}
+
+/* Switching subject replaces the whole topic list, so it crossfades rather than snapping. */
+.topic-list {
+  animation: topicListIn 0.3s var(--ease-out-expo) both;
+}
+@keyframes topicListIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-row__toggle svg,
+  .subject-tab {
+    transition: none;
+  }
+  .topic-row[data-open="true"] .ed-chip,
+  .topic-list {
+    animation: none;
+  }
+  .ed-chip:active,
+  .subject-tab:active {
+    transform: none;
+  }
+}
+
+/* At phone width the cell is too narrow for "0% done" on one line; the number carries it. */
+@media (max-width: 439px) {
+  .subject-tab__done {
+    display: none;
+  }
+  .subject-tab__abbr {
+    font-size: 14px;
+  }
+}
+
+/* =========================================== */
+/* U002 — the syllabus tree, nested             */
+/*                                              */
+/* The previous attempt drew connectors at one  */
+/* level only, so it still read as a list with  */
+/* ticks. A tree has to show CONTAINMENT: the   */
+/* topic hangs off a trunk, and its subtopics   */
+/* hang off the topic. Two visible levels is    */
+/* the minimum that reads as nesting.           */
+/*                                              */
+/* Lines are --rule-hard (3.6:1), not           */
+/* --rule-firm (2.4:1). At 1px on cream the     */
+/* lighter weight was close to invisible, which */
+/* is most of why it did not read as a tree.    */
+/* =========================================== */
+
+.topic-list[data-layout="tree"] {
+  position: relative;
+  padding-left: 22px;
+}
+
+/* Level 1 trunk: runs the height of the subject's topics. */
+.topic-list[data-layout="tree"]::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-hard);
+}
+/* Stops at the last topic's node so the subject visibly ends. */
+.topic-list[data-layout="tree"] > .topic-row:last-child::after {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 30px;
+  bottom: 0;
+  width: 3px;
+  background: var(--paper);
+}
+
+/* Rows inside the tree lose their separators — the connectors carry the structure now. */
+.topic-list[data-layout="tree"] > .topic-row {
+  position: relative;
+  border-top: none;
+}
+.topic-list[data-layout="tree"] > .topic-row:last-child {
+  border-bottom: none;
+}
+
+/* Level 1 branch: the tick from the trunk out to a topic. */
+.topic-list[data-layout="tree"] > .topic-row::before {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 30px;
+  width: 15px;
+  height: 2px;
+  background: var(--rule-hard);
+}
+
+/* The topic's own marker becomes the node sitting on that branch. */
+.topic-list[data-layout="tree"] .topic-row__dot {
+  width: 10px;
+  height: 10px;
+  border-width: 2px;
+  background: var(--paper);
+}
+
+/* Level 2 trunk: descends from the topic into its subtopics. */
+.topic-row__chips[data-layout="list"],
+.topic-row__chips[data-layout="split"] {
+  display: grid;
+  gap: 0;
+  position: relative;
+  padding: 2px 4px 14px 0;
+  margin-left: 6px;
+}
+
+.tree-branch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 12px 10px 30px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: left;
+  transition:
+    background-color 0.14s ease,
+    padding-left 0.16s var(--ease-out-expo);
+}
+
+/* The level-2 trunk, per branch: full height on a tee, half on the last so it terminates. */
+.tree-branch::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-hard);
+}
+.tree-branch[data-last="true"]::before {
+  bottom: 50%;
+}
+
+/* The level-2 tick out to the row. */
+.tree-branch::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 14px;
+  height: 2px;
+  background: var(--rule-hard);
+}
+
+@media (hover: hover) {
+  .tree-branch:hover {
+    background: var(--paper-sunk);
+    padding-left: 34px;
+  }
+}
+.tree-branch[data-selected="true"] {
+  background: var(--paper-sunk);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.tree-branch__label {
+  min-width: 0;
+}
+.tree-branch[data-state="correct"] .tree-branch__label {
+  color: var(--ink-soft);
+}
+
+/* The count that tells a reader whether a row is worth opening. */
+.tree-branch__lessons {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tree-branch__status {
+  min-width: 5.6rem;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-faint);
+}
+.tree-branch[data-state="correct"] .tree-branch__status {
+  color: var(--correct-text);
+}
+.tree-branch[data-state="caution"] .tree-branch__status {
+  color: var(--caution-text);
+}
+
+/* A worked branch colours its own connector, so progress reads straight down the trunk. */
+.tree-branch[data-state="correct"]::after {
+  background: var(--correct-text);
+  height: 3px;
+}
+.tree-branch[data-state="caution"]::after {
+  background: var(--caution-text);
+  height: 3px;
+}
+
+@media (max-width: 599px) {
+  .topic-list[data-layout="tree"] {
+    padding-left: 16px;
+  }
+  .topic-list[data-layout="tree"] > .topic-row::before {
+    left: -12px;
+    width: 10px;
+  }
+  .topic-list[data-layout="tree"]::before {
+    left: 3px;
+  }
+  .tree-branch {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding-left: 26px;
+  }
+  .tree-branch__lessons {
+    display: none;
+  }
+  .tree-branch__status {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tree-branch {
+    transition: none;
+  }
+  .tree-branch:hover {
+    padding-left: 30px;
+  }
+}
+
+/* =========================================== */
+/* U002 — the syllabus as a route               */
+/*                                              */
+/* Same data as the tree, different question.   */
+/* A tree answers "what sits inside what"; a    */
+/* route answers "how far am I and what is      */
+/* next", which is what someone with an exam    */
+/* date actually wants to know.                 */
+/*                                              */
+/* The line weaves, and it is drawn rather than */
+/* ruled. A straight vertical rule is a margin; */
+/* a line that bends is a road, and that is     */
+/* most of the difference between this and a    */
+/* numbered list.                               */
+/* =========================================== */
+
+.topic-list[data-layout="path"] {
+  position: relative;
+  /* Clears the outer ring of a left-hand station, which the list edge would otherwise shave. */
+  padding-left: 4px;
+  /* The gutter the route runs in. Everything below is derived from these three. */
+  --route-w: 92px;
+  --station-y: 36px;
+  --dot: 36px;
+  /* How much of a leg the bend takes. A collapsed row is only a little longer than this. */
+  --bend-h: 56px;
+}
+.topic-list[data-layout="path"]::before {
+  content: none;
+}
+
+.topic-list[data-layout="path"] > .topic-row {
+  position: relative;
+  border: none;
+  padding-left: calc(var(--route-w) + 6px);
+  /* Rows already on screen at first paint arrive in sequence. Rows met by scrolling are
+     staggered by the scrolling itself, so the ramp is capped early. */
+  --sd: calc(min(var(--si, 0), 6) * 70ms);
+}
+
+/* ---- the road ---- */
+
+.topic-row__road {
+  position: absolute;
+  left: 0;
+  /*
+   * Station centre to station centre, so the road hangs below its row by half a station.
+   * The height is explicit because the bend inside is an SVG, a replaced element: given
+   * top and bottom alone it ignores the constraint and takes its size from the viewBox
+   * ratio instead, which pinned every leg to the same length whatever the row did.
+   */
+  top: var(--station-y);
+  width: var(--route-w);
+  height: 100%;
+  pointer-events: none;
+}
+
+.topic-row__bend {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--bend-h);
+  overflow: visible;
+}
+.topic-row__bend path {
+  fill: none;
+  stroke: var(--rule-firm);
+  /* User units against a 100-unit viewBox drawn 92 wide, so this lands near 3px on screen. */
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  transition:
+    stroke 0.35s ease,
+    stroke-width 0.2s ease;
+}
+
+/* The straight run from the end of the bend down to the next station. */
+.topic-row__run {
+  position: absolute;
+  top: var(--bend-h);
+  left: calc(var(--route-w) * var(--sx2, 50) / 100 - 1.5px);
+  width: 3px;
+  /* A collapsed row is barely longer than the bend, so the run can legitimately be nothing. */
+  height: max(0px, calc(100% - var(--bend-h)));
+  background: var(--rule-firm);
+  transition:
+    background-color 0.35s ease,
+    transform 0.2s ease;
+}
+
+/* A travelled leg fills in, so progress reads straight down the road. */
+.topic-list[data-layout="path"]
+  > .topic-row[data-state="correct"]
+  .topic-row__bend
+  path {
+  stroke: var(--correct-text);
+}
+.topic-list[data-layout="path"]
+  > .topic-row[data-state="correct"]
+  .topic-row__run {
+  background: var(--correct-text);
+}
+
+/* ---- the station ---- */
+
+.topic-list[data-layout="path"] .topic-row__dot {
+  position: absolute;
+  width: var(--dot);
+  height: var(--dot);
+  top: calc(var(--station-y) - var(--dot) / 2);
+  left: calc(var(--route-w) * var(--sx, 50) / 100 - var(--dot) / 2);
+  border: none;
+  border-radius: 50%;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition:
+    transform 0.22s var(--ease-out-expo),
+    background-color 0.35s ease,
+    box-shadow 0.22s ease;
+}
+.topic-list[data-layout="path"] .topic-row__dot[data-state="correct"] {
+  background: var(--correct-text);
+}
+
+/*
+ * The ring is a meter for the station it encircles: how much of this topic is done, read
+ * round the rim. Masked to an annulus so the conic gradient shows as a ring, not a pie.
+ */
+.topic-row__ring {
+  display: none;
+}
+.topic-list[data-layout="path"] .topic-row__ring {
+  display: block;
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  --ring-on: var(--rule-hard);
+  --ring-off: var(--rule-hard);
+  background: conic-gradient(
+    var(--ring-on) calc(var(--pct, 0) * 1%),
+    var(--ring-off) 0
+  );
+  -webkit-mask: radial-gradient(
+    circle closest-side,
+    transparent calc(100% - 3px),
+    #000 calc(100% - 3px)
+  );
+  mask: radial-gradient(
+    circle closest-side,
+    transparent calc(100% - 3px),
+    #000 calc(100% - 3px)
+  );
+}
+.topic-list[data-layout="path"]
+  .topic-row__dot[data-state="caution"]
+  .topic-row__ring {
+  --ring-on: var(--caution-text);
+  --ring-off: var(--rule-firm);
+}
+.topic-list[data-layout="path"]
+  .topic-row__dot[data-state="correct"]
+  .topic-row__ring {
+  --ring-on: var(--correct-text);
+  --ring-off: var(--correct-text);
+}
+
+.topic-row__station {
+  display: none;
+}
+.topic-list[data-layout="path"] .topic-row__station {
+  display: block;
+  position: relative;
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--ink);
+}
+.topic-list[data-layout="path"]
+  .topic-row__dot[data-state="correct"]
+  .topic-row__station {
+  color: var(--paper);
+}
+
+/* You are here. A map that cannot answer that is a diagram. */
+.topic-list[data-layout="path"]
+  > .topic-row[data-state="caution"]
+  .topic-row__dot {
+  box-shadow: 0 0 0 5px var(--caution-wash);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .topic-list[data-layout="path"]
+    > .topic-row[data-state="caution"]
+    .topic-row__dot::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--caution-text);
+    /* transform and opacity only, so the one looping animation here is composited. */
+    animation: station-ping 3s ease-out infinite;
+    pointer-events: none;
+  }
+}
+@keyframes station-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  65%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ---- the row ---- */
+
+.topic-list[data-layout="path"] .topic-row__header {
+  padding: 22px 6px;
+  border-radius: 3px;
+}
+.topic-list[data-layout="path"] .topic-row__title {
+  font-size: 18px;
+  font-weight: 600;
+  transition: transform 0.22s var(--ease-out-expo);
+}
+
+/* Hover answers on the road as well as in the row: the station swells and its leg thickens,
+   so the pointer reads as travelling the route rather than skimming a list. */
+@media (hover: hover) {
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__dot {
+    transform: scale(1.09);
+  }
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__bend path {
+    stroke-width: 5.4;
+  }
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__run {
+    transform: scaleX(1.7);
+  }
+  .topic-list[data-layout="path"] > .topic-row:hover .topic-row__title {
+    transform: translateX(3px);
+  }
+}
+.topic-list[data-layout="path"]
+  > .topic-row
+  .topic-row__header:active
+  .topic-row__dot {
+  transform: scale(0.94);
+}
+/* An open station is the one being read, so it keeps the swell without the pointer. */
+.topic-list[data-layout="path"] > .topic-row[data-open="true"] .topic-row__dot {
+  transform: scale(1.09);
+}
+
+/* Subtopics keep a small trunk of their own, indented inside the station. */
+.topic-list[data-layout="path"] .topic-row__chips {
+  margin-left: 0;
+  padding-bottom: 22px;
+}
+/* Here the road carries containment, so the nested trunk is lighter than in the tree. */
+.topic-list[data-layout="path"] .tree-branch::before,
+.topic-list[data-layout="path"] .tree-branch::after {
+  background: var(--rule-firm);
+}
+.topic-list[data-layout="path"] .tree-branch[data-state="correct"]::after {
+  background: var(--correct-text);
+}
+.topic-list[data-layout="path"] .tree-branch[data-state="caution"]::after {
+  background: var(--caution-text);
+}
+
+/* ---- arrival ---- */
+/*
+ * The road builds itself as you scroll: the leg draws down from the station above, the
+ * station lands, and the row slides in behind it. All of it is scoped to [data-anim="on"],
+ * which useScrollReveal sets on mount — without JavaScript, or under reduced motion, none
+ * of the hidden states exist at all. The class is removed again when a row leaves the
+ * viewport entirely, so the build replays on the way back up.
+ *
+ * The station animates the scale property rather than transform, because hover above owns
+ * transform and the two compose instead of overwriting one another.
+ */
+/*
+ * The leg is wiped in from the top rather than dash-drawn. stroke-dashoffset is the usual
+ * way to draw a path, but it measures in the user coordinate system while this SVG is
+ * stretched vertically to whatever the row is tall — so on an expanded topic the dash ran
+ * out a fifth of the way down and the road simply stopped. A clip wipe measures in the
+ * rendered box, so it is immune to that, and it reads the same: the road building downward.
+ */
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__road {
+  clip-path: inset(-6px -6px -6px -6px);
+  transition: clip-path 1s var(--ease-out-expo) var(--sd);
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__road {
+  clip-path: inset(-6px -6px 100% -6px);
+  transition: none;
+}
+
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__dot {
+  scale: 1;
+  opacity: 1;
+  transition:
+    transform 0.22s var(--ease-out-expo),
+    scale 0.6s cubic-bezier(0.34, 1.5, 0.5, 1) var(--sd),
+    opacity 0.4s ease var(--sd),
+    background-color 0.35s ease,
+    box-shadow 0.22s ease;
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__dot {
+  scale: 0.2;
+  opacity: 0;
+  transition: none;
+}
+
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__title,
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row
+  .topic-row__count {
+  opacity: 1;
+  translate: 0;
+  transition:
+    opacity 0.5s ease var(--sd),
+    translate 0.65s var(--ease-out-expo) var(--sd),
+    transform 0.22s var(--ease-out-expo);
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__title,
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__count {
+  opacity: 0;
+  translate: -16px 0;
+  transition: none;
+}
+
+/* The meter only fades. It contains its own fill, and translating it would drag that too. */
+[data-anim="on"] .topic-list[data-layout="path"] > .topic-row .topic-row__meta {
+  opacity: 1;
+  transition: opacity 0.55s ease calc(var(--sd) + 120ms);
+}
+[data-anim="on"]
+  .topic-list[data-layout="path"]
+  > .topic-row:not(.is-visible)
+  .topic-row__meta {
+  opacity: 0;
+  transition: none;
+}
+
+@media (max-width: 599px) {
+  .topic-list[data-layout="path"] {
+    --route-w: 64px;
+    --station-y: 30px;
+    --dot: 32px;
+    --bend-h: 42px;
+  }
+  .topic-list[data-layout="path"] .topic-row__station {
+    font-size: 15px;
+  }
+  .topic-list[data-layout="path"] .topic-row__title {
+    font-size: 16px;
+  }
+}
+
+/* Nothing below the fold would ever be revealed on paper, so the route would print empty. */
+@media print {
+  [data-anim="on"] .topic-list[data-layout="path"] > .topic-row * {
+    opacity: 1 !important;
+    scale: none !important;
+    translate: none !important;
+    clip-path: none !important;
+    animation: none !important;
+  }
+}
+
+/* =========================================== */
+/* U002 — arrival for the nested layout         */
+/*                                              */
+/* The route builds itself downward because it  */
+/* is a road. A catalogue is not travelled, so  */
+/* its rows arrive along the reading direction  */
+/* instead: each one slides in from the left as */
+/* it is reached, and its tick draws out of the */
+/* trunk to meet it.                            */
+/* =========================================== */
+
+.topic-list[data-layout="tree"] > .topic-row {
+  --sd: calc(min(var(--si, 0), 6) * 60ms);
+}
+
+[data-anim="on"] .topic-list[data-layout="tree"] > .topic-row {
+  opacity: 1;
+  translate: 0;
+  transition:
+    opacity 0.5s ease var(--sd),
+    translate 0.6s var(--ease-out-expo) var(--sd);
+}
+[data-anim="on"] .topic-list[data-layout="tree"] > .topic-row:not(.is-visible) {
+  opacity: 0;
+  translate: -18px 0;
+  transition: none;
+}
+
+/* The branch tick grows out of the trunk rather than appearing with the row. */
+[data-anim="on"] .topic-list[data-layout="tree"] > .topic-row::before {
+  transform-origin: left center;
+  scale: 1 1;
+  transition: scale 0.45s var(--ease-out-expo) calc(var(--sd) + 90ms);
+}
+[data-anim="on"]
+  .topic-list[data-layout="tree"]
+  > .topic-row:not(.is-visible)::before {
+  scale: 0 1;
+  transition: none;
+}
+
+/* And the trunk itself draws down once, behind the first row. */
+[data-anim="on"] .topic-list[data-layout="tree"]::before {
+  transform-origin: top center;
+  scale: 1 1;
+  transition: scale 0.8s var(--ease-out-expo);
+}
+[data-anim="on"]
+  .topic-list[data-layout="tree"]:not(:has(> .topic-row.is-visible))::before {
+  scale: 1 0;
+  transition: none;
+}
+
+@media print {
+  [data-anim="on"] .topic-list[data-layout="tree"] > .topic-row,
+  [data-anim="on"] .topic-list[data-layout="tree"] > .topic-row::before,
+  [data-anim="on"] .topic-list[data-layout="tree"]::before {
+    opacity: 1 !important;
+    scale: none !important;
+    translate: none !important;
+  }
+}
+
+/* =========================================== */
+/* U002 — the written guide                     */
+/*                                              */
+/* Twenty of the page's twenty-three boxes were */
+/* the same beige block, so a nine-month plan,  */
+/* a sales pitch and a parenthetical aside all  */
+/* carried identical weight. Each kind of thing */
+/* takes its own form here: the bands are a     */
+/* ladder, the plan is a numbered sequence, the */
+/* coaching question is two columns with a rule */
+/* between them, the aside is one notice.       */
+/* =========================================== */
+
+.guide {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.guide-section {
+  padding-top: 44px;
+  margin-top: 44px;
+  border-top: 1px solid var(--rule);
+}
+.guide-section:first-of-type {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
+}
+
+.guide-heading {
+  font-size: clamp(24px, 2.8vw, 30px);
+  color: var(--ink);
+  margin: 0 0 12px;
+  /* So an anchor does not land the heading underneath the sticky masthead. */
+  scroll-margin-top: calc(var(--chrome-h) + 20px);
+}
+
+/* Measure lives on the prose, not on the intros alone: every 20-word lede was capped at
+   68ch while the long passages beneath them ran the full 852px container. */
+.guide-lede {
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin: 0 0 28px;
+  max-width: 64ch;
+}
+.guide-prose {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 68ch;
+}
+.guide-footnote {
+  font-size: 14px;
+  color: var(--ink-faint);
+  line-height: 1.6;
+  margin: 20px 0 0;
+  max-width: 68ch;
+}
+.guide-list {
+  /* Tailwind preflight strips markers from every list, so a real bulleted list has to
+     ask for them back. Without this the points read as orphaned lines. */
+  list-style: disc;
+  margin: 0;
+  padding-left: 20px;
+}
+.guide-list li::marker {
+  color: var(--rule-hard);
+}
+.guide-list li {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 9px;
+  max-width: 62ch;
+}
+
+/* ---- contents ---- */
+
+.guide-contents {
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--rule-firm);
+  padding: 20px 0 8px;
+  margin-bottom: 44px;
+}
+.guide-contents__list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 680px) {
+  .guide-contents__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+}
+.guide-contents__link {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .guide-contents__link:hover {
+    background: var(--paper-sunk);
+    color: var(--accent-text);
+  }
+}
+.guide-contents__num {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 15px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- the score ladder ---- */
+
+.guide-ladder {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-firm);
+}
+.guide-ladder__row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 20px;
+  align-items: baseline;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--rule);
+}
+.guide-ladder__figure {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.guide-ladder__label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+/* ---- the coaching question ---- */
+
+.guide-debate {
+  display: grid;
+  gap: 28px;
+  margin-bottom: 24px;
+}
+@media (min-width: 680px) {
+  .guide-debate {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px;
+  }
+  /* The rule the spec asked for: between the two sides, carrying no preference. */
+  .guide-debate__side:last-child {
+    border-left: 1px solid var(--rule-firm);
+    padding-left: 36px;
+  }
+}
+.guide-debate__side {
+  border-top: 2px solid var(--ink);
+  padding-top: 16px;
+}
+.guide-debate__title {
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0 0 14px;
+}
+
+/* ---- the plan ---- */
+
+.guide-phases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.guide-phase {
+  display: grid;
+  gap: 8px 22px;
+  padding: 20px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-phase:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+@media (min-width: 680px) {
+  .guide-phase {
+    grid-template-columns: 8.5rem 1fr;
+  }
+}
+.guide-phase__mark {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.guide-phase__num {
+  font-size: 30px;
+  line-height: 1;
+  color: var(--accent-text);
+}
+.guide-phase__months {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.guide-phase__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+/* ---- the three sections ---- */
+
+.guide-sections {
+  display: grid;
+  gap: 0;
+}
+.guide-paper {
+  display: grid;
+  gap: 6px 20px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-paper:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+@media (min-width: 680px) {
+  .guide-paper {
+    grid-template-columns: 6rem 1fr;
+  }
+}
+/* The abbreviation set as a letterform, where an emoji used to sit. */
+.guide-paper__abbr {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0;
+}
+.guide-paper__full {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.guide-paper__share {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- what this site is for ---- */
+
+.guide-value {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.guide-value > div {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-value > div:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.guide-value dt {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+.guide-value dd {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 68ch;
+}
+
+/* ---- mistakes ---- */
+
+.guide-mistakes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.guide-mistake {
+  display: grid;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid var(--rule);
+}
+.guide-mistake:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+/*
+ * One column until there is room for two. The previous rule set the two-column grid
+ * INLINE, with flex-col sm:flex-row beside it that could not override it, so at 390px each
+ * column measured 147px.
+ */
+@media (min-width: 600px) {
+  .guide-mistake {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+}
+.guide-mistake__tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 5px;
+}
+.guide-mistake__tag[data-kind="mistake"] {
+  color: var(--wrong-text);
+}
+.guide-mistake__tag[data-kind="fix"] {
+  color: var(--correct-text);
+}
+.guide-mistake__text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ---- questions ---- */
+
+.guide-faqs {
+  border-top: 1px solid var(--rule-firm);
+}
+.guide-faq {
+  border-bottom: 1px solid var(--rule);
+}
+.guide-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.guide-faq__q::-webkit-details-marker {
+  display: none;
+}
+@media (hover: hover) {
+  .guide-faq__q:hover {
+    color: var(--accent-text);
+  }
+}
+/* A plus that becomes a minus, drawn rather than typed so it cannot pick up a font. */
+.guide-faq__mark {
+  position: relative;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+.guide-faq__mark::before,
+.guide-faq__mark::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1.5px;
+  background: var(--ink-soft);
+}
+.guide-faq__mark::after {
+  rotate: 90deg;
+}
+.guide-faq[open] .guide-faq__mark::after {
+  rotate: 0deg;
+}
+.guide-faq__a {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin: 0;
+  padding: 0 4px 20px;
+  max-width: 68ch;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .guide-faq__mark::after {
+    transition: rotate 0.22s var(--ease-out-expo);
+  }
+}
+
+/* =========================================== */
+/* U002 — past papers                           */
+/*                                              */
+/* Thirty-nine rounded white cards on a cream   */
+/* square-cornered page, each with two equal    */
+/* buttons, none of them responding to a        */
+/* pointer. Rows on rules now, with the title   */
+/* as the click target and the mock demoted to  */
+/* the secondary action it is.                  */
+/* =========================================== */
+
+.pyq-modes {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 28px;
+  max-width: 62ch;
+}
+
+/* ---- the year jump bar ---- */
+
+.pyq-years {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 10px;
+  padding: 14px 0 16px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule-firm);
+  margin-bottom: 8px;
+}
+.pyq-years__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.pyq-years__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pyq-years__link {
+  display: block;
+  padding: 3px 9px;
+  border: 1px solid var(--rule-firm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+@media (hover: hover) {
+  .pyq-years__link:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* ---- year groups ---- */
+
+.pyq-group {
+  margin-top: 34px;
+}
+.pyq-group__year {
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0 0 10px;
+  font-variant-numeric: tabular-nums;
+  scroll-margin-top: calc(var(--chrome-h) + 20px);
+}
+
+/* ---- one paper ---- */
+
+.pyq-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 14px 16px 4px;
+  flex-wrap: wrap;
+}
+.pyq-row__main {
+  min-width: 0;
+  flex: 1;
+}
+.pyq-row__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.pyq-row__link {
+  color: inherit;
+  text-decoration: none;
+}
+/* Stretches the title's hit area over the whole row, so the obvious target works. */
+.pyq-row__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.pyq-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.pyq-row__total {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.pyq-row__progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 0;
+}
+.pyq-row__meter {
+  width: 110px;
+}
+.pyq-row__solved {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--caution-text);
+  font-variant-numeric: tabular-nums;
+}
+.pyq-row[data-state="correct"] .pyq-row__solved {
+  color: var(--correct-text);
+}
+
+/* Raised above the title's overlay, which is the only reason it can be a link at all. */
+.pyq-row__mock {
+  position: relative;
+  flex-shrink: 0;
+  font-size: 14px;
+  padding: 9px 16px;
+}
+
+@media (max-width: 599px) {
+  .pyq-row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .pyq-row__split {
+    display: none;
+  }
+  .pyq-row__mock {
+    font-size: 13px;
+  }
+}
+
+/* =========================================== */
+/* U002 — Daily Dose                            */
+/*                                              */
+/* Two cards that were dark bars over white     */
+/* boxes, led by emoji, with an invalid border  */
+/* that left them edgeless. One frame now, in   */
+/* the same paper and rules as everything else. */
+/* =========================================== */
+
+.dd-card {
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+  margin-bottom: 20px;
+}
+
+.dd-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 18px;
+  background: var(--paper-sunk);
+  border-bottom: 1px solid var(--rule-firm);
+}
+
+/*
+ * A real heading. Both card names were spans, so the only h2 on the surface was the
+ * marketing section beneath them — a reader navigating by heading went from the page title
+ * straight to "Why a daily habit beats cramming" and never met today's essay.
+ */
+.dd-card__name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+}
+
+.dd-card__date {
+  font-size: 13px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dd-card__body {
+  padding: 16px 18px;
+}
+
+.dd-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.dd-card__text {
+  min-width: 0;
+  flex: 1;
+}
+
+/*
+ * The item is the point of the card, so it carries the weight. Both titles used to be 14px
+ * with 12px subs, under a 20px marketing heading.
+ */
+.dd-card__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  margin: 0 0 4px;
+}
+.dd-card__title[data-muted="true"] {
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.dd-card__sub {
+  font-size: 14px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---- the completed score ---- */
+
+.dd-score {
+  margin: 0 0 6px;
+  line-height: 1;
+}
+.dd-score__value {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 30px;
+  color: var(--ink);
+}
+.dd-score__total {
+  font-size: 16px;
+  color: var(--ink-faint);
+}
+.dd-score__section {
+  margin-right: 14px;
+  white-space: nowrap;
+}
+.dd-score__section strong {
+  font-variant-numeric: tabular-nums;
+}
+.dd-score__section strong[data-state="correct"] {
+  color: var(--correct-text);
+}
+.dd-score__section strong[data-state="wrong"] {
+  color: var(--wrong-text);
+}
+.dd-score__section strong[data-state="inert"] {
+  color: var(--inert-text);
+}
+.dd-score__time {
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- the streak ---- */
+
+.dd-streak {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--paper);
+  /* Was rgba(20,184,166,0.35) — the retired brand teal, on #fff rather than --paper. */
+  border: 1.5px solid var(--rule-firm);
+  border-left: 4px solid var(--accent);
+}
+
+.dd-streak__prompt {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.dd-streak__count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+.dd-streak__figure {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.dd-streak__unit {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.dd-streak__items {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.dd-streak__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+/* --rule-hard, because a non-text indicator has to reach 3:1 and --rule is 1.47:1. */
+.dd-streak__mark {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 2px solid var(--rule-hard);
+  background: var(--paper);
+}
+.dd-streak__item[data-done="true"] {
+  color: var(--ink);
+}
+.dd-streak__item[data-done="true"] .dd-streak__mark {
+  border-color: var(--correct-text);
+  background: var(--correct-text);
+}
+
+@media (max-width: 599px) {
+  .dd-card__row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dd-card__title {
+    font-size: 16px;
+  }
+  .dd-streak {
+    align-items: flex-start;
+  }
+}
+
+/* =========================================== */
+/* U002 — solving a passage on a phone          */
+/*                                              */
+/* The switch between passage and questions was */
+/* an ordinary block at the top of the page, so */
+/* changing panel meant scrolling back up the   */
+/* whole passage to reach it. It pins now.      */
+/* =========================================== */
+
+.solve-tabs {
+  display: flex;
+  position: sticky;
+  top: var(--header-h);
+  z-index: 30;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+}
+
+.solve-tabs__tab {
+  flex: 1;
+  padding: 11px 0;
+  border: none;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+.solve-tabs__tab[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/*
+ * auto, never hidden: a DILR set can carry question_svg and a passage can carry MathJax,
+ * and an mjx-container inside overflow:hidden is clipped rather than scrolled.
+ */
+.solve-panel {
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .solve-panel {
+    max-height: 70vh;
+    padding-right: 8px;
+  }
+}
+
+/* ---- paragraph summaries ---- */
+
+.rc-para__marker {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--rule-hard);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+@media (hover: hover) {
+  .rc-para__marker:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+}
+.rc-para__marker[aria-expanded="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+/* A paragraph with no summary is not a control, so it is not focusable and does not invite
+   a press. It used to be a dead button either way. */
+.rc-para__marker[data-inert="true"] {
+  cursor: default;
+  border-color: var(--rule);
+  color: var(--ink-faint);
+}
+
+.rc-para__text {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin: 0;
+}
+
+.rc-para__summary {
+  margin: 10px 0 0 34px;
+  padding: 10px 14px;
+  background: var(--paper-sunk);
+  border-left: 3px solid var(--ink);
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solve-tabs__tab,
+  .rc-para__marker {
+    transition: none;
+  }
+}
+
+/* =========================================== */
+/* U002 — the sign-in gate before a timed test  */
+/*                                              */
+/* It asked for an account without saying what  */
+/* was behind it, on a bare page with no way    */
+/* anywhere else. The test was already in scope */
+/* the whole time.                              */
+/* =========================================== */
+
+.gate {
+  flex: 1;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 56px 24px 72px;
+}
+
+.gate__title {
+  font-size: clamp(26px, 4vw, 34px);
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.gate__reason {
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 28px;
+}
+
+.gate__summary {
+  border-top: 2px solid var(--ink);
+  padding-top: 16px;
+  margin-bottom: 28px;
+}
+
+.gate__summary-head {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.gate__sections {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.gate__sections li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.gate__section-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gate__section-meta {
+  font-size: 14px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.gate__note {
+  font-size: 14px;
+  color: var(--ink-faint);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.gate__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+@media (max-width: 599px) {
+  .gate {
+    padding: 36px 20px 56px;
+  }
+  .gate__sections li {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+/* =========================================== */
+/* U004 — the dark theme                        */
+/*                                              */
+/* Not an inversion. The light system is cream  */
+/* over navy ink, so this is navy ground under  */
+/* warm off-white: the newspaper character      */
+/* survives, and a night reader does not get a  */
+/* slab of white. Every pairing below was       */
+/* measured, not picked — see the spec.         */
+/*                                              */
+/* The values appear twice on purpose. CSS has  */
+/* no way to apply one block both to a media    */
+/* query and to an attribute, and the two cases */
+/* are genuinely different: follow the system   */
+/* unless the reader has overridden it.         */
+/* =========================================== */
+
+:root {
+  /*
+   * The band that inverts against the page — the footer, the closing call to action.
+   * These cannot be `var(--ink)` and `#fff` directly, which is what they were: --ink
+   * becomes near-white in the dark theme, so the band would have been white on white.
+   */
+  /*
+   * Text sitting ON a solid fill — an ink button, a correct/wrong option key. It cannot be
+   * a raw #fff: in the dark theme --ink becomes near-white, so every primary button was
+   * white on white, and --correct-text becomes a bright green that white reads about 2:1
+   * against. Flipping to --paper in dark keeps both ends legible.
+   */
+  --on-fill: var(--paper);
+
+  /*
+   * Text on an --accent-bright fill. That teal is the same value in both themes, so this
+   * one does NOT flip: it was --ink, which becomes near-white in dark and landed at
+   * 1.60:1 on the accent. Fixed at the ink value, 9.36:1 either way.
+   */
+  --on-accent: #101a2b;
+
+  /* Modal scrims. Alpha, so it cannot be a plain token swap in the components. */
+  --scrim: rgba(15, 23, 42, 0.5);
+
+  --invert-bg: var(--ink);
+  --invert-ink: #ffffff;
+  --invert-ink-soft: rgba(255, 255, 255, 0.72);
+  --invert-rule: rgba(255, 255, 255, 0.22);
+
+  /* Lets the browser theme form controls, scrollbars and the caret to match. */
+  color-scheme: light;
+}
+
+/* Follow the system, unless the reader has explicitly chosen light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ink: #f3ede1;
+    --ink-soft: #c2bcae;
+    --ink-faint: #968f82;
+
+    --paper: #111823;
+    --paper-sunk: #1a2230;
+
+    --rule: #242d3c;
+    --rule-firm: #333f52;
+    --rule-hard: #5d6a7e;
+
+    --accent: #2dd4bf;
+    --accent-text: #5eead4;
+    --accent-bright: #2dd4bf;
+    --focus-ring: var(--accent-bright);
+
+    --correct-text: #5fd3a0;
+    --correct-bright: #5fd3a0;
+    --correct-wash: #152a22;
+
+    --wrong-text: #ff9b8f;
+    --wrong-bright: #ff9b8f;
+    --wrong-wash: #2e1a19;
+
+    --caution-text: #e3b35f;
+    --caution-bright: #e3b35f;
+    --caution-wash: #2b2316;
+
+    --review-text: #bda3ff;
+    --review-bright: #bda3ff;
+    --review-wash: #231f33;
+
+    --inert-bright: var(--ink-faint);
+
+    --scrim: rgba(0, 0, 0, 0.66);
+
+    --invert-bg: #232c3b;
+    --invert-ink: var(--ink);
+    --invert-ink-soft: var(--ink-soft);
+    --invert-rule: var(--rule-hard);
+
+    /*
+     * A bridge, not an endorsement. --trust-navy is still read by ~24 files as a text
+     * colour, and #1e3a5f on a dark ground is close to invisible. Pointing it at --ink
+     * keeps those readable until Phase 16 retires the token. New code must not use it.
+     */
+    --trust-navy: var(--ink);
+  }
+}
+
+/* The explicit override. Same values; see the note above on why they repeat. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #f3ede1;
+  --ink-soft: #c2bcae;
+  --ink-faint: #968f82;
+
+  --paper: #111823;
+  --paper-sunk: #1a2230;
+
+  --rule: #242d3c;
+  --rule-firm: #333f52;
+  --rule-hard: #5d6a7e;
+
+  --accent: #2dd4bf;
+  --accent-text: #5eead4;
+  --accent-bright: #2dd4bf;
+  --focus-ring: var(--accent-bright);
+
+  --correct-text: #5fd3a0;
+  --correct-bright: #5fd3a0;
+  --correct-wash: #152a22;
+
+  --wrong-text: #ff9b8f;
+  --wrong-bright: #ff9b8f;
+  --wrong-wash: #2e1a19;
+
+  --caution-text: #e3b35f;
+  --caution-bright: #e3b35f;
+  --caution-wash: #2b2316;
+
+  --review-text: #bda3ff;
+  --review-bright: #bda3ff;
+  --review-wash: #231f33;
+
+  --inert-bright: var(--ink-faint);
+
+  --scrim: rgba(0, 0, 0, 0.66);
+
+  --invert-bg: #232c3b;
+  --invert-ink: var(--ink);
+  --invert-ink-soft: var(--ink-soft);
+  --invert-rule: var(--rule-hard);
+
+  --trust-navy: var(--ink);
+}
+
+/* ---- the pieces that cannot simply follow a token ---- */
+
+.ed-invert .ed-kicker::after {
+  background: var(--invert-rule);
+}
+
+.site-footer {
+  background: var(--invert-bg);
+  color: var(--invert-ink-soft);
+}
+
+/*
+ * The grain is a dark turbulence tile multiplied over cream. Over a dark ground it reads as
+ * dirt rather than paper, so it is lightened and dialled back instead of removed — the
+ * texture is half of why the page does not look like a template.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ed-page::before {
+    opacity: 0.5;
+    filter: invert(1);
+  }
+}
+:root[data-theme="dark"] .ed-page::before {
+  opacity: 0.5;
+  filter: invert(1);
+}
+
+/* ---- the toggle ---- */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--rule-firm);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 0;
+}
+@media (hover: hover) {
+  .theme-toggle:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+}
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+/* One icon is shown at a time, chosen by the theme actually in force. */
+.theme-toggle__moon {
+  display: block;
+}
+.theme-toggle__sun {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle__moon {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .theme-toggle__sun {
+    display: block;
+  }
+}
+:root[data-theme="dark"] .theme-toggle__moon {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle__sun {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle__moon {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle__sun {
+  display: none;
 }

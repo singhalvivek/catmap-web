@@ -55,27 +55,27 @@ export default function DailyChallengeReviewPageClient({ test, date }: Props) {
 
   if (status === "loading" || status === "checking") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
-        <p className="text-slate-500 text-sm">Loading…</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
+        <p className="ed-muted text-sm">Loading…</p>
       </div>
     );
   }
 
   if (status === "unauthenticated") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
         <div style={{ maxWidth: 360, textAlign: "center", padding: "32px 24px" }}>
-          <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 22, marginBottom: 8 }}>
+          <h2 className="font-extrabold" style={{ fontSize: 22, marginBottom: 8, color: "var(--ink)" }}>
             Sign in to view your review
           </h2>
           <button
             type="button"
             onClick={handleLogin}
-            className="font-bold text-white w-full"
+            className="font-bold w-full"
             style={{
               padding: "12px 24px",
-              borderRadius: 10,
-              background: "#1E3A5F",
+              background: "var(--ink)",
+              color: "var(--paper)",
               border: "none",
               fontSize: 15,
               cursor: "pointer",
@@ -85,7 +85,7 @@ export default function DailyChallengeReviewPageClient({ test, date }: Props) {
           >
             Login with Google
           </button>
-          {authError && <p className="text-red-600 text-xs mt-3">{authError}</p>}
+          {authError && <p className="text-xs mt-3" style={{ color: "var(--wrong-text)" }}>{authError}</p>}
         </div>
       </div>
     );
@@ -93,22 +93,22 @@ export default function DailyChallengeReviewPageClient({ test, date }: Props) {
 
   if (status === "no_result") {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFDF8" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
         <div style={{ maxWidth: 360, textAlign: "center", padding: "32px 24px" }}>
-          <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 22, marginBottom: 8 }}>
+          <h2 className="font-extrabold" style={{ fontSize: 22, marginBottom: 8, color: "var(--ink)" }}>
             No attempt found
           </h2>
-          <p className="text-slate-500" style={{ fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+          <p className="ed-muted" style={{ fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
             You need to complete this challenge before you can review it.
           </p>
           <Link
             href="/cat-prep/daily-dose/challenge"
-            className="font-bold text-white"
+            className="font-bold"
             style={{
               display: "inline-block",
               padding: "12px 24px",
-              borderRadius: 10,
-              background: "#1E3A5F",
+              background: "var(--ink)",
+              color: "var(--paper)",
               fontSize: 14,
               textDecoration: "none",
             }}

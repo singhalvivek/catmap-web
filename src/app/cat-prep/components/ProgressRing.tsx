@@ -3,7 +3,7 @@ export default function ProgressRing({
   percent,
   size = 48,
   stroke = 4,
-  color = "#14B8A6",
+  color = "var(--accent)",
 }: {
   percent: number;
   size?: number;
@@ -18,6 +18,8 @@ export default function ProgressRing({
     <svg
       width={size}
       height={size}
+      role="img"
+      aria-label={`${Math.round(percent)}% complete`}
       style={{ transform: "rotate(-90deg)", flexShrink: 0 }}
     >
       <circle
@@ -25,7 +27,7 @@ export default function ProgressRing({
         cy={size / 2}
         r={r}
         fill="none"
-        stroke="#E2E8F0"
+        stroke="var(--rule)"
         strokeWidth={stroke}
       />
       <circle
@@ -37,7 +39,6 @@ export default function ProgressRing({
         strokeWidth={stroke}
         strokeDasharray={circ}
         strokeDashoffset={offset}
-        strokeLinecap="round"
         style={{
           transition: "stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1)",
         }}

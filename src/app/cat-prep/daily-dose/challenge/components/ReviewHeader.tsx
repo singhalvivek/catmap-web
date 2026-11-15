@@ -12,7 +12,7 @@ export default function ReviewHeader({ title, backHref }: Props) {
   return (
     <div
       style={{
-        background: "#1E3A5F",
+        background: "var(--invert-bg)",
         padding: "0 24px",
         height: 56,
         display: "flex",
@@ -28,15 +28,15 @@ export default function ReviewHeader({ title, backHref }: Props) {
           className="font-semibold"
           style={{
             fontSize: 12,
-            color: "rgba(255,255,255,0.55)",
+            color: "var(--invert-ink-soft)",
             textDecoration: "none",
             letterSpacing: "0.2px",
           }}
         >
           ← Back to Results
         </Link>
-        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14 }}>|</span>
-        <span className="font-extrabold text-white" style={{ fontSize: 15 }}>
+        <span style={{ color: "var(--invert-rule)", fontSize: 14 }}>|</span>
+        <span className="font-extrabold" style={{ fontSize: 15, color: "var(--invert-ink)" }}>
           {title}
         </span>
       </div>

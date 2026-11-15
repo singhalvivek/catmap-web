@@ -125,15 +125,15 @@ function QuestionBlock({
   return (
     <article
       id={`q-${question.section.toLowerCase()}-${question.questionNumber}`}
-      className="scroll-mt-20 rounded-xl border-[1.5px] border-[#E8EAF0] bg-white px-5 py-4"
+      className="scroll-mt-20 border-[1.5px] border-rule-firm bg-paper px-5 py-4"
     >
-      <h4 className="mb-2.5 text-sm font-bold text-trust-navy">Question {question.questionNumber}</h4>
+      <h4 className="mb-2.5 text-sm font-bold text-ink">Question {question.questionNumber}</h4>
 
       <InlineContent
         text={question.text}
         imageUrls={question.imageUrls}
         imagePositions={question.imagePositions}
-        textClass="mb-2 whitespace-pre-line text-[15px] leading-[1.7] text-trust-navy"
+        textClass="mb-2 whitespace-pre-line text-[15px] leading-[1.7] text-ink"
       />
 
       <div className="mt-4">
@@ -171,8 +171,8 @@ function QuestionBlock({
         <button
           onClick={onCheck}
           disabled={!given}
-          className={`mt-3 rounded-[10px] border-none px-6 py-2.5 text-sm font-bold ${
-            given ? "cursor-pointer bg-trust-navy text-white" : "cursor-not-allowed bg-slate-200 text-slate-400"
+          className={`mt-3 border-none px-6 py-2.5 text-sm font-bold ${
+            given ? "cursor-pointer bg-ink text-paper" : "cursor-not-allowed bg-paper-sunk ed-muted"
           }`}
         >
           Check Answer
@@ -182,11 +182,11 @@ function QuestionBlock({
           className={`mt-3 mb-0 text-[13px] font-bold ${
             question.type === "mcq"
               ? mcqIsRight
-                ? "text-emerald-800"
-                : "text-red-800"
+                ? "text-correct-text"
+                : "text-wrong-text"
               : titaIsRight
-                ? "text-emerald-800"
-                : "text-red-800"
+                ? "text-correct-text"
+                : "text-wrong-text"
           }`}
         >
           {question.type === "mcq"
@@ -200,11 +200,11 @@ function QuestionBlock({
       )}
 
       <details className="mt-3" open={isChecked}>
-        <summary className="cursor-pointer py-1.5 text-[13px] font-bold text-teal-700">
+        <summary className="cursor-pointer py-1.5 text-[13px] font-bold text-ink">
           Answer &amp; explanation
         </summary>
-        <div className="mt-2 rounded-[10px] border-[1.5px] border-slate-200 bg-slate-50 px-4 py-3.5">
-          <p className="mb-2 text-[13px] font-bold text-trust-navy">
+        <div className="mt-2 border-[1.5px] border-rule-firm bg-paper-sunk px-4 py-3.5">
+          <p className="mb-2 text-[13px] font-bold text-ink">
             Correct answer: {resolveCorrectKey(question)}
           </p>
           {question.explanation.text || question.explanation.imageUrls.length > 0 ? (
@@ -212,10 +212,10 @@ function QuestionBlock({
               text={question.explanation.text}
               imageUrls={question.explanation.imageUrls}
               imagePositions={question.explanation.imagePositions}
-              textClass="mb-2 whitespace-pre-line text-sm leading-[1.7] text-slate-700"
+              textClass="mb-2 whitespace-pre-line text-sm leading-[1.7] text-ink-soft"
             />
           ) : (
-            <p className="m-0 text-sm text-slate-400">No explanation available.</p>
+            <p className="m-0 text-sm ed-muted">No explanation available.</p>
           )}
         </div>
       </details>
@@ -232,10 +232,10 @@ export default function PyqPaperReader({ paper }: { paper: PyqSolvedPaper }) {
 
   return (
     <div ref={containerRef}>
-      <nav className="sticky top-16 z-40 -mx-6 mb-6 flex gap-2 border-b border-slate-200 bg-[#FFFDF8] px-6 py-3">
+      <nav className="sticky-under-header -mx-6 mb-6 flex gap-2 border-b border-rule-firm px-6 py-3">
         <Link
           href="/cat-prep/pyq"
-          className="rounded-full border-[1.5px] border-slate-200 bg-white px-4 py-2 text-[13px] font-semibold text-slate-500 no-underline"
+          className="border-[1.5px] border-rule-firm bg-paper px-4 py-2 text-[13px] font-semibold text-ink-faint no-underline"
         >
           ← All papers
         </Link>
@@ -243,7 +243,7 @@ export default function PyqPaperReader({ paper }: { paper: PyqSolvedPaper }) {
           <a
             key={section.name}
             href={`#${sectionAnchor(section.name)}`}
-            className="rounded-full border-[1.5px] border-trust-navy bg-white px-4 py-2 text-[13px] font-bold text-trust-navy no-underline"
+            className="border-[1.5px] border-ink bg-paper px-4 py-2 text-[13px] font-bold text-ink no-underline"
           >
             {section.name}
           </a>
@@ -252,7 +252,7 @@ export default function PyqPaperReader({ paper }: { paper: PyqSolvedPaper }) {
 
       {sections.map((section) => (
         <section key={section.name} id={sectionAnchor(section.name)} className="mb-10 scroll-mt-32">
-          <h2 className="m-0 mb-3.5 text-[17px] font-extrabold tracking-tight text-trust-navy">
+          <h2 className="m-0 mb-3.5 text-[17px] font-extrabold tracking-tight text-ink">
             {section.name} — {section.questions.length} questions
           </h2>
 
@@ -260,8 +260,8 @@ export default function PyqPaperReader({ paper }: { paper: PyqSolvedPaper }) {
             {buildComprehensionGroups(section.questions).map((group) => (
               <div key={group.questions[0].id} className="flex flex-col gap-4">
                 {group.comprehensionText && (
-                  <div className="rounded-xl border-[1.5px] border-slate-200 bg-slate-50 px-5 py-4">
-                    <h3 className="mb-2 text-[13px] font-bold text-trust-navy">
+                  <div className="border-[1.5px] border-rule-firm bg-paper-sunk px-5 py-4">
+                    <h3 className="mb-2 text-[13px] font-bold text-ink">
                       Passage for questions {group.questions[0].questionNumber}–
                       {group.questions[group.questions.length - 1].questionNumber}
                     </h3>
@@ -269,7 +269,7 @@ export default function PyqPaperReader({ paper }: { paper: PyqSolvedPaper }) {
                       text={group.comprehensionText}
                       imageUrls={group.comprehensionImages}
                       imagePositions={group.comprehensionImagePositions}
-                      textClass="mb-2.5 whitespace-pre-line text-sm leading-[1.8] text-slate-700"
+                      textClass="mb-2.5 whitespace-pre-line text-sm leading-[1.8] text-ink-soft"
                     />
                   </div>
                 )}

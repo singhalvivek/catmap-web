@@ -44,14 +44,14 @@ function EmbedBlockedNotice({ videoId }: { videoId: string | null }) {
         textAlign: "center",
         gap: 10,
         padding: 24,
-        background: "#FFFDF8",
+        background: "var(--paper)",
       }}
     >
       <div aria-hidden style={{ fontSize: 30 }}>📺</div>
-      <div className="font-bold text-trust-navy" style={{ fontSize: 15 }}>
+      <div className="font-bold" style={{ fontSize: 15 }}>
         This video plays on YouTube
       </div>
-      <p style={{ fontSize: 13, color: "#64748B", maxWidth: 300, lineHeight: 1.6, margin: 0 }}>
+      <p style={{ fontSize: 13, color: "var(--ink-soft)", maxWidth: 300, lineHeight: 1.6, margin: 0 }}>
         Watch it there and come straight back &mdash; we&apos;re waiting for you with the next video.
       </p>
       <a
@@ -62,9 +62,8 @@ function EmbedBlockedNotice({ videoId }: { videoId: string | null }) {
           marginTop: 6,
           display: "inline-block",
           padding: "9px 18px",
-          borderRadius: 8,
-          background: "#14B8A6",
-          color: "#fff",
+          background: "var(--accent)",
+          color: "var(--paper)",
           fontSize: 13,
           fontWeight: 700,
           textDecoration: "none",
@@ -176,8 +175,8 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
         className="flex items-center gap-2 flex-shrink-0"
         style={{
           padding: "12px 16px",
-          borderBottom: "1px solid #E2E8F0",
-          background: "#FFFDF8",
+          borderBottom: "1px solid var(--rule)",
+          background: "var(--paper)",
         }}
       >
         <button
@@ -187,12 +186,11 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
             background: "none",
             border: "none",
             cursor: "pointer",
-            color: "#1E3A5F",
+            color: "var(--ink)",
             fontSize: 13,
             fontFamily: "inherit",
             fontWeight: 600,
             padding: "4px 8px",
-            borderRadius: 6,
             display: "flex",
             alignItems: "center",
             gap: 4,
@@ -203,7 +201,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
         </button>
 
         <div
-          className="font-semibold text-trust-navy flex-1 min-w-0"
+          className="font-semibold flex-1 min-w-0"
           style={{
             fontSize: 13,
             overflow: "hidden",
@@ -220,14 +218,13 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            color: "#14B8A6",
+            color: "var(--accent)",
             fontSize: 12,
             fontWeight: 600,
             textDecoration: "none",
             flexShrink: 0,
             padding: "4px 8px",
-            borderRadius: 6,
-            border: "1px solid #14B8A6",
+            border: "1px solid var(--accent)",
             whiteSpace: "nowrap",
           }}
         >
@@ -259,14 +256,14 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
           {/* Playlist items */}
           <div
             className="flex-1 overflow-y-auto"
-            style={{ borderTop: "1px solid #E2E8F0" }}
+            style={{ borderTop: "1px solid var(--rule)" }}
           >
             <div
               className="font-bold uppercase"
               style={{
                 padding: "10px 16px 6px",
                 fontSize: 11,
-                color: "#1E3A5F",
+                color: "var(--ink)",
                 letterSpacing: "0.5px",
               }}
             >
@@ -281,7 +278,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
 
             {isPlaylist && loadingItems && (
               <div
-                style={{ padding: 20, textAlign: "center", color: "#94A3B8", fontSize: 13 }}
+                style={{ padding: 20, textAlign: "center", color: "var(--ink-faint)", fontSize: 13 }}
               >
                 Loading videos…
               </div>
@@ -290,7 +287,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
             {isPlaylist && !loadingItems && (itemsError || playlistItems.length === 0) && (
               <div style={{ padding: "12px 16px" }}>
                 {itemsError && (
-                  <p style={{ fontSize: 12, color: "#EF4444", marginBottom: 8 }}>
+                  <p style={{ fontSize: 12, color: "var(--wrong-text)", marginBottom: 8 }}>
                     {itemsError}
                   </p>
                 )}
@@ -299,7 +296,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    color: "#14B8A6",
+                    color: "var(--accent)",
                     fontSize: 13,
                     fontWeight: 600,
                     textDecoration: "none",
@@ -308,7 +305,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                   View all videos on YouTube ↗
                 </a>
                 {!YOUTUBE_API_KEY && (
-                  <p style={{ marginTop: 6, fontSize: 12, color: "#94A3B8" }}>
+                  <p style={{ marginTop: 6, fontSize: 12, color: "var(--ink-faint)" }}>
                     Add NEXT_PUBLIC_YOUTUBE_API_KEY to .env.local and restart the dev server.
                   </p>
                 )}
@@ -327,15 +324,15 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                     className="flex items-center gap-3 w-full text-left"
                     style={{
                       padding: "8px 16px",
-                      background: isActive ? "#F0FDFA" : "transparent",
+                      background: isActive ? "var(--paper-sunk)" : "transparent",
                       border: "none",
-                      borderBottom: "1px solid #F1F5F9",
+                      borderBottom: "1px solid var(--paper-sunk)",
                       cursor: "pointer",
                       fontFamily: "inherit",
                       transition: "background 0.1s",
                     }}
                     onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.background = "#F8FAFC";
+                      if (!isActive) e.currentTarget.style.background = "var(--paper-sunk)";
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) e.currentTarget.style.background = "transparent";
@@ -345,7 +342,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                     <span
                       style={{
                         fontSize: 11,
-                        color: isActive ? "#14B8A6" : "#94A3B8",
+                        color: isActive ? "var(--accent)" : "var(--ink-faint)",
                         width: 18,
                         textAlign: "right",
                         flexShrink: 0,
@@ -363,7 +360,6 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                           width: 80,
                           height: 45,
                           flexShrink: 0,
-                          borderRadius: 4,
                           overflow: "hidden",
                         }}
                       >
@@ -381,8 +377,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                           width: 80,
                           height: 45,
                           flexShrink: 0,
-                          borderRadius: 4,
-                          background: "#FEF2F2",
+                          background: "var(--paper-sunk)",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -401,7 +396,7 @@ export default function ResourceViewer({ resource, onBack }: ResourceViewerProps
                         minWidth: 0,
                         fontSize: 12,
                         lineHeight: 1.4,
-                        color: isActive ? "#0F766E" : "#1E3A5F",
+                        color: isActive ? "var(--accent-text)" : "var(--ink)",
                         fontWeight: isActive ? 600 : 400,
                       }}
                     >

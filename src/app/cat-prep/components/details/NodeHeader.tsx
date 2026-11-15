@@ -7,17 +7,17 @@ export default function NodeHeader({ selected, onClose }: { selected: Node; onCl
   return (
     <div
       className="flex items-start justify-between gap-3 shrink-0"
-      style={{ padding: "16px 20px", borderBottom: "1px solid #E8EAF0", background: "#fff" }}
+      style={{ padding: "16px 20px", borderBottom: "1px solid var(--rule)", background: "var(--paper)" }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           className="font-semibold uppercase mb-1"
-          style={{ fontSize: 11, color: "#94A3B8", letterSpacing: "0.6px" }}
+          style={{ fontSize: 11, color: "var(--ink-faint)", letterSpacing: "0.6px" }}
         >
           Subtopic
         </div>
         <h2
-          className="font-bold text-trust-navy"
+          className="font-bold"
           style={{ fontSize: 16, lineHeight: 1.3, margin: 0 }}
         >
           {selected.title}
@@ -29,14 +29,13 @@ export default function NodeHeader({ selected, onClose }: { selected: Node; onCl
         style={{
           width: 30,
           height: 30,
-          borderRadius: 8,
-          background: "#F1F5F9",
+          background: "var(--paper-sunk)",
           border: "none",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#64748B",
+          color: "var(--ink-soft)",
           fontSize: 16,
           flexShrink: 0,
         }}

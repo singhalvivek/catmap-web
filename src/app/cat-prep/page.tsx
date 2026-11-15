@@ -1,3 +1,4 @@
+// page — /cat-prep: the Learn surface, the syllabus tree
 import type { Metadata } from "next";
 import data from "./data.json";
 import descriptions from "./description.json";

@@ -40,7 +40,6 @@ export default function CatPrepOGImage() {
               top: 0,
               width: 58,
               height: 100,
-              borderRadius: 10,
               background: OG_BRAND.navy,
             }}
           />
@@ -51,7 +50,6 @@ export default function CatPrepOGImage() {
               top: 0,
               width: 58,
               height: 100,
-              borderRadius: 10,
               background: OG_BRAND.teal,
             }}
           />
@@ -67,7 +65,7 @@ export default function CatPrepOGImage() {
             marginBottom: 28,
           }}
         >
-          CAT Roadmap
+          Free CAT Preparation
         </div>
 
         <div
@@ -78,7 +76,7 @@ export default function CatPrepOGImage() {
             textAlign: "center",
           }}
         >
-          Structured · Trackable · Distraction-free
+          The whole syllabus, past papers and practice. No sign-up.
         </div>
 
         <div

@@ -1,3 +1,4 @@
+// page — question-by-question review of a submitted PYQ mock attempt
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchPyqMockReviewTest } from "@/lib/pyqQueries";

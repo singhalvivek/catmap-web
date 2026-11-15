@@ -6,11 +6,11 @@ import { useEffect, useRef } from "react";
 export type PillState = "unanswered" | "answered" | "correct" | "wrong" | "current";
 
 const PILL_STYLES: Record<PillState, { bg: string; color: string; border: string }> = {
-  unanswered: { bg: "#F1F5F9", color: "#94A3B8", border: "#E2E8F0" },
-  answered:   { bg: "#EEF2FF", color: "#1E3A5F", border: "#1E3A5F" },
-  correct:    { bg: "#D1FAE5", color: "#065F46", border: "#10B981" },
-  wrong:      { bg: "#FEE2E2", color: "#991B1B", border: "#EF4444" },
-  current:    { bg: "#1E3A5F", color: "#fff",    border: "#1E3A5F" },
+  unanswered: { bg: "var(--paper-sunk)", color: "var(--ink-faint)", border: "var(--rule)" },
+  answered:   { bg: "var(--paper-sunk)", color: "var(--ink)", border: "var(--ink)" },
+  correct:    { bg: "var(--correct-wash)", color: "var(--correct-text)", border: "var(--correct-text)" },
+  wrong:      { bg: "var(--wrong-wash)", color: "var(--wrong-text)", border: "var(--wrong-text)" },
+  current:    { bg: "var(--ink)", color: "var(--paper)",    border: "var(--ink)" },
 };
 
 const LEGEND: Array<{ state: PillState; label: string }> = [
@@ -48,7 +48,6 @@ export function PracticePalette({ total, getPillState, currentNum, onSelect, var
         style={{
           width: variant === "bottom-bar" ? 36 : 32,
           height: variant === "bottom-bar" ? 36 : 32,
-          borderRadius: 8,
           background: s.bg,
           color: s.color,
           border: `1.5px solid ${s.border}`,
@@ -73,8 +72,8 @@ export function PracticePalette({ total, getPillState, currentNum, onSelect, var
           bottom: 0,
           left: 0,
           right: 0,
-          background: "#fff",
-          borderTop: "1.5px solid #E8EAF0",
+          background: "var(--paper)",
+          borderTop: "1.5px solid var(--rule)",
           boxShadow: "0 -4px 20px rgba(30,58,95,0.08)",
           zIndex: 50,
           padding: "10px 16px",
@@ -93,7 +92,7 @@ export function PracticePalette({ total, getPillState, currentNum, onSelect, var
 
   return (
     <div>
-      <p className="font-extrabold text-trust-navy" style={{ fontSize: 12, marginBottom: 10 }}>
+      <p className="font-extrabold" style={{ fontSize: 12, marginBottom: 10 }}>
         Questions
       </p>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
@@ -108,13 +107,12 @@ export function PracticePalette({ total, getPillState, currentNum, onSelect, var
                 style={{
                   width: 10,
                   height: 10,
-                  borderRadius: 3,
                   background: s.bg,
                   border: `1.5px solid ${s.border}`,
                   flexShrink: 0,
                 }}
               />
-              <span style={{ fontSize: 11, color: "#64748B" }}>{label}</span>
+              <span style={{ fontSize: 11, color: "var(--ink-soft)" }}>{label}</span>
             </div>
           );
         })}

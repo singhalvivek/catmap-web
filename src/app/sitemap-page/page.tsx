@@ -1,3 +1,4 @@
+// page — /sitemap-page: human-readable index of every public route
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
@@ -61,13 +62,13 @@ export default function SitemapPage() {
         margin: "0 auto",
         padding: "48px 24px 80px",
         fontFamily: "system-ui, sans-serif",
-        color: "#1E3A5F",
+        color: "var(--ink)",
       }}
     >
       <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 6px" }}>Site Map</h1>
-      <p style={{ color: "#64748B", fontSize: 14, margin: "0 0 48px" }}>
+      <p style={{ color: "var(--ink-soft)", fontSize: 14, margin: "0 0 48px" }}>
         All pages on StudyNaksha.{" "}
-        <Link href="/cat-prep" style={{ color: "#3B82F6", textDecoration: "none" }}>
+        <Link href="/cat-prep" style={{ color: "var(--accent-text)", textDecoration: "none" }}>
           Go to CAT Prep →
         </Link>
       </p>
@@ -87,13 +88,13 @@ export default function SitemapPage() {
       <Section title="Practice">
         {PRACTICE_SUBJECTS.map((subject) => (
           <div key={subject.section} style={{ marginBottom: 28 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F766E", margin: "0 0 10px" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--accent-text)", margin: "0 0 10px" }}>
               {SECTION_LABELS[subject.section] ?? subject.section}
             </h3>
             {subject.topics.map((topic) => (
               <div key={topic.slug} style={{ paddingLeft: 12, marginBottom: 10 }}>
                 {subject.topics.length > 1 && (
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)", marginBottom: 6 }}>
                     {topic.name}
                   </div>
                 )}
@@ -107,9 +108,9 @@ export default function SitemapPage() {
                             {chapter.name}
                           </Link>
                         ) : (
-                          <span style={{ color: "#94A3B8", fontSize: 14 }}>{chapter.name}</span>
+                          <span style={{ color: "var(--ink-faint)", fontSize: 14 }}>{chapter.name}</span>
                         )}
-                        <span style={{ color: "#CBD5E1", fontSize: 12 }}>
+                        <span style={{ color: "var(--ink-faint)", fontSize: 12 }}>
                           {chapter.questionCount}+ q
                         </span>
                       </li>
@@ -133,7 +134,7 @@ export default function SitemapPage() {
         >
           {years.map((year) => (
             <div key={year}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>
                 CAT {year}
               </div>
               <ul style={listStyle}>
@@ -160,8 +161,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         style={{
           fontSize: 18,
           fontWeight: 700,
-          color: "#1E3A5F",
-          borderBottom: "2px solid #EEF2FF",
+          color: "var(--ink)",
+          borderBottom: "2px solid var(--rule)",
           paddingBottom: 8,
           margin: "0 0 20px",
         }}
@@ -179,7 +180,7 @@ function LinkRow({ href, label }: { href: string; label: string }) {
       <Link href={href} style={linkStyle}>
         {label}
       </Link>
-      <span style={{ color: "#CBD5E1", fontSize: 12 }}>
+      <span style={{ color: "var(--ink-faint)", fontSize: 12 }}>
         {ENV.SITE_URL}{href}
       </span>
     </span>
@@ -195,7 +196,7 @@ const listStyle: CSSProperties = {
 };
 
 const linkStyle: CSSProperties = {
-  color: "#3B82F6",
+  color: "var(--accent-text)",
   textDecoration: "none",
   fontSize: 14,
 };

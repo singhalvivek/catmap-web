@@ -35,8 +35,8 @@ function Avatar({ name, photoUrl, size = 32 }: { name: string; photoUrl: string 
         width: size,
         height: size,
         borderRadius: "50%",
-        background: "#1E3A5F",
-        color: "#fff",
+        background: "var(--invert-bg)",
+        color: "var(--invert-ink)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -65,21 +65,36 @@ function VoteButton({
     <button
       onClick={onClick}
       disabled={disabled}
+      aria-label={direction === "up" ? "Upvote" : "Downvote"}
+      aria-pressed={active}
       style={{
-        background: active ? (direction === "up" ? "#DCFCE7" : "#FEE2E2") : "#F8FAFC",
-        border: `1px solid ${active ? (direction === "up" ? "#86EFAC" : "#FCA5A5") : "#E2E8F0"}`,
-        color: active ? (direction === "up" ? "#166534" : "#991B1B") : "#94A3B8",
-        borderRadius: 6,
-        padding: "3px 9px",
-        fontSize: 11,
-        fontWeight: 700,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 40,
+        height: 40,
+        padding: 0,
+        background: active ? "var(--paper-sunk)" : "var(--paper)",
+        border: `1px solid ${active ? "var(--ink)" : "var(--rule-hard)"}`,
+        color: active ? "var(--ink)" : "var(--ink-faint)",
         cursor: disabled ? "default" : "pointer",
-        fontFamily: "inherit",
         opacity: disabled && !active ? 0.45 : 1,
-        lineHeight: 1.6,
       }}
     >
-      {direction === "up" ? "▲" : "▼"}
+      <svg
+        width="14"
+        height="9"
+        viewBox="0 0 14 9"
+        fill="none"
+        aria-hidden="true"
+        focusable="false"
+        style={{
+          transformOrigin: "center",
+          transform: direction === "down" ? "rotate(180deg)" : undefined,
+        }}
+      >
+        <path d="M1 8 7 1.5 13 8" stroke="currentColor" strokeWidth="2" />
+      </svg>
     </button>
   );
 }
@@ -109,17 +124,16 @@ function AnswerCard({
   return (
     <div
       style={{
-        border: isOwn ? "1.5px solid #1E3A5F25" : "1px solid #E2E8F0",
-        borderRadius: 10,
+        border: isOwn ? "1.5px solid var(--rule-hard)" : "1px solid var(--rule-firm)",
         padding: "14px 16px",
-        background: isOwn ? "#F0F4FF" : "#fff",
+        background: isOwn ? "var(--paper-sunk)" : "var(--paper)",
       }}
     >
       {/* Author row */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Avatar name={sub.displayName} photoUrl={sub.photoUrl} size={28} />
-          <span className="font-semibold" style={{ fontSize: 13, color: "#1E3A5F" }}>
+          <span className="font-semibold" style={{ fontSize: 13, color: "var(--ink)" }}>
             {sub.displayName}
           </span>
           {isOwn && (
@@ -127,10 +141,9 @@ function AnswerCard({
               style={{
                 fontSize: 10,
                 fontWeight: 700,
-                color: "#3B82F6",
-                background: "#EFF6FF",
-                border: "1px solid #BFDBFE",
-                borderRadius: 100,
+                color: "var(--accent-text)",
+                background: "var(--paper)",
+                border: "1px solid var(--rule-firm)",
                 padding: "1px 7px",
               }}
             >
@@ -146,7 +159,7 @@ function AnswerCard({
             className="font-bold"
             style={{
               fontSize: 12,
-              color: score > 0 ? "#166534" : score < 0 ? "#991B1B" : "#94A3B8",
+              color: score > 0 ? "var(--ink)" : score < 0 ? "var(--ink-soft)" : "var(--ink-faint)",
               minWidth: 18,
               textAlign: "center",
             }}
@@ -158,8 +171,8 @@ function AnswerCard({
       </div>
 
       {/* Answer text */}
-      <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.7, margin: 0 }}>
-        {sub.answers[questionId] || <em style={{ color: "#CBD5E1" }}>No answer</em>}
+      <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.7, margin: 0 }}>
+        {sub.answers[questionId] || <em style={{ color: "var(--ink-faint)" }}>No answer</em>}
       </p>
     </div>
   );
@@ -311,11 +324,11 @@ export default function DailyEssayPageClient({
 
   if (!essay) {
     return (
-      <div style={{ minHeight: "100vh", background: "#FFFDF8", padding: "48px 24px", textAlign: "center" }}>
-        <p className="font-semibold text-slate-400" style={{ fontSize: 16 }}>
+      <div style={{ minHeight: "100vh", background: "var(--paper)", padding: "48px 24px", textAlign: "center" }}>
+        <p className="font-semibold ed-muted" style={{ fontSize: 16 }}>
           Could not load today&apos;s essay. Please try again later.
         </p>
-        <Link href="/cat-prep" style={{ color: "#1E3A5F", fontSize: 14, marginTop: 16, display: "inline-block" }}>
+        <Link href="/cat-prep" style={{ color: "var(--ink)", fontSize: 14, marginTop: 16, display: "inline-block" }}>
           ← Back to Roadmap
         </Link>
       </div>
@@ -325,22 +338,22 @@ export default function DailyEssayPageClient({
   const isLoading = pageState === "auth-loading" || pageState === "discussion-loading";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FFFDF8" }}>
+    <div style={{ minHeight: "100vh", background: "var(--paper)" }}>
       {/* Header */}
-      <div style={{ background: "#1E3A5F", padding: "14px 24px" }}>
+      <div data-ground="dark" style={{ background: "var(--invert-bg)", padding: "14px 24px" }}>
         <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link
             href="/cat-prep"
-            style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, textDecoration: "none", fontWeight: 500 }}
+            style={{ color: "var(--invert-ink-soft)", fontSize: 13, textDecoration: "none", fontWeight: 500 }}
           >
             ← Roadmap
           </Link>
-          <span className="font-bold text-white" style={{ fontSize: 13 }}>
+          <span className="font-bold" style={{ fontSize: 13, color: "var(--invert-ink)" }}>
             Daily Essay
           </span>
           <Link
             href="/cat-prep/daily-dose/essay/archive"
-            style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, textDecoration: "none", fontWeight: 500, textAlign: "right" }}
+            style={{ color: "var(--invert-ink-soft)", fontSize: 13, textDecoration: "none", fontWeight: 500, textAlign: "right" }}
           >
             Archive
           </Link>
@@ -349,32 +362,30 @@ export default function DailyEssayPageClient({
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
         {/* Date */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", letterSpacing: "0.5px", marginBottom: 6, textTransform: "uppercase" }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: "var(--ink-faint)", letterSpacing: "0.5px", marginBottom: 6, textTransform: "uppercase" }}>
           {formatDate(date)}
         </p>
 
         {/* Essay card */}
         <div
           style={{
-            border: "1.5px solid #E2E8F0",
-            borderRadius: 16,
+            border: "1.5px solid var(--rule-firm)",
             padding: "22px 24px",
-            background: "#fff",
+            background: "var(--paper)",
             marginBottom: 32,
-            boxShadow: "0 2px 12px rgba(30,58,95,0.06)",
           }}
         >
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
             Today&apos;s Essay · Aeon
           </p>
-          <h1 className="font-extrabold text-trust-navy" style={{ fontSize: "clamp(18px, 3vw, 24px)", lineHeight: 1.3, marginBottom: 6 }}>
+          <h1 className="font-extrabold" style={{ fontSize: "clamp(18px, 3vw, 24px)", lineHeight: 1.3, marginBottom: 6, color: "var(--ink)" }}>
             {essay.title}
           </h1>
-          <p style={{ fontSize: 13, color: "#64748B", marginBottom: 14 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-faint)", marginBottom: 14 }}>
             by <span className="font-semibold">{essay.author || "Unknown"}</span>
           </p>
           {essay.excerpt && (
-            <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.7, marginBottom: 18 }}>
+            <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.7, marginBottom: 18 }}>
               {essay.excerpt}…
             </p>
           )}
@@ -386,9 +397,8 @@ export default function DailyEssayPageClient({
             style={{
               display: "inline-block",
               padding: "9px 20px",
-              borderRadius: 8,
-              background: "#1E3A5F",
-              color: "#fff",
+              background: "var(--ink)",
+              color: "var(--paper)",
               fontSize: 13,
               textDecoration: "none",
             }}
@@ -401,7 +411,7 @@ export default function DailyEssayPageClient({
         {isLoading && (
           <div className="animate-pulse" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[1, 2, 3].map((i) => (
-              <div key={i} style={{ height: 80, borderRadius: 12, background: "#E2E8F0" }} />
+              <div key={i} style={{ height: 80, background: "var(--paper-sunk)", border: "1px solid var(--rule)" }} />
             ))}
           </div>
         )}
@@ -409,10 +419,10 @@ export default function DailyEssayPageClient({
         {/* Response form */}
         {pageState === "form" && (
           <div>
-            <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 18, marginBottom: 6 }}>
+            <h2 className="font-extrabold" style={{ fontSize: 18, marginBottom: 6, color: "var(--ink)" }}>
               Your Response
             </h2>
-            <p style={{ fontSize: 13, color: "#64748B", marginBottom: 24 }}>
+            <p style={{ fontSize: 13, color: "var(--ink-faint)", marginBottom: 24 }}>
               Answer all four questions. You&apos;ll see everyone else&apos;s responses after submitting.
             </p>
 
@@ -421,8 +431,8 @@ export default function DailyEssayPageClient({
                 <div key={q.id}>
                   <label
                     htmlFor={q.id}
-                    className="font-semibold text-trust-navy"
-                    style={{ fontSize: 14, display: "block", marginBottom: 8 }}
+                    className="font-semibold"
+                    style={{ fontSize: 14, display: "block", marginBottom: 8, color: "var(--ink)" }}
                   >
                     {i + 1}. {q.text}
                   </label>
@@ -434,15 +444,14 @@ export default function DailyEssayPageClient({
                     placeholder="Write your answer here…"
                     style={{
                       width: "100%",
-                      border: "1.5px solid #E2E8F0",
-                      borderRadius: 10,
+                      border: "1.5px solid var(--rule-firm)",
                       padding: "10px 14px",
-                      fontSize: 14,
-                      color: "#334155",
+                      // 16px, not 14: iOS Safari zooms the viewport on focus below 16px.
+                      fontSize: 16,
+                      color: "var(--ink)",
                       fontFamily: "inherit",
                       resize: "vertical",
-                      outline: "none",
-                      background: "#FAFBFC",
+                      background: "var(--paper-sunk)",
                       boxSizing: "border-box",
                     }}
                   />
@@ -451,26 +460,26 @@ export default function DailyEssayPageClient({
             </div>
 
             {submitError && (
-              <p style={{ fontSize: 13, color: "#EF4444", marginBottom: 14 }}>{submitError}</p>
+              <p style={{ fontSize: 13, color: "var(--wrong-text)", marginBottom: 14 }}>{submitError}</p>
             )}
 
             {!user ? (
               <div>
-                <p style={{ fontSize: 13, color: "#64748B", marginBottom: 12 }}>
+                <p style={{ fontSize: 13, color: "var(--ink-faint)", marginBottom: 12 }}>
                   Sign in to submit your response and see what others think.
                 </p>
                 {loginError && (
-                  <p style={{ fontSize: 12, color: "#EF4444", marginBottom: 10 }}>
+                  <p style={{ fontSize: 12, color: "var(--wrong-text)", marginBottom: 10 }}>
                     Could not sign in. Please try again.
                   </p>
                 )}
                 <button
                   onClick={handleSignIn}
-                  className="font-bold text-white"
+                  className="font-bold"
                   style={{
                     padding: "10px 24px",
-                    borderRadius: 8,
-                    background: "#1E3A5F",
+                    background: "var(--ink)",
+                    color: "var(--paper)",
                     border: "none",
                     fontSize: 14,
                     cursor: "pointer",
@@ -483,11 +492,11 @@ export default function DailyEssayPageClient({
             ) : (
               <button
                 onClick={handleSubmit}
-                className="font-bold text-white"
+                className="font-bold"
                 style={{
                   padding: "10px 28px",
-                  borderRadius: 8,
-                  background: "#1E3A5F",
+                  background: "var(--ink)",
+                  color: "var(--paper)",
                   border: "none",
                   fontSize: 14,
                   cursor: "pointer",
@@ -502,26 +511,26 @@ export default function DailyEssayPageClient({
 
         {/* Submitting state */}
         {pageState === "submitting" && (
-          <p style={{ fontSize: 14, color: "#64748B" }}>Submitting…</p>
+          <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>Submitting…</p>
         )}
 
         {/* Discussion — per-question sections */}
         {pageState === "discussion" && (
           <div>
-            <h2 className="font-extrabold text-trust-navy" style={{ fontSize: 18, marginBottom: 4 }}>
+            <h2 className="font-extrabold" style={{ fontSize: 18, marginBottom: 4, color: "var(--ink)" }}>
               Community Responses
-              <span className="font-medium text-slate-400" style={{ fontSize: 14, marginLeft: 8 }}>
+              <span className="font-medium ed-muted" style={{ fontSize: 14, marginLeft: 8 }}>
                 ({submissions.length})
               </span>
             </h2>
-            <p style={{ fontSize: 13, color: "#64748B", marginBottom: 28 }}>
+            <p style={{ fontSize: 13, color: "var(--ink-faint)", marginBottom: 28 }}>
               {viewOnly
                 ? "Community responses for this essay. Sign in to upvote individual answers."
                 : "Upvote the answers you find most insightful within each question."}
             </p>
 
             {submissions.length === 0 ? (
-              <p style={{ fontSize: 14, color: "#94A3B8" }}>No responses yet — you&apos;re the first!</p>
+              <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>No responses yet — you&apos;re the first!</p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
                 {ESSAY_QUESTIONS.map((q, i) => {
@@ -536,15 +545,15 @@ export default function DailyEssayPageClient({
                       {/* Question heading */}
                       <div
                         style={{
-                          borderLeft: "3px solid #1E3A5F",
+                          borderLeft: "3px solid var(--ink)",
                           paddingLeft: 12,
                           marginBottom: 14,
                         }}
                       >
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                           Q{i + 1}
                         </span>
-                        <p className="font-semibold text-trust-navy" style={{ fontSize: 14, marginTop: 2 }}>
+                        <p className="font-semibold" style={{ fontSize: 14, marginTop: 2, color: "var(--ink)" }}>
                           {q.text}
                         </p>
                       </div>

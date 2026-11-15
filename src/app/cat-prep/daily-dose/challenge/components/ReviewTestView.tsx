@@ -53,7 +53,7 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FFFDF8" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--paper)" }}>
       <ReviewHeader title={title} backHref={backHref} />
 
       <div
@@ -84,10 +84,9 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                 className="font-semibold disabled:opacity-40"
                 style={{
                   padding: "9px 20px",
-                  borderRadius: 8,
-                  background: "#F1F5F9",
-                  color: "#1E3A5F",
-                  border: "1px solid #E2E8F0",
+                  background: "var(--paper-sunk)",
+                  color: "var(--ink)",
+                  border: "1px solid var(--rule-firm)",
                   fontSize: 13,
                   cursor: hasPrev ? "pointer" : "not-allowed",
                   fontFamily: "inherit",
@@ -96,7 +95,7 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                 ← Prev
               </button>
 
-              <span style={{ fontSize: 12, color: "#94A3B8", fontVariantNumeric: "tabular-nums" }}>
+              <span style={{ fontSize: 12, color: "var(--ink-faint)", fontVariantNumeric: "tabular-nums" }}>
                 {questionIndex + 1} / {section.questions.length}
               </span>
 
@@ -106,10 +105,9 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                 className="font-semibold disabled:opacity-40"
                 style={{
                   padding: "9px 20px",
-                  borderRadius: 8,
-                  background: hasNext ? "#1E3A5F" : "#F1F5F9",
-                  color: hasNext ? "#fff" : "#94A3B8",
-                  border: "1px solid #E2E8F0",
+                  background: hasNext ? "var(--ink)" : "var(--paper-sunk)",
+                  color: hasNext ? "var(--paper)" : "var(--ink-faint)",
+                  border: "1px solid var(--rule-firm)",
                   fontSize: 13,
                   cursor: hasNext ? "pointer" : "not-allowed",
                   fontFamily: "inherit",
@@ -126,9 +124,8 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
             style={{
               width: 196,
               flexShrink: 0,
-              background: "#fff",
-              borderRadius: 12,
-              border: "1.5px solid #E8EAF0",
+              background: "var(--paper)",
+              border: "1.5px solid var(--rule)",
               padding: "16px 14px",
               position: "sticky",
               top: 72,
@@ -155,8 +152,8 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
           bottom: 0,
           left: 0,
           right: 0,
-          background: "#fff",
-          borderTop: "1.5px solid #E8EAF0",
+          background: "var(--paper)",
+          borderTop: "1.5px solid var(--rule)",
           boxShadow: "0 -4px 20px rgba(30,58,95,0.08)",
           zIndex: 50,
           padding: "10px 16px",
@@ -174,9 +171,8 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                 style={{
                   flex: 1,
                   padding: "5px 0",
-                  borderRadius: 100,
-                  background: isActive ? "#1E3A5F" : "#F1F5F9",
-                  color: isActive ? "#fff" : "#64748B",
+                  background: isActive ? "var(--ink)" : "var(--paper-sunk)",
+                  color: isActive ? "var(--paper)" : "var(--ink-faint)",
                   border: "none",
                   fontSize: 11,
                   cursor: "pointer",
@@ -201,9 +197,9 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
             const isCurrent = idx === questionIndex;
             const resp = responses[q.questionId];
             const isUnattempted = !resp || resp.given === null;
-            const bg = isCurrent ? "#1E3A5F" : isUnattempted ? "#F1F5F9" : resp.correct ? "#DCFCE7" : "#FEE2E2";
-            const color = isCurrent ? "#fff" : isUnattempted ? "#94A3B8" : resp.correct ? "#166534" : "#991B1B";
-            const border = isCurrent ? "#1E3A5F" : isUnattempted ? "#E2E8F0" : resp.correct ? "#86EFAC" : "#FCA5A5";
+            const bg = isCurrent ? "var(--ink)" : isUnattempted ? "var(--paper-sunk)" : resp.correct ? "var(--correct-wash)" : "var(--wrong-wash)";
+            const color = isCurrent ? "var(--paper)" : isUnattempted ? "var(--inert-text)" : resp.correct ? "var(--correct-text)" : "var(--wrong-text)";
+            const border = isCurrent ? "var(--ink)" : isUnattempted ? "var(--rule)" : resp.correct ? "var(--correct-text)" : "var(--wrong-text)";
             return (
               <button
                 key={q.questionId}
@@ -211,7 +207,6 @@ export default function ReviewTestView({ test, result, title, backHref }: Props)
                 style={{
                   width: 36,
                   height: 36,
-                  borderRadius: 8,
                   background: bg,
                   color,
                   border: `1.5px solid ${border}`,
