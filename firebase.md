@@ -49,6 +49,18 @@ Note: The code has fallbacks to these values if env vars are not set, so local d
    - Your production domain
 4. Firestore Database: create in production mode or test mode and then configure rules.
 
+## Custom auth domain (production)
+
+Production sets `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=studynaksha.com`, so Google's account chooser says
+"continue to studynaksha.com" instead of the project's `firebaseapp.com` domain. `next.config.ts`
+proxies `/__/auth/*` and `/__/firebase/*` to `https://<project-id>.firebaseapp.com`, which serves
+Firebase's sign-in helper from our own domain.
+
+For this to work, the OAuth client "Web client (auto created by Google Service)" in Google Cloud →
+Credentials must list `https://studynaksha.com/__/auth/handler` as an authorized redirect URI. Local
+dev and Vercel previews keep `<project-id>.firebaseapp.com`. See
+[planning/C001-auth-domain-branding.md](planning/C001-auth-domain-branding.md) for the full checklist.
+
 ## Firestore rules (minimum for this feature)
 
 Use rules that allow users to access only their own progress documents:
