@@ -72,6 +72,13 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 
 ---
 
+## Config — November 2026
+| ID | Status | Spec | Notes |
+|----|--------|------|-------|
+| C001 | 🔄 | [C001-auth-domain-branding.md](./C001-auth-domain-branding.md) | Google sign-in says studynaksha.com, not learnmax-vivek.firebaseapp.com: `/__/auth` proxy in `next.config.ts`, prod `authDomain=studynaksha.com`, project and OAuth branding renamed to StudyNaksha. Same Firebase project, no data move |
+
+---
+
 ## Deferred
 | ID | Status | Blocker |
 |----|--------|---------|
