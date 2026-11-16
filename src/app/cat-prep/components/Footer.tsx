@@ -1,10 +1,10 @@
-// Footer — shared site footer: wordmark, the five surfaces, and project links
+// Footer — shared site footer: wordmark, the five surfaces, project and legal links
 "use client";
 
 import Link from "next/link";
 import Wordmark from "@/app/components/Wordmark";
-
-const GITHUB_URL = "https://github.com/singhalvivek/catmap-web";
+import { GITHUB_URL } from "@/constants/contact";
+import { PRIVACY_PATH, TERMS_PATH } from "@/constants/routes";
 
 const SURFACE_LINKS = [
   { label: "Syllabus & lessons", href: "/cat-prep" },
@@ -16,6 +16,8 @@ const SURFACE_LINKS = [
 
 const PROJECT_LINKS = [
   { label: "All pages", href: "/sitemap-page" },
+  { label: "Privacy policy", href: PRIVACY_PATH },
+  { label: "Terms of service", href: TERMS_PATH },
 ];
 
 export default function Footer() {

@@ -2,13 +2,12 @@
 "use client";
 
 import { trackEvent } from "@/app/components/analytics";
-
-const WA_NUMBER = "919352277260";
+import { WHATSAPP_URL } from "@/constants/contact";
 
 export default function FeedbackForm({ topicTitle }: { topicTitle: string }) {
   const message =
     `Hi! Suggestion for StudyNaksha\n\nSubtopic: ${topicTitle}\n\nSuggested resource:\n- Link: \n- Why it's better: \n- Any general feedback: `;
-  const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+  const waUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(message)}`;
 
   return (
     <div

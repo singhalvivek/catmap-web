@@ -7,6 +7,7 @@ import type { Node } from "@/app/cat-prep/models/node";
 import { toSlug } from "@/app/cat-prep/lib/nodeMetadata";
 import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import { PYQ_PAPERS } from "@/constants/pyqPapers";
+import { PRIVACY_PATH, TERMS_PATH } from "@/constants/routes";
 import { fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 
 const allNodes = data as Node[];
@@ -129,6 +130,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/challenge`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: `${ENV.SITE_URL}/sitemap-page`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${ENV.SITE_URL}${PRIVACY_PATH}`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${ENV.SITE_URL}${TERMS_PATH}`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
     ...pyqEntries,
     ...topicEntries,
     ...subtopicEntries,
