@@ -1,5 +1,7 @@
 // contact — the public ways to reach the StudyNaksha team, shared by the footer, feedback and legal pages
 
+export const CONTACT_EMAIL = "viveksinghalp@gmail.com";
+
 export const GITHUB_URL = "https://github.com/singhalvivek/catmap-web";
 
 export const GITHUB_ISSUES_URL = `${GITHUB_URL}/issues`;

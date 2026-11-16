@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import Header from "@/app/cat-prep/components/Header";
 import Footer from "@/app/cat-prep/components/Footer";
-import { GITHUB_ISSUES_URL, WHATSAPP_URL } from "@/constants/contact";
+import { CONTACT_EMAIL, GITHUB_ISSUES_URL, WHATSAPP_URL } from "@/constants/contact";
 
 /** Both documents carry the same date; bump it whenever either one changes. */
 export const LEGAL_LAST_UPDATED = "17 November 2026";
@@ -35,11 +35,15 @@ export function LegalPage({
 
         <LegalSection heading="Contact">
           <p className="guide-prose">
-            Questions or requests about this document, or about your data, can be sent on{" "}
+            Questions or requests about this document, or about your data, can be emailed to{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`} style={linkStyle}>
+              {CONTACT_EMAIL}
+            </a>
+            , sent on{" "}
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={linkStyle}>
               WhatsApp
-            </a>{" "}
-            or raised as an issue on{" "}
+            </a>
+            , or raised as an issue on{" "}
             <a href={GITHUB_ISSUES_URL} target="_blank" rel="noopener noreferrer" style={linkStyle}>
               GitHub
             </a>
