@@ -9,3 +9,7 @@ export const PRACTICE_INDEX = "/cat-prep/practice";
 
 /** The syllabus itself. */
 export const LEARN_INDEX = "/cat-prep";
+
+export const PRIVACY_PATH = "/privacy";
+
+export const TERMS_PATH = "/terms";
