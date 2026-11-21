@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { PYQ_PAPERS } from "@/constants/pyqPapers";
 import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
+import { PYQ_TOPIC_PRACTICE } from "@/constants/routes";
 import { ENV } from "@/config/env";
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ const HUB_PAGES = [
   { href: "/cat-prep/how-to-prepare", label: "How to Prepare for CAT" },
   { href: "/cat-prep/pyq", label: "PYQ Papers Hub" },
   { href: "/cat-prep/practice", label: "Practice Hub" },
+  { href: PYQ_TOPIC_PRACTICE, label: "PYQs by Topic" },
   { href: "/cat-prep/daily-dose/essay", label: "Daily Essay" },
   { href: "/cat-prep/daily-dose/challenge", label: "Daily Challenge" },
 ];

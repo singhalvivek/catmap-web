@@ -66,6 +66,20 @@ export type PyqSolvedPaper = {
   sections: { name: PyqSection; questions: PyqSolvedQuestion[] }[];
 };
 
+// One paper's share of a topic set: only its questions on that topic, in paper order.
+export type PyqTopicPaper = {
+  paperSlug: string;
+  examYear: number;
+  examSlot: number | null;
+  questions: PyqSolvedQuestion[];
+};
+
+/** Topic slug → paper slug → how many of that paper's questions are on the topic. */
+export type PyqTopicPaperCounts = Record<string, Record<string, number>>;
+
+/** Topic slug → exam year → how many of that year's questions are on the topic. */
+export type PyqTopicCounts = Record<string, Record<number, number>>;
+
 export type PyqPaperSummary = {
   paperSlug: string;
   examYear: number;
