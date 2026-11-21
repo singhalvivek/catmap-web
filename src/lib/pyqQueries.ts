@@ -1,15 +1,21 @@
 // pyqQueries — server-side MongoDB query functions for cracku_pyq_* (PYQ paper) collections
 import { ObjectId } from "mongodb";
+import { unstable_cache } from "next/cache";
 import { getDb } from "./mongodb";
 import { PYQ_PAPERS, getPyqPaper } from "@/constants/pyqPapers";
+import { PYQ_TOPICS, PYQ_TOPIC_YEARS, type PyqTopic } from "@/constants/pyqTopics";
+import { buildPyqTopicFilter } from "./pyqTopicQuery";
 import type {
   PyqSection,
   PyqQuestionType,
   PyqOption,
   PyqQuestion,
   PyqPaper,
+  PyqSolvedQuestion,
   PyqSolvedPaper,
   PyqPaperSummary,
+  PyqTopicPaper,
+  PyqTopicPaperCounts,
 } from "@/app/cat-prep/models/pyq";
 import type {
   DailyTest,
@@ -48,6 +54,8 @@ type PyqQuestionDoc = {
   correctAnswer?: string | null;
   explanation?: { text: string | null; imageUrls: string[]; imagePositions?: number[] };
   comprehensionId: ObjectId | null;
+  // Written by PYQ-scraper/scrape_cracku_topics.py; absent on questions cracku never filed.
+  topics?: { slug: string; name: string }[];
 };
 
 type PyqComprehensionDoc = {
@@ -83,6 +91,18 @@ function toPyqQuestion(
     comprehension: comp
       ? { id: comp._id.toString(), text: comp.text, imageUrls: comp.imageUrls, imagePositions: comp.imagePositions }
       : null,
+  };
+}
+
+function toPyqSolvedQuestion(
+  doc: PyqQuestionDoc,
+  compMap: Map<string, PyqComprehensionDoc>
+): PyqSolvedQuestion {
+  return {
+    ...toPyqQuestion(doc, compMap),
+    correctOptionIndex: doc.correctOptionIndex ?? null,
+    correctAnswer: doc.correctAnswer ?? null,
+    explanation: doc.explanation ?? { text: null, imageUrls: [] },
   };
 }
 
@@ -202,13 +222,83 @@ export async function fetchPyqPaperSolutions(paperSlug: string): Promise<PyqSolv
 
   return {
     ...resolvePaperMeta(paperSlug, questionDocs[0]),
-    sections: groupBySection(questionDocs, (doc) => ({
-      ...toPyqQuestion(doc, compMap),
-      correctOptionIndex: doc.correctOptionIndex ?? null,
-      correctAnswer: doc.correctAnswer ?? null,
-      explanation: doc.explanation ?? { text: null, imageUrls: [] },
-    })),
+    sections: groupBySection(questionDocs, (doc) => toPyqSolvedQuestion(doc, compMap)),
   };
+}
+
+// ---- By topic ----
+
+// Topic counts only change when the scraper re-tags, so an hour of staleness costs nothing.
+const PYQ_TOPIC_COUNTS_REVALIDATE_SECONDS = 3600;
+
+/**
+ * How many questions each topic has on each paper in the offered years, in one $facet pass.
+ * The picker sums it by year; pagination reads it per paper. Only papers in PYQ_PAPERS are
+ * counted — the set leaves out a scraped paper with no entry there, and the two must agree.
+ */
+export const fetchPyqTopicPaperCounts = unstable_cache(
+  async (): Promise<PyqTopicPaperCounts> => {
+    const db = await getDb();
+    const facets = Object.fromEntries(
+      PYQ_TOPICS.map((topic) => [
+        topic.slug,
+        [
+          { $match: buildPyqTopicFilter(topic, PYQ_TOPIC_YEARS) },
+          { $group: { _id: "$paperSlug", count: { $sum: 1 } } },
+        ],
+      ])
+    );
+    const [row] = await db
+      .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
+      .aggregate<Record<string, { _id: string; count: number }[]>>([
+        { $match: { paperSlug: { $in: PYQ_PAPERS.map((p) => p.slug) } } },
+        { $facet: facets },
+      ])
+      .toArray();
+
+    return Object.fromEntries(
+      PYQ_TOPICS.map((topic) => [
+        topic.slug,
+        Object.fromEntries((row?.[topic.slug] ?? []).map(({ _id, count }) => [_id, count])),
+      ])
+    );
+  },
+  ["pyq-topic-paper-counts"],
+  { revalidate: PYQ_TOPIC_COUNTS_REVALIDATE_SECONDS }
+);
+
+/**
+ * A topic's questions on the given papers, answers and explanations attached, one entry
+ * per paper in PYQ_PAPERS order (newest first) and each paper's questions in order. Takes
+ * the papers rather than the whole selection, so a page reads only its own share.
+ */
+export async function fetchPyqTopicPapers(
+  topic: PyqTopic,
+  years: number[],
+  paperSlugs: string[]
+): Promise<PyqTopicPaper[]> {
+  if (years.length === 0 || paperSlugs.length === 0) return [];
+  const db = await getDb();
+  const questionDocs = await db
+    .collection<PyqQuestionDoc>(QUESTIONS_COLLECTION)
+    .find({ ...buildPyqTopicFilter(topic, years), paperSlug: { $in: paperSlugs } })
+    .sort({ questionNumber: 1 })
+    .toArray();
+  const compMap = await fetchComprehensionMap(questionDocs);
+
+  const byPaper = new Map<string, PyqSolvedQuestion[]>();
+  for (const doc of questionDocs) {
+    const questions = byPaper.get(doc.paperSlug) ?? [];
+    questions.push(toPyqSolvedQuestion(doc, compMap));
+    byPaper.set(doc.paperSlug, questions);
+  }
+
+  return PYQ_PAPERS.flatMap((p) => {
+    const questions = byPaper.get(p.slug);
+    return questions
+      ? [{ paperSlug: p.slug, examYear: p.examYear, examSlot: p.examSlot, questions }]
+      : [];
+  });
 }
 
 // ---- Mock test ----

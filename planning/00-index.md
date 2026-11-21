@@ -49,6 +49,7 @@ See [README.md](./README.md) for the workflow and [instructions.md](./instructio
 | P004 | 🔄 | [P004-pyq-section.md](./P004-pyq-section.md) | PYQ section — browse past papers + timed mock test; new entry point next to Learn/Practice. All 4 phases built; pending a real click-test of the mock submit flow before marking ✅ |
 | P005 | 🔄 | [P005-progress-bars.md](./P005-progress-bars.md) | Mode-aware progress bars — Learn/Practice/PYQ each show their own metric + info tooltip |
 | P006 | 🔄 | [P006-daily-dose-date-rollover.md](./P006-daily-dose-date-rollover.md) | Daily Dose date rollover — ISR was freezing "today" into the cache, serving yesterday's challenge/essay for up to an hour past IST midnight. Pages made dynamic; `getTodayIST` extracted to `src/lib/dateIST.ts` |
+| P007 | 🔄 | [P007-pyq-by-topic.md](./P007-pyq-by-topic.md) | PYQ practice by topic — pick a topic (Arithmetic, Para Summary, Para Jumbles …) and any of the last ten exam years, get every past-paper question on it, answerable inline. Progress shares the paper reader's keys |
 
 ---
 

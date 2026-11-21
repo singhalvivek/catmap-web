@@ -1304,6 +1304,11 @@ textarea.ed-field {
 .ed-chip[data-state="correct"] {
   border-color: var(--correct-text);
 }
+/* A chip wrapping a visually hidden radio or checkbox shows the ring the input can't. */
+.ed-chip:has(> input:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
 
 /* Non-interactive status label. */
 .ed-pill {
@@ -1787,7 +1792,104 @@ textarea.ed-field {
   }
 }
 
-/* ---- Daily Dose promo card on the Learn surface ---- */
+/* ---- PYQs by topic: the picker ---- */
+.pyq-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+  background: var(--paper-sunk);
+  border: 1.5px solid var(--ink);
+}
+.pyq-picker[data-collapsed="true"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+}
+.pyq-picker__summary {
+  margin: 0;
+  font-size: 15px;
+  color: var(--ink);
+}
+.pyq-picker__field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+/* Full width so the kicker's trailing rule has room to run. */
+.pyq-picker__legend {
+  width: 100%;
+  padding: 0;
+  margin-bottom: 12px;
+}
+.pyq-picker__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pyq-picker__hint {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.pyq-picker__group {
+  margin-top: 16px;
+}
+.pyq-picker__group-name {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.pyq-picker__count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.ed-chip[data-selected="true"] .pyq-picker__count {
+  color: inherit;
+}
+.pyq-picker__quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+.pyq-picker__submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.pyq-picker__status {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.pyq-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule-firm);
+}
+.pyq-pager__range {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.pyq-pager .pyq-pager__range {
+  margin: 0;
+}
+
+/* ---- Promo cards: Daily Dose on Learn, PYQs by topic on Practice ---- */
 .dd-promo {
   border: 1.5px solid var(--rule-firm);
   border-left: 4px solid var(--accent);

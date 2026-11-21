@@ -7,7 +7,7 @@ import type { Node } from "@/app/cat-prep/models/node";
 import { toSlug } from "@/app/cat-prep/lib/nodeMetadata";
 import { PRACTICE_SUBJECTS, RC_CHAPTER_SLUG } from "@/constants/practiceChapters";
 import { PYQ_PAPERS } from "@/constants/pyqPapers";
-import { PRIVACY_PATH, TERMS_PATH } from "@/constants/routes";
+import { PRIVACY_PATH, PYQ_TOPIC_PRACTICE, TERMS_PATH } from "@/constants/routes";
 import { fetchDilrSetNumbersByChapter } from "@/lib/practiceQueries";
 
 const allNodes = data as Node[];
@@ -125,6 +125,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${ENV.SITE_URL}/cat-prep`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${ENV.SITE_URL}/cat-prep/how-to-prepare`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/practice`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${ENV.SITE_URL}${PYQ_TOPIC_PRACTICE}`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${ENV.SITE_URL}/cat-prep/pyq`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { url: `${ENV.SITE_URL}/cat-prep/daily-dose/essay`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
