@@ -7,6 +7,12 @@
  */
 export const PRACTICE_INDEX = "/cat-prep/practice";
 
+/** The past-papers index; one paper lives at `${PYQ_INDEX}/<paperSlug>`. */
+export const PYQ_INDEX = "/cat-prep/pyq";
+
+/** Past-paper questions on one topic, across the years you pick. */
+export const PYQ_TOPIC_PRACTICE = "/cat-prep/practice/pyq-by-topic";
+
 /** The syllabus itself. */
 export const LEARN_INDEX = "/cat-prep";
 

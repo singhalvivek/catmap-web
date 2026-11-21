@@ -23,6 +23,7 @@ import ContinueLearning from "./ContinueLearning";
 import ContinuePractice from "./ContinuePractice";
 import DetailsPanel from "./details/DetailsPanel";
 import PracticeTopicRow from "./PracticeTopicRow";
+import PyqTopicCard from "./PyqTopicCard";
 
 import PyqPapersList from "./PyqPapersList";
 import { useProgressContext } from "../lib/ProgressContext";
@@ -328,6 +329,8 @@ export default function RoadmapContent({
 
         {/* Continue Practice strip */}
         {mode === "practice" && <ContinuePractice />}
+
+        {mode === "practice" && <PyqTopicCard />}
 
         {/* Subject tabs — hidden in PYQ & Daily Dose (not organized by subject) */}
         {mode !== "pyq" && mode !== "daily-dose" && (
